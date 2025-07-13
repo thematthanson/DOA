@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Progress Bar Diamond System - Micro Test</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background: #000;
+            color: #00ff41;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #111;
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #00ff41;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #00ff41;
+            padding-bottom: 20px;
+        }
+        
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            background: #1a1a1a;
+            border-radius: 5px;
+            border-left: 4px solid #00ff41;
+        }
+        
+        .progress-container {
+            margin: 20px 0;
+            padding: 20px;
+            background: #222;
+            border-radius: 10px;
+            border: 1px solid #333;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #333;
+            border-radius: 15px;
+            position: relative;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00ff41, #00ff41);
+            border-radius: 15px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .progress-fill.yellow-mode {
+            background: linear-gradient(90deg, #ffff00, #ffff00);
+        }
+        
+        .diamond {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            background: #fff;
+            clip-path: polygon(50% 0%, 0% 50%, 50% 100%, 100% 50%);
+            border: 2px solid #000;
+            z-index: 10;
+            transition: all 0.3s ease;
+        }
+        
+        .diamond.active {
+            box-shadow: 0 0 20px currentColor;
+            animation: pulse 1s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            padding: 10px 20px;
+            background: #00ff41;
+            color: #000;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        button:hover {
+            background: #00cc33;
+            transform: translateY(-2px);
+        }
+        
+        button.yellow {
+            background: #ffff00;
+        }
+        
+        button.yellow:hover {
+            background: #cccc00;
+        }
+        
+        .info-panel {
+            background: #333;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        
+        .color-palette {
+            display: flex;
+            gap: 10px;
+            margin: 10px 0;
+            flex-wrap: wrap;
+        }
+        
+        .color-sample {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 2px solid #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            color: #000;
+            font-weight: bold;
+        }
+        
+        .multiplier-display {
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            margin: 10px 0;
+        }
+        
+        .legend {
+            background: #2a2a2a;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        
+        .legend h3 {
+            margin-top: 0;
+            color: #00ff41;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin: 5px 0;
+        }
+        
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔷 PROGRESS BAR DIAMOND SYSTEM</h1>
+            <p>Micro Test - Diamond Progression & Color Changes</p>
+        </div>
+        
+        <div class="test-section">
+            <h2>Test Overview</h2>
+            <p>This micro-test demonstrates the Progress Bar Diamond System used in the Rumi Extension. Each diamond represents a multiplier milestone, with unique colors and visual effects.</p>
+            
+            <div class="legend">
+                <h3>Diamond Color Palettes</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div>
+                        <h4>Detection Mode (Green Base)</h4>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #00ff41;"></div>
+                            <span>Base Progress (1.0x)</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #ffaa00;"></div>
+                            <span>Orange Diamond (1.5x)</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #ff6600;"></div>
+                            <span>Red-Orange Diamond (2.0x)</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #a985ff;"></div>
+                            <span>Purple Diamond (2.5x)</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #00ccff;"></div>
+                            <span>Cyan Diamond (3.0x)</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #ff00ff;"></div>
+                            <span>Magenta Diamond (3.5x+)</span>
+                        </div>
+                    </div>
+                    <div>
+                        <h4>Automode (Yellow Base)</h4>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #ffff00;"></div>
+                            <span>Base Progress (1.0x)</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #ffaa00;"></div>
+                            <span>Orange Diamond (1.5x)</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #ff6600;"></div>
+                            <span>Red-Orange Diamond (2.0x)</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #a985ff;"></div>
+                            <span>Purple Diamond (2.5x)</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #00ccff;"></div>
+                            <span>Cyan Diamond (3.0x)</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #ff00ff;"></div>
+                            <span>Magenta Diamond (3.5x+)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2>Detection Mode Test</h2>
+            <div class="progress-container">
+                <div class="multiplier-display" id="detectionMultiplier">Current Multiplier: 1.0x</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="detectionProgress"></div>
+                    <div class="diamond" id="diamond1" style="left: 20%; background: #ffaa00;"></div>
+                    <div class="diamond" id="diamond2" style="left: 40%; background: #ff6600;"></div>
+                    <div class="diamond" id="diamond3" style="left: 60%; background: #a985ff;"></div>
+                    <div class="diamond" id="diamond4" style="left: 80%; background: #00ccff;"></div>
+                    <div class="diamond" id="diamond5" style="left: 95%; background: #ff00ff;"></div>
+                </div>
+                <div class="controls">
+                    <button onclick="startDetectionDemo()">Start Detection Demo</button>
+                    <button onclick="resetDetectionDemo()">Reset</button>
+                    <button onclick="fastDetectionDemo()">Fast Mode</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2>Automode Test</h2>
+            <div class="progress-container">
+                <div class="multiplier-display" id="automodeMultiplier">Current Multiplier: 1.0x</div>
+                <div class="progress-bar">
+                    <div class="progress-fill yellow-mode" id="automodeProgress"></div>
+                    <div class="diamond" id="autodiamond1" style="left: 20%; background: #ffaa00;"></div>
+                    <div class="diamond" id="autodiamond2" style="left: 40%; background: #ff6600;"></div>
+                    <div class="diamond" id="autodiamond3" style="left: 60%; background: #a985ff;"></div>
+                    <div class="diamond" id="autodiamond4" style="left: 80%; background: #00ccff;"></div>
+                    <div class="diamond" id="autodiamond5" style="left: 95%; background: #ff00ff;"></div>
+                </div>
+                <div class="controls">
+                    <button class="yellow" onclick="startAutomodeDemo()">Start Automode Demo</button>
+                    <button class="yellow" onclick="resetAutomodeDemo()">Reset</button>
+                    <button class="yellow" onclick="fastAutomodeDemo()">Fast Mode</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2>Key Features Demonstrated</h2>
+            <div class="info-panel">
+                <h3>✨ Visual Effects:</h3>
+                <ul>
+                    <li><strong>Unique Diamond Colors:</strong> Each diamond has a distinct color representing different multiplier levels</li>
+                    <li><strong>Progress Bar Color Transitions:</strong> Bar color changes when passing diamonds</li>
+                    <li><strong>Glow Effects:</strong> Active diamonds pulse with enhanced glow</li>
+                    <li><strong>Smooth Animations:</strong> Fluid transitions between states</li>
+                </ul>
+                
+                <h3>🎯 Multiplier System:</h3>
+                <ul>
+                    <li><strong>1.0x Base:</strong> Starting multiplier</li>
+                    <li><strong>1.5x First Diamond:</strong> Orange milestone</li>
+                    <li><strong>2.0x Second Diamond:</strong> Red-Orange milestone</li>
+                    <li><strong>2.5x Third Diamond:</strong> Purple milestone</li>
+                    <li><strong>3.0x Fourth Diamond:</strong> Cyan milestone</li>
+                    <li><strong>3.5x+ Final Diamond:</strong> Magenta milestone</li>
+                </ul>
+                
+                <h3>🎨 Mode Differences:</h3>
+                <ul>
+                    <li><strong>Detection Mode:</strong> Green base color palette</li>
+                    <li><strong>Automode:</strong> Yellow base color palette</li>
+                    <li><strong>Same Diamond Colors:</strong> Both modes use identical diamond colors</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2>Technical Implementation</h2>
+            <div class="info-panel">
+                <p><strong>Color System:</strong> CSS custom properties and JavaScript-driven color transitions</p>
+                <p><strong>Animation:</strong> CSS transitions with JavaScript timing control</p>
+                <p><strong>Responsiveness:</strong> Adapts to different screen sizes and orientations</p>
+                <p><strong>Performance:</strong> Optimized for smooth 60fps animations</p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let detectionInterval, automodeInterval;
+        let detectionProgress = 0, automodeProgress = 0;
+        
+        const colors = ['#ffaa00', '#ff6600', '#a985ff', '#00ccff', '#ff00ff'];
+        const multipliers = [1.0, 1.5, 2.0, 2.5, 3.0, 3.5];
+        
+        function updateDetectionProgress() {
+            const progressFill = document.getElementById('detectionProgress');
+            const multiplierDisplay = document.getElementById('detectionMultiplier');
+            
+            progressFill.style.width = detectionProgress + '%';
+            
+            // Check diamond milestones
+            let currentMultiplier = 1.0;
+            let currentColor = '#00ff41';
+            
+            for (let i = 0; i < 5; i++) {
+                const diamondPosition = [20, 40, 60, 80, 95][i];
+                const diamond = document.getElementById('diamond' + (i + 1));
+                
+                if (detectionProgress >= diamondPosition) {
+                    diamond.classList.add('active');
+                    currentMultiplier = multipliers[i + 1];
+                    currentColor = colors[i];
+                } else {
+                    diamond.classList.remove('active');
+                }
+            }
+            
+            progressFill.style.background = `linear-gradient(90deg, ${currentColor}, ${currentColor})`;
+            multiplierDisplay.textContent = `Current Multiplier: ${currentMultiplier}x`;
+        }
+        
+        function updateAutomodeProgress() {
+            const progressFill = document.getElementById('automodeProgress');
+            const multiplierDisplay = document.getElementById('automodeMultiplier');
+            
+            progressFill.style.width = automodeProgress + '%';
+            
+            // Check diamond milestones
+            let currentMultiplier = 1.0;
+            let currentColor = '#ffff00';
+            
+            for (let i = 0; i < 5; i++) {
+                const diamondPosition = [20, 40, 60, 80, 95][i];
+                const diamond = document.getElementById('autodiamond' + (i + 1));
+                
+                if (automodeProgress >= diamondPosition) {
+                    diamond.classList.add('active');
+                    currentMultiplier = multipliers[i + 1];
+                    currentColor = colors[i];
+                } else {
+                    diamond.classList.remove('active');
+                }
+            }
+            
+            progressFill.style.background = `linear-gradient(90deg, ${currentColor}, ${currentColor})`;
+            multiplierDisplay.textContent = `Current Multiplier: ${currentMultiplier}x`;
+        }
+        
+        function startDetectionDemo() {
+            clearInterval(detectionInterval);
+            detectionInterval = setInterval(() => {
+                if (detectionProgress < 100) {
+                    detectionProgress += 0.5;
+                    updateDetectionProgress();
+                } else {
+                    clearInterval(detectionInterval);
+                }
+            }, 100);
+        }
+        
+        function resetDetectionDemo() {
+            clearInterval(detectionInterval);
+            detectionProgress = 0;
+            updateDetectionProgress();
+        }
+        
+        function fastDetectionDemo() {
+            clearInterval(detectionInterval);
+            detectionInterval = setInterval(() => {
+                if (detectionProgress < 100) {
+                    detectionProgress += 2;
+                    updateDetectionProgress();
+                } else {
+                    clearInterval(detectionInterval);
+                }
+            }, 50);
+        }
+        
+        function startAutomodeDemo() {
+            clearInterval(automodeInterval);
+            automodeInterval = setInterval(() => {
+                if (automodeProgress < 100) {
+                    automodeProgress += 0.5;
+                    updateAutomodeProgress();
+                } else {
+                    clearInterval(automodeInterval);
+                }
+            }, 100);
+        }
+        
+        function resetAutomodeDemo() {
+            clearInterval(automodeInterval);
+            automodeProgress = 0;
+            updateAutomodeProgress();
+        }
+        
+        function fastAutomodeDemo() {
+            clearInterval(automodeInterval);
+            automodeInterval = setInterval(() => {
+                if (automodeProgress < 100) {
+                    automodeProgress += 2;
+                    updateAutomodeProgress();
+                } else {
+                    clearInterval(automodeInterval);
+                }
+            }, 50);
+        }
+        
+        // Initialize
+        updateDetectionProgress();
+        updateAutomodeProgress();
+    </script>
+</body>
+</html> 

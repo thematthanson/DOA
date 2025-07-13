@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rumi Channel</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background: #0a0a0a;
+            color: #00ff41;
+            margin: 0;
+            padding: 10px;
+            font-size: 11px;
+            line-height: 1.4;
+        }
+        
+        .channel-content {
+            max-width: 100%;
+        }
+        
+        .channel-header {
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            padding: 5px;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 3px;
+        }
+        
+        .content-item {
+            margin-bottom: 8px;
+            padding: 6px;
+            background: #0f0f0f;
+            border: 1px solid #333;
+            border-radius: 3px;
+            transition: all 0.2s ease;
+        }
+        
+        .content-item:hover {
+            background: #1a1a1a;
+            border-color: #00ff41;
+        }
+        
+        .content-title {
+            font-weight: bold;
+            margin-bottom: 2px;
+        }
+        
+        .content-meta {
+            font-size: 9px;
+            color: #888;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #888;
+            font-style: italic;
+        }
+        
+        .automode .content-item {
+            border-left: 3px solid #ff6b35;
+        }
+        
+        .detection .content-item {
+            border-left: 3px solid #00ff41;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="channel-content">
+        <div class="channel-header" id="channel-header">Channel Loading...</div>
+        <div id="channel-body">
+            <div class="loading">Loading channel content...</div>
+        </div>
+    </div>
+
+    <script>
+        // Dynamic channel content management
+        const channelManager = {
+            currentMode: 'detection',
+            currentContent: [],
+            
+            // Initialize channel
+            init() {
+                console.log('📺 CHANNEL: Initializing dynamic channel...');
+                this.setupMessageListener();
+                this.requestContent();
+            },
+            
+            // Setup message listener for parent communication
+            setupMessageListener() {
+                window.addEventListener('message', (event) => {
+                    const { type, data } = event.data;
+                    
+                    switch (type) {
+                        case 'setMode':
+                            this.setMode(data.mode);
+                            break;
+                        case 'updateContent':
+                            this.updateContent(data.content);
+                            break;
+                        case 'contentResponse':
+                            this.updateContent(data.content);
+                            break;
+                        case 'showDetection':
+                            this.handleShowDetection(data);
+                            break;
+                    }
+                });
+            },
+            
+            // Request content from parent
+            requestContent() {
+                window.parent.postMessage({
+                    type: 'requestContent',
+                    mode: this.currentMode
+                }, '*');
+            },
+            
+            // Set channel mode
+            setMode(mode) {
+                this.currentMode = mode;
+                console.log('📺 CHANNEL: Mode set to:', mode);
+                this.updateDisplay();
+                this.requestContent();
+            },
+            
+            // Update content
+            updateContent(content) {
+                this.currentContent = Array.isArray(content) ? content : [];
+                console.log('📺 CHANNEL: Content updated:', this.currentContent.length, 'items');
+                this.updateDisplay();
+            },
+            
+            // Handle show detection
+            handleShowDetection(showData) {
+                console.log('📺 CHANNEL: Show detected:', showData);
+                
+                const detectedShow = {
+                    title: showData.title || 'Detected Show',
+                    meta: `${showData.genre || 'Unknown'} • ${showData.duration || 45}m • ${showData.service || 'DETECTED'}`,
+                    type: 'detected'
+                };
+                
+                this.currentContent = [detectedShow];
+                this.currentMode = 'detection';
+                this.updateDisplay();
+            },
+            
+            // Update display
+            updateDisplay() {
+                const header = document.getElementById('channel-header');
+                const body = document.getElementById('channel-body');
+                
+                // Update header
+                const titles = {
+                    'detection': 'WHAT ARE WE LEARNING',
+                    'automode': '🧠 CONTENT INTELLIGENCE'
+                };
+                header.textContent = titles[this.currentMode] || 'CHANNEL';
+                
+                // Update body class
+                document.body.className = this.currentMode;
+                
+                // Update content
+                if (this.currentContent.length === 0) {
+                    body.innerHTML = '<div class="empty-state">No content available</div>';
+                } else {
+                    body.innerHTML = this.currentContent.map(item => `
+                        <div class="content-item">
+                            <div class="content-title">${item.title}</div>
+                            <div class="content-meta">${item.meta || ''}</div>
+                        </div>
+                    `).join('');
+                }
+            }
+        };
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', () => {
+            channelManager.init();
+        });
+    </script>
+</body>
+</html> 

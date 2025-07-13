@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Overlap Fixes Test</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=SF+Mono:wght@400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'SF Mono', 'Monaco', 'Cascadia Code', monospace;
+            background: #111;
+            color: #fff;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            color: #00ff41;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: #888;
+            font-size: 14px;
+        }
+        
+        .test-section {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .test-section h2 {
+            color: #00ff41;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        
+        .btn {
+            background: #333;
+            border: 1px solid #555;
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+        
+        .btn:hover {
+            background: #444;
+            border-color: #666;
+        }
+        
+        .btn.primary {
+            background: #00ff41;
+            border-color: #00ff41;
+            color: #000;
+        }
+        
+        .btn.primary:hover {
+            background: #00cc33;
+            border-color: #00cc33;
+        }
+        
+        .btn.warning {
+            background: #ffaa00;
+            border-color: #ffaa00;
+            color: #000;
+        }
+        
+        .btn.warning:hover {
+            background: #ff8800;
+            border-color: #ff8800;
+        }
+        
+        .btn.danger {
+            background: #ff4444;
+            border-color: #ff4444;
+            color: #fff;
+        }
+        
+        .btn.danger:hover {
+            background: #ff6666;
+            border-color: #ff6666;
+        }
+        
+        .channel-frame {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        
+        .channel-frame iframe {
+            width: 100%;
+            height: 400px;
+            border: none;
+            background: transparent;
+        }
+        
+        .status-panel {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .status-card {
+            background: #222;
+            border: 1px solid #444;
+            border-radius: 4px;
+            padding: 15px;
+        }
+        
+        .status-card.success {
+            border-color: #00ff41;
+            background: #1a2a1a;
+        }
+        
+        .status-card.warning {
+            border-color: #ffaa00;
+            background: #2a1a1a;
+        }
+        
+        .status-card.error {
+            border-color: #ff4444;
+            background: #2a1a1a;
+        }
+        
+        .status-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+            font-size: 12px;
+        }
+        
+        .status-value {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        .status-details {
+            font-size: 10px;
+            color: #888;
+            margin-top: 5px;
+        }
+        
+        .log-area {
+            background: #000;
+            border: 1px solid #333;
+            border-radius: 4px;
+            padding: 15px;
+            height: 200px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            line-height: 1.3;
+        }
+        
+        .test-results {
+            background: #222;
+            border: 1px solid #444;
+            border-radius: 4px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+        
+        .test-result {
+            margin-bottom: 10px;
+            padding: 8px;
+            border-radius: 3px;
+            font-size: 12px;
+        }
+        
+        .test-result.success {
+            background: #1a2a1a;
+            border-left: 3px solid #00ff41;
+        }
+        
+        .test-result.error {
+            background: #2a1a1a;
+            border-left: 3px solid #ff4444;
+        }
+        
+        .test-result.warning {
+            background: #2a1a1a;
+            border-left: 3px solid #ffaa00;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔧 Overlap Fixes Test</h1>
+            <p>Testing comprehensive overlap prevention and detection in genre channels</p>
+        </div>
+        
+        <div class="test-section">
+            <h2>Status Dashboard</h2>
+            <div class="status-panel">
+                <div class="status-card" id="overlap-detector-status">
+                    <div class="status-title">Overlap Detector</div>
+                    <div class="status-value">Initializing...</div>
+                    <div class="status-details">Detecting overlapping blocks</div>
+                </div>
+                <div class="status-card" id="overlap-fix-status">
+                    <div class="status-title">Overlap Fix</div>
+                    <div class="status-value">Initializing...</div>
+                    <div class="status-details">Preventing overlaps</div>
+                </div>
+                <div class="status-card" id="change-monitor-status">
+                    <div class="status-title">Change Monitor</div>
+                    <div class="status-value">Initializing...</div>
+                    <div class="status-details">Monitoring UX regressions</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2>Genre Channel Test</h2>
+            <div class="channel-frame">
+                <iframe id="test-channel" src="Genre-channel_v2.html" sandbox="allow-scripts allow-same-origin"></iframe>
+            </div>
+            
+            <div class="button-group">
+                <button class="btn primary" onclick="testOverlapDetection()">Test Overlap Detection</button>
+                <button class="btn warning" onclick="simulateOverlap()">Simulate Overlap</button>
+                <button class="btn" onclick="testAllGenres()">Test All Genres</button>
+                <button class="btn" onclick="runStressTest()">Stress Test</button>
+                <button class="btn danger" onclick="clearResults()">Clear Results</button>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2>Test Results</h2>
+            <div id="test-results" class="test-results">
+                <div class="test-result">
+                    Ready to test overlap fixes. Click "Test Overlap Detection" to begin.
+                </div>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2>Debug Log</h2>
+            <div class="log-area" id="debug-log"></div>
+        </div>
+    </div>
+
+    <script>
+        // Test state
+        let testState = {
+            isRunning: false,
+            results: [],
+            channelFrame: null
+        };
+
+        // Initialize test
+        function initializeTest() {
+            log('🔧 Initializing overlap fixes test...');
+            
+            // Wait for iframe to load
+            setTimeout(() => {
+                testState.channelFrame = document.getElementById('test-channel');
+                updateStatus();
+                log('✅ Test initialized');
+            }, 2000);
+        }
+
+        // Update status dashboard
+        function updateStatus() {
+            if (!testState.channelFrame || !testState.channelFrame.contentWindow) {
+                return;
+            }
+
+            const frameWindow = testState.channelFrame.contentWindow;
+            
+            // Check overlap detector
+            if (frameWindow.overlapDetector) {
+                const detectorStatus = frameWindow.overlapDetector.getStatus();
+                updateStatusCard('overlap-detector-status', 
+                    detectorStatus.isActive ? 'Active' : 'Inactive',
+                    detectorStatus.isActive ? 'success' : 'error',
+                    `${detectorStatus.blockCount} blocks, ${detectorStatus.recentOverlaps.length} recent overlaps`
+                );
+            } else {
+                updateStatusCard('overlap-detector-status', 'Not Found', 'error', 'Overlap detector not loaded');
+            }
+            
+            // Check overlap fix
+            if (frameWindow.genreChannelOverlapFix) {
+                const fixStatus = frameWindow.genreChannelOverlapFix.getStatus();
+                updateStatusCard('overlap-fix-status',
+                    fixStatus.isEnabled ? 'Enabled' : 'Disabled',
+                    fixStatus.isEnabled ? 'success' : 'warning',
+                    `${fixStatus.fixedBlocks} blocks fixed, ${fixStatus.overlapHistory.length} fixes applied`
+                );
+            } else {
+                updateStatusCard('overlap-fix-status', 'Not Found', 'error', 'Overlap fix not loaded');
+            }
+            
+            // Check change monitor (try both naming conventions)
+            const changeMonitor = frameWindow.changeMonitor || frameWindow.ChangeMonitor;
+            if (changeMonitor) {
+                const monitorStatus = changeMonitor.getStatus ? changeMonitor.getStatus() : { isActive: true, recentIssues: [] };
+                updateStatusCard('change-monitor-status',
+                    monitorStatus.isActive ? 'Active' : 'Inactive',
+                    monitorStatus.isActive ? 'success' : 'error',
+                    `${monitorStatus.recentIssues ? monitorStatus.recentIssues.length : 0} recent issues`
+                );
+            } else {
+                updateStatusCard('change-monitor-status', 'Not Found', 'error', 'Change monitor not loaded');
+            }
+        }
+
+        // Update status card
+        function updateStatusCard(id, value, type, details) {
+            const card = document.getElementById(id);
+            const valueElement = card.querySelector('.status-value');
+            const detailsElement = card.querySelector('.status-details');
+            
+            valueElement.textContent = value;
+            detailsElement.textContent = details;
+            
+            card.className = `status-card ${type}`;
+        }
+
+        // Test overlap detection
+        function testOverlapDetection() {
+            if (!testState.channelFrame || !testState.channelFrame.contentWindow) {
+                log('❌ Channel frame not ready');
+                return;
+            }
+
+            log('🧪 Testing overlap detection...');
+            
+            const frameWindow = testState.channelFrame.contentWindow;
+            
+            if (frameWindow.overlapDetector) {
+                const result = frameWindow.overlapDetector.test();
+                addTestResult('success', `Overlap detection test: ${result.overlapCount} overlaps found in ${result.blockCount} blocks`);
+                log(`📊 Overlap detection result: ${result.overlapCount} overlaps in ${result.blockCount} blocks`);
+            } else {
+                addTestResult('error', 'Overlap detector not available');
+                log('❌ Overlap detector not found');
+            }
+            
+            updateStatus();
+        }
+
+        // Simulate overlap
+        function simulateOverlap() {
+            if (!testState.channelFrame || !testState.channelFrame.contentWindow) {
+                log('❌ Channel frame not ready');
+                return;
+            }
+
+            log('🎭 Simulating overlap...');
+            
+            const frameWindow = testState.channelFrame.contentWindow;
+            
+            // Send message to simulate overlap
+            frameWindow.postMessage({
+                type: 'simulateOverlap',
+                payload: {}
+            }, '*');
+            
+            addTestResult('warning', 'Overlap simulation triggered');
+            log('✅ Overlap simulation sent to channel');
+        }
+
+        // Test all genres
+        async function testAllGenres() {
+            if (!testState.channelFrame || !testState.channelFrame.contentWindow) {
+                log('❌ Channel frame not ready');
+                return;
+            }
+
+            log('🔄 Testing all genres for overlaps...');
+            
+            const genres = ['drama', 'comedy', 'action', 'sci-fi', 'horror', 'romance', 'thriller', 'documentary', 'animation', 'reality'];
+            const frameWindow = testState.channelFrame.contentWindow;
+            
+            let totalOverlaps = 0;
+            
+            for (const genre of genres) {
+                log(`📺 Testing genre: ${genre}`);
+                
+                // Send genre selection
+                frameWindow.postMessage({
+                    type: 'rumi:setGenre',
+                    payload: { genre: genre }
+                }, '*');
+                
+                // Wait for channel to update
+                await sleep(1000);
+                
+                // Check for overlaps
+                if (frameWindow.overlapDetector) {
+                    const result = frameWindow.overlapDetector.detectOverlaps();
+                    totalOverlaps += result.length;
+                    log(`📊 ${genre}: ${result.length} overlaps`);
+                }
+            }
+            
+            addTestResult(totalOverlaps > 0 ? 'error' : 'success', 
+                `All genres test: ${totalOverlaps} total overlaps found across ${genres.length} genres`);
+            
+            log(`✅ All genres test complete: ${totalOverlaps} total overlaps`);
+            updateStatus();
+        }
+
+        // Run stress test
+        async function runStressTest() {
+            if (!testState.channelFrame || !testState.channelFrame.contentWindow) {
+                log('❌ Channel frame not ready');
+                return;
+            }
+
+            log('💥 Running stress test...');
+            
+            const frameWindow = testState.channelFrame.contentWindow;
+            const genres = ['drama', 'comedy', 'action', 'sci-fi', 'horror'];
+            let overlapsDetected = 0;
+            
+            // Rapidly switch between genres
+            for (let i = 0; i < 10; i++) {
+                const genre = genres[i % genres.length];
+                log(`🔥 Stress test iteration ${i + 1}: ${genre}`);
+                
+                frameWindow.postMessage({
+                    type: 'rumi:setGenre',
+                    payload: { genre: genre }
+                }, '*');
+                
+                await sleep(200); // Very fast switching
+                
+                if (frameWindow.overlapDetector) {
+                    const overlaps = frameWindow.overlapDetector.detectOverlaps();
+                    overlapsDetected += overlaps.length;
+                }
+            }
+            
+            addTestResult(overlapsDetected > 0 ? 'error' : 'success',
+                `Stress test: ${overlapsDetected} overlaps detected during rapid genre switching`);
+            
+            log(`✅ Stress test complete: ${overlapsDetected} overlaps detected`);
+            updateStatus();
+        }
+
+        // Add test result
+        function addTestResult(type, message) {
+            const resultsContainer = document.getElementById('test-results');
+            const resultElement = document.createElement('div');
+            resultElement.className = `test-result ${type}`;
+            resultElement.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            resultsContainer.appendChild(resultElement);
+            
+            testState.results.push({
+                timestamp: Date.now(),
+                type: type,
+                message: message
+            });
+        }
+
+        // Clear results
+        function clearResults() {
+            document.getElementById('test-results').innerHTML = `
+                <div class="test-result">
+                    Results cleared. Ready for new tests.
+                </div>
+            `;
+            testState.results = [];
+            log('🗑️ Test results cleared');
+        }
+
+        // Log function
+        function log(message) {
+            const logArea = document.getElementById('debug-log');
+            const timestamp = new Date().toLocaleTimeString();
+            logArea.innerHTML += `[${timestamp}] ${message}\n`;
+            logArea.scrollTop = logArea.scrollHeight;
+        }
+
+        // Utility function
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        // Listen for messages from the iframe
+        window.addEventListener('message', (event) => {
+            if (event.data && event.data.type === 'overlapTestResult') {
+                log(`📊 Overlap test result from channel: ${event.data.payload.message}`);
+                addTestResult(event.data.payload.success ? 'success' : 'error', event.data.payload.message);
+            }
+        });
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(initializeTest, 1000);
+        });
+    </script>
+</body>
+</html> 

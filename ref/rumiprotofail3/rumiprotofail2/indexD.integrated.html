@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rumi Extension – Integrated</title>
+
+    <!-- Fonts & favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link href="https://fonts.googleapis.com/css2?family=SF+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="../styles/theme.css" rel="stylesheet">
+
+    <!-- Browser-ready ASCII font library (figlet) -->
+    <script src="https://unpkg.com/figlet@1.5.2/lib/figlet.js"></script>
+    <script>window.AsciiArt = window.figlet;</script>
+
+    <!-- Temporary minimal styling; full theme will be ported later -->
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: var(--color-bg);
+            color: var(--color-text);
+            font-family: 'SF Mono', 'Menlo', 'Courier New', monospace;
+            padding: 20px;
+        }
+        .simulation-container { display: flex; gap: 20px; align-items: flex-start; }
+        .primary-cta, .secondary-button {
+            background: var(--color-surface-alt);
+            border: 2px solid var(--color-green);
+            color: var(--color-green);
+            padding: 12px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'SF Mono', monospace;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .primary-cta:hover { background: var(--color-green); color: #000; }
+        .secondary-button { border-color: var(--color-orange); color: var(--color-orange); }
+        .secondary-button:hover { background: var(--color-orange); color: #000; }
+        .nokia-visual {
+            width: 100%;
+            height: 180px;
+            background: linear-gradient(45deg, #001100, #003300);
+            border: 1px solid var(--color-green);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 8px;
+            margin-top: 20px;
+            overflow:hidden;
+        }
+        .nokia-visual pre {
+            margin:0; padding:0; color:var(--color-green); font-family:'SF Mono', monospace; font-size:8px; line-height:8px; white-space:pre;
+        }
+        .nokia-visual .content-display {
+            transition: opacity 0.3s ease-in-out;
+        }
+        .metadata-crawl {
+            display: inline-block;
+            white-space: nowrap;
+            color: var(--color-green);
+            font-weight: bold;
+            transform: translateX(100%);
+            transition: transform 8s linear;
+        }
+        /* Message area expected by UI components */
+        .message-area {
+            background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+            color: #00ff41;
+            padding: 12px 20px;
+            font-size: 13px;
+            font-weight: 600;
+            display: flex;
+            flex-direction: column;
+            border-radius: 8px;
+            border: 1px solid #00ff41;
+            margin: 16px 0;
+            box-shadow: 0 2px 8px rgba(0, 255, 65, 0.1);
+            transition: all 0.3s ease;
+            font-family: 'SF Mono', monospace;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .message-area.collapsed { 
+            font-size: 11px; 
+            padding: 8px 16px;
+            opacity: 0.8;
+        }
+        .message-area.error {
+            background: linear-gradient(135deg, #2a1a1a, #3a2a2a);
+            color: #ff4444;
+            border-color: #ff4444;
+            box-shadow: 0 2px 8px rgba(255, 68, 68, 0.2);
+        }
+        .message-area.warning {
+            background: linear-gradient(135deg, #2a2a1a, #3a3a2a);
+            color: #ffaa00;
+            border-color: #ffaa00;
+            box-shadow: 0 2px 8px rgba(255, 170, 0, 0.2);
+        }
+        .message-area.info {
+            background: linear-gradient(135deg, #1a1a2a, #2a2a3a);
+            color: #0088ff;
+            border-color: #0088ff;
+            box-shadow: 0 2px 8px rgba(0, 136, 255, 0.2);
+        }
+        .message-area.success {
+            background: linear-gradient(135deg, #1a2a1a, #2a3a2a);
+            color: #00ff41;
+            border-color: #00ff41;
+            box-shadow: 0 2px 8px rgba(0, 255, 65, 0.2);
+        }
+        #message-details {
+            margin-top: 8px;
+            font-size: 11px;
+            color: #888;
+            font-weight: normal;
+            text-transform: none;
+            letter-spacing: normal;
+        }
+        #message-close:hover {
+            opacity: 1 !important;
+            transform: scale(1.1);
+        }
+        .message-area.collapsed #message-close {
+            display: none;
+        }
+        /* Program track item states */
+        .program-item { font-family: 'SF Mono', monospace; font-size: 9px; color:#888; padding:2px 4px; border:1px solid #333; border-radius:3px; transition:all 0.2s; }
+        .program-item.active { background:var(--color-green); color:#000; border-color:var(--color-green); font-weight:700; }
+        .program-item.completed { background:#111; color:#444; }
+        /* Debug panel */
+        #debug-panel { position:fixed; bottom:10px; right:10px; background:#000000d0; color:var(--color-text); padding:10px; border:1px solid var(--color-green); border-radius:6px; font-size:10px; display:none; z-index:9999; }
+        #debug-panel button { background:var(--color-surface-alt); color:var(--color-green); border:1px solid var(--color-green); padding:4px 6px; margin:0 2px; font-size:10px; cursor:pointer; }
+        #debug-toggle { position:fixed; bottom:10px; right:10px; background:var(--color-green); border:none; color:#000; padding:6px 8px; border-radius:50%; font-weight:700; cursor:pointer; z-index:9998; }
+        /* Extension popup styling */
+        .extension-popup { background:#0d0d0d; border-radius:12px; overflow:hidden; display:flex; flex-direction:column; width:700px; max-width:100%; margin:40px auto; border:1px solid var(--color-border); }
+        .popup-header { background:#1a1a1a; padding:16px 20px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--color-border); }
+        .popup-logo { font-size:24px; font-weight:700; color:var(--color-green); }
+        .settings-button { background:var(--color-surface-alt); color:var(--color-text); border:1px solid var(--color-border); padding:6px 12px; border-radius:4px; font-size:12px; cursor:pointer; }
+        .popup-body { padding:20px; display:flex; flex-direction:column; gap:16px; }
+        .points-section { text-align:center; }
+        .points-total { font-size:32px; font-weight:700; color:var(--color-green); margin-bottom:4px; }
+        .points-pending { font-size:14px; color:var(--color-muted); }
+    </style>
+
+    <!-- Modern module-based backend & UI stack -->
+    <script type="module" src="../js/core/error-handling.js"></script>
+    <script type="module" src="../js/core/state-management.js"></script>
+    <script type="module" src="../js/core/genre-channel-engine.js"></script>
+    <script type="module" src="../js/core/indexing-engine.js"></script>
+    <script type="module" src="../js/backend/content-manager.js"></script>
+    <script type="module" src="../js/ui/components.js"></script>
+    <script type="module" src="../js/ui/ascii-display.js"></script>
+    <script type="module" src="../js/channel/timeline-manager.js"></script>
+    <script type="module" src="../js/ui/debug-tools.js"></script>
+    <script type="module" src="../js/ui/animations.js"></script>
+
+    <!-- Lightweight adapter exposing legacy globals expected by some inline code (can be removed once all inline code is ported) -->
+    <script type="module">
+        import { RumiState } from '../js/core/state-management.js';
+        import { RumiContent } from '../js/backend/content-manager.js';
+        window.RumiBackend = {
+            getCurrentMultiplier: () => RumiState.getState('multiplier'),
+            calculateSegmentedPoints: (duration, start) => ({ totalPoints: duration * 0.1, segments: [] })
+        };
+        window.RumiContent = RumiContent; // expose for any remaining legacy code
+    </script>
+</head>
+<body>
+    <!-- Message area expected by UI utility functions -->
+    <div id="message-area" class="message-area collapsed">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span id="message-text">🚀 RUMI INDEXING SYSTEM READY</span>
+            <button id="message-close" style="background: none; border: none; color: inherit; font-size: 16px; cursor: pointer; opacity: 0.7; transition: opacity 0.2s;" onclick="hideMessage()">×</button>
+        </div>
+        <span id="message-details" style="display:none;"></span>
+    </div>
+
+    <!-- Program Track & Progress Bar -->
+    <div id="program-track" style="margin-top:16px; display:flex; flex-direction:column; gap:4px;"></div>
+    <div style="background:#222; border:1px solid #333; border-radius:4px; height:8px; overflow:hidden; margin-top:8px;">
+        <div class="progress-bar-fill" style="height:100%; width:0%; background:#00ff41; transition:width 0.3s;"></div>
+    </div>
+
+    <!-- Wiring controls to backend -->
+    <script type="module">
+        import '../js/backend/content-manager.js';
+        import '../js/channel/timeline-manager.js';
+        import '../js/core/state-management.js';
+
+        const RumiTimeline = window.RumiTimeline;
+        const RumiState    = window.RumiState;
+        const RumiUI       = window.RumiUI;
+
+        const startBtn = document.getElementById('indexing-start-btn');
+        const stopBtn  = document.getElementById('indexing-stop-btn');
+
+        async function startIndexing() {
+            try {
+                startBtn.disabled = true;
+                RumiUI?.showInfo?.('Preparing content…');
+
+                // Wait until content manager is ready
+                let attempts = 0;
+                while (!window.RumiContent?.isReady() && attempts < 20) {
+                    await new Promise(r => setTimeout(r, 200));
+                    attempts++;
+                }
+
+                if (!window.RumiContent?.isReady()) {
+                    throw new Error('Content manager not ready');
+                }
+
+                const content = await window.RumiContent.getRandomBucketContent();
+
+                // Build timeline & start
+                RumiTimeline.setTimeline(content, 240);
+                RumiTimeline.startTimeline();
+
+                // Update UI
+                startBtn.style.display = 'none';
+                stopBtn.style.display  = 'block';
+                startBtn.disabled = false;
+
+                RumiUI?.showInfo?.('Indexing started!');
+            } catch (e) {
+                console.error(e);
+                RumiUI?.showError?.('Failed to start indexing', e.message);
+                startBtn.disabled = false;
+            }
+        }
+
+        function stopIndexing() {
+            RumiTimeline.stopTimeline();
+            startBtn.style.display = 'block';
+            stopBtn.style.display  = 'none';
+            RumiUI?.showWarning?.('Indexing stopped');
+        }
+
+        startBtn.addEventListener('click', startIndexing);
+        stopBtn.addEventListener('click', stopIndexing);
+
+        // ============================
+        // MESSAGE AREA UTILITIES
+        // ============================
+        
+        function showMessage(message, type = 'info', details = null, duration = 5000) {
+            const messageArea = document.getElementById('message-area');
+            const messageText = document.getElementById('message-text');
+            const messageDetails = document.getElementById('message-details');
+            
+            if (!messageArea || !messageText) return;
+            
+            // Reset classes
+            messageArea.className = 'message-area';
+            
+            // Add type-specific class
+            if (type !== 'info') {
+                messageArea.classList.add(type);
+            }
+            
+            // Set message text
+            messageText.textContent = message;
+            
+            // Handle details
+            if (details) {
+                messageDetails.textContent = details;
+                messageDetails.style.display = 'block';
+            } else {
+                messageDetails.style.display = 'none';
+            }
+            
+            // Show message area (remove collapsed state)
+            messageArea.classList.remove('collapsed');
+            
+            // Auto-hide after delay for non-error messages
+            if (type !== 'error' && duration > 0) {
+                setTimeout(() => {
+                    hideMessage();
+                }, duration);
+            }
+        }
+        
+        function hideMessage() {
+            const messageArea = document.getElementById('message-area');
+            messageArea.classList.add('collapsed');
+        }
+        
+        // Expose message functions globally for other components
+        window.showMessage = showMessage;
+        window.hideMessage = hideMessage;
+        
+        // Update RumiUI to use our message system
+        if (window.RumiUI) {
+            window.RumiUI.showInfo = (msg) => showMessage(msg, 'info', null, 3000);
+            window.RumiUI.showError = (msg, details) => showMessage(msg, 'error', details, 0);
+            window.RumiUI.showWarning = (msg) => showMessage(msg, 'warning', null, 5000);
+            window.RumiUI.showSuccess = (msg) => showMessage(msg, 'success', null, 3000);
+        }
+
+        // ============================
+        // Timeline driven UI updates
+        // ============================
+
+        let totalPoints = 0;
+        let fastMode    = false;
+        const RumiBackend = window.RumiBackend;
+
+        // Utility to add block points using backend calculation
+        function addBlockPoints(duration) {
+            if (!RumiBackend?.calculateSegmentedPoints) return 0;
+            const result = RumiBackend.calculateSegmentedPoints(duration);
+            return result.totalPoints || 0;
+        }
+
+        RumiTimeline.subscribe?.('timelineSet', ({ timeline }) => {
+            // Build program track items (content blocks only)
+            const trackEl = document.getElementById('program-track');
+            trackEl.innerHTML = '';
+            timeline.filter(b => b.type === 'content').forEach((block, idx) => {
+                const item = document.createElement('div');
+                item.className = 'program-item';
+                item.textContent = `${idx + 1}. ${block.title}`;
+                trackEl.appendChild(item);
+            });
+
+            // Show ASCII for first block immediately
+            const firstContent = timeline.find(b=>b.type==='content');
+            if (firstContent) {
+                // Extract all available data from the first block
+                const blockData = firstContent.data || {};
+                
+                window.RumiAscii?.constructor?.drawAscii?.(firstContent.title, {
+                    duration: firstContent.duration,
+                    index: 1,
+                    total: timeline.filter(b=>b.type==='content').length,
+                    description: blockData.description || firstContent.description || '',
+                    genre: blockData.genre || firstContent.genre || '',
+                    title: firstContent.title,
+                    season: blockData.season || '',
+                    episode: blockData.episode || '',
+                    service: blockData.service || firstContent.service || '',
+                    year: blockData.year || '',
+                    elapsedTime: Date.now() / 1000
+                });
+            }
+        });
+
+        RumiTimeline.subscribe?.('blockChange', ({ block, index }) => {
+            // Extract all available data from the block
+            const blockData = block.data || {};
+            
+            // Draw ASCII art for current title via helper
+            window.RumiAscii?.constructor?.drawAscii?.(block.title, {
+                duration: block.duration,
+                index:    index + 1,
+                total:    RumiTimeline.timeline.filter(b=>b.type==='content').length,
+                description: blockData.description || block.description || '',
+                genre: blockData.genre || block.genre || '',
+                title: block.title,
+                season: blockData.season || '',
+                episode: blockData.episode || '',
+                service: blockData.service || block.service || '',
+                year: blockData.year || '',
+                elapsedTime: Date.now() / 1000
+            });
+
+            // Update points using backend calculation
+            totalPoints += addBlockPoints(block.duration);
+            document.getElementById('points-primary-display').textContent = `${totalPoints.toFixed(1)} POINTS`;
+
+            // Update progress bar
+            const pct = RumiTimeline.getProgress?.() ?? 0;
+            document.querySelector('.progress-bar-fill').style.width = `${pct}%`;
+        });
+
+        // Handle timeline completion
+        RumiTimeline.subscribe?.('completed', async () => {
+            startBtn.style.display = 'block';
+            stopBtn.style.display  = 'none';
+
+            // Obtain session summary and display receipt
+            const session = window.RumiBackend?.getSessionForUI?.();
+            if (session) {
+                await populateReceiptView({
+                    totalPoints: session.totalPoints,
+                    pendingPoints: 0,
+                    sessionDuration: session.sessionDuration,
+                    multiplier: session.currentMultiplier,
+                    contentType: 'Session',
+                    chainBonus: 0,
+                    indexedContent: session.processedContent.map(c=>({title:c.title,timestamp:new Date().toLocaleTimeString()})),
+                    completedShows: session.processedContent
+                });
+            }
+        });
+
+        // ============================
+        // Debug panel wiring
+        // ============================
+
+        const debugPanel = document.getElementById('debug-panel');
+        document.getElementById('debug-toggle').addEventListener('click', ()=>{
+            debugPanel.style.display = debugPanel.style.display === 'none' ? 'block' : 'none';
+        });
+
+        document.getElementById('skip-1m').addEventListener('click', ()=> RumiTimeline.jumpToTime(RumiTimeline.currentTime + 1));
+        document.getElementById('skip-5m').addEventListener('click', ()=> RumiTimeline.jumpToTime(RumiTimeline.currentTime + 5));
+        document.getElementById('skip-15m').addEventListener('click', ()=> RumiTimeline.jumpToTime(RumiTimeline.currentTime + 15));
+
+        document.getElementById('fast-toggle').addEventListener('click', ()=>{
+            fastMode = !fastMode;
+            window.DEBUG_TIME_SCALE = fastMode ? 10 : 1;
+            document.getElementById('fast-toggle').textContent = fastMode ? 'Fast ×1' : 'Fast ×10';
+        });
+    </script>
+
+    <div id="extension-ui">
+        <!-- Extension Popup -->
+        <div class="extension-popup" style="flex-direction: column; width: 700px; max-width: 100%; margin:40px auto; background:#0d0d0d; border-radius:12px; overflow:hidden; display:flex;">
+            <!-- Header -->
+            <div class="popup-header">
+                <div class="popup-logo">RUMI</div>
+                <div class="header-controls">
+                    <button class="settings-button" id="open-settings-btn">⚙ SETTINGS</button>
+                </div>
+            </div>
+            <!-- Body -->
+            <div class="popup-body">
+                <!-- Points Section -->
+                <div class="points-section">
+                    <div style="text-align:center; margin-bottom:12px;">
+                        <div id="points-primary-display" class="points-total">0 POINTS</div>
+                        <div id="points-secondary-display" class="points-pending">+0 pending</div>
+                    </div>
+                </div>
+
+                <!-- Nokia Display -->
+                <div class="nokia-visual">
+                    <div class="content-display">READY</div>
+                </div>
+
+                <!-- Primary CTA -->
+                <button class="primary-cta" id="indexing-start-btn">START INDEXING</button>
+                <button class="primary-cta automode" id="indexing-stop-btn" style="display:none;">STOP INDEXING</button>
+            </div>
+        </div>
+
+        <!-- Debug Toggle Button -->
+        <button id="debug-toggle">🐞</button>
+        <div id="debug-panel">
+            <div style="margin-bottom:4px; font-weight:700;">Debug Controls</div>
+            <button id="skip-1m">+1m</button>
+            <button id="skip-5m">+5m</button>
+            <button id="skip-15m">+15m</button>
+            <button id="fast-toggle">Fast ×10</button>
+        </div>
+    </div>
+</body>
+</html> 

@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Remove Button Visibility Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f5f5f5;
+        }
+        
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        .test-section h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin: 10px 0;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .btn-primary { background: #007bff; color: white; }
+        .btn-success { background: #28a745; color: white; }
+        .btn-warning { background: #ffc107; color: black; }
+        
+        button:hover {
+            opacity: 0.8;
+        }
+        
+        .iframe-container {
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        
+        iframe {
+            width: 100%;
+            height: 400px;
+            border: none;
+        }
+        
+        .log-container {
+            background: #000;
+            color: #00ff00;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            height: 300px;
+            overflow-y: auto;
+            margin: 10px 0;
+        }
+        
+        .status-display {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 11px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>❌ Remove Button Visibility Test</h1>
+        <p>Testing remove button visibility behavior and hover interactions.</p>
+        
+        <div class="test-section">
+            <h3>🎯 Test Controls</h3>
+            <div class="controls">
+                <button class="btn-primary" onclick="testRemoveButtonVisibility()">👁️ Test Remove Button Visibility</button>
+                <button class="btn-success" onclick="testSitcomPopulation()">📺 Test Sitcom Population</button>
+                <button class="btn-warning" onclick="checkAllRemoveButtons()">🔍 Check All Remove Buttons</button>
+                <button class="btn-warning" onclick="simulateHover()">🖱️ Simulate Hover</button>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h3>📺 Genre Channel Test</h3>
+            <div class="iframe-container">
+                <iframe id="genreChannelFrame" src="Genre-channel_v2.html"></iframe>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h3>📊 Status Display</h3>
+            <div class="status-display" id="statusDisplay">
+                Waiting for test...
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h3>📝 Test Logs</h3>
+            <div class="log-container" id="logContainer">
+                <div>❌ Remove Button Visibility Test initialized...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let frameWindow;
+        let logContainer;
+        let statusDisplay;
+        
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            logContainer = document.getElementById('logContainer');
+            statusDisplay = document.getElementById('statusDisplay');
+            
+            // Wait for iframe to load
+            const iframe = document.getElementById('genreChannelFrame');
+            iframe.onload = () => {
+                frameWindow = iframe.contentWindow;
+                log('✅ Genre Channel iframe loaded');
+                
+                // Wait a bit for the channel to initialize
+                setTimeout(() => {
+                    testRemoveButtonVisibility();
+                }, 2000);
+            };
+            
+            log('❌ Remove Button Visibility Test initialized');
+        });
+        
+        // Logging function
+        function log(message) {
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.textContent = `[${timestamp}] ${message}`;
+            logContainer.appendChild(logEntry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+        
+        // Test remove button visibility
+        function testRemoveButtonVisibility() {
+            if (!frameWindow) {
+                log('❌ Frame not available');
+                return;
+            }
+            
+            log('👁️ Testing remove button visibility...');
+            
+            const removeButtons = frameWindow.document.querySelectorAll('.remove-btn');
+            const blocks = frameWindow.document.querySelectorAll('.program-slot:not(.empty)');
+            
+            log(`📦 Found ${blocks.length} blocks`);
+            log(`❌ Found ${removeButtons.length} remove buttons`);
+            
+            if (removeButtons.length === 0) {
+                log('⚠️ No remove buttons found - need to populate content first');
+                statusDisplay.innerHTML = '<strong>⚠️ No remove buttons found</strong><br>Click "Test Sitcom Population" to create content with remove buttons.';
+                return;
+            }
+            
+            // Check initial state
+            let hiddenButtons = 0;
+            let visibleButtons = 0;
+            let protectedButtons = 0;
+            
+            removeButtons.forEach((btn, index) => {
+                const opacity = parseFloat(btn.style.opacity) || 0;
+                const visibility = btn.style.visibility || 'visible';
+                const isProtected = btn.classList.contains('protected');
+                
+                if (isProtected) {
+                    protectedButtons++;
+                    log(`🔒 Remove button ${index + 1}: Protected (opacity: ${opacity}, visibility: ${visibility})`);
+                } else if (opacity === 0 && visibility === 'hidden') {
+                    hiddenButtons++;
+                    log(`✅ Remove button ${index + 1}: Properly hidden (opacity: ${opacity}, visibility: ${visibility})`);
+                } else {
+                    visibleButtons++;
+                    log(`⚠️ Remove button ${index + 1}: Unexpectedly visible (opacity: ${opacity}, visibility: ${visibility})`);
+                }
+            });
+            
+            log(`📊 Summary: ${hiddenButtons} hidden, ${visibleButtons} visible, ${protectedButtons} protected`);
+            
+            // Update status display
+            let statusHtml = `<strong>Remove Button Status:</strong><br>`;
+            statusHtml += `📦 Blocks: ${blocks.length}<br>`;
+            statusHtml += `❌ Remove buttons: ${removeButtons.length}<br>`;
+            statusHtml += `✅ Hidden: ${hiddenButtons}<br>`;
+            statusHtml += `⚠️ Visible: ${visibleButtons}<br>`;
+            statusHtml += `🔒 Protected: ${protectedButtons}<br><br>`;
+            
+            if (visibleButtons === 0 && hiddenButtons > 0) {
+                statusHtml += `<strong style="color: green;">✅ All remove buttons properly hidden!</strong>`;
+            } else if (visibleButtons > 0) {
+                statusHtml += `<strong style="color: red;">⚠️ Some remove buttons are visible when they should be hidden</strong>`;
+            }
+            
+            statusDisplay.innerHTML = statusHtml;
+        }
+        
+        // Test Sitcom population
+        function testSitcomPopulation() {
+            if (!frameWindow) {
+                log('❌ Frame not available');
+                return;
+            }
+            
+            log('📺 Testing Sitcom population...');
+            
+            // Check if Sitcom content exists
+            if (frameWindow.genreContent && frameWindow.genreContent['Sitcom']) {
+                const sitcomContent = frameWindow.genreContent['Sitcom'];
+                log(`📚 Found ${sitcomContent.length} Sitcom items`);
+                
+                // Set genre and populate
+                frameWindow.currentGenre = 'Sitcom';
+                log('🎭 Set currentGenre to Sitcom');
+                
+                if (frameWindow.createLineup) {
+                    frameWindow.createLineup(false);
+                    log('✅ Triggered Sitcom lineup creation');
+                    
+                    setTimeout(() => {
+                        testRemoveButtonVisibility();
+                    }, 2000);
+                } else {
+                    log('❌ createLineup function not available');
+                }
+            } else {
+                log('❌ Sitcom content not found');
+            }
+        }
+        
+        // Check all remove buttons
+        function checkAllRemoveButtons() {
+            if (!frameWindow) {
+                log('❌ Frame not available');
+                return;
+            }
+            
+            log('🔍 Checking all remove buttons...');
+            
+            const removeButtons = frameWindow.document.querySelectorAll('.remove-btn');
+            
+            removeButtons.forEach((btn, index) => {
+                const opacity = parseFloat(btn.style.opacity) || 0;
+                const visibility = btn.style.visibility || 'visible';
+                const isProtected = btn.classList.contains('protected');
+                const title = btn.closest('.program-slot')?.querySelector('.program-title')?.textContent || `Block ${index}`;
+                
+                log(`Remove button ${index + 1} (${title}): opacity=${opacity}, visibility=${visibility}, protected=${isProtected}`);
+            });
+        }
+        
+        // Simulate hover on first block
+        function simulateHover() {
+            if (!frameWindow) {
+                log('❌ Frame not available');
+                return;
+            }
+            
+            log('🖱️ Simulating hover on first block...');
+            
+            const firstBlock = frameWindow.document.querySelector('.program-slot:not(.empty)');
+            if (firstBlock) {
+                const removeBtn = firstBlock.querySelector('.remove-btn');
+                
+                if (removeBtn) {
+                    log('📊 Before hover:');
+                    log(`  Opacity: ${removeBtn.style.opacity}`);
+                    log(`  Visibility: ${removeBtn.style.visibility}`);
+                    
+                    // Simulate mouseenter
+                    const mouseenterEvent = new MouseEvent('mouseenter', {
+                        bubbles: true,
+                        cancelable: true
+                    });
+                    firstBlock.dispatchEvent(mouseenterEvent);
+                    
+                    setTimeout(() => {
+                        log('📊 After hover:');
+                        log(`  Opacity: ${removeBtn.style.opacity}`);
+                        log(`  Visibility: ${removeBtn.style.visibility}`);
+                        
+                        // Simulate mouseleave
+                        const mouseleaveEvent = new MouseEvent('mouseleave', {
+                            bubbles: true,
+                            cancelable: true
+                        });
+                        firstBlock.dispatchEvent(mouseleaveEvent);
+                        
+                        setTimeout(() => {
+                            log('📊 After mouse leave:');
+                            log(`  Opacity: ${removeBtn.style.opacity}`);
+                            log(`  Visibility: ${removeBtn.style.visibility}`);
+                        }, 100);
+                    }, 100);
+                } else {
+                    log('❌ No remove button found in first block');
+                }
+            } else {
+                log('❌ No blocks found');
+            }
+        }
+    </script>
+</body>
+</html> 

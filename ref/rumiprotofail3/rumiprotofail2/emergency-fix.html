@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emergency Fix - Genre Channel</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f5f5f5;
+        }
+        
+        .emergency-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .emergency-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        .emergency-section h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        
+        .status-display {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            margin: 10px 0;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin: 10px 0;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .btn-danger { background: #dc3545; color: white; }
+        .btn-success { background: #28a745; color: white; }
+        .btn-warning { background: #ffc107; color: black; }
+        .btn-info { background: #17a2b8; color: white; }
+        
+        button:hover {
+            opacity: 0.8;
+        }
+        
+        .iframe-container {
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        
+        iframe {
+            width: 100%;
+            height: 500px;
+            border: none;
+        }
+        
+        .log-container {
+            background: #000;
+            color: #00ff00;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            height: 150px;
+            overflow-y: auto;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="emergency-container">
+        <h1>🚨 Emergency Fix - Genre Channel</h1>
+        <p>This page disables all problematic features to stop infinite loops and crashes.</p>
+        
+        <div class="emergency-section">
+            <h3>🚨 Emergency Controls</h3>
+            <div class="status-display" id="statusDisplay">
+                Loading status...
+            </div>
+            <div class="controls">
+                <button class="btn-danger" onclick="disableAllFeatures()">🚨 Disable All Features</button>
+                <button class="btn-success" onclick="enableBasicFeatures()">✅ Enable Basic Features</button>
+                <button class="btn-warning" onclick="resetSystem()">🔄 Reset System</button>
+                <button class="btn-info" onclick="refreshStatus()">📊 Refresh Status</button>
+            </div>
+        </div>
+        
+        <div class="emergency-section">
+            <h3>📺 Genre Channel (Safe Mode)</h3>
+            <div class="iframe-container">
+                <iframe id="genreChannelFrame" src="Genre-channel_v2.html"></iframe>
+            </div>
+            <div class="controls">
+                <button class="btn-success" onclick="loadSafeContent()">📺 Load Safe Content</button>
+                <button class="btn-warning" onclick="testBasicFunctionality()">🧪 Test Basic Functionality</button>
+            </div>
+        </div>
+        
+        <div class="emergency-section">
+            <h3>📝 Emergency Logs</h3>
+            <div class="log-container" id="logContainer">
+                <div>🚨 Emergency Fix initialized...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let frameWindow;
+        let logContainer;
+        let statusDisplay;
+        
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            logContainer = document.getElementById('logContainer');
+            statusDisplay = document.getElementById('statusDisplay');
+            
+            // Wait for iframe to load
+            const iframe = document.getElementById('genreChannelFrame');
+            iframe.onload = () => {
+                frameWindow = iframe.contentWindow;
+                log('✅ Genre Channel iframe loaded');
+                disableAllFeatures(); // Auto-disable on load
+                refreshStatus();
+            };
+            
+            log('🚨 Emergency Fix initialized');
+        });
+        
+        // Logging function
+        function log(message) {
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.textContent = `[${timestamp}] ${message}`;
+            logContainer.appendChild(logEntry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+        
+        // Disable all problematic features
+        function disableAllFeatures() {
+            if (!frameWindow) {
+                log('❌ Frame not available');
+                return;
+            }
+            
+            log('🚨 Disabling all problematic features...');
+            
+            // Disable overlap fix
+            if (frameWindow.genreChannelOverlapFix) {
+                frameWindow.genreChannelOverlapFix.disable();
+                frameWindow.genreChannelOverlapFix.autoFillGaps = false;
+                frameWindow.genreChannelOverlapFix.isEnabled = false;
+                log('✅ Overlap fix disabled');
+            }
+            
+            // Disable overlap detector
+            if (frameWindow.overlapDetector) {
+                frameWindow.overlapDetector.disable();
+                frameWindow.overlapDetector.isEnabled = false;
+                log('✅ Overlap detector disabled');
+            }
+            
+            // Disable change monitor
+            if (frameWindow.changeMonitor) {
+                frameWindow.changeMonitor.disable();
+                frameWindow.changeMonitor.isEnabled = false;
+                log('✅ Change monitor disabled');
+            }
+            
+            // Restore original width calculation
+            if (frameWindow.calculateWidth && frameWindow.calculateWidth._overridden) {
+                // Restore original function if possible
+                frameWindow.calculateWidth = function(duration) {
+                    return (duration / (frameWindow.currentTimelineDuration || 240)) * 100;
+                };
+                log('✅ Original width calculation restored');
+            }
+            
+            log('🚨 All features disabled - system should be stable');
+            refreshStatus();
+        }
+        
+        // Enable only basic features
+        function enableBasicFeatures() {
+            if (!frameWindow) {
+                log('❌ Frame not available');
+                return;
+            }
+            
+            log('✅ Enabling basic features only...');
+            
+            // Enable only overlap fix without gap filling
+            if (frameWindow.genreChannelOverlapFix) {
+                frameWindow.genreChannelOverlapFix.autoFillGaps = false;
+                frameWindow.genreChannelOverlapFix.enable();
+                log('✅ Basic overlap fix enabled (no gap filling)');
+            }
+            
+            log('✅ Basic features enabled');
+            refreshStatus();
+        }
+        
+        // Reset the system
+        function resetSystem() {
+            if (!frameWindow) {
+                log('❌ Frame not available');
+                return;
+            }
+            
+            log('🔄 Resetting system...');
+            
+            // Reload the iframe
+            const iframe = document.getElementById('genreChannelFrame');
+            iframe.src = iframe.src;
+            
+            log('🔄 System reset complete');
+        }
+        
+        // Refresh status
+        function refreshStatus() {
+            if (!frameWindow) {
+                statusDisplay.innerHTML = '❌ Frame not available';
+                return;
+            }
+            
+            let status = '<strong>Emergency Status:</strong><br>';
+            
+            // Check overlap fix
+            if (frameWindow.genreChannelOverlapFix) {
+                const overlapStatus = frameWindow.genreChannelOverlapFix.getStatus();
+                status += `🔧 Overlap Fix: ${overlapStatus.isEnabled ? 'ENABLED' : 'DISABLED'}<br>`;
+                status += `🔄 Auto Gap Filling: ${overlapStatus.autoFillGaps ? 'ENABLED' : 'DISABLED'}<br>`;
+            } else {
+                status += `🔧 Overlap Fix: NOT FOUND<br>`;
+            }
+            
+            // Check overlap detector
+            if (frameWindow.overlapDetector) {
+                status += `🔍 Overlap Detector: ${frameWindow.overlapDetector.isEnabled ? 'ENABLED' : 'DISABLED'}<br>`;
+            } else {
+                status += `🔍 Overlap Detector: NOT FOUND<br>`;
+            }
+            
+            // Check change monitor
+            if (frameWindow.changeMonitor) {
+                status += `📊 Change Monitor: ${frameWindow.changeMonitor.isEnabled ? 'ENABLED' : 'DISABLED'}<br>`;
+            } else {
+                status += `📊 Change Monitor: NOT FOUND<br>`;
+            }
+            
+            statusDisplay.innerHTML = status;
+            log('📊 Status refreshed');
+        }
+        
+        // Load safe content
+        function loadSafeContent() {
+            if (!frameWindow) return;
+            
+            log('📺 Loading safe content...');
+            
+            // Load minimal, safe content
+            const safeContent = [
+                { title: 'Safe Content 1', duration: 60, genre: 'Comedy' },
+                { title: 'Safe Content 2', duration: 90, genre: 'Drama' }
+            ];
+            
+            if (frameWindow.loadTestContent) {
+                frameWindow.loadTestContent(safeContent);
+                log('✅ Safe content loaded');
+            } else {
+                log('❌ loadTestContent function not available');
+            }
+        }
+        
+        // Test basic functionality
+        function testBasicFunctionality() {
+            if (!frameWindow) return;
+            
+            log('🧪 Testing basic functionality...');
+            
+            // Test if basic functions work
+            const blocks = frameWindow.document.querySelectorAll('.program-slot:not(.empty)');
+            log(`📦 Found ${blocks.length} blocks`);
+            
+            if (blocks.length > 0) {
+                log('✅ Basic functionality working');
+            } else {
+                log('⚠️ No blocks found - may need to load content');
+            }
+        }
+        
+        // Auto-refresh status every 10 seconds
+        setInterval(() => {
+            if (frameWindow) {
+                refreshStatus();
+            }
+        }, 10000);
+    </script>
+</body>
+</html> 

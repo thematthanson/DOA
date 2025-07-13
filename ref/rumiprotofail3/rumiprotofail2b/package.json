@@ -1,0 +1,16 @@
+{
+  "name": "integration_project",
+  "version": "1.0.0",
+  "description": "This is a standalone version of the Rumi Extension Beta V0, collected from the working IndexD.html implementation.",
+  "main": "change-monitor.js",
+  "scripts": {
+    "test": "node e2e-tests.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "puppeteer": "^24.11.2"
+  }
+}

@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Remove Button Overflow Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f5f5f5;
+        }
+        
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        .test-section h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin: 10px 0;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .btn-primary { background: #007bff; color: white; }
+        .btn-success { background: #28a745; color: white; }
+        .btn-warning { background: #ffc107; color: black; }
+        .btn-danger { background: #dc3545; color: white; }
+        
+        button:hover {
+            opacity: 0.8;
+        }
+        
+        .iframe-container {
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        
+        iframe {
+            width: 100%;
+            height: 400px;
+            border: none;
+        }
+        
+        .log-container {
+            background: #000;
+            color: #00ff00;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            height: 300px;
+            overflow-y: auto;
+            margin: 10px 0;
+        }
+        
+        .status-display {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 11px;
+            margin: 10px 0;
+        }
+        
+        .overflow-test {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>❌ Remove Button Overflow Test</h1>
+        <p>Testing remove button visibility when blocks have overflow scaling and are cut off.</p>
+        
+        <div class="test-section">
+            <h3>🎯 Test Controls</h3>
+            <div class="controls">
+                <button class="btn-primary" onclick="testRemoveButtonOverflow()">👁️ Test Remove Button Overflow</button>
+                <button class="btn-success" onclick="testLongTitleContent()">📺 Test Long Title Content</button>
+                <button class="btn-warning" onclick="testActionMovies()">🎬 Test Action Movies (Long Titles)</button>
+                <button class="btn-danger" onclick="checkOverflowBlocks()">🔍 Check Overflow Blocks</button>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h3>📺 Genre Channel Test</h3>
+            <div class="iframe-container">
+                <iframe id="genreChannelFrame" src="Genre-channel_v2.html"></iframe>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h3>📊 Status Display</h3>
+            <div class="status-display" id="statusDisplay">
+                Waiting for test...
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h3>📝 Test Logs</h3>
+            <div class="log-container" id="logContainer">
+                <div>❌ Remove Button Overflow Test initialized...</div>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h3>💡 Test Instructions</h3>
+            <div class="overflow-test">
+                <strong>How to test overflow scenarios:</strong><br>
+                1. Click "Test Long Title Content" to create blocks with long titles that may overflow<br>
+                2. Click "Test Action Movies" to create blocks with movie titles that might be cut off<br>
+                3. Hover over each block to see if the remove button (×) appears in the top-right corner<br>
+                4. The remove button should always be visible and clickable, even when text is cut off<br>
+                5. Use "Check Overflow Blocks" to see which blocks have overflow scaling applied
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let frameWindow;
+        let logContainer;
+        let statusDisplay;
+        
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            logContainer = document.getElementById('logContainer');
+            statusDisplay = document.getElementById('statusDisplay');
+            
+            // Wait for iframe to load
+            const iframe = document.getElementById('genreChannelFrame');
+            iframe.onload = () => {
+                frameWindow = iframe.contentWindow;
+                log('✅ Genre Channel iframe loaded');
+                
+                // Wait a bit for the channel to initialize
+                setTimeout(() => {
+                    testRemoveButtonOverflow();
+                }, 2000);
+            };
+            
+            log('❌ Remove Button Overflow Test initialized');
+        });
+        
+        // Logging function
+        function log(message) {
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.textContent = `[${timestamp}] ${message}`;
+            logContainer.appendChild(logEntry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+        
+        // Test remove button overflow visibility
+        function testRemoveButtonOverflow() {
+            if (!frameWindow) {
+                log('❌ Frame not available');
+                return;
+            }
+            
+            log('👁️ Testing remove button overflow visibility...');
+            
+            const removeButtons = frameWindow.document.querySelectorAll('.remove-btn');
+            const blocks = frameWindow.document.querySelectorAll('.program-slot:not(.empty)');
+            const overflowBlocks = frameWindow.document.querySelectorAll('.program-slot.has-overflow');
+            
+            log(`📦 Found ${blocks.length} blocks`);
+            log(`❌ Found ${removeButtons.length} remove buttons`);
+            log(`📏 Found ${overflowBlocks.length} overflow blocks`);
+            
+            if (removeButtons.length === 0) {
+                log('⚠️ No remove buttons found - need to populate content first');
+                statusDisplay.innerHTML = '<strong>⚠️ No remove buttons found</strong><br>Click "Test Long Title Content" to create content with remove buttons.';
+                return;
+            }
+            
+            // Check remove button positioning and visibility
+            let visibleButtons = 0;
+            let hiddenButtons = 0;
+            let overflowButtons = 0;
+            
+            removeButtons.forEach((btn, index) => {
+                const block = btn.closest('.program-slot');
+                const isOverflow = block.classList.contains('has-overflow');
+                const opacity = parseFloat(btn.style.opacity) || 0;
+                const visibility = btn.style.visibility || 'visible';
+                const zIndex = parseInt(btn.style.zIndex) || 0;
+                const title = block.querySelector('.program-title')?.textContent || `Block ${index}`;
+                
+                if (isOverflow) {
+                    overflowButtons++;
+                    log(`📏 Overflow block ${index + 1} (${title}): opacity=${opacity}, visibility=${visibility}, zIndex=${zIndex}`);
+                    
+                    // Check if overflow button has proper z-index
+                    if (zIndex >= 200) {
+                        log(`  ✅ Proper z-index for overflow block`);
+                    } else {
+                        log(`  ⚠️ Low z-index for overflow block: ${zIndex}`);
+                    }
+                } else {
+                    if (opacity > 0 && visibility !== 'hidden') {
+                        visibleButtons++;
+                        log(`✅ Normal block ${index + 1} (${title}): visible`);
+                    } else {
+                        hiddenButtons++;
+                        log(`✅ Normal block ${index + 1} (${title}): properly hidden`);
+                    }
+                }
+            });
+            
+            log(`📊 Summary: ${visibleButtons} visible, ${hiddenButtons} hidden, ${overflowButtons} overflow blocks`);
+            
+            // Update status display
+            let statusHtml = `<strong>Remove Button Overflow Status:</strong><br>`;
+            statusHtml += `📦 Total blocks: ${blocks.length}<br>`;
+            statusHtml += `❌ Remove buttons: ${removeButtons.length}<br>`;
+            statusHtml += `📏 Overflow blocks: ${overflowBlocks.length}<br>`;
+            statusHtml += `✅ Visible: ${visibleButtons}<br>`;
+            statusHtml += `✅ Hidden: ${hiddenButtons}<br><br>`;
+            
+            if (overflowButtons > 0) {
+                statusHtml += `<strong style="color: blue;">📏 ${overflowButtons} overflow blocks detected - test hover to verify remove button visibility</strong>`;
+            } else {
+                statusHtml += `<strong style="color: green;">✅ No overflow blocks detected</strong>`;
+            }
+            
+            statusDisplay.innerHTML = statusHtml;
+        }
+        
+        // Test with long title content
+        function testLongTitleContent() {
+            if (!frameWindow) {
+                log('❌ Frame not available');
+                return;
+            }
+            
+            log('📺 Testing with long title content...');
+            
+            // Create test content with very long titles that will cause overflow
+            const longTitleContent = [
+                {title: 'This Is A Very Long Show Title That Will Definitely Cause Text Overflow And Require Scaling', type: 'show', duration: 22, service: 'NETFLIX', season: 'S1', episode: 'E1'},
+                {title: 'Another Extremely Long Television Program Name That Exceeds Normal Width Limits', type: 'show', duration: 45, service: 'HBO MAX', season: 'S2', episode: 'E5'},
+                {title: 'A Third Show With An Incredibly Long Title That Will Test The Overflow Scaling System', type: 'show', duration: 60, service: 'HULU', season: 'S3', episode: 'E10'}
+            ];
+            
+            // Load the test content
+            if (frameWindow.loadTestContent) {
+                frameWindow.loadTestContent(longTitleContent);
+                log('✅ Loaded long title test content');
+                
+                setTimeout(() => {
+                    testRemoveButtonOverflow();
+                }, 2000);
+            } else {
+                log('❌ loadTestContent function not available');
+            }
+        }
+        
+        // Test with Action movies (which have long titles)
+        function testActionMovies() {
+            if (!frameWindow) {
+                log('❌ Frame not available');
+                return;
+            }
+            
+            log('🎬 Testing with Action movies...');
+            
+            // Check if Action content exists
+            if (frameWindow.genreContent && frameWindow.genreContent['Action']) {
+                const actionContent = frameWindow.genreContent['Action'];
+                log(`📚 Found ${actionContent.length} Action items`);
+                
+                // Set genre and populate
+                frameWindow.currentGenre = 'Action';
+                log('🎭 Set currentGenre to Action');
+                
+                if (frameWindow.createLineup) {
+                    frameWindow.createLineup(false);
+                    log('✅ Triggered Action lineup creation');
+                    
+                    setTimeout(() => {
+                        testRemoveButtonOverflow();
+                    }, 2000);
+                } else {
+                    log('❌ createLineup function not available');
+                }
+            } else {
+                log('❌ Action content not found');
+            }
+        }
+        
+        // Check overflow blocks specifically
+        function checkOverflowBlocks() {
+            if (!frameWindow) {
+                log('❌ Frame not available');
+                return;
+            }
+            
+            log('🔍 Checking overflow blocks specifically...');
+            
+            const overflowBlocks = frameWindow.document.querySelectorAll('.program-slot.has-overflow');
+            
+            if (overflowBlocks.length === 0) {
+                log('✅ No overflow blocks found');
+                statusDisplay.innerHTML = '<strong>✅ No overflow blocks found</strong><br>All blocks fit within their allocated space.';
+                return;
+            }
+            
+            log(`📏 Found ${overflowBlocks.length} overflow blocks:`);
+            
+            overflowBlocks.forEach((block, index) => {
+                const title = block.querySelector('.program-title')?.textContent || `Block ${index}`;
+                const removeBtn = block.querySelector('.remove-btn');
+                const scaleFactor = block.style.getPropertyValue('--scale-factor') || '1';
+                const zIndex = removeBtn ? parseInt(removeBtn.style.zIndex) || 0 : 0;
+                
+                log(`  ${index + 1}. "${title}" - Scale: ${scaleFactor}, Remove button z-index: ${zIndex}`);
+                
+                if (removeBtn) {
+                    const opacity = parseFloat(removeBtn.style.opacity) || 0;
+                    const visibility = removeBtn.style.visibility || 'visible';
+                    log(`     Remove button: opacity=${opacity}, visibility=${visibility}`);
+                }
+            });
+            
+            // Update status display
+            let statusHtml = `<strong>Overflow Blocks Analysis:</strong><br>`;
+            statusHtml += `📏 Overflow blocks: ${overflowBlocks.length}<br><br>`;
+            
+            overflowBlocks.forEach((block, index) => {
+                const title = block.querySelector('.program-title')?.textContent || `Block ${index}`;
+                const scaleFactor = block.style.getPropertyValue('--scale-factor') || '1';
+                statusHtml += `${index + 1}. "${title}" (Scale: ${scaleFactor})<br>`;
+            });
+            
+            statusHtml += `<br><strong style="color: blue;">💡 Hover over these blocks to test remove button visibility</strong>`;
+            
+            statusDisplay.innerHTML = statusHtml;
+        }
+    </script>
+</body>
+</html> 

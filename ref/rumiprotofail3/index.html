@@ -1,0 +1,1313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rumi Extension - Optimized</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/components.css">
+    <link rel="stylesheet" href="styles/responsive.css">
+    <style>
+        .activation-circle {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 80px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #00ff41;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 10001;
+            display: none;
+            transition: all 0.3s ease;
+        }
+
+        .activation-circle:hover {
+            background: rgba(0, 0, 0, 0.9);
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+
+        .activation-circle.activated {
+            border-color: #00ff41;
+            animation: pulse 1.5s infinite;
+        }
+
+        .activation-circle.activated::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(0, 255, 65, 0.4);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(0, 255, 65, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(0, 255, 65, 0);
+            }
+        }
+
+        .extension-popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 320px;
+            background: #000;
+            border: 1px solid #333;
+            border-radius: 6px;
+            z-index: 10000;
+            font-family: 'SF Mono', monospace;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+        }
+
+        .extension-popup.deactivated {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .extension-popup.deactivated::after {
+            content: 'Click the circle to activate';
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #00ff41;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        /* Debug Panel */
+        .debug-panel {
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            background: rgba(0,0,0,0.9);
+            border: 1px solid #00ff41;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 10px;
+            z-index: 10000;
+            min-width: 200px;
+            display: none; /* Hidden by default */
+            font-family: 'SF Mono', monospace;
+        }
+
+        .debug-panel.visible {
+            display: block;
+        }
+
+        .debug-trigger {
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            background: rgba(0,0,0,0.6);
+            border: 1px solid #333;
+            color: #666;
+            padding: 3px 6px;
+            border-radius: 3px;
+            font-size: 8px;
+            cursor: pointer;
+            z-index: 9999;
+            font-family: 'SF Mono', monospace;
+            text-transform: uppercase;
+            transition: all 0.2s;
+            opacity: 0.7;
+        }
+
+        .debug-trigger:hover {
+            border-color: #00ff41;
+            color: #00ff41;
+            opacity: 1;
+        }
+
+        .debug-panel-header {
+            color: #00ff41;
+            font-weight: bold;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .debug-section {
+            margin-bottom: 8px;
+            border-top: 1px solid #333;
+            padding-top: 8px;
+        }
+
+        .debug-section:first-child {
+            border-top: none;
+            padding-top: 0;
+        }
+
+        .debug-section-header {
+            color: #888;
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .debug-section-content {
+            max-height: 200px;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .debug-section-content.collapsed {
+            max-height: 0;
+        }
+
+        .debug-button {
+            background: #00ff41;
+            color: #000;
+            border: none;
+            padding: 4px 8px;
+            margin: 2px;
+            border-radius: 2px;
+            font-size: 9px;
+            cursor: pointer;
+            font-family: 'SF Mono', monospace;
+            width: 100%;
+            text-align: left;
+        }
+
+        .debug-button.error {
+            background: #ff4444;
+            color: #fff;
+        }
+
+        .debug-button.warning {
+            background: #ffaa00;
+            color: #000;
+        }
+
+        .debug-button.info {
+            background: #a985ff;
+            color: #000;
+        }
+
+        .debug-button.blue {
+            background: #0088ff;
+            color: #fff;
+        }
+
+        .debug-button:disabled {
+            background: #333;
+            color: #666;
+            cursor: not-allowed;
+        }
+
+        .debug-button.cooldown {
+            background: #333;
+            color: #666;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <!-- Activation Circle (completely outside the popup) -->
+    <div class="activation-circle" id="activation-circle" onclick="activateExtension()"></div>
+
+    <!-- Debug Trigger -->
+    <div class="debug-trigger" onclick="toggleDebugPanel()" title="Debug Panel (Ctrl+Shift+D)">
+        Debug
+    </div>
+
+    <!-- Debug Panel -->
+    <div class="debug-panel" id="debug-panel">
+        <div class="debug-panel-header">
+            <span>DebugRumi Debug ▼</span>
+        </div>
+        
+        <div class="debug-panel-content" id="debug-panel-content">
+            <!-- Basic Testing Section -->
+            <div class="debug-section">
+                <div class="debug-section-header">
+                    <span>Basic Testing ▼</span>
+                </div>
+                <div class="debug-section-content" id="basic-testing-content">
+                    <button class="debug-button" onclick="showState()">Show State</button>
+                    <button class="debug-button" onclick="testContent()">Test Content</button>
+                    <button class="debug-button" onclick="testIndexing()">Test Indexing</button>
+                </div>
+            </div>
+
+            <!-- Error Testing Section -->
+            <div class="debug-section">
+                <div class="debug-section-header">
+                    <span>Error Testing ▼</span>
+                </div>
+                <div class="debug-section-content" id="error-testing-content">
+                    <button class="debug-button warning" onclick="testVolumeError()">Volume Error</button>
+                    <button class="debug-button warning" onclick="testSpeedError()">Speed Error</button>
+                    <button class="debug-button error" onclick="testSystemError()">System Error</button>
+                    <button class="debug-button blue" onclick="testShowInterrupt()">Show Interrupt</button>
+                </div>
+            </div>
+
+            <!-- Session Management Section -->
+            <div class="debug-section">
+                <div class="debug-section-header">
+                    <span>Session Management ▼</span>
+                </div>
+                <div class="debug-section-content" id="session-management-content">
+                    <button class="debug-button info" id="debug-turbo-btn" onclick="toggleTurboMode()">⚡ TURBO (30×)</button>
+                    <div id="turbo-skip-controls" style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap;">
+                        <button class="debug-button" data-skip="300">+5&nbsp;min</button>
+                        <button class="debug-button" data-skip="1200">+20&nbsp;min</button>
+                        <button class="debug-button" id="skip-block">Skip&nbsp;Show</button>
+                        <button class="debug-button danger" id="finish-session-btn">Finish&nbsp;Session</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Breakpoint Testing Section -->
+            <div class="debug-section">
+                <div class="debug-section-header">
+                    <span>Breakpoint Testing ▼</span>
+                </div>
+                <div class="debug-section-content" id="breakpoint-testing-content">
+                    <button class="debug-button info" onclick="setViewportHeight(400)">📱 Very Short (400px)</button>
+                    <button class="debug-button info" onclick="setViewportHeight(600)">📱 Short (600px)</button>
+                    <button class="debug-button" onclick="setViewportHeight(800)">💻 Standard (800px)</button>
+                    <button class="debug-button info" onclick="setViewportHeight(1100)">🖥️ Tall (1100px)</button>
+                    <button class="debug-button warning" onclick="resetViewportHeight()">🔄 Reset to Natural</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="simulation-container">
+        <!-- Entry Point Panel -->
+        <div class="entry-point-panel">
+            <div class="entry-point-header">SIMULATED ENTRY POINTS</div>
+            
+            <!-- Stream Detector Entry -->
+            <div id="stream-detector-entry" class="stream-detector">
+                <div class="status">STREAM DETECTED</div>
+                <div class="subtext">Select a show to begin</div>
+                <select id="show-select" class="show-select" onchange="selectShow(this.value)">
+                    <option value="">-- Select a Show --</option>
+                </select>
+            </div>
+            
+            <div style="margin-bottom: 10px;">
+                <button class="automode-button" onclick="launchWithAutomode()">
+                    AUTOMODE
+                </button>
+                <select id="bucket-select" onchange="changeBucket(this.value)" style="background: #1a1a1a; border: 1px solid #333; color: #ccc; padding: 6px 10px; border-radius: 4px; font-size: 11px; width: 100%; margin-top: 8px;">
+                    <option value="Content Intelligence">🧠 Content Intelligence</option>
+                    <option value="Scene Description Pipeline">🎬 Scene Description Pipeline</option>
+                    <option value="Story Tree">🌳 Story Tree</option>
+                    <option value="Character Summaries">👥 Character Summaries</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Extension Popup -->
+        <div class="extension-popup" style="display: none;">
+            <div class="popup-header">
+                <div class="popup-logo">RUMI</div>
+                <div class="header-controls">
+                    <button class="settings-button" onclick="testSettings()">⚙ SETTINGS</button>
+                </div>
+            </div>
+            
+            <!-- Receipt View (Initially Hidden) -->
+            <div id="receipt-view" style="display: none;">
+                <div class="popup-body">
+                    <div class="receipt-container">
+                        <div class="receipt-header">
+                            <div class="receipt-title">
+                                <span>SESSION COMPLETED for</span>
+                                <span class="receipt-points" id="receipt-total-points">+0.00</span>
+                                <span>POINTS</span>
+                            </div>
+                            <div class="receipt-subtitle">
+                                <span id="receipt-total-pending"></span>
+                                <span>PENDING FROM TODAY</span>
+                            </div>
+                        </div>
+
+                        <!-- Nokia Display Section -->
+                        <div class="nokia-section" id="nokia-display">
+                            <!-- ASCII art will be populated by JS -->
+                            <div class="mode-indicator">
+                                <div class="mode-color-bar"></div>
+                                <div class="mode-label"></div>
+                            </div>
+                            <div class="content-blocks">
+                                <!-- Content blocks will be populated by JS -->
+                            </div>
+                        </div>
+
+                        <!-- Session Details -->
+                        <div class="receipt-details">
+                            <div class="receipt-section-title">SESSION DETAILS</div>
+                            
+                            <div class="receipt-info-grid">
+                                <div class="receipt-info-item">
+                                    <span class="receipt-label">Duration:</span>
+                                    <span class="receipt-value" id="receipt-duration">0h 0m</span>
+                                </div>
+                                <div class="receipt-info-item">
+                                    <span class="receipt-label">Multiplier:</span>
+                                    <span class="receipt-value" id="receipt-multiplier">1.0x</span>
+                                </div>
+                                <div class="receipt-info-item">
+                                    <span class="receipt-label">Mode:</span>
+                                    <span class="receipt-value" id="receipt-mode">Unknown</span>
+                                </div>
+                                <div class="receipt-info-item">
+                                    <span class="receipt-label">Content:</span>
+                                    <span class="receipt-value" id="receipt-content">Unknown</span>
+                                </div>
+                                <div class="receipt-info-item">
+                                    <span class="receipt-label">Chain Bonus:</span>
+                                    <span class="receipt-value" id="receipt-chain-bonus">+0.0</span>
+                                </div>
+                                <div class="receipt-info-item">
+                                    <span class="receipt-label">Intelligence:</span>
+                                    <span class="receipt-value" id="receipt-intelligence">Unknown</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="receipt-actions">
+                            <button class="primary-cta" onclick="startNewSession()">START NEW SESSION</button>
+                            <button class="secondary-button" onclick="showMainView()">BACK TO MAIN</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main View -->
+            <div id="main-view">
+                <div class="popup-body">
+                    <!-- Points Section -->
+                    <div class="points-section">
+                        <div class="points-header">
+                            <div class="points-display">
+                                <div class="points-total" id="points-primary-display">+0.00</div>
+                                <div class="points-pending" id="points-secondary-display">+0.00 pending</div>
+                            </div>
+                            <div class="points-multiplier" id="multiplier-display">1.0×</div>
+                        </div>
+                        
+                        <!-- Nokia Visual -->
+                        <div class="nokia-visual" id="nokia-visual">
+                            <!-- Animation content -->
+                        </div>
+                    </div>
+
+                    <!-- Holistic Panel -->
+                    <div class="holistic-panel">
+                        <div class="holistic-section">
+                            <div id="holistic-show-info">
+                                No content detected
+                            </div>
+                            <div id="holistic-animation">
+                                <pre>Ready to index</pre>
+                            </div>
+                            <div id="holistic-progress">
+                                Waiting for content...
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Primary CTA -->
+                    <button class="primary-cta" id="primary-cta" onclick="startIndexing()">
+                        START INDEXING
+                    </button>
+
+                    <!-- Channel Section -->
+                    <div class="expandable-channel-section" id="expandable-channel-section" style="display: none;">
+                        <div class="expand-channel-header" onclick="toggleChannelExpansion()">
+                            <span id="expand-channel-text">SHOW CHANNEL</span>
+                            <span id="expand-channel-icon">▼</span>
+                        </div>
+                        <div class="channel-expanded-container" id="channel-expanded-container" style="display: none;">
+                            <iframe id="channel-frame" src="channel/channel.html" style="width: 100%; height: 320px; border: none; border-radius: 6px; background: #000;"></iframe>
+                        </div>
+                    </div>
+
+                    <!-- Expandable Sections -->
+                    <div class="expandable-section" id="settings-section">
+                        <div class="expandable-title" onclick="toggleSection('settings')">
+                            SETTINGS <span class="expand-icon">▼</span>
+                        </div>
+                        <div class="expandable-content" id="settings-content">
+                            <!-- Settings content -->
+                        </div>
+                    </div>
+
+                    <div class="expandable-section" id="leaderboard-section">
+                        <div class="expandable-title" onclick="toggleSection('leaderboard')">
+                            LEADERBOARD <span class="expand-icon">▼</span>
+                        </div>
+                        <div class="expandable-content" id="leaderboard-content">
+                            <!-- Leaderboard content -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Message Area -->
+    <div class="message-area" id="message-area" style="display: none;">
+        <div class="message-text" id="message-text"></div>
+        <div class="message-details" id="message-details" style="display: none;"></div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/figlet@1.5.2/lib/figlet.js"></script>
+    
+    <!-- ASCII Art Engine -->
+    <script src="js/ascii-art-engine.js"></script>
+    
+    <!-- Core JavaScript -->
+    <script src="js/backend-engine.js"></script>
+    <script src="js/backend-integration.js"></script>
+    <script src="js/ascii-display.js"></script>
+    <script src="js/enhanced-ascii-display.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/core/error-handling.js"></script>
+    <script src="js/core/state-management.js"></script>
+    <script src="js/core/genre-channel-engine.js"></script>
+    <script src="js/core/indexing-engine.js"></script>
+    <script src="js/backend/content-manager.js"></script>
+    <script src="js/ui/components.js"></script>
+    <script src="js/ui/ascii-display.js"></script>
+    <script src="js/channel/timeline-manager.js"></script>
+    <script src="js/ui/debug-tools.js"></script>
+    <script src="js/ui/animations.js"></script>
+    
+    <!-- Main Application Script -->
+    <script>
+        // ================================
+        // MAIN APPLICATION INITIALIZATION
+        // ================================
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🎯 RUMI: Application initializing...');
+            
+            // Initialize all systems
+            initializeApplication();
+            
+            // Set up event listeners
+            setupEventListeners();
+            
+            // Load content library
+            loadContentLibrary();
+            
+            console.log('🎯 RUMI: Application initialized successfully');
+        });
+        
+        // ================================
+        // INITIALIZATION FUNCTIONS
+        // ================================
+        
+        function initializeApplication() {
+            // Initialize state
+            window.RumiState = new RumiState();
+            
+            // Initialize indexing engine
+            window.RumiIndexing = new RumiIndexingEngine();
+            
+            // Initialize content manager
+            window.RumiContent = new ContentManager();
+            
+            // Initialize timeline manager
+            window.RumiTimeline = new RumiTimelineManager();
+            
+            // Initialize UI Components
+            window.RumiUI = new RumiUIComponents();
+            window.RumiUI.initializeHolisticPanel();
+            
+            // Set up state synchronization
+            setupStateSync();
+        }
+        
+        function setupEventListeners() {
+            // Indexing engine events
+            RumiIndexing.subscribe('started', onIndexingStarted);
+            RumiIndexing.subscribe('stopped', onIndexingStopped);
+            RumiIndexing.subscribe('update', onIndexingUpdate);
+            RumiIndexing.subscribe('blockAdvanced', onBlockAdvanced);
+            
+            // Content manager events
+            RumiContent.subscribe('loaded', onContentLoaded);
+            RumiContent.subscribe('error', onContentError);
+            
+            // Timeline events
+            RumiTimeline.subscribe('blockChanged', onTimelineBlockChanged);
+            RumiTimeline.subscribe('update', onTimelineUpdate);
+            
+            // State events
+            window.addEventListener('rumiStateChange', function(event) {
+                const { key, value } = event.detail;
+                switch (key) {
+                    case 'totalPoints':
+                        onPointsChanged(value);
+                        break;
+                    case 'currentMultiplier':
+                        onMultiplierChanged(value);
+                        break;
+                    case 'errorState':
+                        onErrorStateChanged(value);
+                        break;
+                    case 'mode':
+                        onModeChanged(value);
+                        break;
+                }
+            });
+        }
+        
+        function setupStateSync() {
+            // Sync indexing engine with state
+            RumiIndexing.subscribe('update', (data) => {
+                RumiState.setState('sessionTime', data.sessionTime);
+            });
+            
+            // Sync timeline with state
+            window.addEventListener('rumiStateChange', function(event) {
+                const { key, value } = event.detail;
+                if (key === 'channelIndex' && RumiTimeline.currentIndex !== value) {
+                    RumiTimeline.currentIndex = value;
+                }
+            });
+        }
+        
+        // ================================
+        // CONTENT LOADING
+        // ================================
+        
+        async function loadContentLibrary() {
+            try {
+                await RumiContent.loadContentLibrary();
+                console.log('🎯 RUMI: Content library loaded successfully');
+                populateShowDropdown();
+            } catch (error) {
+                console.error('🎯 RUMI: Failed to load content library:', error);
+            }
+        }
+        
+        function onContentLoaded(data) {
+            console.log(`🎯 RUMI: Content loaded - ${data.count} items`);
+            updateStreamDetector();
+        }
+        
+        // Initialize available shows
+        window.availableShows = [
+            { title: 'Stranger Things', genre: 'Thriller', service: 'NETFLIX', season: 'S4', episode: 'E9', duration: 60 },
+            { title: 'The Office', genre: 'Comedy', service: 'PEACOCK', season: 'S3', episode: 'E20', duration: 22 },
+            { title: 'Blade Runner 2049', genre: 'Sci-Fi', service: 'HBO MAX', season: 'N/A', episode: 'N/A', year: '2017', duration: 164 },
+            { title: 'The Crown', genre: 'Drama', service: 'NETFLIX', season: 'S6', episode: 'E10', duration: 58 },
+            { title: 'Planet Earth II', genre: 'Documentary', service: 'DISCOVERY+', season: 'S1', episode: 'E1', duration: 60 }
+        ];
+
+        // Initialize app state
+        window.appState = {
+            pendingShowForGenreChannel: null,
+            pendingEntryPoint: null,
+            pendingDetectedShow: null,
+            pendingBucket: null,
+            view: 'home',
+            pointsEarned: 4349,
+            totalPendingPoints: 200,
+            sessionEarnings: 0,
+            currentMultiplier: 1.0,
+            currentContent: null,
+            isIndexing: false,
+            indexingStartTime: null,
+            sortMode: 'points',
+            currentBucket: 'Content Intelligence',
+            mode: 'detected',
+            entryPoint: null,
+            detectedShow: null,
+            errorState: null,
+            volumeLevel: 100,
+            connectionStatus: 'connected',
+            isLoading: false,
+            automodeContentItems: [],
+            currentContentIndex: 0,
+            contentItemStartTime: 0,
+            contentItemDuration: 0,
+            contentTransitionProgress: 0,
+            channelExpanded: false
+        };
+
+        // Initialize show dropdown
+        async function initializeShowDropdown() {
+            const showSelect = document.getElementById('show-select');
+            if (!showSelect) return;
+
+            try {
+                // Clear existing options except the default
+                while (showSelect.options.length > 1) {
+                    showSelect.remove(1);
+                }
+
+                // Get shows from content library
+                const shows = await window.RumiContent.getShowTitles();
+                
+                // Add shows to dropdown
+                shows.forEach(title => {
+                    const option = document.createElement('option');
+                    option.value = title;
+                    option.textContent = title;
+                    showSelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Failed to initialize show dropdown:', error);
+            }
+        }
+
+        // Handle show selection
+        async function selectShow(showTitle) {
+            if (!showTitle) return;
+
+            try {
+                const show = await window.RumiContent.detectShowFromTitle(showTitle);
+                if (show) {
+                    // Update UI to reflect the selected show
+                    const detector = document.getElementById('stream-detector-entry');
+                    if (detector) {
+                        detector.innerHTML = `
+                            <div class="status">STREAM DETECTED</div>
+                            <div class="subtext">Currently watching:</div>
+                            <div style="color: #fff; font-size: 12px; margin: 8px 0;">
+                                ${show.title}
+                                ${show.season !== 'N/A' ? `<span style="color: #666;">S${show.season}:E${show.episode}</span>` : ''}
+                            </div>
+                            <button class="primary-cta" onclick="launchWithDetection()" style="width: 100%; margin-top: 10px;">
+                                Launch Rumi & Get Points
+                            </button>
+                        `;
+                    }
+
+                    // Store the show for later use
+                    window.appState.pendingDetectedShow = show;
+                }
+            } catch (error) {
+                console.error('Failed to select show:', error);
+            }
+        }
+        
+        function onContentError(data) {
+            console.error('🎯 RUMI: Content error:', data.error);
+        }
+        
+        // ================================
+        // INDEXING FUNCTIONS
+        // ================================
+        
+        function startIndexing() {
+            // Get detected show or create default content
+            const detectedShow = RumiState.get('detectedShow');
+            let content = null;
+            
+            if (detectedShow) {
+                content = [detectedShow];
+            } else {
+                // Create default content for testing
+                content = RumiContent.createGenreSession(240, 'Drama').content;
+            }
+            
+            // Start indexing
+            const success = RumiIndexing.startIndexing(content);
+            
+            if (success) {
+                // Update UI
+                updateUIForIndexing(true);
+                
+                // Start timeline
+                RumiTimeline.setTimeline(content);
+                RumiTimeline.startTimeline();
+            }
+        }
+        
+        function stopIndexing() {
+            RumiIndexing.stopIndexing();
+            RumiTimeline.stopTimeline();
+            updateUIForIndexing(false);
+        }
+        
+        function onIndexingStarted(data) {
+            console.log('🎯 RUMI: Indexing started');
+            updateUIForIndexing(true);
+        }
+        
+        function onIndexingStopped(data) {
+            console.log('🎯 RUMI: Indexing stopped');
+            updateUIForIndexing(false);
+            showReceiptView(data.duration, 'detection', RumiState.get('currentMultiplier'));
+        }
+        
+        function onIndexingUpdate(data) {
+            // Update UI with new data
+            updatePointsDisplay(data.points);
+            updateMultiplierDisplay(data.multiplier);
+            updateProgressDisplay(data.sessionTime);
+        }
+        
+        function onBlockAdvanced(data) {
+            console.log(`🎯 RUMI: Block advanced to ${data.block.title}`);
+            
+            // Update channel content
+            RumiState.setChannelContent(data.content);
+            
+            // Update timeline
+            RumiTimeline.setTimeline(data.content);
+        }
+        
+        // ================================
+        // TIMELINE FUNCTIONS
+        // ================================
+        
+        function onTimelineBlockChanged(data) {
+            console.log(`🎯 RUMI: Timeline block changed to ${data.block.title}`);
+            
+            // Update channel display
+            updateChannelDisplay(data.block);
+        }
+        
+        function onTimelineUpdate(data) {
+            // Update timeline UI
+            updateTimelineDisplay(data.currentTime, data.currentIndex);
+        }
+        
+        // ================================
+        // UI UPDATE FUNCTIONS
+        // ================================
+        
+        function updateUIForIndexing(isIndexing) {
+            const primaryCta = document.getElementById('primary-cta');
+            const extensionPopup = document.querySelector('.extension-popup');
+            
+            if (isIndexing) {
+                primaryCta.textContent = 'STOP INDEXING';
+                primaryCta.onclick = stopIndexing;
+                extensionPopup.classList.remove('deactivated');
+            } else {
+                primaryCta.textContent = 'START INDEXING';
+                primaryCta.onclick = startIndexing;
+            }
+        }
+        
+        function updatePointsDisplay(points) {
+            const primaryDisplay = document.getElementById('points-primary-display');
+            const secondaryDisplay = document.getElementById('points-secondary-display');
+            
+            if (primaryDisplay) {
+                primaryDisplay.textContent = `+${points.toFixed(2)}`;
+            }
+            
+            if (secondaryDisplay) {
+                const pending = RumiState.get('pendingPoints') || 0;
+                secondaryDisplay.textContent = `+${pending.toFixed(2)} pending`;
+            }
+        }
+        
+        function updateMultiplierDisplay(multiplier) {
+            const multiplierDisplay = document.getElementById('multiplier-display');
+            if (multiplierDisplay) {
+                multiplierDisplay.textContent = `${multiplier.toFixed(1)}×`;
+            }
+        }
+        
+        function updateProgressDisplay(sessionTime) {
+            const progress = document.getElementById('holistic-progress');
+            if (progress) {
+                const minutes = Math.floor(sessionTime / (1000 * 60));
+                const seconds = Math.floor((sessionTime % (1000 * 60)) / 1000);
+                progress.textContent = `${minutes}m ${seconds}s elapsed`;
+            }
+        }
+        
+        function updateChannelDisplay(block) {
+            // Update channel iframe content
+            const channelFrame = document.getElementById('channel-frame');
+            if (channelFrame && channelFrame.contentWindow) {
+                try {
+                    channelFrame.contentWindow.postMessage({
+                        type: 'updateBlock',
+                        block: block
+                    }, '*');
+                } catch (error) {
+                    console.warn('Cannot communicate with channel frame:', error);
+                }
+            }
+        }
+        
+        function updateTimelineDisplay(currentTime, currentIndex) {
+            // Update timeline markers and progress
+            const timelineMarkers = document.querySelectorAll('.timeline-marker');
+            timelineMarkers.forEach(marker => {
+                const markerTime = parseInt(marker.dataset.time) || 0;
+                if (currentTime >= markerTime) {
+                    marker.classList.add('active');
+                } else {
+                    marker.classList.remove('active');
+                }
+            });
+        }
+        
+        // ================================
+        // ENTRY POINT FUNCTIONS
+        // ================================
+        
+        function launchWithAutomode() {
+            const popup = document.querySelector('.extension-popup');
+            const activationCircle = document.getElementById('activation-circle');
+            const entryPointPanel = document.querySelector('.entry-point-panel');
+            
+            // Show the extension in deactivated state
+            popup.style.display = 'flex';
+            popup.classList.add('deactivated');
+            activationCircle.style.display = 'block';
+
+            // Hide entry points
+            if (entryPointPanel) {
+                entryPointPanel.style.display = 'none';
+            }
+
+            // Store the entry point info for when activation happens
+            window.appState.pendingEntryPoint = 'automode';
+            window.appState.pendingBucket = document.getElementById('bucket-select')?.value || 'Content Intelligence';
+            
+            // Update UI to reflect automode state
+            document.body.classList.remove('detected-mode');
+            document.body.classList.add('automode');
+        }
+        
+        function activateExtension() {
+            const activationCircle = document.getElementById('activation-circle');
+            const popup = document.querySelector('.extension-popup');
+            
+            // Add activated class for animation
+            activationCircle.classList.add('activated');
+            
+            // Remove deactivated state from popup
+            popup.classList.remove('deactivated');
+            
+            // Hide activation circle after animation
+            setTimeout(() => {
+                activationCircle.style.display = 'none';
+            }, 1000);
+
+            // Set entry point and mode from pending state
+            if (window.appState.pendingEntryPoint) {
+                window.appState.entryPoint = window.appState.pendingEntryPoint;
+                window.appState.pendingEntryPoint = null;
+                
+                if (window.appState.entryPoint === 'automode') {
+                    // Set up automode state
+                    window.appState.mode = 'automode';
+                    window.appState.currentBucket = window.appState.pendingBucket;
+                    window.appState.pendingBucket = null;
+                    window.appState.detectedShow = null;
+                    
+                    // Update UI for automode
+                    const primaryCta = document.getElementById('primary-cta');
+                    if (primaryCta) {
+                        primaryCta.textContent = 'START AUTOMODE';
+                        primaryCta.classList.add('automode');
+                    }
+                    
+                    // Update holistic panel
+                    const holisticInfo = document.getElementById('holistic-show-info');
+                    if (holisticInfo) {
+                        holisticInfo.textContent = 'Automode ready - Learning from your content';
+                    }
+                } else if (window.appState.pendingDetectedShow) {
+                    // Set up detection mode state
+                    window.appState.mode = 'detected';
+                    window.appState.detectedShow = window.appState.pendingDetectedShow;
+                    window.appState.pendingDetectedShow = null;
+                }
+            }
+            
+            // Update UI now that we're activated
+            updateUI();
+        }
+        
+        function updateStreamDetector(show = null) {
+            const detector = document.getElementById('stream-detector-entry');
+            if (!detector) return;
+
+            if (show) {
+                // Show is selected
+                detector.innerHTML = `
+                    <div class="status">STREAM DETECTED</div>
+                    <div class="subtext">Currently watching:</div>
+                    <div style="color: #fff; font-size: 12px; margin: 8px 0;">
+                        ${show.title}
+                        ${show.season ? `<span style="color: #666;">S${show.season}:E${show.episode}</span>` : ''}
+                    </div>
+                    <button class="primary-cta" onclick="launchWithDetection()" style="width: 100%; margin-top: 10px;">
+                        Launch Rumi & Get Points
+                    </button>
+                `;
+            } else {
+                // No show selected
+                detector.innerHTML = `
+                    <div class="status">STREAM DETECTED</div>
+                    <div class="subtext">Select a show to begin</div>
+                    <select id="show-select" class="show-select" onchange="selectShow(this.value)">
+                        <option value="">-- Select a Show --</option>
+                    </select>
+                `;
+                // Repopulate the dropdown
+                initializeShowDropdown();
+            }
+        }
+        
+        // ================================
+        // UTILITY FUNCTIONS
+        // ================================
+        
+        function toggleDebugPanel() {
+            const panel = document.getElementById('debug-panel');
+            const trigger = document.querySelector('.debug-trigger');
+            
+            if (panel.classList.contains('visible')) {
+                // Hide the panel
+                panel.classList.remove('visible');
+                trigger.style.display = 'block';
+            } else {
+                // Show the panel
+                panel.classList.add('visible');
+                trigger.style.display = 'none';
+            }
+        }
+        
+        function toggleDebugSection(sectionId) {
+            const content = document.getElementById(sectionId + '-content');
+            
+            if (content.classList.contains('collapsed')) {
+                content.classList.remove('collapsed');
+            } else {
+                content.classList.add('collapsed');
+            }
+        }
+        
+        function toggleChannelExpansion() {
+            const expanded = window.RumiState.toggleChannelExpansion();
+            const channelContainer = document.getElementById('channel-expanded-container');
+            const channelIcon = document.getElementById('expand-channel-icon');
+
+            if (expanded) {
+                channelContainer.style.display = 'block';
+                channelIcon.textContent = '▲';
+            } else {
+                channelContainer.style.display = 'none';
+                channelIcon.textContent = '▼';
+            }
+        }
+        
+        function showReceiptView(duration, mode, multiplier) {
+            document.getElementById('main-view').style.display = 'none';
+            document.getElementById('receipt-view').style.display = 'block';
+            
+            // Populate receipt data
+            const totalPoints = RumiState.get('totalPoints');
+            const pendingPoints = RumiState.get('pendingPoints') || 0;
+            
+            document.getElementById('receipt-total-points').textContent = `+${totalPoints.toFixed(2)}`;
+            document.getElementById('receipt-total-pending').textContent = `+${pendingPoints.toFixed(2)}`;
+            document.getElementById('receipt-duration').textContent = formatDuration(duration);
+            document.getElementById('receipt-multiplier').textContent = `${multiplier.toFixed(1)}x`;
+            document.getElementById('receipt-mode').textContent = mode === 'auto' ? 'AUTOMODE' : 'DETECTED';
+            document.getElementById('receipt-content').textContent = RumiState.get('detectedShow')?.title || 'Unknown';
+            document.getElementById('receipt-chain-bonus').textContent = `+${RumiState.get('chainBonus') || 0}`;
+            document.getElementById('receipt-intelligence').textContent = RumiState.get('intelligence') ? 'High' : 'Low';
+        }
+        
+        function showMainView() {
+            document.getElementById('receipt-view').style.display = 'none';
+            document.getElementById('main-view').style.display = 'block';
+        }
+        
+        function startNewSession() {
+            showMainView();
+            RumiState.reset();
+            RumiIndexing.reset();
+            RumiTimeline.reset();
+            updateUIForIndexing(false);
+        }
+        
+        function formatDuration(ms) {
+            const minutes = Math.floor(ms / (1000 * 60));
+            const hours = Math.floor(minutes / 60);
+            const mins = minutes % 60;
+            
+            if (hours > 0) {
+                return `${hours}h ${mins}m`;
+            } else {
+                return `${mins}m`;
+            }
+        }
+        
+        // ================================
+        // DEBUG FUNCTIONS
+        // ================================
+        
+        function showState() {
+            const state = RumiState.getStateSnapshot();
+            console.log('🎯 RUMI: Current State:', state);
+            alert(`State logged to console\nTotal Points: ${state.state.totalPoints}\nMultiplier: ${state.state.currentMultiplier}x`);
+        }
+        
+        function testContent() {
+            RumiContent.loadContentLibrary().then(() => {
+                const stats = RumiContent.getContentStats();
+                alert(`Content loaded: ${stats.totalItems} items\nServices: ${stats.serviceCount}\nGenres: ${stats.genreCount}`);
+            });
+        }
+        
+        function testIndexing() {
+            const content = RumiContent.createGenreSession(120, 'Drama');
+            RumiIndexing.startIndexing(content.content);
+        }
+        
+        function toggleTurboMode() {
+            const enabled = RumiState.toggleTurboMode();
+            RumiIndexing.setTurboMode(enabled);
+            
+            const button = document.getElementById('debug-turbo-btn');
+            button.textContent = enabled ? '⚡ TURBO (30×)' : '⚡ TURBO (1×)';
+        }
+        
+        // ================================
+        // ERROR TESTING FUNCTIONS
+        // ================================
+        
+        function testVolumeError() {
+            RumiState.setErrorState('volume', { level: 0 });
+        }
+        
+        function testSpeedError() {
+            RumiState.setErrorState('speed', { current: 0 });
+        }
+        
+        function testSystemError() {
+            RumiState.setErrorState('system', { code: 'ERR_001' });
+        }
+        
+        function testShowInterrupt() {
+            const newShow = {
+                title: 'Test Show Interrupt',
+                service: 'Test Service',
+                genre: 'Test Genre',
+                duration: 45
+            };
+            RumiState.handleShowInterrupt(newShow);
+        }
+        
+        // ================================
+        // BREAKPOINT TESTING
+        // ================================
+        
+        function setViewportHeight(height) {
+            document.body.style.height = `${height}px`;
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function resetViewportHeight() {
+            document.body.style.height = '';
+            document.body.style.overflow = '';
+        }
+        
+        // ================================
+        // SETTINGS FUNCTIONS
+        // ================================
+        
+        function testSettings() {
+            alert('Settings panel would open here');
+        }
+        
+        function changeBucket(bucket) {
+            RumiState.setBucket(bucket);
+        }
+        
+        function toggleCacheControl() {
+            const enabled = RumiState.toggleCacheControl();
+            const button = document.getElementById('cache-control-btn');
+            button.textContent = enabled ? '🗂️ Enable Cache' : '🗂️ Disable Cache';
+        }
+        
+        function simulateShowChange() {
+            const newShow = {
+                title: 'Simulated Show Change',
+                service: 'Simulated Service',
+                genre: 'Simulated Genre',
+                duration: 60
+            };
+            RumiState.setDetectedShow(newShow);
+        }
+        
+        // ================================
+        // EVENT HANDLERS
+        // ================================
+        
+        function onPointsChanged(points) {
+            updatePointsDisplay(points);
+        }
+        
+        function onMultiplierChanged(multiplier) {
+            updateMultiplierDisplay(multiplier);
+        }
+        
+        function onErrorStateChanged(error) {
+            if (error) {
+                showError(error);
+            } else {
+                clearError();
+            }
+        }
+        
+        function onModeChanged(mode) {
+            // Update UI for mode
+            document.body.classList.remove('detected-mode', 'automode');
+            document.body.classList.add(`${mode}-mode`);
+            
+            // Update color scheme
+            const color = mode === 'detected' ? '#00ff41' : '#ffff00';
+            document.documentElement.style.setProperty('--primary-color', color);
+            
+            // Update UI components
+            window.RumiUI.updateModeSpecificUI(mode);
+        }
+        
+        // ================================
+        // KEYBOARD SHORTCUTS
+        // ================================
+        
+        document.addEventListener('keydown', function(event) {
+            if (event.ctrlKey && event.shiftKey && event.key === 'D') {
+                event.preventDefault();
+                toggleDebugPanel();
+            }
+        });
+        
+        // ================================
+        // INITIALIZATION COMPLETE
+        // ================================
+        
+        console.log('🎯 RUMI: Main application script loaded');
+
+        function showMessage(message, type = 'info', details = null) {
+            const messageArea = document.getElementById('message-area');
+            const messageText = document.getElementById('message-text');
+            const messageDetails = document.getElementById('message-details');
+            
+            // Reset classes
+            messageArea.className = 'message-area';
+            
+            // Add type-specific class
+            if (type !== 'info') {
+                messageArea.classList.add(type);
+            }
+            
+            // Set message text
+            messageText.textContent = message;
+            
+            // Handle details
+            if (details) {
+                messageDetails.textContent = details;
+                messageDetails.style.display = 'block';
+            } else {
+                messageDetails.style.display = 'none';
+            }
+            
+            // Show message area
+            messageArea.style.display = 'block';
+            
+            // Auto-hide after delay for non-error messages
+            if (type !== 'error') {
+                setTimeout(() => {
+                    hideMessage();
+                }, 5000);
+            }
+        }
+
+        function hideMessage() {
+            const messageArea = document.getElementById('message-area');
+            messageArea.style.display = 'none';
+        }
+
+        // Add styles for automode button
+        const style = document.createElement('style');
+        style.textContent = `
+            .automode-button {
+                width: 100%;
+                background: linear-gradient(135deg, #ffff00, #ffaa00);
+                color: #000;
+                border: none;
+                border-radius: 8px;
+                padding: 15px;
+                font-size: 14px;
+                font-weight: bold;
+                cursor: pointer;
+                text-align: center;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                margin: 10px 0;
+                transition: all 0.3s ease;
+            }
+
+            .automode-button:hover {
+                background: linear-gradient(135deg, #ffaa00, #ff8800);
+                transform: translateY(-2px);
+                box-shadow: 0 4px 15px rgba(255, 170, 0, 0.3);
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Initialize debug panel state
+        document.addEventListener('DOMContentLoaded', function() {
+            // Start with debug panel hidden and trigger visible
+            const panel = document.getElementById('debug-panel');
+            const trigger = document.querySelector('.debug-trigger');
+            
+            if (panel && trigger) {
+                panel.classList.remove('visible');
+                trigger.style.display = 'block';
+            }
+            
+            // Start with sections collapsed
+            const sections = ['basic-testing', 'error-testing', 'session-management', 'breakpoint-testing'];
+            sections.forEach(sectionId => {
+                const content = document.getElementById(sectionId + '-content');
+                if (content) {
+                    content.classList.add('collapsed');
+                }
+            });
+        });
+    </script>
+</body>
+</html> 

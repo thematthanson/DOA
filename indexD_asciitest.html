@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rumi Extension – Integrated</title>
+
+    <!-- Fonts & favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link href="https://fonts.googleapis.com/css2?family=SF+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="../styles/theme.css" rel="stylesheet">
+
+    <!-- Browser-ready ASCII font library (figlet) -->
+    <script src="https://unpkg.com/figlet@1.5.2/lib/figlet.js"></script>
+    <script>window.AsciiArt = window.figlet;</script>
+
+    <!-- Temporary minimal styling; full theme will be ported later -->
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: var(--color-bg);
+            color: var(--color-text);
+            font-family: 'SF Mono', 'Menlo', 'Courier New', monospace;
+            padding: 20px;
+        }
+        .simulation-container { display: flex; gap: 20px; align-items: flex-start; }
+        .primary-cta, .secondary-button {
+            background: var(--color-surface-alt);
+            border: 2px solid var(--color-green);
+            color: var(--color-green);
+            padding: 12px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'SF Mono', monospace;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .primary-cta:hover { background: var(--color-green); color: #000; }
+        .secondary-button { border-color: var(--color-orange); color: var(--color-orange); }
+        .secondary-button:hover { background: var(--color-orange); color: #000; }
+        .nokia-visual {
+            width: 100%;
+            height: 180px;
+            background: linear-gradient(45deg, #001100, #003300);
+            border: 1px solid var(--color-green);
+            border-radius: 4px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 8px;
+            margin-top: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+        .nokia-visual pre {
+            margin: 0; 
+            padding: 0; 
+            color: var(--color-green); 
+            font-family: 'SF Mono', monospace; 
+            font-size: 8px; 
+            line-height: 8px; 
+            white-space: pre;
+        }
+        .nokia-visual .content-display {
+            transition: opacity 0.3s ease-in-out;
+            text-align: center;
+            font-family: 'SF Mono', monospace;
+            font-size: 8px;
+            line-height: 8px;
+            white-space: pre;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            width: 100%;
+        }
+        .nokia-visual .ascii-art {
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+        }
+        .nokia-visual .bottom-info {
+            position: absolute;
+            bottom: 8px;
+            left: 8px;
+            right: 8px;
+            font-size: 8px;
+            color: var(--color-green);
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .nokia-visual .progress-section {
+            position: absolute;
+            bottom: 25px;
+            left: 8px;
+            right: 8px;
+            text-align: center;
+        }
+        .nokia-visual .progress-time {
+            font-size: 8px;
+            color: var(--color-green);
+            margin-bottom: 2px;
+        }
+        .nokia-visual .progress-bar {
+            font-family: 'SF Mono', monospace;
+            font-size: 8px;
+            line-height: 8px;
+        }
+        .nokia-visual.automode {
+            background: linear-gradient(45deg, #1a1a00, #333300);
+            border-color: #ffff00;
+        }
+        .nokia-visual.automode .content-display,
+        .nokia-visual.automode .bottom-info,
+        .nokia-visual.automode .progress-time {
+            color: #ffff00;
+        }
+        
+        /* Content type specific styles */
+        .nokia-visual.show {
+            background: linear-gradient(45deg, #001a1a, #003333);
+            border-color: #00ffff;
+            animation: showPulse 3s ease-in-out infinite;
+        }
+        .nokia-visual.show .content-display,
+        .nokia-visual.show .bottom-info,
+        .nokia-visual.show .progress-time {
+            color: #00ffff;
+        }
+        
+        .nokia-visual.movie {
+            background: linear-gradient(45deg, #1a001a, #330033);
+            border-color: #ff00ff;
+            animation: movieGlow 4s ease-in-out infinite;
+        }
+        .nokia-visual.movie .content-display,
+        .nokia-visual.movie .bottom-info,
+        .nokia-visual.movie .progress-time {
+            color: #ff00ff;
+        }
+        
+        .nokia-visual.documentary {
+            background: linear-gradient(45deg, #1a1a00, #333300);
+            border-color: #ffaa00;
+            animation: docFlicker 2s ease-in-out infinite;
+        }
+        .nokia-visual.documentary .content-display,
+        .nokia-visual.documentary .bottom-info,
+        .nokia-visual.documentary .progress-time {
+            color: #ffaa00;
+        }
+        
+        .nokia-visual.active {
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.5);
+            transform: scale(1.02);
+        }
+        
+        .nokia-visual.show.active {
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+        }
+        
+        .nokia-visual.movie.active {
+            box-shadow: 0 0 20px rgba(255, 0, 255, 0.5);
+        }
+        
+        .nokia-visual.documentary.active {
+            box-shadow: 0 0 20px rgba(255, 170, 0, 0.5);
+        }
+        
+        /* Animations */
+        @keyframes showPulse {
+            0%, 100% { border-color: #00ffff; }
+            50% { border-color: #00aaaa; }
+        }
+        
+        @keyframes movieGlow {
+            0%, 100% { border-color: #ff00ff; }
+            25% { border-color: #aa00aa; }
+            75% { border-color: #ff44ff; }
+        }
+        
+        @keyframes docFlicker {
+            0%, 100% { border-color: #ffaa00; }
+            50% { border-color: #cc8800; }
+        }
+        
+        /* Noun cycling display */
+        .nokia-visual .noun-display {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            font-size: 7px;
+            color: rgba(255, 255, 255, 0.7);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 2px 6px;
+            border-radius: 3px;
+            transition: all 0.3s ease;
+        }
+        .metadata-crawl {
+            display: inline-block;
+            white-space: nowrap;
+            color: var(--color-green);
+            font-weight: bold;
+            transform: translateX(100%);
+            transition: transform 8s linear;
+        }
+        /* Message area expected by UI components */
+        .message-area {
+            background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+            color: #00ff41;
+            padding: 12px 20px;
+            font-size: 13px;
+            font-weight: 600;
+            display: flex;
+            flex-direction: column;
+            border-radius: 8px;
+            border: 1px solid #00ff41;
+            margin: 16px 0;
+            box-shadow: 0 2px 8px rgba(0, 255, 65, 0.1);
+            transition: all 0.3s ease;
+            font-family: 'SF Mono', monospace;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .message-area.collapsed { 
+            font-size: 11px; 
+            padding: 8px 16px;
+            opacity: 0.8;
+        }
+        .message-area.error {
+            background: linear-gradient(135deg, #2a1a1a, #3a2a2a);
+            color: #ff4444;
+            border-color: #ff4444;
+            box-shadow: 0 2px 8px rgba(255, 68, 68, 0.2);
+        }
+        .message-area.warning {
+            background: linear-gradient(135deg, #2a2a1a, #3a3a2a);
+            color: #ffaa00;
+            border-color: #ffaa00;
+            box-shadow: 0 2px 8px rgba(255, 170, 0, 0.2);
+        }
+        .message-area.info {
+            background: linear-gradient(135deg, #1a1a2a, #2a2a3a);
+            color: #0088ff;
+            border-color: #0088ff;
+            box-shadow: 0 2px 8px rgba(0, 136, 255, 0.2);
+        }
+        .message-area.success {
+            background: linear-gradient(135deg, #1a2a1a, #2a3a2a);
+            color: #00ff41;
+            border-color: #00ff41;
+            box-shadow: 0 2px 8px rgba(0, 255, 65, 0.2);
+        }
+        #message-details {
+            margin-top: 8px;
+            font-size: 11px;
+            color: #888;
+            font-weight: normal;
+            text-transform: none;
+            letter-spacing: normal;
+        }
+        #message-close:hover {
+            opacity: 1 !important;
+            transform: scale(1.1);
+        }
+        #message-settings:hover {
+            opacity: 1 !important;
+            transform: scale(1.05);
+        }
+        .message-area.collapsed #message-close {
+            display: none;
+        }
+        .message-area.collapsed #message-settings {
+            display: none;
+        }
+        /* Program track item states */
+        .program-item { font-family: 'SF Mono', monospace; font-size: 9px; color:#888; padding:2px 4px; border:1px solid #333; border-radius:3px; transition:all 0.2s; }
+        .program-item.active { background:var(--color-green); color:#000; border-color:var(--color-green); font-weight:700; }
+        .program-item.completed { background:#111; color:#444; }
+        /* Debug panel */
+        #debug-panel { position:fixed; bottom:10px; right:10px; background:#000000d0; color:var(--color-text); padding:10px; border:1px solid var(--color-green); border-radius:6px; font-size:10px; display:none; z-index:9999; }
+        #debug-panel button { background:var(--color-surface-alt); color:var(--color-green); border:1px solid var(--color-green); padding:4px 6px; margin:0 2px; font-size:10px; cursor:pointer; }
+        #debug-toggle { position:fixed; bottom:10px; right:10px; background:var(--color-green); border:none; color:#000; padding:6px 8px; border-radius:50%; font-weight:700; cursor:pointer; z-index:9998; }
+        /* Extension popup styling */
+        .extension-popup { background:#0d0d0d; border-radius:12px; overflow:hidden; display:flex; flex-direction:column; width:700px; max-width:100%; margin:40px auto; border:1px solid var(--color-border); }
+        .popup-header { background:#1a1a1a; padding:16px 20px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--color-border); }
+        .popup-logo { font-size:24px; font-weight:700; color:var(--color-green); }
+        .settings-button { background:var(--color-surface-alt); color:var(--color-text); border:1px solid var(--color-border); padding:6px 12px; border-radius:4px; font-size:12px; cursor:pointer; }
+        .popup-body { padding:20px; display:flex; flex-direction:column; gap:16px; }
+        .points-section { text-align:center; }
+        .points-total { font-size:32px; font-weight:700; color:var(--color-green); margin-bottom:4px; }
+        .points-pending { font-size:14px; color:var(--color-muted); }
+        /* Points multiplier display */
+        .points-multiplier { font-size:14px; color: var(--color-orange); }
+    </style>
+
+    <!-- Modern module-based backend & UI stack -->
+    <script type="module" src="../js/core/error-handling.js"></script>
+    <script type="module" src="../js/core/state-management.js"></script>
+    <script type="module" src="../js/core/genre-channel-engine.js"></script>
+    <script type="module" src="../js/core/indexing-engine.js"></script>
+    <script type="module" src="../js/backend/content-manager.js"></script>
+    <script type="module" src="../js/ui/components.js"></script>
+    <script type="module" src="../js/ui/ascii-display.js"></script>
+    <script type="module" src="../js/channel/timeline-manager.js"></script>
+    <script type="module" src="../js/ui/debug-tools.js"></script>
+    <script type="module" src="../js/ui/animations.js"></script>
+
+    <!-- Lightweight adapter exposing legacy globals expected by some inline code (can be removed once all inline code is ported) -->
+    <script type="module">
+        import { RumiState } from '../js/core/state-management.js';
+        import { RumiContent } from '../js/backend/content-manager.js';
+        window.RumiBackend = {
+            getCurrentMultiplier: () => RumiState.getState('multiplier'),
+            calculateSegmentedPoints: (duration, start) => ({ totalPoints: duration * 0.1, segments: [] })
+        };
+        window.RumiContent = RumiContent; // expose for any remaining legacy code
+    </script>
+</head>
+<body>
+    <!-- Message area expected by UI utility functions -->
+    <div id="message-area" class="message-area collapsed">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span id="message-text">🚀 RUMI INDEXING SYSTEM READY</span>
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <button id="message-settings" style="background: none; border: none; color: inherit; font-size: 12px; cursor: pointer; opacity: 0.7; transition: opacity 0.2s; text-transform: uppercase; letter-spacing: 0.5px; font-family: 'SF Mono', monospace;" onclick="openSettings()">⚙ SETTINGS</button>
+                <button id="message-close" style="background: none; border: none; color: inherit; font-size: 16px; cursor: pointer; opacity: 0.7; transition: opacity 0.2s;" onclick="hideMessage()">×</button>
+            </div>
+        </div>
+        <span id="message-details" style="display:none;"></span>
+    </div>
+
+    <!-- Program Track & Progress Bar -->
+    <div id="program-track" style="margin-top:16px; display:flex; flex-direction:column; gap:4px;"></div>
+    <div style="background:#222; border:1px solid #333; border-radius:4px; height:8px; overflow:hidden; margin-top:8px;">
+        <div class="progress-bar-fill" style="height:100%; width:0%; background:#00ff41; transition:width 0.3s;"></div>
+    </div>
+
+    <!-- Wiring controls to backend -->
+    <script type="module">
+        import '../js/backend/content-manager.js';
+        import '../js/channel/timeline-manager.js';
+        import '../js/core/state-management.js';
+
+        const RumiTimeline = window.RumiTimeline;
+        const RumiState    = window.RumiState;
+        const RumiUI       = window.RumiUI;
+
+        const startBtn = document.getElementById('indexing-start-btn');
+        const stopBtn  = document.getElementById('indexing-stop-btn');
+
+        async function startIndexing() {
+            try {
+                startBtn.disabled = true;
+                RumiUI?.showInfo?.('Preparing content…');
+
+                // Wait until content manager is ready
+                let attempts = 0;
+                while (!window.RumiContent?.isReady() && attempts < 20) {
+                    await new Promise(r => setTimeout(r, 200));
+                    attempts++;
+                }
+
+                if (!window.RumiContent?.isReady()) {
+                    throw new Error('Content manager not ready');
+                }
+
+                const content = await window.RumiContent.getRandomBucketContent();
+
+                // Check if this is automode (random bucket content suggests automode)
+                isAutomode = true; // Assuming this test file is for automode
+                
+                // Build timeline & start
+                RumiTimeline.setTimeline(content, 240);
+                RumiTimeline.startTimeline();
+
+                // Update UI
+                startBtn.style.display = 'none';
+                stopBtn.style.display  = 'block';
+                startBtn.disabled = false;
+
+                RumiUI?.showInfo?.('Indexing started!');
+            } catch (e) {
+                console.error(e);
+                RumiUI?.showError?.('Failed to start indexing', e.message);
+                startBtn.disabled = false;
+            }
+        }
+
+        function stopIndexing() {
+            RumiTimeline.stopTimeline();
+            startBtn.style.display = 'block';
+            stopBtn.style.display  = 'none';
+            RumiUI?.showWarning?.('Indexing stopped');
+        }
+
+        startBtn.addEventListener('click', startIndexing);
+        stopBtn.addEventListener('click', stopIndexing);
+
+        // ============================
+        // MESSAGE AREA UTILITIES
+        // ============================
+        
+        function showMessage(message, type = 'info', details = null, duration = 5000) {
+            const messageArea = document.getElementById('message-area');
+            const messageText = document.getElementById('message-text');
+            const messageDetails = document.getElementById('message-details');
+            
+            if (!messageArea || !messageText) return;
+            
+            // Reset classes
+            messageArea.className = 'message-area';
+            
+            // Add type-specific class
+            if (type !== 'info') {
+                messageArea.classList.add(type);
+            }
+            
+            // Set message text
+            messageText.textContent = message;
+            
+            // Handle details
+            if (details) {
+                messageDetails.textContent = details;
+                messageDetails.style.display = 'block';
+            } else {
+                messageDetails.style.display = 'none';
+            }
+            
+            // Show message area (remove collapsed state)
+            messageArea.classList.remove('collapsed');
+            
+            // Impact session based on alert severity
+            try {
+                if (type === 'warning') {
+                    window.RumiTimeline?.pauseTimeline?.();
+                } else if (type === 'error') {
+                    if (typeof stopIndexing === 'function') {
+                        stopIndexing();
+                    } else {
+                        window.RumiTimeline?.stopTimeline?.();
+                    }
+
+                    const session = window.RumiBackend?.getSessionForUI?.();
+                    if (session && typeof populateReceiptView === 'function') {
+                        populateReceiptView({
+                            totalPoints: session.totalPoints,
+                            pendingPoints: 0,
+                            sessionDuration: session.sessionDuration,
+                            multiplier: session.currentMultiplier,
+                            contentType: 'Session',
+                            chainBonus: 0,
+                            indexedContent: session.processedContent.map(c => ({ title: c.title, timestamp: new Date().toLocaleTimeString() })),
+                            completedShows: session.processedContent
+                        });
+                    }
+                }
+            } catch (e) {
+                console.warn('Alert impact handling failed', e);
+            }
+            
+            // Auto-hide after delay for non-error messages
+            if (type !== 'error' && duration > 0) {
+                setTimeout(() => {
+                    hideMessage();
+                }, duration);
+            }
+        }
+        
+        function hideMessage() {
+            const messageArea = document.getElementById('message-area');
+            messageArea.classList.add('collapsed');
+        }
+        
+        // Expose message functions globally for other components
+        window.showMessage = showMessage;
+        window.hideMessage = hideMessage;
+        
+        // Update RumiUI to use our message system
+        if (window.RumiUI) {
+            window.RumiUI.showInfo = (msg) => showMessage(msg, 'info', null, 3000);
+            window.RumiUI.showError = (msg, details) => showMessage(msg, 'error', details, 0);
+            window.RumiUI.showWarning = (msg) => showMessage(msg, 'warning', null, 5000);
+            window.RumiUI.showSuccess = (msg) => showMessage(msg, 'success', null, 3000);
+        }
+
+        // ============================
+        // Timeline driven UI updates
+        // ============================
+
+        let totalPoints = 0;
+        let fastMode    = false;
+        const RumiBackend = window.RumiBackend;
+
+        // Utility to add block points using backend calculation
+        function addBlockPoints(duration) {
+            if (!RumiBackend?.calculateSegmentedPoints) return 0;
+            const result = RumiBackend.calculateSegmentedPoints(duration);
+            return result.totalPoints || 0;
+        }
+
+        RumiTimeline.subscribe?.('timelineSet', ({ timeline }) => {
+            // Build program track items (content blocks only)
+            const trackEl = document.getElementById('program-track');
+            trackEl.innerHTML = '';
+            timeline.filter(b => b.type === 'content').forEach((block, idx) => {
+                const item = document.createElement('div');
+                item.className = 'program-item';
+                item.textContent = `${idx + 1}. ${block.title}`;
+                trackEl.appendChild(item);
+            });
+
+            // Initialize ASCII display with first block
+            const firstContent = timeline.find(b=>b.type==='content');
+            if (firstContent) {
+                // Extract all available data from the first block
+                const blockData = firstContent.data || {};
+                
+                // Set current session data for ASCII system
+                currentSessionData = {
+                    title: firstContent.title,
+                    duration: firstContent.duration,
+                    index: 1,
+                    total: timeline.filter(b=>b.type==='content').length,
+                    description: blockData.description || firstContent.description || '',
+                    genre: blockData.genre || firstContent.genre || '',
+                    season: blockData.season || '',
+                    episode: blockData.episode || '',
+                    service: blockData.service || firstContent.service || '',
+                    year: blockData.year || ''
+                };
+                
+                // Reset animation start time
+                animationStartTime = Date.now();
+                
+                // Update ASCII display immediately
+                updateAsciiDisplay(currentSessionData);
+            }
+        });
+
+        RumiTimeline.subscribe?.('blockChange', ({ block, index }) => {
+            // Extract all available data from the block
+            const blockData = block.data || {};
+            
+            // Update current session data for ASCII system
+            currentSessionData = {
+                title: block.title,
+                duration: block.duration,
+                index: index + 1,
+                total: RumiTimeline.timeline.filter(b=>b.type==='content').length,
+                description: blockData.description || block.description || '',
+                genre: blockData.genre || block.genre || '',
+                season: blockData.season || '',
+                episode: blockData.episode || '',
+                service: blockData.service || block.service || '',
+                year: blockData.year || ''
+            };
+            
+            // Update ASCII display immediately
+            updateAsciiDisplay(currentSessionData);
+
+            // Update points using backend calculation
+            totalPoints += addBlockPoints(block.duration);
+            document.getElementById('points-primary-display').textContent = `${totalPoints.toFixed(1)} POINTS`;
+
+            // Update progress bar (the external one)
+            const pct = RumiTimeline.getProgress?.() ?? 0;
+            document.querySelector('.progress-bar-fill').style.width = `${pct}%`;
+        });
+
+        // Handle timeline completion
+        RumiTimeline.subscribe?.('completed', async () => {
+            startBtn.style.display = 'block';
+            stopBtn.style.display  = 'none';
+
+            // Obtain session summary and display receipt
+            const session = window.RumiBackend?.getSessionForUI?.();
+            if (session) {
+                await populateReceiptView({
+                    totalPoints: session.totalPoints,
+                    pendingPoints: 0,
+                    sessionDuration: session.sessionDuration,
+                    multiplier: session.currentMultiplier,
+                    contentType: 'Session',
+                    chainBonus: 0,
+                    indexedContent: session.processedContent.map(c=>({title:c.title,timestamp:new Date().toLocaleTimeString()})),
+                    completedShows: session.processedContent
+                });
+            }
+        });
+
+        // ============================
+        // Debug panel wiring
+        // ============================
+
+        const debugPanel = document.getElementById('debug-panel');
+        document.getElementById('debug-toggle').addEventListener('click', ()=>{
+            debugPanel.style.display = debugPanel.style.display === 'none' ? 'block' : 'none';
+        });
+
+        document.getElementById('skip-1m').addEventListener('click', ()=> RumiTimeline.jumpToTime(RumiTimeline.currentTime + 1));
+        document.getElementById('skip-5m').addEventListener('click', ()=> RumiTimeline.jumpToTime(RumiTimeline.currentTime + 5));
+        document.getElementById('skip-15m').addEventListener('click', ()=> RumiTimeline.jumpToTime(RumiTimeline.currentTime + 15));
+
+        document.getElementById('fast-toggle').addEventListener('click', ()=>{
+            fastMode = !fastMode;
+            window.DEBUG_TIME_SCALE = fastMode ? 10 : 1;
+            document.getElementById('fast-toggle').textContent = fastMode ? 'Fast ×1' : 'Fast ×10';
+        });
+
+        // Debug message test buttons
+        document.getElementById('test-info').addEventListener('click', () => {
+            showMessage('📡 Preparing content for indexing...', 'info', 'Loading content library and initializing timeline', 3000);
+        });
+        
+        document.getElementById('test-success').addEventListener('click', () => {
+            showMessage('✅ Indexing session started successfully!', 'success', 'Timeline initialized with 8 content blocks', 3000);
+        });
+        
+        document.getElementById('test-warning').addEventListener('click', () => {
+            showMessage('⚠️ Volume changed - please return to 100%', 'warning', 'System detected volume change during indexing', 5000);
+        });
+        
+        document.getElementById('test-error').addEventListener('click', () => {
+            showMessage('❌ Failed to start indexing session', 'error', 'Content manager not ready. Please try again.', 0);
+        });
+
+        // Settings functionality
+        function openSettings() {
+            showMessage('⚙️ Settings panel opened', 'info', 'Configure indexing preferences and system options', 3000);
+            // TODO: Implement actual settings panel
+        }
+        
+        // Expose settings function globally
+        window.openSettings = openSettings;
+        
+        // Settings test button
+        document.getElementById('test-settings').addEventListener('click', () => {
+            openSettings();
+        });
+
+        // ASCII test buttons
+        document.getElementById('toggle-automode').addEventListener('click', () => {
+            isAutomode = !isAutomode;
+            showMessage(`Automode ${isAutomode ? 'enabled' : 'disabled'}`, 'info', `ASCII display switched to ${isAutomode ? 'yellow' : 'green'} theme`, 2000);
+        });
+
+        document.getElementById('test-show').addEventListener('click', () => {
+            // Test with TV show content
+            currentSessionData = {
+                title: 'The Office',
+                duration: '22:00',
+                index: 3,
+                total: 8,
+                description: 'Comedy series about office workers',
+                genre: 'Comedy',
+                season: '3',
+                episode: '20',
+                service: 'NBC',
+                year: '2007'
+            };
+            animationStartTime = Date.now();
+            nounCycleIndex = 0;
+            lastNounUpdate = 0;
+            updateAsciiDisplay(currentSessionData);
+            showMessage('TV Show loaded', 'success', 'Cyan theme with comedy nouns', 2000);
+        });
+
+        document.getElementById('test-movie').addEventListener('click', () => {
+            // Test with movie content
+            currentSessionData = {
+                title: 'Inception',
+                duration: '148:00',
+                index: 1,
+                total: 1,
+                description: 'A thief who steals corporate secrets through dream-sharing technology',
+                genre: 'Action',
+                service: 'Warner Bros',
+                year: '2010'
+            };
+            animationStartTime = Date.now();
+            nounCycleIndex = 0;
+            lastNounUpdate = 0;
+            updateAsciiDisplay(currentSessionData);
+            showMessage('Movie loaded', 'success', 'Magenta theme with action nouns', 2000);
+        });
+
+        document.getElementById('test-doc').addEventListener('click', () => {
+            // Test with documentary content
+            currentSessionData = {
+                title: 'Planet Earth',
+                duration: '50:00',
+                index: 2,
+                total: 11,
+                description: 'A nature documentary series',
+                genre: 'Documentary',
+                service: 'BBC',
+                year: '2006'
+            };
+            animationStartTime = Date.now();
+            nounCycleIndex = 0;
+            lastNounUpdate = 0;
+            updateAsciiDisplay(currentSessionData);
+            showMessage('Documentary loaded', 'success', 'Orange theme with nature nouns', 2000);
+        });
+
+        // ============================
+        // ENHANCED ASCII ANIMATION SYSTEM
+        // ============================
+
+        let currentSessionData = null;
+        let animationStartTime = Date.now();
+        let isAutomode = false;
+        let currentContentType = 'default';
+        let nounCycleIndex = 0;
+        let lastNounUpdate = 0;
+
+        // Time-based multiplier milestones (90-minute increments)
+        function calculateMultiplierMilestones(sessionDurationMinutes) {
+            const milestones = [{ time: 0, multiplier: 1.0 }];
+            
+            const baseInterval = 90; // 90 minutes
+            let currentTime = baseInterval;
+            let currentMultiplier = 1.2;
+            
+            // Regular 90-minute intervals until we reach 240 minutes
+            while (currentTime <= Math.min(sessionDurationMinutes, 240)) {
+                milestones.push({
+                    time: currentTime / sessionDurationMinutes,
+                    multiplier: currentMultiplier
+                });
+                
+                currentTime += baseInterval;
+                currentMultiplier += 0.2;
+            }
+            
+            // If session is longer than 240 minutes, increase frequency
+            if (sessionDurationMinutes > 240) {
+                const acceleratedInterval = 30; // 30 minutes
+                currentTime = 240 + acceleratedInterval;
+                currentMultiplier = 1.6 + 0.2;
+                
+                while (currentTime <= Math.min(sessionDurationMinutes, 350)) {
+                    milestones.push({
+                        time: currentTime / sessionDurationMinutes,
+                        multiplier: Math.min(currentMultiplier, 3.0)
+                    });
+                    
+                    currentTime += acceleratedInterval;
+                    currentMultiplier += 0.1;
+                }
+            }
+            
+            return milestones;
+        }
+
+        // Format time display
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        // Content type detection
+        function detectContentType(blockData) {
+            if (!blockData) return 'default';
+            
+            const title = (blockData.title || '').toLowerCase();
+            const genre = (blockData.genre || '').toLowerCase();
+            const description = (blockData.description || '').toLowerCase();
+            
+            // Movie indicators
+            if (genre.includes('movie') || genre.includes('film') || 
+                title.includes('movie') || description.includes('film') ||
+                (!blockData.season && !blockData.episode && blockData.duration && parseInt(blockData.duration) > 90)) {
+                return 'movie';
+            }
+            
+            // Documentary indicators
+            if (genre.includes('documentary') || genre.includes('doc') ||
+                title.includes('documentary') || description.includes('documentary')) {
+                return 'documentary';
+            }
+            
+            // Show indicators (has season/episode or common show genres)
+            if (blockData.season || blockData.episode ||
+                genre.includes('series') || genre.includes('show') ||
+                genre.includes('sitcom') || genre.includes('drama') ||
+                genre.includes('comedy') || genre.includes('reality')) {
+                return 'show';
+            }
+            
+            return 'default';
+        }
+
+        // Noun collections for different content types
+        const nounCollections = {
+            show: {
+                general: ['EPISODE', 'SERIES', 'SEASON', 'SHOW', 'DRAMA', 'STORY', 'CHARACTERS', 'PLOT'],
+                comedy: ['LAUGHS', 'HUMOR', 'JOKES', 'COMEDY', 'SITCOM', 'FUNNY', 'WITTY', 'HILARIOUS'],
+                drama: ['TENSION', 'EMOTION', 'DRAMA', 'CONFLICT', 'STORY', 'NARRATIVE', 'PLOT', 'CHARACTERS'],
+                action: ['ACTION', 'THRILLS', 'ADVENTURE', 'EXCITEMENT', 'STUNTS', 'CHASE', 'FIGHT', 'HERO'],
+                scifi: ['FUTURE', 'SPACE', 'TECH', 'ALIENS', 'ROBOTS', 'GALAXY', 'UNIVERSE', 'SCIENCE'],
+                horror: ['FEAR', 'TERROR', 'SCARY', 'HAUNTED', 'MONSTER', 'GHOST', 'CREEPY', 'NIGHTMARE']
+            },
+            movie: {
+                general: ['FILM', 'CINEMA', 'MOVIE', 'PICTURE', 'FLICK', 'FEATURE', 'BLOCKBUSTER', 'MASTERPIECE'],
+                action: ['EXPLOSIVE', 'THRILLING', 'INTENSE', 'ADRENALINE', 'SPECTACULAR', 'EPIC', 'HEROIC', 'DYNAMIC'],
+                comedy: ['HILARIOUS', 'FUNNY', 'AMUSING', 'WITTY', 'CLEVER', 'LAUGHS', 'HUMOR', 'COMIC'],
+                drama: ['POWERFUL', 'MOVING', 'EMOTIONAL', 'GRIPPING', 'COMPELLING', 'TOUCHING', 'PROFOUND', 'INTENSE'],
+                horror: ['TERRIFYING', 'CHILLING', 'SPINE-TINGLING', 'HORRIFIC', 'SCARY', 'NIGHTMARE', 'FEAR', 'DREAD'],
+                romance: ['ROMANTIC', 'LOVE', 'PASSION', 'HEARTFELT', 'TENDER', 'SWEET', 'BEAUTIFUL', 'ENCHANTING']
+            },
+            documentary: {
+                general: ['FACTS', 'TRUTH', 'REALITY', 'KNOWLEDGE', 'EDUCATION', 'INSIGHT', 'DISCOVERY', 'LEARNING'],
+                nature: ['WILDLIFE', 'NATURE', 'ANIMALS', 'EARTH', 'PLANET', 'ECOSYSTEM', 'ENVIRONMENT', 'LIFE'],
+                history: ['HISTORY', 'PAST', 'LEGACY', 'HERITAGE', 'TIMELINE', 'EVENTS', 'CULTURE', 'CIVILIZATION'],
+                science: ['SCIENCE', 'RESEARCH', 'DISCOVERY', 'INNOVATION', 'TECHNOLOGY', 'BREAKTHROUGH', 'KNOWLEDGE', 'FACTS']
+            },
+            default: ['CONTENT', 'MEDIA', 'STREAM', 'WATCH', 'VIEW', 'PLAY', 'ENJOY', 'EXPERIENCE']
+        };
+
+        // Get appropriate nouns for content
+        function getNounsForContent(blockData) {
+            const contentType = detectContentType(blockData);
+            const genre = (blockData.genre || '').toLowerCase();
+            
+            let nouns = nounCollections[contentType]?.general || nounCollections.default;
+            
+            // Try to get genre-specific nouns
+            if (nounCollections[contentType]) {
+                for (const genreKey in nounCollections[contentType]) {
+                    if (genre.includes(genreKey)) {
+                        nouns = nounCollections[contentType][genreKey];
+                        break;
+                    }
+                }
+            }
+            
+            return nouns;
+        }
+
+        // Cycle through nouns
+        function cycleNoun(blockData, elapsedTime) {
+            const nouns = getNounsForContent(blockData);
+            const cycleInterval = 2000; // Change every 2 seconds
+            
+            if (elapsedTime - lastNounUpdate > cycleInterval) {
+                nounCycleIndex = (nounCycleIndex + 1) % nouns.length;
+                lastNounUpdate = elapsedTime;
+            }
+            
+            return nouns[nounCycleIndex];
+        }
+
+        // Scroll text for bottom info
+        function scrollText(text, elapsedTime, maxWidth) {
+            if (text.length <= maxWidth) {
+                return text.padEnd(maxWidth);
+            }
+            
+            const scrollSpeed = 0.5; // characters per second
+            const totalCycle = text.length + maxWidth;
+            const position = Math.floor((elapsedTime * scrollSpeed) % totalCycle);
+            
+            if (position < text.length) {
+                return (text + ' '.repeat(maxWidth)).substring(position, position + maxWidth);
+            } else {
+                const spacePosition = position - text.length;
+                return (' '.repeat(maxWidth) + text).substring(spacePosition, spacePosition + maxWidth);
+            }
+        }
+
+        // Generate ASCII art using figlet
+        function generateAsciiArt(text, callback) {
+            if (window.figlet) {
+                // Use a smaller font for the confined space
+                window.figlet.text(text, {
+                    font: 'Small',
+                    horizontalLayout: 'fitted',
+                    verticalLayout: 'fitted'
+                }, (err, data) => {
+                    if (err) {
+                        console.error('ASCII generation error:', err);
+                        callback('ASCII ERROR');
+                    } else {
+                        // Limit to fit our display area
+                        const lines = data.split('\n').slice(0, 8); // Max 8 lines
+                        const truncatedLines = lines.map(line => line.substring(0, 60)); // Max 60 chars
+                        callback(truncatedLines.join('\n'));
+                    }
+                });
+            } else {
+                // Fallback if figlet not available
+                callback(`[${text}]`);
+            }
+        }
+
+        // Update the ASCII display
+        function updateAsciiDisplay(blockData) {
+            const nokiaVisual = document.getElementById('nokia-visual');
+            const asciiArt = document.getElementById('ascii-art');
+            const progressSection = document.getElementById('progress-section');
+            const progressTime = document.getElementById('progress-time');
+            const progressBar = document.getElementById('progress-bar');
+            const bottomInfo = document.getElementById('bottom-info');
+            const nounDisplay = document.getElementById('noun-display');
+
+            if (!blockData) return;
+
+            // Detect content type and update styling
+            const contentType = detectContentType(blockData);
+            currentContentType = contentType;
+            
+            // Remove all content type classes
+            nokiaVisual.classList.remove('automode', 'show', 'movie', 'documentary');
+            
+            // Add appropriate styling
+            if (isAutomode) {
+                nokiaVisual.classList.add('automode');
+            } else {
+                nokiaVisual.classList.add(contentType);
+            }
+            
+            // Always keep active class for the box
+            nokiaVisual.classList.add('active');
+
+            // Generate ASCII art for the title
+            const titleForAscii = blockData.title.split(' ').slice(0, 2).join(' '); // Use first 2 words
+            generateAsciiArt(titleForAscii, (ascii) => {
+                asciiArt.textContent = ascii;
+            });
+
+            // Update progress bar and time
+            const elapsedTime = (Date.now() - animationStartTime) / 1000;
+            const sessionDuration = 240 * 60; // 4 hours in seconds
+            const progress = Math.min(elapsedTime / sessionDuration, 1);
+            
+            progressTime.textContent = formatTime(elapsedTime);
+
+            // Create progress bar with colored diamonds
+            const barWidth = 28;
+            const filledWidth = Math.floor(progress * barWidth);
+            const sessionDurationMinutes = sessionDuration / 60;
+            const multiplierMilestones = calculateMultiplierMilestones(sessionDurationMinutes);
+
+            let progressBarText = '█'.repeat(filledWidth);
+            let placeholder = '░'.repeat(barWidth - filledWidth);
+            let glintColors = [];
+
+            // Add colored diamonds for milestones
+            multiplierMilestones.forEach((milestone, index) => {
+                if (index === 0) return; // Skip starting milestone
+                
+                const milestonePosition = Math.floor(milestone.time * barWidth);
+                let glintColor;
+                
+                if (isAutomode) {
+                    if (milestone.multiplier <= 1.0) {
+                        glintColor = '#ffff00'; // Yellow
+                    } else if (milestone.multiplier <= 1.5) {
+                        glintColor = '#ffaa00'; // Orange
+                    } else {
+                        glintColor = '#a985ff'; // Purple
+                    }
+                } else {
+                    if (milestone.multiplier <= 1.0) {
+                        glintColor = '#00ff41'; // Green
+                    } else if (milestone.multiplier <= 1.5) {
+                        glintColor = '#ffaa00'; // Orange
+                    } else {
+                        glintColor = '#a985ff'; // Purple
+                    }
+                }
+                
+                if (elapsedTime < (milestone.time * sessionDuration)) {
+                    // Milestone not yet reached
+                    if (milestonePosition > filledWidth) {
+                        let placeholderArray = placeholder.split('');
+                        const glintIndex = milestonePosition - filledWidth - 1;
+                        if (glintIndex >= 0 && glintIndex < placeholderArray.length) {
+                            placeholderArray[glintIndex] = '◆';
+                            glintColors[filledWidth + glintIndex] = glintColor;
+                        }
+                        placeholder = placeholderArray.join('');
+                    }
+                } else {
+                    // Milestone reached
+                    if (milestonePosition <= filledWidth) {
+                        let barArray = progressBarText.split('');
+                        if (milestonePosition - 1 < barArray.length) {
+                            barArray[milestonePosition - 1] = '◆';
+                            glintColors[milestonePosition - 1] = glintColor;
+                        }
+                        progressBarText = barArray.join('');
+                    }
+                }
+            });
+
+            // Determine current progress color based on passed diamonds
+            let currentProgressColor = isAutomode ? '#ffff00' : '#00ff41';
+            let lastPassedDiamondColor = null;
+            for (let i = 0; i < filledWidth; i++) {
+                if (progressBarText[i] === '◆' && glintColors[i]) {
+                    lastPassedDiamondColor = glintColors[i];
+                }
+            }
+            if (lastPassedDiamondColor) {
+                currentProgressColor = lastPassedDiamondColor;
+            }
+
+            // Create colored progress bar HTML
+            const fullProgressBar = progressBarText + placeholder;
+            let visualProgressBar = '';
+            for (let i = 0; i < fullProgressBar.length; i++) {
+                const char = fullProgressBar[i];
+                let color;
+                
+                if (char === '◆') {
+                    color = glintColors[i] || currentProgressColor;
+                    visualProgressBar += `<span style="color: ${color}; text-shadow: 0 0 2px ${color};">${char}</span>`;
+                } else if (char === '█') {
+                    visualProgressBar += `<span style="color: ${currentProgressColor};">${char}</span>`;
+                } else {
+                    const placeholderColor = glintColors[i] || '#666';
+                    visualProgressBar += `<span style="color: ${placeholderColor};">${char}</span>`;
+                }
+            }
+
+            progressBar.innerHTML = visualProgressBar;
+
+            // Update bottom info with detailed clip information
+            let clipInfo = blockData.title;
+            
+            if (blockData.service && blockData.service !== 'Unknown') {
+                clipInfo += ` • ${blockData.service.toUpperCase()}`;
+            }
+            
+            if (blockData.duration) {
+                clipInfo += ` • ${blockData.duration}`;
+            }
+            
+            if (blockData.season && blockData.episode && blockData.season !== 'N/A' && blockData.episode !== 'N/A') {
+                clipInfo += ` S${blockData.season}E${blockData.episode}`;
+            }
+            
+            if (blockData.genre) {
+                clipInfo += ` [${blockData.genre.toUpperCase()}]`;
+            }
+
+            bottomInfo.textContent = scrollText(clipInfo, elapsedTime, 50);
+            
+            // Update cycling noun display
+            const currentNoun = cycleNoun(blockData, elapsedTime * 1000); // Convert to milliseconds
+            nounDisplay.textContent = currentNoun;
+        }
+
+        // Animation loop
+        function startAsciiAnimation() {
+            function animate() {
+                if (currentSessionData) {
+                    updateAsciiDisplay(currentSessionData);
+                }
+                requestAnimationFrame(animate);
+            }
+            animate();
+        }
+
+        // Start animation loop
+        startAsciiAnimation();
+    </script>
+
+    <!-- Main interactive view wrapper -->
+    <div id="main-view">
+    <div id="extension-ui">
+        <!-- Extension Popup -->
+        <div class="extension-popup" style="flex-direction: column; width: 700px; max-width: 100%; margin:40px auto; background:#0d0d0d; border-radius:12px; overflow:hidden; display:flex;">
+            <!-- Header -->
+            <div class="popup-header">
+                <div class="popup-logo">RUMI</div>
+                <div class="header-controls">
+                    <button class="settings-button" id="open-settings-btn">⚙ SETTINGS</button>
+                </div>
+            </div>
+            <!-- Body -->
+            <div class="popup-body">
+                <!-- Points Section -->
+                <div class="points-section">
+                    <div style="text-align:center; margin-bottom:12px;">
+                        <div id="points-primary-display" class="points-total">0 POINTS</div>
+                        <div id="points-secondary-display" class="points-pending">+0 pending</div>
+                        <div id="points-multiplier-display" class="points-multiplier">1.0x</div>
+                    </div>
+                </div>
+
+                <!-- Show name display (hidden by default) -->
+                <div class="show-name-display" style="display:none; text-align:center; font-size:12px; color:var(--color-green); margin-top:8px;"></div>
+
+                <!-- Nokia Display -->
+                <div class="nokia-visual active" id="nokia-visual">
+                    <div class="noun-display" id="noun-display">READY</div>
+                    <div class="content-display">
+                        <div class="ascii-art" id="ascii-art">READY</div>
+                    </div>
+                    <div class="progress-section" id="progress-section">
+                        <div class="progress-time" id="progress-time">0:00</div>
+                        <div class="progress-bar" id="progress-bar">░░░░░░░░░░░░░░░░░░░░░░░░░░░░</div>
+                    </div>
+                    <div class="bottom-info" id="bottom-info">Waiting for content...</div>
+                </div>
+
+                <!-- Primary CTA -->
+                <button class="primary-cta" id="indexing-start-btn">START INDEXING</button>
+                <button class="primary-cta automode" id="indexing-stop-btn" style="display:none;">STOP INDEXING</button>
+            </div>
+        </div>
+
+        <!-- Debug Toggle Button -->
+        <button id="debug-toggle">🐞</button>
+        <div id="debug-panel">
+            <div style="margin-bottom:4px; font-weight:700;">Debug Controls</div>
+            <button id="skip-1m">+1m</button>
+            <button id="skip-5m">+5m</button>
+            <button id="skip-15m">+15m</button>
+            <button id="fast-toggle">Fast ×10</button>
+            <div style="margin-top:8px; padding-top:8px; border-top:1px solid #333;">
+                <div style="margin-bottom:4px; font-weight:700; font-size:9px;">Message Tests</div>
+                <button id="test-info" style="background:#0088ff; color:#000;">Info</button>
+                <button id="test-success" style="background:#00ff41; color:#000;">Success</button>
+                <button id="test-warning" style="background:#ffaa00; color:#000;">Warning</button>
+                <button id="test-error" style="background:#ff4444; color:#000;">Error</button>
+                <button id="test-settings" style="background:#8b5cf6; color:#000;">Settings</button>
+            </div>
+            <div style="margin-top:8px; padding-top:8px; border-top:1px solid #333;">
+                <div style="margin-bottom:4px; font-weight:700; font-size:9px;">ASCII Tests</div>
+                <button id="toggle-automode" style="background:#ffff00; color:#000;">Toggle Automode</button>
+                <button id="test-show" style="background:#00ffff; color:#000;">Test Show</button>
+                <button id="test-movie" style="background:#ff00ff; color:#000;">Test Movie</button>
+                <button id="test-doc" style="background:#ffaa00; color:#000;">Test Doc</button>
+            </div>
+        </div>
+
+        <!-- Holistic Panel placeholder (for future enhanced UI) -->
+        <div class="holistic-panel" style="display:none; margin-top:16px; padding:8px; background:#111; border:1px solid #333; border-radius:6px; text-align:center; font-size:11px; color:#888;">
+            Holistic panel placeholder
+        </div>
+    </div>
+    </div>
+
+    <!-- Receipt View (hidden by default) -->
+    <div id="receipt-view" style="display:none; margin:40px auto; max-width:520px;">
+        <div style="background:#0d0d0d; border:1px solid #333; border-radius:12px; padding:20px;">
+            <div style="text-align:center; margin-bottom:12px;">
+                <div style="font-size:14px; color:#888; font-weight:600; margin-bottom:8px; text-transform:uppercase; letter-spacing:1px; display:flex; justify-content:center; gap:8px;">
+                    <span>SESSION COMPLETED for</span>
+                    <span style="font-size:24px; font-weight:700; color:#00ff41;" id="receipt-total-points">+0.00</span>
+                    <span>POINTS</span>
+                </div>
+                <div style="font-size:12px; color:#888; text-transform:uppercase; letter-spacing:1px; display:flex; justify-content:center; gap:8px;">
+                    <span id="receipt-total-pending" style="font-size:13px; color:#ffaa00; font-weight:600;"></span>
+                    <span>PENDING FROM TODAY</span>
+                </div>
+            </div>
+
+            <!-- Session Details -->
+            <div style="background:#111; border:1px solid #333; border-radius:6px; padding:12px; margin-bottom:16px; font-size:11px;">
+                <div style="font-size:12px; color:#00ff41; font-weight:600; margin-bottom:8px; text-transform:uppercase; letter-spacing:1px;">SESSION DETAILS</div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:6px;"><span style="color:#888;">Duration:</span><span style="color:#fff;" id="receipt-duration">0:00</span></div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:6px;"><span style="color:#888;">Multiplier:</span><span style="color:#fff;" id="receipt-multiplier">1.0x</span></div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:6px;"><span style="color:#888;">Content Type:</span><span style="color:#fff;" id="receipt-content">Unknown</span></div>
+                <div style="display:flex; justify-content:space-between;"><span style="color:#888;">Chain Bonus:</span><span style="color:#ffaa00;" id="receipt-chain-bonus">+0.0</span></div>
+            </div>
+
+            <!-- Placeholder for indexed content list -->
+            <div id="receipt-content-list" style="font-size:10px; color:#ccc; max-height:120px; overflow-y:auto;"></div>
+
+            <!-- Done Button -->
+            <div style="text-align:center; margin-top:16px;">
+                <button class="primary-cta" onclick="document.getElementById('receipt-view').style.display='none'; document.getElementById('main-view').style.display='block';">DONE</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

@@ -1,0 +1,564 @@
+/* ================================
+   RUMI COMPONENTS STYLES
+   UI components and widgets
+   ================================ */
+
+/* ================================
+   EXTENSION POPUP
+   ================================ */
+
+.extension-popup {
+    width: 320px;
+    background: #000;
+    border: 2px solid #333;
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+
+.popup-header {
+    background: #111;
+    padding: 12px 16px;
+    border-bottom: 1px solid #333;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.popup-logo {
+    font-size: 16px;
+    font-weight: 700;
+    color: #00ff41;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.header-controls {
+    display: flex;
+    gap: 8px;
+}
+
+.popup-body {
+    flex: 1;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ================================
+   POINTS SECTION
+   ================================ */
+
+.points-section {
+    background: #1a1a1a;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 20px;
+    border: none;
+}
+
+.points-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.points-display {
+    display: flex;
+    flex-direction: column;
+}
+
+.points-total {
+    font-size: 20px;
+    font-weight: 700;
+    color: #00ff41;
+}
+
+.points-pending {
+    font-size: 11px;
+    color: #ffaa00;
+}
+
+.points-multiplier {
+    font-size: 14px;
+    font-weight: 600;
+    color: #00ff41;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* ================================
+   NOKIA VISUAL
+   ================================ */
+
+.nokia-visual {
+    width: 100%;
+    height: 45px;
+    background: linear-gradient(45deg, #001100, #003300);
+    border: 1px solid #00ff41;
+    border-radius: 4px;
+    margin: 0 auto 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: monospace;
+    font-size: 6px;
+    color: #00ff41;
+    overflow: hidden;
+}
+
+/* ================================
+   HOLISTIC PANEL
+   ================================ */
+
+.holistic-panel {
+    background: #111;
+    border: 1px solid #333;
+    border-radius: 6px;
+    padding: 12px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.holistic-section {
+    width: 100%;
+}
+
+#holistic-show-info {
+    font-size: 11px;
+    color: #ccc;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+#holistic-animation pre {
+    margin: 0;
+    padding: 0;
+    color: #00ff41;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    font-weight: bold;
+    line-height: 1.4;
+    white-space: pre-wrap;
+    text-align: center;
+}
+
+#holistic-animation pre.automode {
+    color: #ffff00 !important;
+}
+
+#holistic-progress {
+    font-size: 11px;
+    color: #888;
+    margin-top: 8px;
+}
+
+/* ================================
+   BUTTONS
+   ================================ */
+
+.primary-cta {
+    width: 100%;
+    padding: 12px 20px;
+    background: #222;
+    color: #00ff41;
+    border: 2px solid #00ff41;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-family: 'SF Mono', monospace;
+    transition: all 0.3s ease;
+}
+
+.primary-cta:hover {
+    background: #00ff41;
+    color: #000;
+}
+
+.primary-cta:disabled {
+    background: #333;
+    color: #666;
+    border-color: #666;
+    cursor: not-allowed;
+}
+
+.primary-cta:disabled:hover {
+    background: #333;
+    color: #666;
+}
+
+.primary-cta.automode {
+    background: #ffff00;
+    color: #000;
+    border-color: #ffff00;
+}
+
+.primary-cta.automode:hover {
+    background: #ffaa00;
+    border-color: #ffaa00;
+}
+
+.secondary-button {
+    padding: 8px 16px;
+    background: transparent;
+    color: #888;
+    border: 1px solid #333;
+    border-radius: 6px;
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.secondary-button:hover {
+    background: #222;
+    color: #fff;
+}
+
+.automode-button {
+    background: #222;
+    color: #ffff00;
+    border: 2px solid #ffff00;
+}
+
+.automode-button:hover {
+    background: #ffff00;
+    color: #000;
+}
+
+.settings-button {
+    width: 32px;
+    height: 32px;
+    background: #222;
+    border: 1px solid #333;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.settings-button:hover {
+    background: #333;
+}
+
+/* ================================
+   STREAM DETECTOR
+   ================================ */
+
+.stream-detector {
+    padding: 12px;
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.stream-detector:hover {
+    background: #222;
+}
+
+.stream-detector .status {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.stream-detector .subtext {
+    font-size: 11px;
+    color: #888;
+}
+
+.show-select {
+    background: #1a1a1a;
+    border: 1px solid #333;
+    color: #ccc;
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-size: 11px;
+    width: 100%;
+    margin-top: 8px;
+}
+
+/* ================================
+   ACTIVATION CIRCLE
+   ================================ */
+
+.activation-circle {
+    width: 120px;
+    height: 120px;
+    border: 2px solid #00ff41;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin: 0 auto;
+    position: relative;
+    background: radial-gradient(circle at center, #001100, #000000);
+}
+
+.activation-circle:hover {
+    transform: scale(1.05);
+}
+
+.activation-text {
+    font-size: 12px;
+    font-weight: 600;
+    color: #00ff41;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-align: center;
+    line-height: 1.4;
+}
+
+/* ================================
+   MESSAGE AREA
+   ================================ */
+
+.message-area {
+    padding: 12px;
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-size: 12px;
+    color: #ccc;
+    line-height: 1.4;
+    transition: all 0.3s ease;
+}
+
+.message-area.error {
+    background: #330000;
+    border-color: #ff0000;
+}
+
+.message-area.warning {
+    background: #332200;
+    border-color: #ffaa00;
+}
+
+.message-area.info {
+    background: #001133;
+    border-color: #0088ff;
+}
+
+.message-area.collapsed {
+    height: 0;
+    padding: 0;
+    margin: 0;
+    opacity: 0;
+}
+
+.message-area.expanded {
+    height: auto;
+    opacity: 1;
+}
+
+/* ================================
+   EXPANDABLE SECTIONS
+   ================================ */
+
+.expandable-section {
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    overflow: hidden;
+}
+
+.expandable-section.expanded {
+    background: #222;
+}
+
+.expandable-content {
+    padding: 12px;
+    display: none;
+}
+
+.expandable-title {
+    padding: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    color: #ccc;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.expand-icon {
+    transform: rotate(0deg);
+    transition: transform 0.3s ease;
+}
+
+.expandable-section.expanded .expand-icon {
+    transform: rotate(180deg);
+}
+
+/* ================================
+   CHANNEL SECTION
+   ================================ */
+
+.expandable-channel-section {
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.expand-channel-header {
+    padding: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    color: #ccc;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+}
+
+.expand-channel-header:hover {
+    background: #222;
+}
+
+.channel-expanded-container {
+    padding: 12px;
+    display: none;
+    background: #222;
+}
+
+/* ================================
+   RECEIPT SECTION
+   ================================ */
+
+.receipt-container {
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 20px;
+    font-family: 'Courier New', monospace;
+}
+
+.receipt-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.receipt-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #00ff41;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+}
+
+.receipt-points {
+    font-size: 24px;
+    font-weight: 700;
+    color: #00ff41;
+}
+
+.receipt-subtitle {
+    font-size: 11px;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 4px;
+}
+
+.receipt-details {
+    border-top: 1px dashed #333;
+    padding-top: 16px;
+    margin-top: 16px;
+}
+
+.receipt-section-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: #ccc;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+}
+
+.receipt-info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+}
+
+.receipt-info-item {
+    font-size: 11px;
+    line-height: 1.4;
+}
+
+.receipt-label {
+    color: #888;
+}
+
+.receipt-value {
+    color: #ccc;
+}
+
+.receipt-actions {
+    margin-top: 20px;
+    display: flex;
+    gap: 12px;
+}
+
+/* ================================
+   STATE MODIFIERS
+   ================================ */
+
+.paused .points-total,
+.paused .points-multiplier {
+    color: #ffaa00;
+}
+
+.paused .primary-cta {
+    background: #ffaa00;
+    color: #000;
+    border-color: #ffaa00;
+}
+
+.paused .nokia-visual {
+    border-color: #ffaa00;
+    color: #ffaa00;
+    background: linear-gradient(45deg, #332200, #331100);
+}
+
+/* Nokia Display Section */
+.nokia-section {
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 6px;
+    padding: 16px;
+    margin: 16px 0;
+    font-family: monospace;
+}
+
+.nokia-section .ascii-art {
+    margin: 0;
+    padding: 0;
+    color: #00ff41;
+    font-size: 12px;
+    line-height: 1.2;
+    white-space: pre;
+    overflow-x: auto;
+} 

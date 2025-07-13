@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Genre Channel Duration Fixes Test</title>
+    <style>
+        body {
+            font-family: 'SF Mono', monospace;
+            background: #111;
+            color: #fff;
+            padding: 20px;
+        }
+        
+        .test-panel {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .test-button {
+            background: #00ff41;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+            font-family: 'SF Mono', monospace;
+        }
+        
+        .test-button:hover {
+            background: #00cc33;
+        }
+        
+        .test-button.warning {
+            background: #ffaa00;
+        }
+        
+        .test-button.warning:hover {
+            background: #cc8800;
+        }
+        
+        .test-button.danger {
+            background: #ff4444;
+        }
+        
+        .test-button.danger:hover {
+            background: #cc3333;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .status-healthy {
+            background: #00ff41;
+        }
+        
+        .status-warning {
+            background: #ffaa00;
+        }
+        
+        .status-error {
+            background: #ff4444;
+        }
+        
+        .channel-container {
+            border: 2px solid #333;
+            border-radius: 8px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        
+        .channel-header {
+            background: #222;
+            padding: 10px;
+            border-bottom: 1px solid #333;
+        }
+        
+        .log-output {
+            background: #000;
+            border: 1px solid #333;
+            border-radius: 4px;
+            padding: 10px;
+            height: 300px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+        }
+        
+        .duration-patterns {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin: 10px 0;
+        }
+        
+        .pattern-card {
+            background: #222;
+            border: 1px solid #444;
+            border-radius: 4px;
+            padding: 10px;
+        }
+        
+        .pattern-title {
+            font-weight: bold;
+            color: #00ff41;
+            margin-bottom: 5px;
+        }
+        
+        .pattern-details {
+            font-size: 11px;
+            color: #ccc;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 Genre Channel Duration Fixes Test</h1>
+    
+    <div class="test-panel">
+        <h2>Duration Patterns Analysis</h2>
+        <div class="duration-patterns">
+            <div class="pattern-card">
+                <div class="pattern-title">Comedy</div>
+                <div class="pattern-details">22-28 min (typical: 22)</div>
+            </div>
+            <div class="pattern-card">
+                <div class="pattern-title">Drama</div>
+                <div class="pattern-details">45-60 min (typical: 47)</div>
+            </div>
+            <div class="pattern-card">
+                <div class="pattern-title">Sci-Fi</div>
+                <div class="pattern-details">32-62 min (typical: 45)</div>
+            </div>
+            <div class="pattern-card">
+                <div class="pattern-title">Action</div>
+                <div class="pattern-details">44-181 min (typical: 120)</div>
+            </div>
+            <div class="pattern-card">
+                <div class="pattern-title">Documentary</div>
+                <div class="pattern-details">44-100 min (typical: 50)</div>
+            </div>
+            <div class="pattern-card">
+                <div class="pattern-title">Thriller</div>
+                <div class="pattern-details">132 min (typical: 132)</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="test-panel">
+        <h2>Fix Status</h2>
+        <div id="fix-status">
+            <span class="status-indicator status-warning"></span>
+            <span id="status-text">Initializing...</span>
+        </div>
+        
+        <div id="fix-metrics">
+            <p>Duration-Aware Layout: <span id="duration-layout-status">❌</span></p>
+            <p>Smart Timeline Scaling: <span id="timeline-scaling-status">❌</span></p>
+            <p>Enhanced Block Positioning: <span id="block-positioning-status">❌</span></p>
+            <p>Gap Management: <span id="gap-management-status">❌</span></p>
+        </div>
+    </div>
+    
+    <div class="test-panel">
+        <h2>Test Controls</h2>
+        <button class="test-button" onclick="testComedyContent()">Test Comedy (22min)</button>
+        <button class="test-button" onclick="testDramaContent()">Test Drama (47min)</button>
+        <button class="test-button" onclick="testMovieContent()">Test Movie (120min+)</button>
+        <button class="test-button" onclick="testMixedContent()">Test Mixed Content</button>
+        <button class="test-button warning" onclick="debugDurationAnalysis()">Debug Duration Analysis</button>
+        <button class="test-button" onclick="testOverlapPrevention()">Test Overlap Prevention</button>
+        <button class="test-button danger" onclick="resetChannel()">Reset Channel</button>
+    </div>
+    
+    <div class="test-panel">
+        <h2>Genre Channel Preview</h2>
+        <div class="channel-container">
+            <div class="channel-header">
+                <strong>GENRE CHANNEL</strong> - <span id="channel-status">Loading...</span>
+            </div>
+            <iframe id="test-channel-frame" src="Genre-channel_v2.html" style="width: 100%; height: 300px; border: none; background: transparent;"></iframe>
+        </div>
+    </div>
+    
+    <div class="test-panel">
+        <h2>Test Log</h2>
+        <div id="test-log" class="log-output"></div>
+    </div>
+    
+    <!-- Load the fixes -->
+    <script src="genre-channel-fixes.js"></script>
+    <script src="genre-channel-duration-fixes.js"></script>
+    
+    <script>
+        // Test functions
+        function log(message) {
+            const logOutput = document.getElementById('test-log');
+            const timestamp = new Date().toLocaleTimeString();
+            logOutput.innerHTML += `[${timestamp}] ${message}\n`;
+            logOutput.scrollTop = logOutput.scrollHeight;
+            console.log(`🧪 TEST: ${message}`);
+        }
+        
+        function updateStatus() {
+            const durationFixes = window.GenreChannelDurationFixes;
+            const layoutFixes = window.GenreChannelFixes;
+            const statusIndicator = document.querySelector('.status-indicator');
+            const statusText = document.getElementById('status-text');
+            
+            if (durationFixes && durationFixes.isFixesApplied() && layoutFixes && layoutFixes.isFixesApplied()) {
+                statusIndicator.className = 'status-indicator status-healthy';
+                statusText.textContent = 'All Fixes Applied';
+                
+                // Update metrics
+                document.getElementById('duration-layout-status').textContent = '✅';
+                document.getElementById('timeline-scaling-status').textContent = '✅';
+                document.getElementById('block-positioning-status').textContent = '✅';
+                document.getElementById('gap-management-status').textContent = '✅';
+            } else {
+                statusIndicator.className = 'status-indicator status-warning';
+                statusText.textContent = 'Fixes Not Applied';
+            }
+        }
+        
+        function testComedyContent() {
+            log('Testing comedy content (22-minute episodes)...');
+            
+            const frame = document.getElementById('test-channel-frame');
+            if (!frame || !frame.contentWindow) {
+                log('❌ Channel frame not ready');
+                return;
+            }
+            
+            try {
+                const frameWindow = frame.contentWindow;
+                
+                // Simulate comedy content
+                const comedyContent = [
+                    { title: 'The Office S01E01', duration: 22, type: 'episode', service: 'PEACOCK', genre: 'comedy' },
+                    { title: 'The Office S01E02', duration: 22, type: 'episode', service: 'PEACOCK', genre: 'comedy' },
+                    { title: 'The Office S01E03', duration: 22, type: 'episode', service: 'PEACOCK', genre: 'comedy' }
+                ];
+                
+                if (frameWindow.currentContent && frameWindow.updateProgramTrack) {
+                    frameWindow.currentContent = comedyContent;
+                    frameWindow.updateProgramTrack();
+                    log('✅ Comedy content test completed');
+                } else {
+                    log('❌ Channel functions not available');
+                }
+            } catch (error) {
+                log(`❌ Error testing comedy content: ${error.message}`);
+            }
+        }
+        
+        function testDramaContent() {
+            log('Testing drama content (47-minute episodes)...');
+            
+            const frame = document.getElementById('test-channel-frame');
+            if (!frame || !frame.contentWindow) {
+                log('❌ Channel frame not ready');
+                return;
+            }
+            
+            try {
+                const frameWindow = frame.contentWindow;
+                
+                // Simulate drama content
+                const dramaContent = [
+                    { title: 'Breaking Bad S01E01', duration: 58, type: 'episode', service: 'NETFLIX', genre: 'drama' },
+                    { title: 'Breaking Bad S01E02', duration: 48, type: 'episode', service: 'NETFLIX', genre: 'drama' },
+                    { title: 'Breaking Bad S01E03', duration: 48, type: 'episode', service: 'NETFLIX', genre: 'drama' }
+                ];
+                
+                if (frameWindow.currentContent && frameWindow.updateProgramTrack) {
+                    frameWindow.currentContent = dramaContent;
+                    frameWindow.updateProgramTrack();
+                    log('✅ Drama content test completed');
+                } else {
+                    log('❌ Channel functions not available');
+                }
+            } catch (error) {
+                log(`❌ Error testing drama content: ${error.message}`);
+            }
+        }
+        
+        function testMovieContent() {
+            log('Testing movie content (120+ minutes)...');
+            
+            const frame = document.getElementById('test-channel-frame');
+            if (!frame || !frame.contentWindow) {
+                log('❌ Channel frame not ready');
+                return;
+            }
+            
+            try {
+                const frameWindow = frame.contentWindow;
+                
+                // Simulate movie content
+                const movieContent = [
+                    { title: 'The Dark Knight', duration: 152, type: 'movie', service: 'HBO', genre: 'action' },
+                    { title: 'Inception', duration: 148, type: 'movie', service: 'HBO', genre: 'sci-fi' },
+                    { title: 'Avengers Endgame', duration: 181, type: 'movie', service: 'DISNEY', genre: 'action' }
+                ];
+                
+                if (frameWindow.currentContent && frameWindow.updateProgramTrack) {
+                    frameWindow.currentContent = movieContent;
+                    frameWindow.updateProgramTrack();
+                    log('✅ Movie content test completed');
+                } else {
+                    log('❌ Channel functions not available');
+                }
+            } catch (error) {
+                log(`❌ Error testing movie content: ${error.message}`);
+            }
+        }
+        
+        function testMixedContent() {
+            log('Testing mixed content (varying durations)...');
+            
+            const frame = document.getElementById('test-channel-frame');
+            if (!frame || !frame.contentWindow) {
+                log('❌ Channel frame not ready');
+                return;
+            }
+            
+            try {
+                const frameWindow = frame.contentWindow;
+                
+                // Simulate mixed content
+                const mixedContent = [
+                    { title: 'The Office S01E01', duration: 22, type: 'episode', service: 'PEACOCK', genre: 'comedy' },
+                    { title: 'Breaking Bad S01E01', duration: 58, type: 'episode', service: 'NETFLIX', genre: 'drama' },
+                    { title: 'The Dark Knight', duration: 152, type: 'movie', service: 'HBO', genre: 'action' },
+                    { title: 'Planet Earth S01E01', duration: 50, type: 'episode', service: 'BBC', genre: 'documentary' }
+                ];
+                
+                if (frameWindow.currentContent && frameWindow.updateProgramTrack) {
+                    frameWindow.currentContent = mixedContent;
+                    frameWindow.updateProgramTrack();
+                    log('✅ Mixed content test completed');
+                } else {
+                    log('❌ Channel functions not available');
+                }
+            } catch (error) {
+                log(`❌ Error testing mixed content: ${error.message}`);
+            }
+        }
+        
+        function debugDurationAnalysis() {
+            log('Debugging duration analysis...');
+            
+            if (window.GenreChannelDurationFixes && window.GenreChannelDurationFixes.debugDurationAnalysis) {
+                window.GenreChannelDurationFixes.debugDurationAnalysis();
+                log('✅ Duration analysis debug completed - check console for details');
+            } else {
+                log('❌ Debug function not available');
+            }
+        }
+        
+        function testOverlapPrevention() {
+            log('Testing overlap prevention...');
+            
+            const frame = document.getElementById('test-channel-frame');
+            if (!frame || !frame.contentWindow) {
+                log('❌ Channel frame not ready');
+                return;
+            }
+            
+            try {
+                const frameWindow = frame.contentWindow;
+                
+                if (frameWindow.preventBlockOverlaps) {
+                    frameWindow.preventBlockOverlaps();
+                    log('✅ Overlap prevention test completed');
+                } else {
+                    log('❌ Overlap prevention function not available');
+                }
+            } catch (error) {
+                log(`❌ Error testing overlap prevention: ${error.message}`);
+            }
+        }
+        
+        function resetChannel() {
+            log('Resetting channel...');
+            
+            const frame = document.getElementById('test-channel-frame');
+            if (frame) {
+                frame.src = frame.src;
+                log('✅ Channel reset completed');
+            } else {
+                log('❌ Channel frame not found');
+            }
+        }
+        
+        // Update status every second
+        setInterval(updateStatus, 1000);
+        
+        // Initial status update
+        setTimeout(updateStatus, 1000);
+        
+        // Log when page loads
+        log('Genre channel duration fixes test suite loaded');
+        
+        // Wait for fixes to be applied
+        setTimeout(() => {
+            if (window.GenreChannelDurationFixes && window.GenreChannelDurationFixes.isFixesApplied()) {
+                log('✅ Genre channel duration fixes applied successfully');
+            } else {
+                log('⚠️ Genre channel duration fixes not yet applied');
+            }
+        }, 2000);
+        
+        // Log duration patterns
+        setTimeout(() => {
+            if (window.GenreChannelDurationFixes && window.GenreChannelDurationFixes.analyzeCSVDurationPatterns) {
+                log('📊 Analyzing CSV duration patterns...');
+                window.GenreChannelDurationFixes.analyzeCSVDurationPatterns();
+            }
+        }, 3000);
+    </script>
+</body>
+</html> 

@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Padding Test - Genre Channel</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f5f5f5;
+        }
+        
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        .test-section h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        
+        .status-display {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            margin: 10px 0;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin: 10px 0;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .btn-primary { background: #007bff; color: white; }
+        .btn-success { background: #28a745; color: white; }
+        .btn-warning { background: #ffc107; color: black; }
+        .btn-danger { background: #dc3545; color: white; }
+        
+        button:hover {
+            opacity: 0.8;
+        }
+        
+        .iframe-container {
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        
+        iframe {
+            width: 100%;
+            height: 500px;
+            border: none;
+        }
+        
+        .log-container {
+            background: #000;
+            color: #00ff00;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            height: 150px;
+            overflow-y: auto;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>📏 Simple Padding Test - Genre Channel</h1>
+        <p>Testing the reverted version with 10px padding between blocks.</p>
+        
+        <div class="test-section">
+            <h3>📊 System Status</h3>
+            <div class="status-display" id="statusDisplay">
+                Loading status...
+            </div>
+            <div class="controls">
+                <button class="btn-primary" onclick="refreshStatus()">🔄 Refresh Status</button>
+                <button class="btn-success" onclick="testPadding()">📏 Test Padding</button>
+                <button class="btn-warning" onclick="loadTestContent()">📺 Load Test Content</button>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h3>📺 Genre Channel Test</h3>
+            <div class="iframe-container">
+                <iframe id="genreChannelFrame" src="Genre-channel_v2.html"></iframe>
+            </div>
+            <div class="controls">
+                <button class="btn-success" onclick="loadSciFiContent()">🎬 Load Sci-Fi Content</button>
+                <button class="btn-success" onclick="loadComedyContent()">😂 Load Comedy Content</button>
+                <button class="btn-success" onclick="loadShortContent()">⏱️ Load Short Content</button>
+                <button class="btn-danger" onclick="removeRandomBlock()">🗑️ Remove Random Block</button>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h3>📝 Test Logs</h3>
+            <div class="log-container" id="logContainer">
+                <div>📏 Simple Padding Test initialized...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let frameWindow;
+        let logContainer;
+        let statusDisplay;
+        
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            logContainer = document.getElementById('logContainer');
+            statusDisplay = document.getElementById('statusDisplay');
+            
+            // Wait for iframe to load
+            const iframe = document.getElementById('genreChannelFrame');
+            iframe.onload = () => {
+                frameWindow = iframe.contentWindow;
+                log('✅ Genre Channel iframe loaded');
+                refreshStatus();
+            };
+            
+            log('📏 Simple Padding Test initialized');
+        });
+        
+        // Logging function
+        function log(message) {
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.textContent = `[${timestamp}] ${message}`;
+            logContainer.appendChild(logEntry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+        
+        // Refresh system status
+        function refreshStatus() {
+            if (!frameWindow || !frameWindow.genreChannelOverlapFix) {
+                statusDisplay.innerHTML = '❌ Overlap fix not available';
+                return;
+            }
+            
+            const status = frameWindow.genreChannelOverlapFix.getStatus();
+            statusDisplay.innerHTML = `
+                <strong>System Status:</strong><br>
+                ✅ Enabled: ${status.isEnabled}<br>
+                🔄 Auto Gap Filling: ${status.autoFillGaps}<br>
+                ⏰ Preserve Time Positions: ${status.preserveTimePositions}<br>
+                🔧 Is Filling Gaps: ${status.isFillingGaps}<br>
+                📦 Block Count: ${status.blockCount}<br>
+                🔍 Overlap Count: ${status.overlapCount}<br>
+                🕳️ Gap Count: ${status.gapCount}<br>
+                📏 Block Padding: ${frameWindow.genreChannelOverlapFix.blockPadding}px
+            `;
+            
+            log('📊 Status refreshed');
+        }
+        
+        // Test padding
+        function testPadding() {
+            if (!frameWindow) {
+                log('❌ Frame not available');
+                return;
+            }
+            
+            log('📏 Testing padding...');
+            
+            const blocks = frameWindow.document.querySelectorAll('.program-slot:not(.empty)');
+            log(`📦 Found ${blocks.length} blocks`);
+            
+            if (blocks.length > 1) {
+                const firstBlock = blocks[0];
+                const secondBlock = blocks[1];
+                
+                const firstRect = firstBlock.getBoundingClientRect();
+                const secondRect = secondBlock.getBoundingClientRect();
+                
+                const gap = secondRect.left - (firstRect.left + firstRect.width);
+                log(`📏 Gap between first two blocks: ${gap.toFixed(1)}px`);
+                
+                if (gap >= 8 && gap <= 12) {
+                    log('✅ Padding working correctly (8-12px gap)');
+                } else {
+                    log(`⚠️ Unexpected gap size: ${gap.toFixed(1)}px`);
+                }
+            } else {
+                log('⚠️ Need at least 2 blocks to test padding');
+            }
+        }
+        
+        // Load test content
+        function loadTestContent() {
+            if (!frameWindow) return;
+            
+            log('📺 Loading test content...');
+            
+            const testContent = [
+                { title: 'Test Content 1', duration: 60, genre: 'Comedy' },
+                { title: 'Test Content 2', duration: 90, genre: 'Drama' },
+                { title: 'Test Content 3', duration: 120, genre: 'Action' }
+            ];
+            
+            if (frameWindow.loadTestContent) {
+                frameWindow.loadTestContent(testContent);
+                log('✅ Test content loaded');
+            } else {
+                log('❌ loadTestContent function not available');
+            }
+        }
+        
+        // Load different content types
+        function loadSciFiContent() {
+            if (!frameWindow) return;
+            log('🎬 Loading Sci-Fi content...');
+            frameWindow.loadContentByGenre('Sci-Fi');
+        }
+        
+        function loadComedyContent() {
+            if (!frameWindow) return;
+            log('😂 Loading Comedy content...');
+            frameWindow.loadContentByGenre('Comedy');
+        }
+        
+        function loadShortContent() {
+            if (!frameWindow) return;
+            log('⏱️ Loading short content...');
+            const shortContent = [
+                { title: 'Short Film 1', duration: 15, genre: 'Action' },
+                { title: 'Short Film 2', duration: 20, genre: 'Drama' },
+                { title: 'Short Film 3', duration: 25, genre: 'Comedy' }
+            ];
+            
+            if (frameWindow.loadTestContent) {
+                frameWindow.loadTestContent(shortContent);
+            }
+        }
+        
+        function removeRandomBlock() {
+            if (!frameWindow) return;
+            
+            log('🗑️ Removing random block...');
+            const blocks = frameWindow.document.querySelectorAll('.program-slot:not(.empty)');
+            if (blocks.length > 0) {
+                const randomIndex = Math.floor(Math.random() * blocks.length);
+                if (frameWindow.removeContent) {
+                    frameWindow.removeContent(randomIndex);
+                }
+            }
+        }
+        
+        // Auto-refresh status every 5 seconds
+        setInterval(() => {
+            if (frameWindow) {
+                refreshStatus();
+            }
+        }, 5000);
+    </script>
+</body>
+</html> 

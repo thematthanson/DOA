@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detected Show Protection Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #1a1a1a;
+            color: #fff;
+        }
+        .test-section {
+            background: #2a2a2a;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        .test-result {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .pass {
+            background: #1a4a1a;
+            border: 1px solid #4a8a4a;
+        }
+        .fail {
+            background: #4a1a1a;
+            border: 1px solid #8a4a4a;
+        }
+        button {
+            background: #4a4a8a;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #5a5a9a;
+        }
+        iframe {
+            width: 100%;
+            height: 400px;
+            border: 1px solid #4a4a4a;
+            border-radius: 4px;
+        }
+        .content-list {
+            background: #333;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+            font-family: monospace;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Detected Show Protection Test</h1>
+    
+    <div class="test-section">
+        <h2>Test Overview</h2>
+        <p>This test verifies that detected shows (first content block) are properly protected and cannot be removed or replaced when the genre is changed.</p>
+        
+        <div class="test-result pass">
+            <strong>✅ Test Setup:</strong> Loaded optimized genre channel in iframe
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>Test Steps</h2>
+        <button onclick="simulateShowDetection()">1. Simulate Show Detection</button>
+        <button onclick="changeGenre()">2. Change Genre</button>
+        <button onclick="checkProtection()">3. Check Protection</button>
+        <button onclick="resetTest()">Reset Test</button>
+    </div>
+
+    <div class="test-section">
+        <h2>Channel Content</h2>
+        <div id="content-display" class="content-list">No content loaded yet...</div>
+    </div>
+
+    <div class="test-section">
+        <h2>Test Results</h2>
+        <div id="test-results"></div>
+    </div>
+
+    <iframe id="channel-frame" src="genre-channel-optimized.html"></iframe>
+
+    <script>
+        let testResults = [];
+        let detectedShow = null;
+
+        function addTestResult(message, passed) {
+            const resultsDiv = document.getElementById('test-results');
+            const resultDiv = document.createElement('div');
+            resultDiv.className = `test-result ${passed ? 'pass' : 'fail'}`;
+            resultDiv.innerHTML = `<strong>${passed ? '✅' : '❌'}</strong> ${message}`;
+            resultsDiv.appendChild(resultDiv);
+            testResults.push({ message, passed });
+        }
+
+        function updateContentDisplay() {
+            const iframe = document.getElementById('channel-frame');
+            iframe.contentWindow.postMessage({ type: 'requestCurrentContent' }, '*');
+        }
+
+        function simulateShowDetection() {
+            const iframe = document.getElementById('channel-frame');
+            const showData = {
+                title: 'Planet Earth II',
+                genre: 'Documentary',
+                service: 'DISCOVERY+',
+                season: 'S1',
+                episode: 'E1',
+                duration: 60,
+                type: 'show'
+            };
+            
+            detectedShow = showData;
+            iframe.contentWindow.postMessage({
+                type: 'rumi:showDetected',
+                payload: showData
+            }, '*');
+            
+            addTestResult('Simulated show detection: Planet Earth II', true);
+            
+            // Wait a moment then update display
+            setTimeout(updateContentDisplay, 1000);
+        }
+
+        function changeGenre() {
+            const iframe = document.getElementById('channel-frame');
+            
+            // Send a message to change genre (this would normally be done through the UI)
+            // For testing, we'll simulate the autoPopulateFromSubmenu behavior
+            iframe.contentWindow.postMessage({
+                type: 'testChangeGenre',
+                genre: 'Action'
+            }, '*');
+            
+            addTestResult('Attempted to change genre from Documentary to Action', true);
+            
+            // Wait a moment then update display
+            setTimeout(updateContentDisplay, 1000);
+        }
+
+        function checkProtection() {
+            const iframe = document.getElementById('channel-frame');
+            iframe.contentWindow.postMessage({ type: 'requestCurrentContent' }, '*');
+            
+            // We'll check the results in the message handler
+            setTimeout(() => {
+                addTestResult('Checking if detected show is still protected...', true);
+            }, 500);
+        }
+
+        function resetTest() {
+            const iframe = document.getElementById('channel-frame');
+            iframe.src = iframe.src; // Reload iframe
+            document.getElementById('test-results').innerHTML = '';
+            document.getElementById('content-display').innerHTML = 'No content loaded yet...';
+            testResults = [];
+            detectedShow = null;
+            addTestResult('Test reset - iframe reloaded', true);
+        }
+
+        // Listen for messages from the iframe
+        window.addEventListener('message', (event) => {
+            if (event.data.type === 'currentContentResponse') {
+                const content = event.data.content;
+                const contentDisplay = document.getElementById('content-display');
+                
+                if (content.length === 0) {
+                    contentDisplay.innerHTML = 'No content loaded';
+                    return;
+                }
+                
+                let html = '<strong>Current Content:</strong><br>';
+                content.forEach((item, index) => {
+                    const protected = item.protected ? '🔒 PROTECTED' : '🔓 REMOVABLE';
+                    const isDetected = index === 0 && item.protected ? ' (DETECTED SHOW)' : '';
+                    html += `${index + 1}. ${item.title} - ${item.duration}min • ${item.service} ${protected}${isDetected}<br>`;
+                });
+                
+                contentDisplay.innerHTML = html;
+                
+                // Check protection if this was triggered by our test
+                if (testResults.length > 0 && testResults[testResults.length - 1].message.includes('Checking if detected show')) {
+                    const firstItem = content[0];
+                    if (firstItem && firstItem.protected && firstItem.title === 'Planet Earth II') {
+                        addTestResult('✅ Detected show is still protected and in first position', true);
+                    } else {
+                        addTestResult('❌ Detected show was not protected or was moved/removed', false);
+                    }
+                }
+            }
+        });
+
+        // Add test change genre handler to the iframe
+        setTimeout(() => {
+            const iframe = document.getElementById('channel-frame');
+            iframe.addEventListener('load', () => {
+                // Inject test handler into iframe
+                iframe.contentWindow.addEventListener('message', (event) => {
+                    if (event.data.type === 'testChangeGenre') {
+                        // Simulate the autoPopulateFromSubmenu behavior
+                        const channel = iframe.contentWindow.OptimizedGenreChannel;
+                        if (channel) {
+                            channel.currentGenre = event.data.genre;
+                            
+                            // Preserve the detected show (first item) if it exists and is protected
+                            const detectedShow = channel.currentContent[0]?.protected ? channel.currentContent[0] : null;
+                            
+                            // Clear content but preserve detected show
+                            channel.currentContent = detectedShow ? [detectedShow] : [];
+                            
+                            channel.updateChannelTitle();
+                            channel.autoPopulateFromGenre();
+                            channel.createLineup();
+                        }
+                    }
+                });
+            });
+        }, 1000);
+    </script>
+</body>
+</html> 

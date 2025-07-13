@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rumi Integrated Front-End</title>
+
+    <!-- Shared theme & fonts -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link href="https://fonts.googleapis.com/css2?family=SF+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="styles/theme.css" rel="stylesheet" />
+
+    <style>
+        /* Root reset from indexD.html */
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{background:var(--color-bg);color:var(--color-text);font-family:'SF Mono','Menlo',monospace;padding:20px;overflow-x:hidden;}
+        /* Sidebar simulation container (Section 1) */
+        .simulation-container{display:flex;flex-direction:column;gap:20px;max-width:360px;width:100%;background:#111;border:1px solid #222;border-radius:8px;padding:24px;}
+        .simulation-heading{font-size:12px;color:#666;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;}
+        .section-box{border:1px solid #333;background:#1a1a1a;border-radius:6px;padding:16px;}
+        .section-box h3{font-size:12px;font-weight:600;color:#00ff41;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;}
+        select,button{font-family:'SF Mono',monospace;font-size:12px;border-radius:4px;}
+        select{width:100%;padding:8px;background:#000;border:1px solid #333;color:#ccc;margin-bottom:8px;}
+        .primary-btn{width:100%;padding:12px;background:#8b5cf6;border:none;color:#fff;font-weight:700;cursor:pointer;text-transform:uppercase;letter-spacing:0.8px;}        
+        .primary-btn:hover{background:#7c3aed;}
+        /* Activation circle */
+        #activation-circle{width:60px;height:60px;border:2px solid #00ff41;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#00ff41;font-size:9px;cursor:pointer;margin:auto;}
+        /* Message area copied from tests integration */
+        .message-area{background:linear-gradient(135deg,#1a1a1a,#2a2a2a);color:#00ff41;padding:12px 20px;font-size:13px;font-weight:600;display:flex;flex-direction:column;border-radius:8px;border:1px solid #00ff41;margin:16px 0;transition:all .3s ease;text-transform:uppercase;letter-spacing:.5px;}
+        .message-area.collapsed{font-size:11px;padding:8px 16px;opacity:.8}
+        .message-area.error{background:linear-gradient(135deg,#2a1a1a,#3a2a2a);color:#ff4444;border-color:#ff4444}
+        .message-area.warning{background:linear-gradient(135deg,#2a2a1a,#3a3a2a);color:#ffaa00;border-color:#ffaa00}
+        #program-track{display:flex;flex-direction:column;gap:4px;margin-top:16px}
+        .program-item{font-size:9px;color:#888;border:1px solid #333;border-radius:3px;padding:2px 4px}
+        .program-item.active{background:#00ff41;color:#000;font-weight:700}
+        .program-item.completed{color:#444}
+        .progress-bar-container{height:8px;background:#222;border:1px solid #333;border-radius:4px;margin-top:8px;overflow:hidden}
+        .progress-bar-fill{height:100%;width:0%;background:#00ff41;transition:width .3s}
+        /* Nokia display */
+        .nokia-visual{width:100%;height:180px;background:linear-gradient(45deg,#001100,#003300);border:1px solid var(--color-green);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:8px;margin-top:20px;overflow:hidden}
+        .nokia-visual pre{color:var(--color-green)}
+        /* Channel Details & holistic */
+        #channel-details{background:#111;border:1px solid #333;border-radius:6px;padding:12px;margin-top:24px;}
+        #channel-details h4{font-size:11px;color:#00ff41;text-transform:uppercase;margin-bottom:6px;}
+        #holistic-panel{background:#111;border:1px solid #333;border-radius:6px;padding:12px;margin-top:16px;font-size:11px;color:#888;text-align:center;}
+        /* Dev tools toggle */
+        #dev-toggle{position:fixed;bottom:12px;right:12px;background:#8b5cf6;color:#000;border:none;padding:6px 8px;border-radius:50%;cursor:pointer;font-weight:700;}
+        #dev-panel{position:fixed;bottom:60px;right:12px;background:#000000ee;color:#fff;border:1px solid #8b5cf6;border-radius:8px;padding:16px;font-size:11px;display:none;z-index:9999;}
+        #dev-panel button{background:#111;border:1px solid #8b5cf6;color:#8b5cf6;padding:6px 10px;border-radius:4px;font-size:11px;margin:4px 0;width:100%;cursor:pointer;}
+    </style>
+
+    <!-- Backend / UI modules -->
+    <script type="module" src="js/core/error-handling.js"></script>
+    <script type="module" src="js/core/state-management.js"></script>
+    <script type="module" src="js/core/genre-channel-engine.js"></script>
+    <script type="module" src="js/core/indexing-engine.js"></script>
+    <script type="module" src="js/backend/content-manager.js"></script>
+    <script type="module" src="js/channel/timeline-manager.js"></script>
+    <script type="module" src="js/ui/ascii-display.js"></script>
+    <script type="module" src="js/ui/components.js"></script>
+    <script type="module" src="js/ui/animations.js"></script>
+</head>
+<body>
+    <!-- Message area + progress (top of page) -->
+    <div id="message-area" class="message-area collapsed">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+            <span id="message-text">🚀 RUMI READY</span>
+            <button id="message-close" style="background:none;border:none;color:inherit;font-size:14px;cursor:pointer;">×</button>
+        </div>
+        <span id="message-details" style="display:none;font-size:11px;color:#888;margin-top:6px;"></span>
+    </div>
+    <div id="program-track"></div>
+    <div class="progress-bar-container"><div class="progress-bar-fill"></div></div>
+
+    <!-- Main layout: left test panel + right UI -->
+    <div style="display:flex;gap:32px;margin-top:24px;align-items:flex-start;">
+        <!-- Simulation / entry sidebar -->
+        <div class="simulation-container">
+            <div id="activation-circle" onclick="activateExtension()">ENABLE</div>
+            <div class="simulation-heading">Simulated Entry Points</div>
+            <div id="stream-detector-entry" class="section-box">
+                <h3>Stream Detected</h3>
+                <select id="show-select"><option value="">-- Select a Show --</option></select>
+            </div>
+            <div class="section-box">
+                <h3>Automode</h3>
+                <select id="automode-select">
+                    <option value="content-intelligence">🧠 Content Intelligence</option>
+                    <option value="scene-description">🎬 Scene Description Pipeline</option>
+                    <option value="story-tree">🌳 Story Tree</option>
+                    <option value="character-summaries">👥 Character Summaries</option>
+                </select>
+                <button class="primary-btn automode-button primary-cta" onclick="launchAutomode()">Start Automode</button>
+            </div>
+            <!-- Current mode info -->
+            <div id="mode-info" class="section-box" style="text-align:center;"></div>
+        </div>
+
+        <!-- Main extension UI (copied from indexD) -->
+        <div style="flex:1;min-width:0;">
+            <!-- Nokia display -->
+            <div class="nokia-visual"><div class="content-display">READY</div></div>
+            <!-- Channel details inside expandable section for validator -->
+            <div id="expandable-channel-section" style="display:block;">
+                <div id="channel-details" style="display:none;">
+                    <h4>Channel Block Lineup</h4>
+                    <ul id="channel-block-list" style="list-style:none;padding-left:0;font-size:11px;color:#ccc;"></ul>
+                </div>
+            </div>
+            <!-- Holistic panel -->
+            <div id="holistic-panel" style="display:none;">
+                <div id="holistic-show-info">No show selected</div>
+                <div id="holistic-animation"><pre>Ready</pre></div>
+                <div id="holistic-progress">Progress: 0%</div>
+            </div>
+
+            <!-- Primary CTA for detected mode -->
+            <button id="start-indexing-btn" class="primary-btn primary-cta" style="margin-top:24px;" onclick="startIndexingSession()">Start Indexing</button>
+        </div>
+    </div>
+
+    <!-- Hidden test-log for E2E suite -->
+    <div id="test-log" style="display:none"><pre id="testOutput"></pre></div>
+
+    <!-- Hidden Receipt View for validation -->
+    <div id="receipt-view" style="display:none"><div class="popup-body"><div class="receipt-container"><div class="receipt-header"><div class="receipt-title"><span>SESSION COMPLETED for</span><span class="receipt-points" id="receipt-total-points">+0.00</span><span>POINTS</span></div></div><div class="receipt-details"></div><div class="nokia-section"></div></div></div></div>
+
+    <!-- Developer Tools toggle & panel -->
+    <button id="dev-toggle">⚙</button>
+    <div id="dev-panel">
+        <button onclick="window.RumiTests?.runAllTests?.()">Run All Tests</button>
+        <button onclick="window.uiValidator?.runAll?.()">Run UI Validation</button>
+    </div>
+
+    <!-- Automated test scripts (non-module) -->
+    <script src="js/tests/e2e-tests.js"></script>
+    <script src="js/tests/ui-validation.test.js"></script>
+
+    <script>
+        // Toggle dev panel visibility
+        const devToggle=document.getElementById('dev-toggle');
+        const devPanel=document.getElementById('dev-panel');
+        devToggle.addEventListener('click',()=>{devPanel.style.display=devPanel.style.display==='none'||!devPanel.style.display?'block':'none'});
+
+        // Helper: close message
+        document.getElementById('message-close').onclick=()=>document.getElementById('message-area').classList.add('collapsed');
+
+        // Activate extension placeholder
+        function activateExtension(){console.log('Extension activated');showMessage('Extension Enabled','success',2000)}
+
+        // Simple message system
+        function showMessage(msg,type='info',duration=3000){const m=document.getElementById('message-area');const t=document.getElementById('message-text');m.className='message-area';if(type!=='info')m.classList.add(type);t.textContent=msg;m.classList.remove('collapsed');if(duration>0)setTimeout(()=>m.classList.add('collapsed'),duration)}
+
+        // Launch Automode
+        function launchAutomode(){const sel=document.getElementById('automode-select');const slug=sel.value||'content-intelligence';window.RumiState.setMode('auto');window.RumiState.setState('automodeType',slug);showMessage(`Automode: ${slug}`,'success',2000);startIndexingSession();}
+
+        // Start indexing session (detected or automode)
+        async function startIndexingSession(){try{
+                // Ensure content library ready
+                let attempts=0;while(!window.RumiContent?.isReady()&&attempts<20){await new Promise(r=>setTimeout(r,200));attempts++}
+                if(!window.RumiContent?.isReady()) throw new Error('Content manager not ready');
+                const content=await window.RumiContent.getRandomBucketContent();
+                window.RumiTimeline.setTimeline(content,240);
+                window.RumiTimeline.startTimeline();
+                document.getElementById('channel-details').style.display='block';
+                document.getElementById('holistic-panel').style.display='block';
+            }catch(e){console.error(e);showMessage('Failed to start','error',0)} }
+
+        // Timeline listeners for block list & holistic panel
+        if(window.RumiTimeline){
+            window.RumiTimeline.subscribe?.('timelineSet',({timeline})=>{
+                const list=document.getElementById('channel-block-list');if(!list)return;list.innerHTML='';timeline.filter(b=>b.type==='content').forEach((b,i)=>{const li=document.createElement('li');li.textContent=`${i+1}. ${b.title} (${b.duration}m)`;list.appendChild(li);});});
+            window.RumiTimeline.subscribe?.('blockChange',({block,index})=>{
+                const items=document.querySelectorAll('#channel-block-list li');items.forEach((li,i)=>{li.style.color=i===index?'#00ff41':i<index?'#444':'#ccc';});
+                const showInfo=document.getElementById('holistic-show-info');const progressEl=document.getElementById('holistic-progress');if(showInfo)showInfo.textContent=block?.title||'Unknown';if(progressEl){const pct=window.RumiTimeline.getProgress?.()||0;progressEl.textContent=`Progress: ${pct.toFixed(1)}%`;}
+                 // Update progress bar
+                 const bar=document.querySelector('.progress-bar-fill');if(bar){bar.style.width=`${(window.RumiTimeline.getProgress?.()||0).toFixed(1)}%`;}
+
+                 // Update Nokia display ASCII art using RumiAscii (if available)
+                 if(window.RumiAscii && window.RumiAscii.generateNokiaDisplay){
+                     window.RumiAscii.generateNokiaDisplay(block.title,{mode:window.RumiState.get('mode'),duration:block.duration,blocks:window.RumiTimeline.timeline.filter(b=>b.type==='content').length}).then(html=>{
+                         window.RumiAscii.updateNokiaSection(html);
+                     });
+                 }
+            });
+        }
+
+        // Populate show dropdown on load
+        async function populateShows(){try{const titles=await window.RumiContent.getShowTitles();const sel=document.getElementById('show-select');sel.innerHTML='<option value="">-- Select a Show --</option>';titles.forEach(t=>{const o=document.createElement('option');o.value=t;o.textContent=t;sel.appendChild(o);});}catch(e){console.warn('Show list load failed',e)}}
+
+        // Handle show selection => detected mode
+        document.getElementById('show-select').addEventListener('change',async e=>{const title=e.target.value;if(!title)return;await window.rumiState.initializeShow(title);window.RumiState.setMode('detected');showMessage(`Detected: ${title}`,'info',2000);startIndexingSession();});
+
+        async function waitForContentManager(maxWait=5000){const start=Date.now();while(Date.now()-start<maxWait){if(window.RumiContent?.isReady&&window.RumiContent.isReady()){return true;}await new Promise(r=>setTimeout(r,200));}return false;}
+
+        async function initializeApp(){console.log('INIT: waiting for RumiContent…');const ready=await waitForContentManager();if(!ready){console.warn('No global RumiContent instance, creating one');if(!window.RumiContent){window.RumiContent=new ContentManager();await window.RumiContent.loadContentLibrary();}
+            if(!window.RumiContent.isReady()){
+                console.error('Content manager could not load library');showMessage('Content library failed','error',0);return;}
+        }
+        console.log('INIT: RumiContent ready');await populateShows();document.getElementById('mode-info').textContent='CURRENT MODE: DETECTED';// Instantiate test suites for dev panel
+            if(!window.RumiTests){window.RumiTests=new E2ETests();}
+            if(!window.uiValidator){window.uiValidator=new UIValidationTests();}
+        }
+
+        document.addEventListener('DOMContentLoaded',initializeApp);
+    </script>
+</body>
+</html> 

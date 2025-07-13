@@ -1,0 +1,12 @@
+=== LAST KNOWN GOOD BACKUP - Fri Jul 11 13:36:14 EDT 2025 ===
+
+Files backed up:
+- reference-index-last-known-good-20250711_133549.html
+- rumi-channel-last-known-good-20250711_133557.html
+
+Working features:
+✅ Progress bar with milestone diamonds restored
+✅ Rich CSV metadata display in automode
+✅ Block progression in rumi channel
+✅ Last block inclusion in session summary
+✅ Fixed JavaScript errors preventing progress display

@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Main System Backend Test</title>
+    <style>
+        body {
+            font-family: 'SF Mono', monospace;
+            background: #111;
+            color: #00ff41;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .test-section {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+        }
+        .test-result {
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 4px;
+        }
+        .success { background: #1a3a1a; border: 1px solid #00ff41; }
+        .error { background: #3a1a1a; border: 1px solid #ff4444; }
+        .warning { background: #3a3a1a; border: 1px solid #ffaa00; }
+        .info { background: #1a1a3a; border: 1px solid #0088ff; }
+        button {
+            background: #333;
+            color: #00ff41;
+            border: 1px solid #00ff41;
+            padding: 8px 16px;
+            margin: 5px;
+            cursor: pointer;
+            font-family: 'SF Mono', monospace;
+        }
+        button:hover {
+            background: #00ff41;
+            color: #000;
+        }
+        .console-output {
+            background: #000;
+            border: 1px solid #333;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .status-good { background: #00ff41; }
+        .status-bad { background: #ff4444; }
+        .status-warning { background: #ffaa00; }
+    </style>
+</head>
+<body>
+    <h1>🔧 Main System Backend Test</h1>
+    <p>Testing backend integration in the main indexD.html environment</p>
+
+    <div class="test-section">
+        <h2>System Status Overview</h2>
+        <div id="system-overview"></div>
+        <button onclick="runSystemCheck()">Run System Check</button>
+    </div>
+
+    <div class="test-section">
+        <h2>Backend Integration Test</h2>
+        <div id="backend-test"></div>
+        <button onclick="testBackendIntegration()">Test Backend Integration</button>
+    </div>
+
+    <div class="test-section">
+        <h2>Block State Update Test</h2>
+        <div id="block-state-test"></div>
+        <button onclick="testBlockStateUpdate()">Test Block State Update</button>
+    </div>
+
+    <div class="test-section">
+        <h2>Ludicrous Mode Test</h2>
+        <div id="ludicrous-test"></div>
+        <button onclick="testLudicrousMode()">Test Ludicrous Mode</button>
+    </div>
+
+    <div class="test-section">
+        <h2>Console Output</h2>
+        <div id="console-output" class="console-output"></div>
+        <button onclick="clearConsole()">Clear Console</button>
+    </div>
+
+    <script>
+        // Console logging function
+        function log(message, type = 'info') {
+            const console = document.getElementById('console-output');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.style.color = type === 'error' ? '#ff4444' : 
+                                  type === 'warning' ? '#ffaa00' : 
+                                  type === 'success' ? '#00ff41' : '#00aaff';
+            logEntry.textContent = `[${timestamp}] ${message}`;
+            console.appendChild(logEntry);
+            console.scrollTop = console.scrollHeight;
+        }
+
+        // Run comprehensive system check
+        function runSystemCheck() {
+            const results = document.getElementById('system-overview');
+            results.innerHTML = '';
+            
+            log('Running comprehensive system check...', 'info');
+            
+            const checks = [
+                { name: 'Backend Engine', check: () => !!window.RumiBackend },
+                { name: 'Backend Integration', check: () => !!window.RumiIntegration },
+                { name: 'LudicrousSpeedManager', check: () => !!window.LudicrousSpeedManager },
+                { name: 'App State', check: () => !!window.appState },
+                { name: 'Content Library', check: () => window.RumiBackend?.contentLibrary?.length > 0 },
+                { name: 'Backend Ready', check: () => window.RumiIntegration?.backendReady }
+            ];
+            
+            let allGood = true;
+            
+            checks.forEach(check => {
+                const status = check.check();
+                const statusClass = status ? 'status-good' : 'status-bad';
+                const statusText = status ? '✅' : '❌';
+                
+                const result = document.createElement('div');
+                result.innerHTML = `<span class="status-indicator ${statusClass}"></span>${statusText} ${check.name}`;
+                results.appendChild(result);
+                
+                if (!status) allGood = false;
+                
+                log(`${check.name}: ${status ? 'OK' : 'FAILED'}`, status ? 'success' : 'error');
+            });
+            
+            if (allGood) {
+                log('🎉 All system checks passed!', 'success');
+            } else {
+                log('⚠️ Some system checks failed', 'warning');
+            }
+        }
+
+        // Test backend integration
+        function testBackendIntegration() {
+            const results = document.getElementById('backend-test');
+            results.innerHTML = '';
+            
+            log('Testing backend integration...', 'info');
+            
+            if (!window.RumiBackend) {
+                addResult(results, 'error', '❌ Backend engine not available');
+                log('Backend engine not available', 'error');
+                return;
+            }
+            
+            addResult(results, 'success', '✅ Backend engine available');
+            log('Backend engine available', 'success');
+            
+            // Test key methods
+            const methods = ['updateBlockState', 'calculateSegmentedPoints', 'getCurrentMultiplier'];
+            methods.forEach(method => {
+                if (typeof window.RumiBackend[method] === 'function') {
+                    addResult(results, 'success', `✅ ${method} method available`);
+                    log(`${method} method available`, 'success');
+                } else {
+                    addResult(results, 'error', `❌ ${method} method not found`);
+                    log(`${method} method not found`, 'error');
+                }
+            });
+            
+            // Test integration
+            if (window.RumiIntegration) {
+                addResult(results, 'success', '✅ Backend integration available');
+                log('Backend integration available', 'success');
+                
+                if (window.RumiIntegration.backendReady) {
+                    addResult(results, 'success', '✅ Backend integration ready');
+                    log('Backend integration ready', 'success');
+                } else {
+                    addResult(results, 'warning', '⚠️ Backend integration not ready');
+                    log('Backend integration not ready', 'warning');
+                }
+            } else {
+                addResult(results, 'error', '❌ Backend integration not available');
+                log('Backend integration not available', 'error');
+            }
+        }
+
+        // Test block state update
+        function testBlockStateUpdate() {
+            const results = document.getElementById('block-state-test');
+            results.innerHTML = '';
+            
+            log('Testing block state update...', 'info');
+            
+            if (!window.RumiBackend) {
+                addResult(results, 'error', '❌ Backend not available for block state test');
+                log('Backend not available for block state test', 'error');
+                return;
+            }
+            
+            try {
+                // Test the updateBlockState method
+                window.RumiBackend.updateBlockState('Test Block', 'indexing');
+                addResult(results, 'success', '✅ Block state update successful');
+                log('Block state update successful', 'success');
+                
+                // Check if the state was recorded
+                if (window.RumiBackend.sessionData && window.RumiBackend.sessionData.blockStates) {
+                    const testState = window.RumiBackend.sessionData.blockStates['Test Block'];
+                    if (testState && testState.state === 'indexing') {
+                        addResult(results, 'success', '✅ Block state recorded in session data');
+                        log('Block state recorded in session data', 'success');
+                    } else {
+                        addResult(results, 'warning', '⚠️ Block state not recorded in session data');
+                        log('Block state not recorded in session data', 'warning');
+                    }
+                } else {
+                    addResult(results, 'warning', '⚠️ Session data not available');
+                    log('Session data not available', 'warning');
+                }
+                
+                // Test integration handler
+                if (window.RumiIntegration && window.RumiIntegration.handleBlockStateUpdate) {
+                    try {
+                        window.RumiIntegration.handleBlockStateUpdate({
+                            title: 'Integration Test Block',
+                            state: 'indexed'
+                        });
+                        addResult(results, 'success', '✅ Integration block state handler works');
+                        log('Integration block state handler works', 'success');
+                    } catch (error) {
+                        addResult(results, 'error', `❌ Integration handler failed: ${error.message}`);
+                        log(`Integration handler failed: ${error.message}`, 'error');
+                    }
+                }
+                
+            } catch (error) {
+                addResult(results, 'error', `❌ Block state update failed: ${error.message}`);
+                log(`Block state update failed: ${error.message}`, 'error');
+            }
+        }
+
+        // Test ludicrous mode
+        function testLudicrousMode() {
+            const results = document.getElementById('ludicrous-test');
+            results.innerHTML = '';
+            
+            log('Testing ludicrous mode...', 'info');
+            
+            // Check LudicrousSpeedManager
+            if (window.LudicrousSpeedManager) {
+                addResult(results, 'success', '✅ LudicrousSpeedManager available');
+                log('LudicrousSpeedManager available', 'success');
+                
+                const currentSpeed = window.LudicrousSpeedManager.currentSpeed || 150;
+                addResult(results, 'info', `📊 Current speed: ${currentSpeed}x`);
+                log(`Current speed: ${currentSpeed}x`, 'info');
+                
+                if (currentSpeed === 150) {
+                    addResult(results, 'success', '✅ Speed is optimized (150x)');
+                    log('Speed is optimized (150x)', 'success');
+                } else if (currentSpeed === 300) {
+                    addResult(results, 'warning', '⚠️ Speed is high (300x) - may cause issues');
+                    log('Speed is high (300x) - may cause issues', 'warning');
+                }
+            } else {
+                addResult(results, 'warning', '⚠️ LudicrousSpeedManager not available');
+                log('LudicrousSpeedManager not available', 'warning');
+            }
+            
+            // Check integration ludicrous mode
+            if (window.RumiIntegration && window.RumiIntegration.ludicrousMode) {
+                addResult(results, 'success', '✅ Integration ludicrous mode available');
+                log('Integration ludicrous mode available', 'success');
+                
+                const speedMultiplier = window.RumiIntegration.ludicrousMode.speedMultiplier;
+                addResult(results, 'info', `📊 Integration speed multiplier: ${speedMultiplier}x`);
+                log(`Integration speed multiplier: ${speedMultiplier}x`, 'info');
+            } else {
+                addResult(results, 'warning', '⚠️ Integration ludicrous mode not available');
+                log('Integration ludicrous mode not available', 'warning');
+            }
+        }
+
+        // Helper function to add test results
+        function addResult(container, type, message) {
+            const result = document.createElement('div');
+            result.className = `test-result ${type}`;
+            result.textContent = message;
+            container.appendChild(result);
+        }
+
+        // Clear console
+        function clearConsole() {
+            document.getElementById('console-output').innerHTML = '';
+        }
+
+        // Auto-run system check on load
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                log('Page loaded, running system check...', 'info');
+                runSystemCheck();
+            }, 1000);
+        });
+    </script>
+</body>
+</html> 

@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Change Monitor Test</title>
+    <style>
+        body {
+            font-family: 'SF Mono', monospace;
+            background: #111;
+            color: #fff;
+            padding: 20px;
+        }
+        
+        .test-panel {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .test-button {
+            background: #00ff41;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+            font-family: 'SF Mono', monospace;
+        }
+        
+        .test-button:hover {
+            background: #00cc33;
+        }
+        
+        .test-button.danger {
+            background: #ff4444;
+        }
+        
+        .test-button.danger:hover {
+            background: #cc3333;
+        }
+        
+        .log-output {
+            background: #000;
+            border: 1px solid #333;
+            border-radius: 4px;
+            padding: 10px;
+            height: 300px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .status-healthy {
+            background: #00ff41;
+        }
+        
+        .status-warning {
+            background: #ffaa00;
+        }
+        
+        .status-error {
+            background: #ff4444;
+        }
+    </style>
+</head>
+<body>
+    <h1>🛡️ Change Monitor Test Suite</h1>
+    
+    <div class="test-panel">
+        <h2>System Status</h2>
+        <div id="system-status">
+            <span class="status-indicator status-healthy"></span>
+            <span id="status-text">Initializing...</span>
+        </div>
+        
+        <div id="health-metrics">
+            <p>Errors: <span id="error-count">0</span></p>
+            <p>Warnings: <span id="warning-count">0</span></p>
+            <p>Function Calls: <span id="function-call-count">0</span></p>
+        </div>
+    </div>
+    
+    <div class="test-panel">
+        <h2>Test Controls</h2>
+        <button class="test-button" onclick="testHealthyFunction()">Test Healthy Function</button>
+        <button class="test-button" onclick="testSlowFunction()">Test Slow Function</button>
+        <button class="test-button" onclick="testErrorFunction()">Test Error Function</button>
+        <button class="test-button" onclick="testStateChange()">Test State Change</button>
+        <button class="test-button danger" onclick="testBreakingChange()">Test Breaking Change</button>
+        <button class="test-button" onclick="generateReport()">Generate Report</button>
+        <button class="test-button" onclick="clearLogs()">Clear Logs</button>
+    </div>
+    
+    <div class="test-panel">
+        <h2>Live Log Output</h2>
+        <div id="log-output" class="log-output"></div>
+    </div>
+    
+    <!-- Load the change monitor -->
+    <script src="change-monitor.js"></script>
+    
+    <script>
+        // Test functions
+        function testHealthyFunction() {
+            console.log('🧪 TEST: Running healthy function test');
+            // This should be fast and successful
+            const result = calculatePoints(30, 0.1);
+            console.log('✅ TEST: Healthy function completed, result:', result);
+        }
+        
+        function testSlowFunction() {
+            console.log('🧪 TEST: Running slow function test');
+            // Simulate a slow function
+            const start = performance.now();
+            while (performance.now() - start < 1500) {
+                // Busy wait for 1.5 seconds
+            }
+            console.log('⚠️ TEST: Slow function completed');
+        }
+        
+        function testErrorFunction() {
+            console.log('🧪 TEST: Running error function test');
+            // This should trigger an error
+            try {
+                throw new Error('Test error from error function');
+            } catch (error) {
+                console.error('❌ TEST: Error function failed:', error.message);
+            }
+        }
+        
+        function testStateChange() {
+            console.log('🧪 TEST: Testing state change validation');
+            
+            // Test valid state change
+            if (window.appState) {
+                window.appState.currentMultiplier = 2.5;
+                console.log('✅ TEST: Valid state change applied');
+            }
+            
+            // Test invalid state change (should trigger warning)
+            if (window.appState) {
+                window.appState.currentMultiplier = 15.0; // Out of range
+                console.log('⚠️ TEST: Invalid state change applied (should trigger warning)');
+            }
+        }
+        
+        function testBreakingChange() {
+            console.log('🧪 TEST: Testing breaking change detection');
+            
+            // Remove a critical function
+            if (window.calculatePoints) {
+                const original = window.calculatePoints;
+                window.calculatePoints = undefined;
+                
+                setTimeout(() => {
+                    // Restore the function
+                    window.calculatePoints = original;
+                    console.log('🔄 TEST: Critical function restored');
+                }, 2000);
+            }
+        }
+        
+        function generateReport() {
+            console.log('📊 TEST: Generating validation report');
+            if (window.ChangeMonitor) {
+                const report = window.ChangeMonitor.generateValidationReport();
+                console.log('📊 TEST: Report generated:', report);
+            }
+        }
+        
+        function clearLogs() {
+            console.log('🧹 TEST: Clearing change monitor logs');
+            if (window.ChangeMonitor) {
+                window.ChangeMonitor.clearLogs();
+            }
+        }
+        
+        // Update status display
+        function updateStatus() {
+            if (window.ChangeMonitor) {
+                const summary = window.ChangeMonitor.getErrorSummary();
+                const isHealthy = window.ChangeMonitor.isSystemHealthy();
+                
+                // Update status indicator
+                const statusIndicator = document.querySelector('.status-indicator');
+                const statusText = document.getElementById('status-text');
+                
+                if (isHealthy) {
+                    statusIndicator.className = 'status-indicator status-healthy';
+                    statusText.textContent = 'System Healthy';
+                } else if (summary.totalErrors > 0) {
+                    statusIndicator.className = 'status-indicator status-error';
+                    statusText.textContent = `System Error (${summary.totalErrors} errors)`;
+                } else {
+                    statusIndicator.className = 'status-indicator status-warning';
+                    statusText.textContent = `System Warning (${summary.totalWarnings} warnings)`;
+                }
+                
+                // Update metrics
+                document.getElementById('error-count').textContent = summary.totalErrors;
+                document.getElementById('warning-count').textContent = summary.totalWarnings;
+                document.getElementById('function-call-count').textContent = summary.totalErrors + summary.totalWarnings;
+            }
+        }
+        
+        // Mock functions for testing
+        window.calculatePoints = function(duration, baseRate) {
+            return duration * 60 * baseRate * 1.0;
+        };
+        
+        window.appState = {
+            currentMultiplier: 1.0,
+            sessionDuration: 45,
+            baseRate: 0.1
+        };
+        
+        // Update status every second
+        setInterval(updateStatus, 1000);
+        
+        // Initial status update
+        setTimeout(updateStatus, 1000);
+        
+        console.log('🧪 TEST: Change monitor test suite loaded');
+    </script>
+</body>
+</html> 

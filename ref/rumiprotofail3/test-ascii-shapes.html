@@ -1,0 +1,1456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASCII Shapes Test</title>
+    <style>
+        body {
+            background: #000;
+            color: #00ff41;
+            font-family: 'Courier New', monospace;
+            padding: 20px;
+        }
+        
+        .test-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        .nokia-visual {
+            width: 100%;
+            height: 400px;
+            background: linear-gradient(45deg, #001100, #003300);
+            border: 2px solid #00ff41;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 8px;
+            margin: 20px 0;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .content-display {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #00ff41;
+            font-family: 'Courier New', monospace;
+            white-space: pre;
+            line-height: 1.0;
+            font-size: 8px;
+        }
+        
+        .metadata-line {
+            width: 100%;
+            padding: 8px;
+            background: rgba(0, 255, 65, 0.1);
+            border-top: 1px solid #00ff41;
+            text-align: center;
+            font-size: 10px;
+            color: #00ff41;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            background: #333;
+            color: #00ff41;
+            border: 1px solid #00ff41;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+        }
+        
+        button:hover {
+            background: #00ff41;
+            color: #000;
+        }
+        
+        .test-log {
+            background: #111;
+            border: 1px solid #333;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+            font-size: 11px;
+            color: #888;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        
+        .status.success {
+            background: #001100;
+            color: #00ff41;
+            border: 1px solid #00ff41;
+        }
+        
+        .status.error {
+            background: #110000;
+            color: #ff4444;
+            border: 1px solid #ff4444;
+        }
+        
+        .status.warning {
+            background: #111100;
+            color: #ffaa00;
+            border: 1px solid #ffaa00;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🎯 ASCII Shapes Test</h1>
+        
+        <div id="status" class="status">Ready to test ASCII shapes...</div>
+        
+        <div class="nokia-visual">
+            <div class="content-display" id="ascii-display">
+                <pre>READY</pre>
+            </div>
+            <div class="metadata-line" id="metadata-line">
+                [READY] [0/0] Waiting for content...
+            </div>
+        </div>
+        
+        <div class="controls">
+            <button onclick="testCircle()">Circle</button>
+            <button onclick="testDiamond()">Diamond</button>
+            <button onclick="testWave()">Wave</button>
+            <button onclick="testSpiral()">Spiral</button>
+            <button onclick="testMaze()">Maze</button>
+            <button onclick="testMatrix()">Matrix</button>
+            <button onclick="testPulse()">Pulse</button>
+            <button onclick="testHexagon()">Hexagon</button>
+            <button onclick="testStar()">Star</button>
+            <button onclick="testTunnel()">Tunnel</button>
+            <button onclick="testFractal()">Fractal</button>
+            <button onclick="testPlasma()">Plasma</button>
+            <button onclick="testVortex()">Vortex</button>
+            <button onclick="testCrystal()">Crystal</button>
+            <button onclick="testLightning()">Lightning</button>
+            <button onclick="testGalaxy()">Galaxy</button>
+            <button onclick="testMandala()">Mandala</button>
+            <button onclick="testFireworks()">Fireworks</button>
+            <button onclick="testDNA()">DNA</button>
+            <button onclick="testAtom()">Atom</button>
+            <button onclick="testInfinity()">Infinity</button>
+            <button onclick="testCycle()">Cycle All</button>
+            <button onclick="stopAnimation()">Stop</button>
+            <button onclick="clearDisplay()">Clear</button>
+        </div>
+        
+        <div class="test-log" id="test-log">
+            <div>Test log will appear here...</div>
+        </div>
+    </div>
+
+    <script>
+        let animationInterval = null;
+        let currentShape = null;
+        let animationFrame = 0;
+        
+        function updateStatus(message, type = 'info') {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = 'status ' + type;
+        }
+        
+        function log(message) {
+            const logDiv = document.getElementById('test-log');
+            const timestamp = new Date().toLocaleTimeString();
+            logDiv.innerHTML += `<div>[${timestamp}] ${message}</div>`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+        
+        function updateMetadata(meta) {
+            const metadataLine = document.getElementById('metadata-line');
+            let text = `[${meta.duration || 0}m] [${meta.index || 0}/${meta.total || 0}] ${meta.title || 'Unknown'}`;
+            
+            if (meta.genre) text += ` | ${meta.genre.toUpperCase()}`;
+            if (meta.service) text += ` | ${meta.service}`;
+            if (meta.season && meta.episode) text += ` | S${meta.season}E${meta.episode}`;
+            if (meta.year) text += ` | ${meta.year}`;
+            
+            metadataLine.textContent = text;
+        }
+        
+        function generateCircle(size = 30, frame = 0) {
+            const lines = [];
+            const center = Math.floor(size / 2);
+            const radius = center - 2;
+            
+            for (let y = 0; y < size; y++) {
+                let line = '';
+                for (let x = 0; x < size * 2; x++) {
+                    const dx = x - center * 2;
+                    const dy = y - center;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (Math.abs(distance - radius) < 1.5) {
+                        // Animated border
+                        const chars = ['█', '▓', '▒', '░'];
+                        const charIndex = (Math.floor(frame / 5) + Math.floor(distance)) % chars.length;
+                        line += chars[charIndex];
+                    } else if (distance < radius - 2) {
+                        // Animated fill
+                        const fillChars = ['●', '◉', '◯', '○'];
+                        const fillIndex = (Math.floor(frame / 3) + x + y) % fillChars.length;
+                        line += fillChars[fillIndex];
+                    } else {
+                        line += ' ';
+                    }
+                }
+                lines.push(line);
+            }
+            return lines.join('\n');
+        }
+        
+        function generateDiamond(size = 23, frame = 0) {
+            const lines = [];
+            const center = Math.floor(size / 2);
+            
+            for (let y = 0; y < size; y++) {
+                let line = '';
+                for (let x = 0; x < size * 2; x++) {
+                    const dx = Math.abs(x - center * 2);
+                    const dy = Math.abs(y - center);
+                    const distance = dx + dy;
+                    
+                    if (distance === center * 2) {
+                        // Diamond border
+                        const chars = ['◆', '◇', '♦', '♢'];
+                        const charIndex = (Math.floor(frame / 4) + x + y) % chars.length;
+                        line += chars[charIndex];
+                    } else if (distance < center * 2) {
+                        // Diamond fill
+                        const fillChars = ['▲', '▼', '◄', '►'];
+                        const fillIndex = (Math.floor(frame / 6) + distance) % fillChars.length;
+                        line += fillChars[fillIndex];
+                    } else {
+                        line += ' ';
+                    }
+                }
+                lines.push(line);
+            }
+            return lines.join('\n');
+        }
+        
+        function generateWave(width = 90, height = 23, frame = 0) {
+            const lines = [];
+            
+            for (let y = 0; y < height; y++) {
+                let line = '';
+                for (let x = 0; x < width; x++) {
+                    const wave1 = Math.sin((x + frame) * 0.1) * 3;
+                    const wave2 = Math.sin((x + frame) * 0.2) * 2;
+                    const wave3 = Math.sin((x + frame) * 0.05) * 4;
+                    const waveY = Math.floor(height / 2 + wave1 + wave2 + wave3);
+                    
+                    if (Math.abs(y - waveY) <= 1) {
+                        const chars = ['~', '≈', '∼', '⌇'];
+                        const charIndex = (Math.floor(frame / 3) + x) % chars.length;
+                        line += chars[charIndex];
+                    } else if (y > waveY) {
+                        const fillChars = ['▒', '░', '▓', '█'];
+                        const fillIndex = (Math.floor(frame / 5) + x + y) % fillChars.length;
+                        line += fillChars[fillIndex];
+                    } else {
+                        line += ' ';
+                    }
+                }
+                lines.push(line);
+            }
+            return lines.join('\n');
+        }
+        
+        function generateSpiral(size = 30, frame = 0) {
+            const lines = [];
+            const center = Math.floor(size / 2);
+            
+            for (let y = 0; y < size; y++) {
+                let line = '';
+                for (let x = 0; x < size * 2; x++) {
+                    const dx = x - center * 2;
+                    const dy = y - center;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    const angle = Math.atan2(dy, dx);
+                    
+                    const spiralValue = (angle + distance * 0.3 + frame * 0.1) % (Math.PI * 2);
+                    
+                    if (Math.abs(spiralValue - Math.PI) < 0.5) {
+                        const chars = ['◉', '◎', '●', '○'];
+                        const charIndex = Math.floor(distance + frame / 4) % chars.length;
+                        line += chars[charIndex];
+                    } else if (spiralValue < Math.PI) {
+                        const fillChars = ['▓', '▒', '░', ' '];
+                        const fillIndex = Math.floor(spiralValue * 2 + frame / 6) % fillChars.length;
+                        line += fillChars[fillIndex];
+                    } else {
+                        line += ' ';
+                    }
+                }
+                lines.push(line);
+            }
+            return lines.join('\n');
+        }
+        
+        function generateMaze(width = 60, height = 23, frame = 0) {
+            const lines = [];
+            
+            for (let y = 0; y < height; y++) {
+                let line = '';
+                for (let x = 0; x < width; x++) {
+                    const pattern = (x + y + Math.floor(frame / 10)) % 4;
+                    const isWall = (x % 3 === 0 && y % 2 === 0) || 
+                                  (x % 2 === 0 && y % 3 === 0) ||
+                                  (pattern === 0 && (x + y) % 5 === 0);
+                    
+                    if (isWall) {
+                        const wallChars = ['█', '▓', '▒', '░'];
+                        const wallIndex = (Math.floor(frame / 8) + x + y) % wallChars.length;
+                        line += wallChars[wallIndex];
+                    } else {
+                        const pathChars = ['·', '•', '◦', ' '];
+                        const pathIndex = (Math.floor(frame / 12) + pattern) % pathChars.length;
+                        line += pathChars[pathIndex];
+                    }
+                }
+                lines.push(line);
+            }
+            return lines.join('\n');
+        }
+        
+        function generateMatrix(width = 75, height = 27, frame = 0) {
+            const lines = [];
+            const chars = ['0', '1', '█', '▓', '▒', '░', '●', '○', '◉', '◎'];
+            
+            for (let y = 0; y < height; y++) {
+                let line = '';
+                for (let x = 0; x < width; x++) {
+                    const seed = x * 7 + y * 13 + Math.floor(frame / 3);
+                    const charIndex = (seed * 31) % chars.length;
+                    const intensity = Math.sin(seed * 0.1 + frame * 0.05) * 0.5 + 0.5;
+                    
+                    if (intensity > 0.7) {
+                        line += chars[charIndex];
+                    } else if (intensity > 0.4) {
+                        line += chars[charIndex % 4];
+                    } else {
+                        line += ' ';
+                    }
+                }
+                lines.push(line);
+            }
+            return lines.join('\n');
+        }
+        
+        function generatePulse(size = 27, frame = 0) {
+            const lines = [];
+            const center = Math.floor(size / 2);
+            const pulseRadius = Math.abs(Math.sin(frame * 0.1)) * center;
+            
+            for (let y = 0; y < size; y++) {
+                let line = '';
+                for (let x = 0; x < size * 2; x++) {
+                    const dx = x - center * 2;
+                    const dy = y - center;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (Math.abs(distance - pulseRadius) < 2) {
+                        const chars = ['◉', '◎', '●', '○'];
+                        const charIndex = Math.floor(frame / 5) % chars.length;
+                        line += chars[charIndex];
+                    } else if (distance < pulseRadius) {
+                        const fillChars = ['▓', '▒', '░', ' '];
+                        const fillIndex = Math.floor(distance + frame / 4) % fillChars.length;
+                        line += fillChars[fillIndex];
+                    } else {
+                        line += ' ';
+                    }
+                }
+                lines.push(line);
+            }
+            return lines.join('\n');
+        }
+        
+        function generateHexagon(size = 25, frame = 0) {
+            const lines = [];
+            const center = Math.floor(size / 2);
+            
+            for (let y = 0; y < size; y++) {
+                let line = '';
+                for (let x = 0; x < size * 2; x++) {
+                    const dx = x - center * 2;
+                    const dy = y - center;
+                    
+                    // Hexagon shape calculation
+                    const angle = Math.atan2(dy, dx) + Math.PI;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    const hexRadius = center - 3;
+                    
+                    // Create hexagon sides
+                    const sideAngle = Math.floor(angle / (Math.PI / 3));
+                    const hexDistance = Math.abs(Math.cos((angle - sideAngle * Math.PI / 3) * 3)) * hexRadius;
+                    
+                    if (Math.abs(distance - hexDistance) < 1.5) {
+                        const chars = ['⬡', '⬢', '⬣', '◯'];
+                        const charIndex = (Math.floor(frame / 6) + sideAngle) % chars.length;
+                        line += chars[charIndex];
+                    } else if (distance < hexDistance) {
+                        const fillChars = ['▲', '▼', '◄', '►', '♦', '◆'];
+                        const fillIndex = (Math.floor(frame / 4) + Math.floor(distance)) % fillChars.length;
+                        line += fillChars[fillIndex];
+                    } else {
+                        line += ' ';
+                    }
+                }
+                lines.push(line);
+            }
+            return lines.join('\n');
+        }
+        
+        function generateStar(size = 25, frame = 0) {
+            const lines = [];
+            const center = Math.floor(size / 2);
+            
+            for (let y = 0; y < size; y++) {
+                let line = '';
+                for (let x = 0; x < size * 2; x++) {
+                    const dx = x - center * 2;
+                    const dy = y - center;
+                    const angle = Math.atan2(dy, dx) + Math.PI;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    // 5-pointed star calculation
+                    const starAngle = (angle + frame * 0.02) % (Math.PI * 2);
+                    const starRadius = center - 2;
+                    const innerRadius = starRadius * 0.4;
+                    
+                    const starPoint = Math.floor(starAngle / (Math.PI * 2 / 10));
+                    const isOuter = starPoint % 2 === 0;
+                    const targetRadius = isOuter ? starRadius : innerRadius;
+                    
+                    if (Math.abs(distance - targetRadius) < 2) {
+                        const chars = ['★', '☆', '✦', '✧', '✩', '✪'];
+                        const charIndex = (Math.floor(frame / 5) + starPoint) % chars.length;
+                        line += chars[charIndex];
+                    } else if (distance < targetRadius) {
+                        const fillChars = ['▓', '▒', '░', '·'];
+                        const fillIndex = (Math.floor(frame / 7) + starPoint) % fillChars.length;
+                        line += fillChars[fillIndex];
+                    } else {
+                        line += ' ';
+                    }
+                }
+                lines.push(line);
+            }
+            return lines.join('\n');
+        }
+        
+        function generateTunnel(size = 25, frame = 0) {
+            const lines = [];
+            const center = Math.floor(size / 2);
+            
+            for (let y = 0; y < size; y++) {
+                let line = '';
+                for (let x = 0; x < size * 2; x++) {
+                    const dx = x - center * 2;
+                    const dy = y - center;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    // Tunnel effect with depth
+                    const tunnelDepth = Math.floor(distance + frame * 0.5) % 8;
+                    const tunnelChars = ['█', '▓', '▒', '░', '▫', '▪', '·', ' '];
+                    
+                    if (distance < center - 1) {
+                        line += tunnelChars[tunnelDepth];
+                    } else {
+                        line += ' ';
+                    }
+                }
+                lines.push(line);
+            }
+            return lines.join('\n');
+        }
+        
+        function generateFractal(size = 27, frame = 0) {
+            const lines = [];
+            const center = Math.floor(size / 2);
+            
+            for (let y = 0; y < size; y++) {
+                let line = '';
+                for (let x = 0; x < size * 2; x++) {
+                    const dx = (x - center * 2) / 10;
+                    const dy = (y - center) / 10;
+                    
+                    // Mandelbrot-like fractal
+                    let zx = dx;
+                    let zy = dy;
+                    let iterations = 0;
+                    const maxIterations = 20;
+                    
+                    while (zx * zx + zy * zy < 4 && iterations < maxIterations) {
+                        const temp = zx * zx - zy * zy + dx + Math.sin(frame * 0.01);
+                        zy = 2 * zx * zy + dy + Math.cos(frame * 0.01);
+                        zx = temp;
+                        iterations++;
+                    }
+                    
+                    const chars = ['█', '▓', '▒', '░', '▫', '▪', '·', ' '];
+                    const charIndex = Math.floor(iterations / maxIterations * chars.length);
+                    line += chars[Math.min(charIndex, chars.length - 1)];
+                }
+                lines.push(line);
+            }
+            return lines.join('\n');
+        }
+        
+        function generatePlasma(width = 80, height = 25, frame = 0) {
+            const lines = [];
+            
+            for (let y = 0; y < height; y++) {
+                let line = '';
+                for (let x = 0; x < width; x++) {
+                    const plasma = Math.sin(x * 0.1 + frame * 0.05) +
+                                  Math.sin(y * 0.1 + frame * 0.03) +
+                                  Math.sin((x + y) * 0.05 + frame * 0.02) +
+                                  Math.sin(Math.sqrt(x * x + y * y) * 0.1 + frame * 0.04);
+                    
+                    const intensity = (plasma + 4) / 8;
+                    const chars = [' ', '·', '▪', '▫', '░', '▒', '▓', '█'];
+                    const charIndex = Math.floor(intensity * chars.length);
+                    line += chars[Math.min(charIndex, chars.length - 1)];
+                }
+                lines.push(line);
+            }
+            return lines.join('\n');
+        }
+        
+        function generateVortex(size = 25, frame = 0) {
+            const lines = [];
+            const center = Math.floor(size / 2);
+            
+            for (let y = 0; y < size; y++) {
+                let line = '';
+                for (let x = 0; x < size * 2; x++) {
+                    const dx = x - center * 2;
+                    const dy = y - center;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    const angle = Math.atan2(dy, dx);
+                    
+                    // Vortex spiral
+                    const vortexAngle = angle + distance * 0.3 + frame * 0.1;
+                    const vortexRadius = Math.sin(vortexAngle) * 3 + distance;
+                    
+                    if (distance < center - 1) {
+                        const chars = ['◐', '◑', '◒', '◓', '●', '○'];
+                        const charIndex = Math.floor(vortexAngle * 2 + frame / 3) % chars.length;
+                        line += chars[charIndex];
+                    } else {
+                        line += ' ';
+                    }
+                }
+                lines.push(line);
+            }
+            return lines.join('\n');
+        }
+        
+        function generateCrystal(size = 23, frame = 0) {
+            const lines = [];
+            const center = Math.floor(size / 2);
+            
+            for (let y = 0; y < size; y++) {
+                let line = '';
+                for (let x = 0; x < size * 2; x++) {
+                    const dx = x - center * 2;
+                    const dy = y - center;
+                    
+                    // Crystal lattice pattern
+                    const latticeX = Math.floor(dx / 3) * 3;
+                    const latticeY = Math.floor(dy / 3) * 3;
+                    const latticeDistance = Math.sqrt(latticeX * latticeX + latticeY * latticeY);
+                    
+                    if ((dx + dy + frame) % 6 === 0 || (dx - dy + frame) % 6 === 0) {
+                        const chars = ['◊', '◈', '◇', '♦', '♢', '⬟'];
+                        const charIndex = Math.floor(latticeDistance + frame / 4) % chars.length;
+                        line += chars[charIndex];
+                    } else if (Math.abs(dx % 3) + Math.abs(dy % 3) < 2) {
+                        const fillChars = ['▓', '▒', '░', '·'];
+                        const fillIndex = Math.floor(frame / 6) % fillChars.length;
+                        line += fillChars[fillIndex];
+                    } else {
+                        line += ' ';
+                    }
+                }
+                lines.push(line);
+            }
+            return lines.join('\n');
+        }
+        
+        function generateLightning(width = 70, height = 25, frame = 0) {
+            const lines = [];
+            
+            for (let y = 0; y < height; y++) {
+                let line = '';
+                for (let x = 0; x < width; x++) {
+                    const lightning = Math.sin(x * 0.3 + frame * 0.2) * Math.sin(y * 0.2 + frame * 0.1);
+                    const bolt = Math.random() < 0.1 && Math.abs(lightning) > 0.7;
+                    
+                    if (bolt) {
+                        const chars = ['⚡', '✦', '✧', '✩', '※', '⋆'];
+                        const charIndex = Math.floor(Math.random() * chars.length);
+                        line += chars[charIndex];
+                    } else if (Math.abs(lightning) > 0.5) {
+                        const chars = ['▓', '▒', '░', '·'];
+                        const charIndex = Math.floor(Math.abs(lightning) * 4) % chars.length;
+                        line += chars[charIndex];
+                    } else {
+                        line += ' ';
+                    }
+                }
+                lines.push(line);
+            }
+            return lines.join('\n');
+        }
+        
+        function generateGalaxy(size = 30, frame = 0) {
+            const lines = [];
+            const center = Math.floor(size / 2);
+            
+            for (let y = 0; y < size; y++) {
+                let line = '';
+                for (let x = 0; x < size * 2; x++) {
+                    const dx = x - center * 2;
+                    const dy = y - center;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    const angle = Math.atan2(dy, dx);
+                    
+                    // Galaxy spiral arms
+                    const armAngle = angle + distance * 0.2 + frame * 0.02;
+                    const armRadius = Math.sin(armAngle * 2) * 3 + distance;
+                    
+                    if (distance < center - 1) {
+                        if (Math.abs(armRadius - distance) < 2) {
+                            const chars = ['✦', '✧', '✩', '✪', '⋆', '★'];
+                            const charIndex = Math.floor(armAngle + frame / 4) % chars.length;
+                            line += chars[charIndex];
+                        } else {
+                            const chars = ['·', '▪', '▫', ' '];
+                            const charIndex = Math.floor(distance / 3) % chars.length;
+                            line += chars[charIndex];
+                        }
+                    } else {
+                        line += ' ';
+                    }
+                }
+                lines.push(line);
+            }
+            return lines.join('\n');
+        }
+        
+        function generateMandala(size = 25, frame = 0) {
+            const lines = [];
+            const center = Math.floor(size / 2);
+            
+            for (let y = 0; y < size; y++) {
+                let line = '';
+                for (let x = 0; x < size * 2; x++) {
+                    const dx = x - center * 2;
+                    const dy = y - center;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    const angle = Math.atan2(dy, dx) + Math.PI;
+                    
+                    // Mandala pattern with 8-fold symmetry
+                    const mandalaAngle = (angle + frame * 0.01) % (Math.PI / 4);
+                    const mandalaRadius = Math.sin(mandalaAngle * 8) * 3 + Math.cos(distance * 0.5 + frame * 0.02) * 2;
+                    
+                    if (distance < center - 1 && Math.abs(mandalaRadius) > 1) {
+                        const chars = ['◉', '◎', '●', '○', '◐', '◑', '◒', '◓'];
+                        const charIndex = Math.floor(angle * 4 + frame / 3) % chars.length;
+                        line += chars[charIndex];
+                    } else if (distance < center - 1) {
+                        const chars = ['▓', '▒', '░', '·'];
+                        const charIndex = Math.floor(distance + frame / 5) % chars.length;
+                        line += chars[charIndex];
+                    } else {
+                        line += ' ';
+                    }
+                }
+                lines.push(line);
+            }
+            return lines.join('\n');
+        }
+        
+        function generateFireworks(width = 75, height = 25, frame = 0) {
+            const lines = [];
+            
+            for (let y = 0; y < height; y++) {
+                let line = '';
+                for (let x = 0; x < width; x++) {
+                    const explosion1 = Math.sin((x - 20) * 0.3 + frame * 0.2) * Math.sin((y - 8) * 0.3 + frame * 0.15);
+                    const explosion2 = Math.sin((x - 50) * 0.25 + frame * 0.18) * Math.sin((y - 15) * 0.25 + frame * 0.12);
+                    const explosion3 = Math.sin((x - 35) * 0.35 + frame * 0.22) * Math.sin((y - 5) * 0.35 + frame * 0.17);
+                    
+                    const combined = explosion1 + explosion2 + explosion3;
+                    
+                    if (Math.abs(combined) > 1.5) {
+                        const chars = ['✦', '✧', '✩', '✪', '⋆', '★', '※', '⚡'];
+                        const charIndex = Math.floor(Math.abs(combined) * 3 + frame / 2) % chars.length;
+                        line += chars[charIndex];
+                    } else if (Math.abs(combined) > 0.8) {
+                        const chars = ['▓', '▒', '░', '·'];
+                        const charIndex = Math.floor(Math.abs(combined) * 4) % chars.length;
+                        line += chars[charIndex];
+                    } else {
+                        line += ' ';
+                    }
+                }
+                lines.push(line);
+            }
+            return lines.join('\n');
+        }
+        
+        function generateDNA(width = 60, height = 25, frame = 0) {
+            const lines = [];
+            
+            for (let y = 0; y < height; y++) {
+                let line = '';
+                for (let x = 0; x < width; x++) {
+                    const helix1 = Math.sin(x * 0.3 + frame * 0.1) * 3 + height / 2;
+                    const helix2 = Math.sin(x * 0.3 + Math.PI + frame * 0.1) * 3 + height / 2;
+                    
+                    if (Math.abs(y - helix1) < 1) {
+                        const chars = ['◉', '●', '○', '◎'];
+                        const charIndex = Math.floor(x / 3 + frame / 4) % chars.length;
+                        line += chars[charIndex];
+                    } else if (Math.abs(y - helix2) < 1) {
+                        const chars = ['◐', '◑', '◒', '◓'];
+                        const charIndex = Math.floor(x / 3 + frame / 4) % chars.length;
+                        line += chars[charIndex];
+                    } else if (Math.abs(helix1 - helix2) < 4 && Math.abs(y - (helix1 + helix2) / 2) < 1) {
+                        const chars = ['─', '═', '━', '▬'];
+                        const charIndex = Math.floor(x / 2 + frame / 3) % chars.length;
+                        line += chars[charIndex];
+                    } else {
+                        line += ' ';
+                    }
+                }
+                lines.push(line);
+            }
+            return lines.join('\n');
+        }
+        
+        function generateAtom(size = 25, frame = 0) {
+            const lines = [];
+            const center = Math.floor(size / 2);
+            
+            for (let y = 0; y < size; y++) {
+                let line = '';
+                for (let x = 0; x < size * 2; x++) {
+                    const dx = x - center * 2;
+                    const dy = y - center;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    const angle = Math.atan2(dy, dx);
+                    
+                    // Nucleus
+                    if (distance < 2) {
+                        const chars = ['◉', '◎', '●'];
+                        const charIndex = Math.floor(frame / 5) % chars.length;
+                        line += chars[charIndex];
+                    }
+                    // Electron orbits
+                    else if (Math.abs(distance - 8) < 1 || Math.abs(distance - 12) < 1 || Math.abs(distance - 16) < 1) {
+                        const orbitAngle = angle + frame * 0.1;
+                        const electronPos = Math.sin(orbitAngle * 3) * 0.5;
+                        if (Math.abs(electronPos) < 0.3) {
+                            const chars = ['◦', '•', '○', '●'];
+                            const charIndex = Math.floor(distance / 4 + frame / 3) % chars.length;
+                            line += chars[charIndex];
+                        } else {
+                            const chars = ['·', '▪', '▫', ' '];
+                            const charIndex = Math.floor(distance / 6) % chars.length;
+                            line += chars[charIndex];
+                        }
+                    } else {
+                        line += ' ';
+                    }
+                }
+                lines.push(line);
+            }
+            return lines.join('\n');
+        }
+        
+        function generateInfinity(width = 70, height = 20, frame = 0) {
+            const lines = [];
+            const centerY = Math.floor(height / 2);
+            
+            for (let y = 0; y < height; y++) {
+                let line = '';
+                for (let x = 0; x < width; x++) {
+                    const t = (x - width / 2) * 0.1 + frame * 0.05;
+                    const infinityX = Math.sin(t) * 15 + width / 2;
+                    const infinityY = Math.sin(t * 2) * 5 + centerY;
+                    
+                    const distance = Math.sqrt((x - infinityX) * (x - infinityX) + (y - infinityY) * (y - infinityY));
+                    
+                    if (distance < 2) {
+                        const chars = ['∞', '◉', '●', '○'];
+                        const charIndex = Math.floor(t * 2 + frame / 4) % chars.length;
+                        line += chars[charIndex];
+                    } else if (distance < 4) {
+                        const chars = ['▓', '▒', '░', '·'];
+                        const charIndex = Math.floor(distance + frame / 6) % chars.length;
+                        line += chars[charIndex];
+                    } else {
+                        line += ' ';
+                    }
+                }
+                lines.push(line);
+            }
+            return lines.join('\n');
+        }
+        
+        function displayShape(shapeFunction, metadata) {
+            const display = document.getElementById('ascii-display');
+            
+            function animate() {
+                const shape = shapeFunction(animationFrame);
+                display.innerHTML = `<pre>${shape}</pre>`;
+                updateMetadata(metadata);
+                animationFrame++;
+                
+                if (animationInterval) {
+                    setTimeout(animate, 100);
+                }
+            }
+            
+            animate();
+        }
+        
+        function testCircle() {
+            log('Testing circle shape...');
+            stopAnimation();
+            animationInterval = true;
+            animationFrame = 0;
+            
+            displayShape(
+                (frame) => generateCircle(30, frame),
+                {
+                    title: 'Breaking Bad',
+                    genre: 'drama',
+                    duration: 47,
+                    index: 3,
+                    total: 10,
+                    service: 'Netflix',
+                    season: '1',
+                    episode: '3',
+                    year: '2008'
+                }
+            );
+            
+            updateStatus('Circle animation started', 'success');
+            log('Circle test: SUCCESS');
+        }
+        
+        function testDiamond() {
+            log('Testing diamond shape...');
+            stopAnimation();
+            animationInterval = true;
+            animationFrame = 0;
+            
+            displayShape(
+                (frame) => generateDiamond(23, frame),
+                {
+                    title: 'Stranger Things',
+                    genre: 'sci-fi',
+                    duration: 51,
+                    index: 7,
+                    total: 8,
+                    service: 'Netflix',
+                    season: '4',
+                    episode: '9',
+                    year: '2022'
+                }
+            );
+            
+            updateStatus('Diamond animation started', 'success');
+            log('Diamond test: SUCCESS');
+        }
+        
+        function testWave() {
+            log('Testing wave pattern...');
+            stopAnimation();
+            animationInterval = true;
+            animationFrame = 0;
+            
+            displayShape(
+                (frame) => generateWave(90, 23, frame),
+                {
+                    title: 'The Office',
+                    genre: 'comedy',
+                    duration: 22,
+                    index: 15,
+                    total: 25,
+                    service: 'Peacock',
+                    season: '2',
+                    episode: '1',
+                    year: '2005'
+                }
+            );
+            
+            updateStatus('Wave animation started', 'success');
+            log('Wave test: SUCCESS');
+        }
+        
+        function testSpiral() {
+            log('Testing spiral pattern...');
+            stopAnimation();
+            animationInterval = true;
+            animationFrame = 0;
+            
+            displayShape(
+                (frame) => generateSpiral(30, frame),
+                {
+                    title: 'Westworld',
+                    genre: 'sci-fi',
+                    duration: 58,
+                    index: 4,
+                    total: 10,
+                    service: 'HBO Max',
+                    season: '1',
+                    episode: '4',
+                    year: '2016'
+                }
+            );
+            
+            updateStatus('Spiral animation started', 'success');
+            log('Spiral test: SUCCESS');
+        }
+        
+        function testMaze() {
+            log('Testing maze pattern...');
+            stopAnimation();
+            animationInterval = true;
+            animationFrame = 0;
+            
+            displayShape(
+                (frame) => generateMaze(60, 23, frame),
+                {
+                    title: 'Game of Thrones',
+                    genre: 'fantasy',
+                    duration: 60,
+                    index: 9,
+                    total: 10,
+                    service: 'HBO Max',
+                    season: '8',
+                    episode: '6',
+                    year: '2019'
+                }
+            );
+            
+            updateStatus('Maze animation started', 'success');
+            log('Maze test: SUCCESS');
+        }
+        
+        function testMatrix() {
+            log('Testing matrix pattern...');
+            stopAnimation();
+            animationInterval = true;
+            animationFrame = 0;
+            
+            displayShape(
+                (frame) => generateMatrix(75, 27, frame),
+                {
+                    title: 'Black Mirror',
+                    genre: 'sci-fi',
+                    duration: 45,
+                    index: 6,
+                    total: 6,
+                    service: 'Netflix',
+                    season: '3',
+                    episode: '4',
+                    year: '2016'
+                }
+            );
+            
+            updateStatus('Matrix animation started', 'success');
+            log('Matrix test: SUCCESS');
+        }
+        
+        function testPulse() {
+            log('Testing pulse pattern...');
+            stopAnimation();
+            animationInterval = true;
+            animationFrame = 0;
+            
+            displayShape(
+                (frame) => generatePulse(27, frame),
+                {
+                    title: 'The Crown',
+                    genre: 'drama',
+                    duration: 57,
+                    index: 2,
+                    total: 10,
+                    service: 'Netflix',
+                    season: '4',
+                    episode: '2',
+                    year: '2020'
+                }
+            );
+            
+            updateStatus('Pulse animation started', 'success');
+            log('Pulse test: SUCCESS');
+        }
+        
+        function testHexagon() {
+            log('Testing hexagon pattern...');
+            stopAnimation();
+            animationInterval = true;
+            animationFrame = 0;
+            
+            displayShape(
+                (frame) => generateHexagon(25, frame),
+                {
+                    title: 'The Mandalorian',
+                    genre: 'sci-fi',
+                    duration: 40,
+                    index: 5,
+                    total: 8,
+                    service: 'Disney+',
+                    season: '2',
+                    episode: '5',
+                    year: '2020'
+                }
+            );
+            
+            updateStatus('Hexagon animation started', 'success');
+            log('Hexagon test: SUCCESS');
+        }
+        
+        function testStar() {
+            log('Testing star pattern...');
+            stopAnimation();
+            animationInterval = true;
+            animationFrame = 0;
+            
+            displayShape(
+                (frame) => generateStar(25, frame),
+                {
+                    title: 'Star Trek',
+                    genre: 'sci-fi',
+                    duration: 45,
+                    index: 12,
+                    total: 26,
+                    service: 'Paramount+',
+                    season: '1',
+                    episode: '12',
+                    year: '2017'
+                }
+            );
+            
+            updateStatus('Star animation started', 'success');
+            log('Star test: SUCCESS');
+        }
+        
+        function testTunnel() {
+            log('Testing tunnel pattern...');
+            stopAnimation();
+            animationInterval = true;
+            animationFrame = 0;
+            
+            displayShape(
+                (frame) => generateTunnel(25, frame),
+                {
+                    title: 'Stranger Things',
+                    genre: 'horror',
+                    duration: 55,
+                    index: 8,
+                    total: 9,
+                    service: 'Netflix',
+                    season: '4',
+                    episode: '8',
+                    year: '2022'
+                }
+            );
+            
+            updateStatus('Tunnel animation started', 'success');
+            log('Tunnel test: SUCCESS');
+        }
+        
+        function testFractal() {
+            log('Testing fractal pattern...');
+            stopAnimation();
+            animationInterval = true;
+            animationFrame = 0;
+            
+            displayShape(
+                (frame) => generateFractal(27, frame),
+                {
+                    title: 'Westworld',
+                    genre: 'sci-fi',
+                    duration: 58,
+                    index: 10,
+                    total: 10,
+                    service: 'HBO Max',
+                    season: '1',
+                    episode: '10',
+                    year: '2016'
+                }
+            );
+            
+            updateStatus('Fractal animation started', 'success');
+            log('Fractal test: SUCCESS');
+        }
+        
+        function testPlasma() {
+            log('Testing plasma pattern...');
+            stopAnimation();
+            animationInterval = true;
+            animationFrame = 0;
+            
+            displayShape(
+                (frame) => generatePlasma(80, 25, frame),
+                {
+                    title: 'The Expanse',
+                    genre: 'sci-fi',
+                    duration: 43,
+                    index: 6,
+                    total: 10,
+                    service: 'Amazon Prime',
+                    season: '5',
+                    episode: '6',
+                    year: '2020'
+                }
+            );
+            
+            updateStatus('Plasma animation started', 'success');
+            log('Plasma test: SUCCESS');
+        }
+        
+        function testVortex() {
+            log('Testing vortex pattern...');
+            stopAnimation();
+            animationInterval = true;
+            animationFrame = 0;
+            
+            displayShape(
+                (frame) => generateVortex(25, frame),
+                {
+                    title: 'Doctor Who',
+                    genre: 'sci-fi',
+                    duration: 45,
+                    index: 1,
+                    total: 13,
+                    service: 'BBC iPlayer',
+                    season: '13',
+                    episode: '1',
+                    year: '2021'
+                }
+            );
+            
+            updateStatus('Vortex animation started', 'success');
+            log('Vortex test: SUCCESS');
+        }
+        
+        function testCrystal() {
+            log('Testing crystal pattern...');
+            stopAnimation();
+            animationInterval = true;
+            animationFrame = 0;
+            
+            displayShape(
+                (frame) => generateCrystal(23, frame),
+                {
+                    title: 'The Dark Crystal',
+                    genre: 'fantasy',
+                    duration: 60,
+                    index: 3,
+                    total: 10,
+                    service: 'Netflix',
+                    season: '1',
+                    episode: '3',
+                    year: '2019'
+                }
+            );
+            
+            updateStatus('Crystal animation started', 'success');
+            log('Crystal test: SUCCESS');
+        }
+        
+        function testLightning() {
+            log('Testing lightning pattern...');
+            stopAnimation();
+            animationInterval = true;
+            animationFrame = 0;
+            
+            displayShape(
+                (frame) => generateLightning(70, 25, frame),
+                {
+                    title: 'The Flash',
+                    genre: 'superhero',
+                    duration: 42,
+                    index: 15,
+                    total: 23,
+                    service: 'CW',
+                    season: '7',
+                    episode: '15',
+                    year: '2021'
+                }
+            );
+            
+            updateStatus('Lightning animation started', 'success');
+            log('Lightning test: SUCCESS');
+        }
+        
+        function testGalaxy() {
+            log('Testing galaxy pattern...');
+            stopAnimation();
+            animationInterval = true;
+            animationFrame = 0;
+            
+            displayShape(
+                (frame) => generateGalaxy(30, frame),
+                {
+                    title: 'Guardians of the Galaxy',
+                    genre: 'sci-fi',
+                    duration: 121,
+                    index: 1,
+                    total: 1,
+                    service: 'Disney+',
+                    year: '2014'
+                }
+            );
+            
+            updateStatus('Galaxy animation started', 'success');
+            log('Galaxy test: SUCCESS');
+        }
+        
+        function testMandala() {
+            log('Testing mandala pattern...');
+            stopAnimation();
+            animationInterval = true;
+            animationFrame = 0;
+            
+            displayShape(
+                (frame) => generateMandala(25, frame),
+                {
+                    title: 'Doctor Strange',
+                    genre: 'superhero',
+                    duration: 115,
+                    index: 1,
+                    total: 1,
+                    service: 'Disney+',
+                    year: '2016'
+                }
+            );
+            
+            updateStatus('Mandala animation started', 'success');
+            log('Mandala test: SUCCESS');
+        }
+        
+        function testFireworks() {
+            log('Testing fireworks pattern...');
+            stopAnimation();
+            animationInterval = true;
+            animationFrame = 0;
+            
+            displayShape(
+                (frame) => generateFireworks(75, 25, frame),
+                {
+                    title: 'The Grand Tour',
+                    genre: 'documentary',
+                    duration: 65,
+                    index: 1,
+                    total: 14,
+                    service: 'Amazon Prime',
+                    season: '4',
+                    episode: '1',
+                    year: '2019'
+                }
+            );
+            
+            updateStatus('Fireworks animation started', 'success');
+            log('Fireworks test: SUCCESS');
+        }
+        
+        function testDNA() {
+            log('Testing DNA pattern...');
+            stopAnimation();
+            animationInterval = true;
+            animationFrame = 0;
+            
+            displayShape(
+                (frame) => generateDNA(60, 25, frame),
+                {
+                    title: 'Helix',
+                    genre: 'sci-fi',
+                    duration: 43,
+                    index: 7,
+                    total: 13,
+                    service: 'Syfy',
+                    season: '1',
+                    episode: '7',
+                    year: '2014'
+                }
+            );
+            
+            updateStatus('DNA animation started', 'success');
+            log('DNA test: SUCCESS');
+        }
+        
+        function testAtom() {
+            log('Testing atom pattern...');
+            stopAnimation();
+            animationInterval = true;
+            animationFrame = 0;
+            
+            displayShape(
+                (frame) => generateAtom(25, frame),
+                {
+                    title: 'The Big Bang Theory',
+                    genre: 'comedy',
+                    duration: 22,
+                    index: 200,
+                    total: 279,
+                    service: 'HBO Max',
+                    season: '9',
+                    episode: '15',
+                    year: '2016'
+                }
+            );
+            
+            updateStatus('Atom animation started', 'success');
+            log('Atom test: SUCCESS');
+        }
+        
+        function testInfinity() {
+            log('Testing infinity pattern...');
+            stopAnimation();
+            animationInterval = true;
+            animationFrame = 0;
+            
+            displayShape(
+                (frame) => generateInfinity(70, 20, frame),
+                {
+                    title: 'Avengers: Infinity War',
+                    genre: 'superhero',
+                    duration: 149,
+                    index: 1,
+                    total: 1,
+                    service: 'Disney+',
+                    year: '2018'
+                }
+            );
+            
+            updateStatus('Infinity animation started', 'success');
+            log('Infinity test: SUCCESS');
+        }
+        
+        function testCycle() {
+            log('Testing cycle through all shapes...');
+            const shapes = [
+                { func: () => generateCircle(30, animationFrame), name: 'Circle' },
+                { func: () => generateDiamond(23, animationFrame), name: 'Diamond' },
+                { func: () => generateWave(90, 23, animationFrame), name: 'Wave' },
+                { func: () => generateSpiral(30, animationFrame), name: 'Spiral' },
+                { func: () => generateMaze(60, 23, animationFrame), name: 'Maze' },
+                { func: () => generateMatrix(75, 27, animationFrame), name: 'Matrix' },
+                { func: () => generatePulse(27, animationFrame), name: 'Pulse' },
+                { func: () => generateHexagon(25, animationFrame), name: 'Hexagon' },
+                { func: () => generateStar(25, animationFrame), name: 'Star' },
+                { func: () => generateTunnel(25, animationFrame), name: 'Tunnel' },
+                { func: () => generateFractal(27, animationFrame), name: 'Fractal' },
+                { func: () => generatePlasma(80, 25, animationFrame), name: 'Plasma' },
+                { func: () => generateVortex(25, animationFrame), name: 'Vortex' },
+                { func: () => generateCrystal(23, animationFrame), name: 'Crystal' },
+                { func: () => generateLightning(70, 25, animationFrame), name: 'Lightning' },
+                { func: () => generateGalaxy(30, animationFrame), name: 'Galaxy' },
+                { func: () => generateMandala(25, animationFrame), name: 'Mandala' },
+                { func: () => generateFireworks(75, 25, animationFrame), name: 'Fireworks' },
+                { func: () => generateDNA(60, 25, animationFrame), name: 'DNA' },
+                { func: () => generateAtom(25, animationFrame), name: 'Atom' },
+                { func: () => generateInfinity(70, 20, animationFrame), name: 'Infinity' }
+            ];
+            
+            let currentShapeIndex = 0;
+            stopAnimation();
+            animationInterval = true;
+            animationFrame = 0;
+            
+            function cycleShapes() {
+                if (!animationInterval) return;
+                
+                const currentShapeData = shapes[currentShapeIndex];
+                const display = document.getElementById('ascii-display');
+                const shape = currentShapeData.func();
+                
+                display.innerHTML = `<pre>${shape}</pre>`;
+                updateMetadata({
+                    title: `${currentShapeData.name} Pattern`,
+                    genre: 'test',
+                    duration: 30,
+                    index: currentShapeIndex + 1,
+                    total: shapes.length,
+                    service: 'Test Suite'
+                });
+                
+                animationFrame++;
+                
+                // Switch shape every 3 seconds (30 frames)
+                if (animationFrame % 30 === 0) {
+                    currentShapeIndex = (currentShapeIndex + 1) % shapes.length;
+                    log(`Switched to: ${shapes[currentShapeIndex].name}`);
+                }
+                
+                setTimeout(cycleShapes, 100);
+            }
+            
+            cycleShapes();
+            updateStatus('Cycling through all shapes', 'success');
+            log('Cycle test: SUCCESS - cycling through all shapes');
+        }
+        
+        function stopAnimation() {
+            if (animationInterval) {
+                animationInterval = null;
+                updateStatus('Animation stopped', 'warning');
+                log('Animation stopped');
+            }
+        }
+        
+        function clearDisplay() {
+            log('Clearing display...');
+            stopAnimation();
+            document.getElementById('ascii-display').innerHTML = '<pre>READY</pre>';
+            document.getElementById('metadata-line').textContent = '[READY] [0/0] Waiting for content...';
+            updateStatus('Display cleared', 'warning');
+            log('Display cleared');
+        }
+        
+        // Auto-start with circle test
+        setTimeout(() => {
+            log('Auto-starting circle test...');
+            testCircle();
+        }, 1000);
+    </script>
+</body>
+</html> 

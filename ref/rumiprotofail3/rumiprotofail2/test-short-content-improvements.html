@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Short Content Improvements Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #000;
+            color: #fff;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .test-section {
+            margin-bottom: 30px;
+        }
+        
+        .btn {
+            background: #333;
+            border: 1px solid #555;
+            color: #fff;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .btn:hover {
+            background: #444;
+        }
+        
+        .btn.primary {
+            background: #00ff41;
+            border-color: #00ff41;
+            color: #000;
+        }
+        
+        .btn.primary:hover {
+            background: #00cc33;
+        }
+        
+        .status {
+            background: #222;
+            border: 1px solid #444;
+            border-radius: 4px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .status.success {
+            border-color: #00ff41;
+            background: #1a2a1a;
+        }
+        
+        .status.warning {
+            border-color: #ffaa00;
+            background: #2a1a1a;
+        }
+        
+        .log {
+            background: #000;
+            border: 1px solid #333;
+            border-radius: 4px;
+            padding: 15px;
+            height: 300px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+        
+        .channel-frame {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        
+        .channel-frame iframe {
+            width: 100%;
+            height: 400px;
+            border: none;
+            background: transparent;
+        }
+        
+        .test-results {
+            background: #222;
+            border: 1px solid #444;
+            border-radius: 4px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+        
+        .test-result {
+            margin-bottom: 10px;
+            padding: 8px;
+            border-radius: 3px;
+            font-size: 12px;
+        }
+        
+        .test-result.success {
+            background: #1a2a1a;
+            border-left: 3px solid #00ff41;
+        }
+        
+        .test-result.warning {
+            background: #2a1a1a;
+            border-left: 3px solid #ffaa00;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔧 Short Content Improvements Test</h1>
+            <p>Testing improved width calculation and remove button visibility for short content</p>
+        </div>
+        
+        <div class="test-section">
+            <h2>Status</h2>
+            <div id="status" class="status">
+                Initializing...
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2>Genre Channel Test</h2>
+            <div class="channel-frame">
+                <iframe id="test-channel" src="Genre-channel_v2.html" sandbox="allow-scripts allow-same-origin"></iframe>
+            </div>
+            
+            <div class="button-group">
+                <button class="btn primary" onclick="testShortContent()">Test Short Content</button>
+                <button class="btn" onclick="testComedyGenre()">Test Comedy Genre</button>
+                <button class="btn" onclick="checkRemoveButtons()">Check Remove Buttons</button>
+                <button class="btn" onclick="clearLog()">Clear Log</button>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2>Test Results</h2>
+            <div id="test-results" class="test-results">
+                <div class="test-result">
+                    Ready to test short content improvements. Click "Test Short Content" to begin.
+                </div>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2>Debug Log</h2>
+            <div class="log" id="log"></div>
+        </div>
+    </div>
+
+    <script>
+        function log(message) {
+            const logElement = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            logElement.innerHTML += `[${timestamp}] ${message}\n`;
+            logElement.scrollTop = logElement.scrollHeight;
+        }
+        
+        function updateStatus(message, type = '') {
+            const statusElement = document.getElementById('status');
+            statusElement.textContent = message;
+            statusElement.className = `status ${type}`;
+        }
+        
+        function addTestResult(message, type = 'success') {
+            const resultsElement = document.getElementById('test-results');
+            const resultDiv = document.createElement('div');
+            resultDiv.className = `test-result ${type}`;
+            resultDiv.textContent = message;
+            resultsElement.appendChild(resultDiv);
+        }
+        
+        function testShortContent() {
+            const frame = document.getElementById('test-channel');
+            const frameWindow = frame.contentWindow;
+            
+            log('🧪 Testing short content improvements...');
+            
+            // Check if overlap fix is working
+            if (frameWindow.overlapFix) {
+                log('✅ Overlap fix system is loaded');
+                
+                // Test width calculation for different durations
+                const testDurations = [15, 30, 45, 60, 90, 120];
+                log('Testing width calculation for different durations:');
+                
+                testDurations.forEach(duration => {
+                    const width = frameWindow.overlapFix.safeCalculateWidth(duration);
+                    log(`  ${duration}min -> ${width.toFixed(1)}% width`);
+                    
+                    // Check if minimum widths are being applied correctly
+                    if (duration <= 30 && width < 15) {
+                        addTestResult(`⚠️ ${duration}min content width (${width.toFixed(1)}%) is below 15% minimum`, 'warning');
+                    } else if (duration <= 60 && width < 12) {
+                        addTestResult(`⚠️ ${duration}min content width (${width.toFixed(1)}%) is below 12% minimum`, 'warning');
+                    } else {
+                        addTestResult(`✅ ${duration}min content width (${width.toFixed(1)}%) is appropriate`);
+                    }
+                });
+                
+                updateStatus('Short content width test completed', 'success');
+            } else {
+                log('❌ Overlap fix system not found');
+                updateStatus('Overlap fix system not found', 'warning');
+            }
+        }
+        
+        function testComedyGenre() {
+            const frame = document.getElementById('test-channel');
+            const frameWindow = frame.contentWindow;
+            
+            log('🎭 Testing Comedy genre with short content...');
+            
+            try {
+                // Try to trigger comedy genre selection
+                if (frameWindow.handleGenreChange) {
+                    log('Triggering Comedy genre selection...');
+                    // This would need to be adapted based on the actual genre selection mechanism
+                    log('✅ Comedy genre test initiated');
+                    addTestResult('✅ Comedy genre test initiated');
+                } else {
+                    log('⚠️ handleGenreChange function not found');
+                    addTestResult('⚠️ handleGenreChange function not found', 'warning');
+                }
+            } catch (error) {
+                log(`❌ Error testing comedy genre: ${error.message}`);
+                addTestResult(`❌ Error: ${error.message}`, 'warning');
+            }
+        }
+        
+        function checkRemoveButtons() {
+            const frame = document.getElementById('test-channel');
+            const frameWindow = frame.contentWindow;
+            
+            log('🔍 Checking remove button visibility...');
+            
+            try {
+                const blocks = frameWindow.document.querySelectorAll('.program-slot:not(.empty)');
+                log(`Found ${blocks.length} content blocks`);
+                
+                let narrowBlocks = 0;
+                let visibleRemoveButtons = 0;
+                
+                blocks.forEach((block, index) => {
+                    const width = parseFloat(block.style.width) || 0;
+                    const removeBtn = block.querySelector('.remove-btn');
+                    
+                    log(`Block ${index + 1}: ${width.toFixed(1)}% width`);
+                    
+                    if (width < 20) {
+                        narrowBlocks++;
+                        log(`  -> Narrow block detected (${width.toFixed(1)}% width)`);
+                        
+                        if (removeBtn) {
+                            const opacity = parseFloat(removeBtn.style.opacity) || 0;
+                            if (opacity > 0.5) {
+                                visibleRemoveButtons++;
+                                log(`  -> Remove button is visible (opacity: ${opacity})`);
+                            } else {
+                                log(`  -> Remove button visibility needs improvement (opacity: ${opacity})`);
+                            }
+                        }
+                    }
+                });
+                
+                addTestResult(`Found ${narrowBlocks} narrow blocks (< 20% width)`);
+                addTestResult(`${visibleRemoveButtons}/${narrowBlocks} narrow blocks have visible remove buttons`);
+                
+                if (visibleRemoveButtons === narrowBlocks && narrowBlocks > 0) {
+                    addTestResult('✅ All narrow blocks have visible remove buttons');
+                    updateStatus('Remove button visibility check completed', 'success');
+                } else if (narrowBlocks > 0) {
+                    addTestResult('⚠️ Some narrow blocks need remove button visibility improvements', 'warning');
+                    updateStatus('Remove button visibility needs improvement', 'warning');
+                } else {
+                    addTestResult('ℹ️ No narrow blocks found to test');
+                    updateStatus('No narrow blocks to test', 'success');
+                }
+                
+            } catch (error) {
+                log(`❌ Error checking remove buttons: ${error.message}`);
+                addTestResult(`❌ Error: ${error.message}`, 'warning');
+            }
+        }
+        
+        function clearLog() {
+            document.getElementById('log').innerHTML = '';
+            document.getElementById('test-results').innerHTML = '<div class="test-result">Log cleared</div>';
+            log('Log cleared');
+        }
+        
+        // Auto-test when page loads
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                log('Page loaded, checking systems...');
+                testShortContent();
+            }, 3000);
+        });
+        
+        log('Short content improvements test page loaded');
+    </script>
+</body>
+</html> 

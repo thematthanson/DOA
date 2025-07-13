@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RUMI - Quick Test</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #0a0a0a;
+            color: #ffffff;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            color: #00ff88;
+            margin: 0;
+            font-size: 2.5em;
+        }
+        .test-section {
+            background: #1a1a1a;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .test-section h3 {
+            color: #00ff88;
+            margin-top: 0;
+        }
+        .test-button {
+            background: #00ff88;
+            color: #000;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.3s;
+        }
+        .test-button:hover {
+            background: #00cc66;
+            transform: translateY(-2px);
+        }
+        .status {
+            background: #2a2a2a;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="header">
+            <h1>🎯 RUMI Quick Test</h1>
+            <p>Test the integrated optimized genre channel</p>
+        </div>
+        
+        <div class="test-section">
+            <h3>🚀 Main Application</h3>
+            <p>Open the main application with feature flag integration:</p>
+            <button class="test-button" onclick="openMainApp()">📱 Open Main App (indexD.html)</button>
+            <div class="status" id="mainStatus">Click button to open main application</div>
+        </div>
+        
+        <div class="test-section">
+            <h3>🧪 Channel Tests</h3>
+            <p>Test individual channel versions:</p>
+            <button class="test-button" onclick="openCurrentChannel()">📺 Current Channel</button>
+            <button class="test-button" onclick="openOptimizedChannel()">🎯 Optimized Channel</button>
+            <div class="status" id="channelStatus">Click buttons to test channels</div>
+        </div>
+        
+        <div class="test-section">
+            <h3>📊 Feature Flag Control</h3>
+            <p>Control which channel version is used:</p>
+            <button class="test-button" onclick="setFeatureFlag(false)">📺 Use Current Channel</button>
+            <button class="test-button" onclick="setFeatureFlag(true)">🎯 Use Optimized Channel</button>
+            <div class="status" id="flagStatus">Current: <span id="currentFlag">Loading...</span></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>📋 Instructions</h3>
+            <ol>
+                <li>Click "Open Main App" to start the main application</li>
+                <li>Use the toggle button in the bottom-right corner to switch between versions</li>
+                <li>Test both current and optimized channels</li>
+                <li>Check the console for integration messages</li>
+            </ol>
+        </div>
+    </div>
+    
+    <script>
+        function openMainApp() {
+            window.open('indexD.html', '_blank');
+            document.getElementById('mainStatus').textContent = '✅ Main application opened in new tab';
+        }
+        
+        function openCurrentChannel() {
+            window.open('Genre-channel_v2.html', '_blank');
+            document.getElementById('channelStatus').textContent = '✅ Current channel opened';
+        }
+        
+        function openOptimizedChannel() {
+            window.open('Genre-channel_v2-INTEGRATED.html', '_blank');
+            document.getElementById('channelStatus').textContent = '✅ Optimized channel opened';
+        }
+        
+        function setFeatureFlag(useOptimized) {
+            const flags = JSON.parse(localStorage.getItem('rumi_feature_flags') || '{}');
+            flags.USE_OPTIMIZED_GENRE_CHANNEL = useOptimized;
+            localStorage.setItem('rumi_feature_flags', JSON.stringify(flags));
+            
+            document.getElementById('currentFlag').textContent = useOptimized ? 'Optimized Channel' : 'Current Channel';
+            document.getElementById('flagStatus').textContent = `Current: ${useOptimized ? 'Optimized Channel' : 'Current Channel'}`;
+            
+            console.log('🚩 Feature flag updated:', useOptimized ? 'Optimized ENABLED' : 'Current ENABLED');
+        }
+        
+        // Initialize status
+        function updateStatus() {
+            const flags = JSON.parse(localStorage.getItem('rumi_feature_flags') || '{}');
+            const useOptimized = flags.USE_OPTIMIZED_GENRE_CHANNEL || false;
+            document.getElementById('currentFlag').textContent = useOptimized ? 'Optimized Channel' : 'Current Channel';
+        }
+        
+        updateStatus();
+        window.addEventListener('storage', updateStatus);
+        
+        console.log('🧪 RUMI Quick Test Loaded');
+    </script>
+</body>
+</html>

@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Component Communication Test - Rumi Extension</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            padding: 30px;
+        }
+
+        .test-section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border: 1px solid #e9ecef;
+        }
+
+        .test-section h2 {
+            color: #495057;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .iframe-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .iframe-wrapper {
+            border: 2px solid #dee2e6;
+            border-radius: 10px;
+            overflow: hidden;
+            background: white;
+        }
+
+        .iframe-header {
+            background: #343a40;
+            color: white;
+            padding: 10px 15px;
+            font-weight: 500;
+            font-size: 0.9em;
+        }
+
+        .iframe-content {
+            height: 300px;
+            padding: 20px;
+            background: #f8f9fa;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .simulated-iframe {
+            width: 100%;
+            height: 100%;
+            border: 2px dashed #6c757d;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: white;
+            position: relative;
+        }
+
+        .iframe-state {
+            padding: 15px;
+            background: #e9ecef;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .iframe-state.active {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+        }
+
+        .iframe-state.error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .control-group {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #dee2e6;
+        }
+
+        .control-group h3 {
+            margin-bottom: 15px;
+            color: #495057;
+            font-size: 1.1em;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn.secondary {
+            background: #6c757d;
+        }
+
+        .btn.success {
+            background: #28a745;
+        }
+
+        .btn.danger {
+            background: #dc3545;
+        }
+
+        .btn.warning {
+            background: #ffc107;
+            color: #212529;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .input-group input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            font-size: 0.9em;
+        }
+
+        .input-group button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+
+        .message-log {
+            background: #212529;
+            color: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+            line-height: 1.6;
+        }
+
+        .message-log .timestamp {
+            color: #6c757d;
+            margin-right: 10px;
+        }
+
+        .message-log .sender {
+            color: #17a2b8;
+            font-weight: bold;
+        }
+
+        .message-log .receiver {
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        .message-log .error {
+            color: #dc3545;
+        }
+
+        .message-log .info {
+            color: #ffc107;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #dee2e6;
+            text-align: center;
+        }
+
+        .stat-card .value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .stat-card .label {
+            color: #6c757d;
+            font-size: 0.9em;
+        }
+
+        .connection-indicator {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #dc3545;
+        }
+
+        .connection-indicator.connected {
+            background: #28a745;
+        }
+
+        .connection-indicator.connecting {
+            background: #ffc107;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .instructions {
+            background: #e3f2fd;
+            border: 1px solid #bbdefb;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .instructions h3 {
+            color: #1976d2;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .instructions ul {
+            margin-left: 20px;
+            color: #424242;
+        }
+
+        .instructions li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .sync-status {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .sync-status .status {
+            font-weight: 500;
+        }
+
+        .sync-status .status.synced {
+            color: #28a745;
+        }
+
+        .sync-status .status.out-of-sync {
+            color: #dc3545;
+        }
+
+        .sync-status .status.syncing {
+            color: #ffc107;
+        }
+
+        @media (max-width: 768px) {
+            .iframe-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .controls {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔗 Component Communication Test</h1>
+            <p>Test message passing between iframes and state synchronization</p>
+        </div>
+
+        <div class="main-content">
+            <div class="instructions">
+                <h3>🎯 Testing Instructions</h3>
+                <ul>
+                    <li><strong>Send Messages:</strong> Use the control buttons to send different types of messages between components</li>
+                    <li><strong>Test State Sync:</strong> Update states in one component and observe synchronization in others</li>
+                    <li><strong>Monitor Connection:</strong> Watch the connection indicators to see communication status</li>
+                    <li><strong>Check Message Log:</strong> Review all communication activities in the message log</li>
+                    <li><strong>Test Error Handling:</strong> Trigger error scenarios to test resilience</li>
+                    <li><strong>Verify Statistics:</strong> Monitor message counts and performance metrics</li>
+                </ul>
+            </div>
+
+            <div class="test-section">
+                <h2>Communication Components</h2>
+                <div class="iframe-container">
+                    <div class="iframe-wrapper">
+                        <div class="iframe-header">Component A (Main)</div>
+                        <div class="iframe-content">
+                            <div class="simulated-iframe" id="componentA">
+                                <div class="connection-indicator" id="connA"></div>
+                                <div class="iframe-state" id="stateA">
+                                    <strong>State:</strong> <span id="stateValueA">Idle</span>
+                                </div>
+                                <div><strong>ID:</strong> component-a</div>
+                                <div><strong>Type:</strong> Main Controller</div>
+                                <div><strong>Messages:</strong> <span id="messagesA">0</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="iframe-wrapper">
+                        <div class="iframe-header">Component B (Child)</div>
+                        <div class="iframe-content">
+                            <div class="simulated-iframe" id="componentB">
+                                <div class="connection-indicator" id="connB"></div>
+                                <div class="iframe-state" id="stateB">
+                                    <strong>State:</strong> <span id="stateValueB">Idle</span>
+                                </div>
+                                <div><strong>ID:</strong> component-b</div>
+                                <div><strong>Type:</strong> Child Worker</div>
+                                <div><strong>Messages:</strong> <span id="messagesB">0</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sync-status">
+                    <span>Synchronization Status:</span>
+                    <span class="status" id="syncStatus">Disconnected</span>
+                </div>
+            </div>
+
+            <div class="test-section">
+                <h2>Communication Controls</h2>
+                <div class="controls">
+                    <div class="control-group">
+                        <h3>Basic Messages</h3>
+                        <button class="btn" onclick="sendMessage('ping', 'A', 'B')">Send Ping A→B</button>
+                        <button class="btn" onclick="sendMessage('pong', 'B', 'A')">Send Pong B→A</button>
+                        <button class="btn" onclick="sendMessage('hello', 'A', 'B')">Send Hello A→B</button>
+                        <button class="btn secondary" onclick="sendMessage('status', 'B', 'A')">Request Status B→A</button>
+                    </div>
+
+                    <div class="control-group">
+                        <h3>State Updates</h3>
+                        <button class="btn success" onclick="updateState('A', 'Active')">Set A Active</button>
+                        <button class="btn success" onclick="updateState('B', 'Processing')">Set B Processing</button>
+                        <button class="btn warning" onclick="updateState('A', 'Idle')">Set A Idle</button>
+                        <button class="btn danger" onclick="updateState('B', 'Error')">Set B Error</button>
+                    </div>
+
+                    <div class="control-group">
+                        <h3>Connection Control</h3>
+                        <button class="btn" onclick="establishConnection()">Connect Components</button>
+                        <button class="btn secondary" onclick="disconnectComponents()">Disconnect</button>
+                        <button class="btn warning" onclick="simulateLatency()">Simulate Latency</button>
+                        <button class="btn danger" onclick="simulateError()">Simulate Error</button>
+                    </div>
+
+                    <div class="control-group">
+                        <h3>Custom Message</h3>
+                        <div class="input-group">
+                            <input type="text" id="customMessage" placeholder="Enter custom message">
+                            <button onclick="sendCustomMessage()">Send</button>
+                        </div>
+                        <div class="input-group">
+                            <select id="messageType">
+                                <option value="info">Info</option>
+                                <option value="warning">Warning</option>
+                                <option value="error">Error</option>
+                                <option value="success">Success</option>
+                            </select>
+                            <button onclick="sendTypedMessage()">Send Typed</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="test-section">
+                <h2>Statistics & Monitoring</h2>
+                <div class="stats">
+                    <div class="stat-card">
+                        <div class="value" id="totalMessages">0</div>
+                        <div class="label">Total Messages</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="value" id="successRate">100%</div>
+                        <div class="label">Success Rate</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="value" id="avgLatency">0ms</div>
+                        <div class="label">Avg Latency</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="value" id="errorCount">0</div>
+                        <div class="label">Errors</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="test-section">
+                <h2>Message Log</h2>
+                <div class="message-log" id="messageLog">
+                    <div class="info">Communication system initialized. Ready for testing.</div>
+                </div>
+            </div>
+
+            <div class="test-section">
+                <h2>Test Actions</h2>
+                <div class="controls">
+                    <div class="control-group">
+                        <h3>Test Scenarios</h3>
+                        <button class="btn" onclick="runBasicTest()">Run Basic Test</button>
+                        <button class="btn" onclick="runStateSync()">Test State Sync</button>
+                        <button class="btn" onclick="runStressTest()">Stress Test</button>
+                        <button class="btn secondary" onclick="clearLog()">Clear Log</button>
+                    </div>
+
+                    <div class="control-group">
+                        <h3>Advanced Tests</h3>
+                        <button class="btn" onclick="testBidirectional()">Bidirectional Test</button>
+                        <button class="btn" onclick="testErrorRecovery()">Error Recovery</button>
+                        <button class="btn" onclick="testMessageQueue()">Message Queue</button>
+                        <button class="btn warning" onclick="resetSystem()">Reset System</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Component Communication Test System
+        class ComponentCommunicationTest {
+            constructor() {
+                this.components = new Map();
+                this.messageQueue = [];
+                this.messageLog = document.getElementById('messageLog');
+                this.stats = {
+                    totalMessages: 0,
+                    successfulMessages: 0,
+                    errorCount: 0,
+                    latencySum: 0,
+                    startTime: Date.now()
+                };
+                this.connectionStatus = 'disconnected';
+                this.init();
+            }
+
+            init() {
+                this.setupComponents();
+                this.updateDisplay();
+                this.log('System initialized successfully', 'info');
+            }
+
+            setupComponents() {
+                this.components.set('A', {
+                    id: 'component-a',
+                    type: 'main',
+                    state: 'Idle',
+                    messageCount: 0,
+                    connected: false
+                });
+
+                this.components.set('B', {
+                    id: 'component-b',
+                    type: 'child',
+                    state: 'Idle',
+                    messageCount: 0,
+                    connected: false
+                });
+            }
+
+            establishConnection() {
+                this.connectionStatus = 'connecting';
+                this.updateConnectionIndicators();
+                this.log('Establishing connection between components...', 'info');
+                
+                setTimeout(() => {
+                    this.components.get('A').connected = true;
+                    this.components.get('B').connected = true;
+                    this.connectionStatus = 'connected';
+                    this.updateConnectionIndicators();
+                    this.updateSyncStatus('synced');
+                    this.log('Connection established successfully', 'success');
+                }, 1000);
+            }
+
+            disconnectComponents() {
+                this.components.get('A').connected = false;
+                this.components.get('B').connected = false;
+                this.connectionStatus = 'disconnected';
+                this.updateConnectionIndicators();
+                this.updateSyncStatus('disconnected');
+                this.log('Components disconnected', 'warning');
+            }
+
+            sendMessage(type, sender, receiver, data = {}) {
+                const timestamp = Date.now();
+                const message = {
+                    id: `msg_${timestamp}_${Math.random().toString(36).substr(2, 9)}`,
+                    type,
+                    sender,
+                    receiver,
+                    data,
+                    timestamp
+                };
+
+                this.stats.totalMessages++;
+                
+                if (!this.components.get(sender).connected || !this.components.get(receiver).connected) {
+                    this.log(`Message failed: ${sender}→${receiver} (${type}) - No connection`, 'error');
+                    this.stats.errorCount++;
+                    this.updateStats();
+                    return false;
+                }
+
+                // Simulate message processing
+                const processingTime = Math.random() * 100 + 50; // 50-150ms
+                
+                setTimeout(() => {
+                    this.processMessage(message);
+                    this.stats.successfulMessages++;
+                    this.stats.latencySum += processingTime;
+                    this.updateStats();
+                }, processingTime);
+
+                this.log(`Message sent: ${sender}→${receiver} (${type})`, 'info');
+                return true;
+            }
+
+            processMessage(message) {
+                const { sender, receiver, type, data } = message;
+                
+                // Update message counts
+                this.components.get(sender).messageCount++;
+                this.components.get(receiver).messageCount++;
+                
+                // Handle different message types
+                switch (type) {
+                    case 'ping':
+                        this.log(`${receiver} received ping from ${sender}`, 'receiver');
+                        // Auto-respond with pong
+                        setTimeout(() => {
+                            this.sendMessage('pong', receiver, sender);
+                        }, 100);
+                        break;
+                    
+                    case 'pong':
+                        this.log(`${receiver} received pong from ${sender}`, 'receiver');
+                        break;
+                    
+                    case 'state_update':
+                        this.updateComponentState(receiver, data.state);
+                        this.log(`${receiver} state updated to: ${data.state}`, 'receiver');
+                        break;
+                    
+                    case 'status':
+                        const status = this.components.get(receiver);
+                        this.log(`Status request from ${sender}: ${JSON.stringify(status)}`, 'receiver');
+                        break;
+                    
+                    default:
+                        this.log(`${receiver} received ${type} from ${sender}`, 'receiver');
+                }
+                
+                this.updateDisplay();
+            }
+
+            updateComponentState(component, newState) {
+                const comp = this.components.get(component);
+                if (comp) {
+                    comp.state = newState;
+                    this.updateDisplay();
+                    
+                    // Notify other components about state change
+                    const others = Array.from(this.components.keys()).filter(k => k !== component);
+                    others.forEach(other => {
+                        if (this.components.get(other).connected) {
+                            this.sendMessage('state_update', component, other, { state: newState });
+                        }
+                    });
+                }
+            }
+
+            updateDisplay() {
+                // Update component displays
+                this.components.forEach((comp, key) => {
+                    document.getElementById(`stateValue${key}`).textContent = comp.state;
+                    document.getElementById(`messages${key}`).textContent = comp.messageCount;
+                    
+                    const stateElement = document.getElementById(`state${key}`);
+                    stateElement.className = 'iframe-state';
+                    if (comp.state === 'Active' || comp.state === 'Processing') {
+                        stateElement.classList.add('active');
+                    } else if (comp.state === 'Error') {
+                        stateElement.classList.add('error');
+                    }
+                });
+            }
+
+            updateConnectionIndicators() {
+                this.components.forEach((comp, key) => {
+                    const indicator = document.getElementById(`conn${key}`);
+                    indicator.className = 'connection-indicator';
+                    
+                    if (this.connectionStatus === 'connected' && comp.connected) {
+                        indicator.classList.add('connected');
+                    } else if (this.connectionStatus === 'connecting') {
+                        indicator.classList.add('connecting');
+                    }
+                });
+            }
+
+            updateSyncStatus(status) {
+                const statusElement = document.getElementById('syncStatus');
+                statusElement.textContent = status.charAt(0).toUpperCase() + status.slice(1);
+                statusElement.className = `status ${status.replace('_', '-')}`;
+            }
+
+            updateStats() {
+                document.getElementById('totalMessages').textContent = this.stats.totalMessages;
+                document.getElementById('errorCount').textContent = this.stats.errorCount;
+                
+                const successRate = this.stats.totalMessages > 0 ? 
+                    ((this.stats.successfulMessages / this.stats.totalMessages) * 100).toFixed(1) : 100;
+                document.getElementById('successRate').textContent = `${successRate}%`;
+                
+                const avgLatency = this.stats.successfulMessages > 0 ? 
+                    Math.round(this.stats.latencySum / this.stats.successfulMessages) : 0;
+                document.getElementById('avgLatency').textContent = `${avgLatency}ms`;
+            }
+
+            log(message, type = 'info') {
+                const timestamp = new Date().toLocaleTimeString();
+                const logEntry = document.createElement('div');
+                logEntry.className = type;
+                logEntry.innerHTML = `<span class="timestamp">[${timestamp}]</span> ${message}`;
+                this.messageLog.appendChild(logEntry);
+                this.messageLog.scrollTop = this.messageLog.scrollHeight;
+            }
+
+            // Test scenarios
+            runBasicTest() {
+                this.log('Running basic communication test...', 'info');
+                this.establishConnection();
+                
+                setTimeout(() => {
+                    this.sendMessage('ping', 'A', 'B');
+                }, 1200);
+            }
+
+            runStateSync() {
+                this.log('Testing state synchronization...', 'info');
+                this.establishConnection();
+                
+                setTimeout(() => {
+                    this.updateComponentState('A', 'Active');
+                    setTimeout(() => {
+                        this.updateComponentState('B', 'Processing');
+                    }, 500);
+                }, 1200);
+            }
+
+            runStressTest() {
+                this.log('Running stress test - sending 10 messages...', 'info');
+                this.establishConnection();
+                
+                setTimeout(() => {
+                    for (let i = 0; i < 10; i++) {
+                        setTimeout(() => {
+                            this.sendMessage(`stress_${i}`, i % 2 === 0 ? 'A' : 'B', i % 2 === 0 ? 'B' : 'A');
+                        }, i * 100);
+                    }
+                }, 1200);
+            }
+
+            testBidirectional() {
+                this.log('Testing bidirectional communication...', 'info');
+                this.establishConnection();
+                
+                setTimeout(() => {
+                    this.sendMessage('ping', 'A', 'B');
+                    setTimeout(() => {
+                        this.sendMessage('ping', 'B', 'A');
+                    }, 200);
+                }, 1200);
+            }
+
+            testErrorRecovery() {
+                this.log('Testing error recovery...', 'info');
+                this.simulateError();
+                
+                setTimeout(() => {
+                    this.establishConnection();
+                    setTimeout(() => {
+                        this.sendMessage('recovery_test', 'A', 'B');
+                    }, 1200);
+                }, 2000);
+            }
+
+            testMessageQueue() {
+                this.log('Testing message queue handling...', 'info');
+                // Send messages before connection
+                for (let i = 0; i < 3; i++) {
+                    this.sendMessage(`queued_${i}`, 'A', 'B');
+                }
+                
+                // Then establish connection
+                setTimeout(() => {
+                    this.establishConnection();
+                }, 500);
+            }
+
+            simulateLatency() {
+                this.log('Simulating high latency...', 'warning');
+                const originalSendMessage = this.sendMessage.bind(this);
+                
+                this.sendMessage = (type, sender, receiver, data = {}) => {
+                    setTimeout(() => {
+                        originalSendMessage(type, sender, receiver, data);
+                    }, 1000); // 1 second delay
+                };
+                
+                setTimeout(() => {
+                    this.sendMessage = originalSendMessage;
+                    this.log('Latency simulation ended', 'info');
+                }, 5000);
+            }
+
+            simulateError() {
+                this.log('Simulating communication error...', 'error');
+                this.disconnectComponents();
+                this.updateComponentState('A', 'Error');
+                this.updateComponentState('B', 'Error');
+            }
+
+            clearLog() {
+                this.messageLog.innerHTML = '<div class="info">Message log cleared.</div>';
+            }
+
+            resetSystem() {
+                this.log('Resetting system...', 'warning');
+                this.disconnectComponents();
+                this.stats = {
+                    totalMessages: 0,
+                    successfulMessages: 0,
+                    errorCount: 0,
+                    latencySum: 0,
+                    startTime: Date.now()
+                };
+                this.components.forEach(comp => {
+                    comp.messageCount = 0;
+                    comp.state = 'Idle';
+                });
+                this.updateDisplay();
+                this.updateStats();
+                this.log('System reset complete', 'success');
+            }
+        }
+
+        // Initialize the test system
+        const commTest = new ComponentCommunicationTest();
+
+        // Global functions for button handlers
+        function sendMessage(type, sender, receiver) {
+            commTest.sendMessage(type, sender, receiver);
+        }
+
+        function updateState(component, state) {
+            commTest.updateComponentState(component, state);
+        }
+
+        function establishConnection() {
+            commTest.establishConnection();
+        }
+
+        function disconnectComponents() {
+            commTest.disconnectComponents();
+        }
+
+        function simulateLatency() {
+            commTest.simulateLatency();
+        }
+
+        function simulateError() {
+            commTest.simulateError();
+        }
+
+        function sendCustomMessage() {
+            const message = document.getElementById('customMessage').value;
+            if (message) {
+                commTest.sendMessage('custom', 'A', 'B', { content: message });
+                document.getElementById('customMessage').value = '';
+            }
+        }
+
+        function sendTypedMessage() {
+            const messageType = document.getElementById('messageType').value;
+            const message = document.getElementById('customMessage').value || `Test ${messageType} message`;
+            commTest.sendMessage(messageType, 'A', 'B', { content: message });
+        }
+
+        function runBasicTest() {
+            commTest.runBasicTest();
+        }
+
+        function runStateSync() {
+            commTest.runStateSync();
+        }
+
+        function runStressTest() {
+            commTest.runStressTest();
+        }
+
+        function testBidirectional() {
+            commTest.testBidirectional();
+        }
+
+        function testErrorRecovery() {
+            commTest.testErrorRecovery();
+        }
+
+        function testMessageQueue() {
+            commTest.testMessageQueue();
+        }
+
+        function clearLog() {
+            commTest.clearLog();
+        }
+
+        function resetSystem() {
+            commTest.resetSystem();
+        }
+    </script>
+</body>
+</html> 

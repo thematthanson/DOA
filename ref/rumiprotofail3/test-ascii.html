@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASCII Display Test</title>
+    <style>
+        body {
+            background: #000;
+            color: #00ff41;
+            font-family: 'Courier New', monospace;
+            padding: 20px;
+        }
+        
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .nokia-visual {
+            width: 100%;
+            height: 300px;
+            background: linear-gradient(45deg, #001100, #003300);
+            border: 2px solid #00ff41;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            margin: 20px 0;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .content-display {
+            text-align: center;
+            color: #00ff41;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            line-height: 1.2;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            background: #333;
+            color: #00ff41;
+            border: 1px solid #00ff41;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+        }
+        
+        button:hover {
+            background: #00ff41;
+            color: #000;
+        }
+        
+        .test-log {
+            background: #111;
+            border: 1px solid #333;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+            font-size: 11px;
+            color: #888;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        
+        .status.success {
+            background: #001100;
+            color: #00ff41;
+            border: 1px solid #00ff41;
+        }
+        
+        .status.error {
+            background: #110000;
+            color: #ff4444;
+            border: 1px solid #ff4444;
+        }
+        
+        .status.warning {
+            background: #111100;
+            color: #ffaa00;
+            border: 1px solid #ffaa00;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🎯 ASCII Display Test</h1>
+        
+        <div id="status" class="status">Ready to test ASCII display...</div>
+        
+        <div class="nokia-visual">
+            <div class="content-display" id="ascii-display">
+                <pre>READY</pre>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <button onclick="testBasicAscii()">Test Basic ASCII</button>
+            <button onclick="testAnimatedAscii()">Test Animated ASCII</button>
+            <button onclick="testShowTitle()">Test Show Title</button>
+            <button onclick="testGenrePatterns()">Test Genre Patterns</button>
+            <button onclick="testMetadataDisplay()">Test Metadata</button>
+            <button onclick="testScrolling()">Test Scrolling</button>
+            <button onclick="stopAnimation()">Stop Animation</button>
+            <button onclick="clearDisplay()">Clear Display</button>
+        </div>
+        
+        <div class="test-log" id="test-log">
+            <div>Test log will appear here...</div>
+        </div>
+    </div>
+
+    <!-- Load the ASCII display module -->
+    <script type="module">
+        import { RumiASCII } from './js/ui/ascii-display.js';
+        
+        // Make it globally available for testing
+        window.RumiASCII = RumiASCII;
+        
+        // Initialize
+        RumiASCII.init().then(() => {
+            updateStatus('ASCII module initialized successfully', 'success');
+            log('ASCII module loaded and ready');
+        }).catch(err => {
+            updateStatus('Failed to initialize ASCII module: ' + err.message, 'error');
+            log('ERROR: ' + err.message);
+        });
+    </script>
+
+    <script>
+        function updateStatus(message, type = 'info') {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = 'status ' + type;
+        }
+        
+        function log(message) {
+            const logDiv = document.getElementById('test-log');
+            const timestamp = new Date().toLocaleTimeString();
+            logDiv.innerHTML += `<div>[${timestamp}] ${message}</div>`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+        
+        function getDisplay() {
+            return document.getElementById('ascii-display');
+        }
+        
+                 async function testBasicAscii() {
+             log('Testing basic ASCII shapes...');
+             try {
+                 const art = generateLargeShape('circle', {
+                     genre: 'general',
+                     duration: 30,
+                     index: 1,
+                     total: 5,
+                     title: 'Circle Pattern Test'
+                 });
+                 
+                 getDisplay().innerHTML = `<pre>${art}</pre>`;
+                 updateStatus('Basic ASCII shapes test completed', 'success');
+                 log('Basic ASCII shapes test: SUCCESS');
+             } catch (err) {
+                 updateStatus('Basic ASCII shapes test failed: ' + err.message, 'error');
+                 log('Basic ASCII shapes test: ERROR - ' + err.message);
+             }
+         }
+        
+        async function testAnimatedAscii() {
+            log('Testing animated ASCII...');
+            try {
+                const display = getDisplay();
+                await window.RumiASCII.drawAscii('ANIMATED TEST', {
+                    genre: 'sci-fi',
+                    duration: 45,
+                    index: 2,
+                    total: 8,
+                    service: 'Netflix',
+                    elapsedTime: Date.now() / 1000
+                });
+                
+                updateStatus('Animated ASCII test started', 'success');
+                log('Animated ASCII test: SUCCESS - animation running');
+            } catch (err) {
+                updateStatus('Animated ASCII test failed: ' + err.message, 'error');
+                log('Animated ASCII test: ERROR - ' + err.message);
+            }
+        }
+        
+        async function testShowTitle() {
+            log('Testing show title display...');
+            try {
+                await window.RumiASCII.drawAscii('Breaking Bad', {
+                    genre: 'drama',
+                    duration: 60,
+                    index: 3,
+                    total: 10,
+                    service: 'Netflix',
+                    season: '1',
+                    episode: '1',
+                    description: 'A high school chemistry teacher diagnosed with inoperable lung cancer turns to manufacturing and selling methamphetamine',
+                    year: '2008'
+                });
+                
+                updateStatus('Show title test completed', 'success');
+                log('Show title test: SUCCESS');
+            } catch (err) {
+                updateStatus('Show title test failed: ' + err.message, 'error');
+                log('Show title test: ERROR - ' + err.message);
+            }
+        }
+        
+        async function testGenrePatterns() {
+            log('Testing different genre patterns...');
+            const genres = ['drama', 'sci-fi', 'comedy', 'horror', 'general'];
+            let currentGenre = 0;
+            
+            const cycleGenres = async () => {
+                if (currentGenre < genres.length) {
+                    const genre = genres[currentGenre];
+                    log(`Testing genre: ${genre}`);
+                    
+                    await window.RumiASCII.drawAscii(`${genre.toUpperCase()} TEST`, {
+                        genre: genre,
+                        duration: 30,
+                        index: currentGenre + 1,
+                        total: genres.length,
+                        service: 'Test Service'
+                    });
+                    
+                    currentGenre++;
+                    setTimeout(cycleGenres, 3000);
+                } else {
+                    updateStatus('Genre pattern test completed', 'success');
+                    log('Genre pattern test: SUCCESS - all genres tested');
+                }
+            };
+            
+            cycleGenres();
+        }
+        
+        async function testMetadataDisplay() {
+            log('Testing metadata display...');
+            try {
+                await window.RumiASCII.drawAscii('The Office', {
+                    genre: 'comedy',
+                    duration: 22,
+                    index: 15,
+                    total: 25,
+                    service: 'Peacock',
+                    season: '2',
+                    episode: '1',
+                    description: 'Michael Scott is the regional manager of a paper company',
+                    year: '2005'
+                });
+                
+                updateStatus('Metadata display test completed', 'success');
+                log('Metadata display test: SUCCESS');
+            } catch (err) {
+                updateStatus('Metadata display test failed: ' + err.message, 'error');
+                log('Metadata display test: ERROR - ' + err.message);
+            }
+        }
+        
+        async function testScrolling() {
+            log('Testing scrolling animation...');
+            try {
+                await window.RumiASCII.drawAscii('This is a very long title that should scroll across the display', {
+                    genre: 'general',
+                    duration: 90,
+                    index: 1,
+                    total: 3,
+                    service: 'Test Service',
+                    description: 'This is a very long description that should also scroll and demonstrate the scrolling metadata functionality'
+                });
+                
+                updateStatus('Scrolling test started', 'success');
+                log('Scrolling test: SUCCESS - scrolling animation running');
+            } catch (err) {
+                updateStatus('Scrolling test failed: ' + err.message, 'error');
+                log('Scrolling test: ERROR - ' + err.message);
+            }
+        }
+        
+        function stopAnimation() {
+            log('Stopping animation...');
+            if (window.RumiASCII && window.RumiASCII.stopAnimationLoop) {
+                window.RumiASCII.stopAnimationLoop();
+                updateStatus('Animation stopped', 'warning');
+                log('Animation stopped');
+            } else {
+                updateStatus('No animation to stop', 'warning');
+                log('No animation running');
+            }
+        }
+        
+        function clearDisplay() {
+            log('Clearing display...');
+            getDisplay().innerHTML = '<pre>READY</pre>';
+            stopAnimation();
+            updateStatus('Display cleared', 'warning');
+            log('Display cleared');
+        }
+        
+        // Auto-start with basic test after a short delay
+        setTimeout(() => {
+            if (window.RumiASCII) {
+                log('Auto-starting basic ASCII test...');
+                testBasicAscii();
+            }
+        }, 2000);
+    </script>
+</body>
+</html> 

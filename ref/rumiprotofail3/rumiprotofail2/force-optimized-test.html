@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RUMI - Force Optimized Test</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #0a0a0a;
+            color: #ffffff;
+        }
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            color: #00ff88;
+            margin: 0;
+            font-size: 2.5em;
+        }
+        .status {
+            background: #1a1a1a;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid #00ff88;
+        }
+        .test-section {
+            background: #1a1a1a;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .test-section h3 {
+            color: #00ff88;
+            margin-top: 0;
+        }
+        .test-button {
+            background: #00ff88;
+            color: #000;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.3s;
+        }
+        .test-button:hover {
+            background: #00cc66;
+            transform: translateY(-2px);
+        }
+        .dropdown-section {
+            background: #2a2a2a;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        .dropdown-section label {
+            display: block;
+            margin-bottom: 8px;
+            color: #00ff88;
+            font-weight: bold;
+        }
+        .dropdown-section select {
+            background: #333;
+            color: #fff;
+            border: 1px solid #555;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 14px;
+            width: 200px;
+        }
+        .instructions {
+            background: #2a2a2a;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        .instructions ol {
+            margin: 0;
+            padding-left: 20px;
+        }
+        .instructions li {
+            margin: 8px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="header">
+            <h1>🎯 Force Optimized Integration Test</h1>
+            <p>Test the forced optimized genre channel integration</p>
+        </div>
+        
+        <div class="status">
+            <h3>🚀 Integration Status</h3>
+            <p><strong>Status:</strong> ✅ Force Optimized Integration Active</p>
+            <p><strong>Version:</strong> 🎯 Optimized Channel Only</p>
+            <p><strong>Autopopulation:</strong> ✅ Enabled from Content Detected Dropdown</p>
+            <p><strong>Styling:</strong> ✅ Optimized UI Integrated</p>
+        </div>
+        
+        <div class="test-section">
+            <h3>📱 Main Application</h3>
+            <p>Open the main application with forced optimized integration:</p>
+            <button class="test-button" onclick="openMainApp()">🚀 Open Main App (indexD.html)</button>
+            <p><small>The main app now forces the optimized channel and includes autopopulation</small></p>
+        </div>
+        
+        <div class="test-section">
+            <h3>🧪 Content Detected Dropdown Test</h3>
+            <p>Test the autopopulation from content detected dropdown:</p>
+            <div class="dropdown-section">
+                <label for="contentDetected">Content Detected:</label>
+                <select id="contentDetected" onchange="testAutopopulation()">
+                    <option value="">Select a genre...</option>
+                    <option value="Thriller">Thriller</option>
+                    <option value="Comedy">Comedy</option>
+                    <option value="Drama">Drama</option>
+                    <option value="Sci-Fi">Sci-Fi</option>
+                    <option value="Action">Action</option>
+                </select>
+            </div>
+            <p><small>Select a genre to test autopopulation in the main app</small></p>
+        </div>
+        
+        <div class="test-section">
+            <h3>🎯 Optimized Channel Test</h3>
+            <p>Test the standalone optimized channel:</p>
+            <button class="test-button" onclick="openOptimizedChannel()">🎯 Open Optimized Channel</button>
+            <p><small>Direct test of the optimized channel with enhanced styling</small></p>
+        </div>
+        
+        <div class="instructions">
+            <h3>📋 Testing Instructions</h3>
+            <ol>
+                <li><strong>Open Main App:</strong> Click "Open Main App" to see the forced optimized integration</li>
+                <li><strong>Test Autopopulation:</strong> Use the dropdown above to select a genre, then check the main app</li>
+                <li><strong>Verify Styling:</strong> Check that content blocks have the optimized styling with hover effects</li>
+                <li><strong>Test Functionality:</strong> Try clicking on content blocks to see metadata popups</li>
+                <li><strong>Check Console:</strong> Open browser console to see integration messages</li>
+            </ol>
+        </div>
+        
+        <div class="test-section">
+            <h3>🔧 Debug Information</h3>
+            <p><strong>Force Optimized:</strong> The main app now only uses the optimized channel</p>
+            <p><strong>Autopopulation:</strong> Content detected dropdown automatically populates the genre channel</p>
+            <p><strong>Enhanced Styling:</strong> All content blocks have optimized styling with color-coded hover effects</p>
+            <p><strong>Message System:</strong> Console shows detailed integration messages</p>
+        </div>
+    </div>
+    
+    <script>
+        function openMainApp() {
+            window.open('indexD.html', '_blank');
+            console.log('🚀 Opening main app with force optimized integration');
+        }
+        
+        function openOptimizedChannel() {
+            window.open('Genre-channel_v2-INTEGRATED.html', '_blank');
+            console.log('🎯 Opening standalone optimized channel');
+        }
+        
+        function testAutopopulation() {
+            const dropdown = document.getElementById('contentDetected');
+            const selectedGenre = dropdown.value;
+            
+            if (selectedGenre) {
+                console.log('🎯 Testing autopopulation for genre:', selectedGenre);
+                
+                // Simulate the autopopulation that would happen in the main app
+                const testMessage = {
+                    type: 'populateWithContent',
+                    genre: selectedGenre,
+                    source: 'testDropdown'
+                };
+                
+                console.log('📡 Test message:', testMessage);
+                
+                // If we have the main app open, send the message
+                if (window.opener) {
+                    try {
+                        window.opener.postMessage(testMessage, '*');
+                        console.log('✅ Test message sent to main app');
+                    } catch (error) {
+                        console.log('⚠️ Could not send message to main app:', error);
+                    }
+                }
+            }
+        }
+        
+        console.log('🧪 Force Optimized Integration Test Loaded');
+        console.log('🎯 Main app now forces optimized channel only');
+        console.log('📡 Autopopulation enabled from content detected dropdown');
+        console.log('🎨 Optimized styling integrated');
+    </script>
+</body>
+</html>

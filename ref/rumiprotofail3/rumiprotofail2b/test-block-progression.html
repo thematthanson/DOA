@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Block Progression Test</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background: #000;
+            color: #00ff41;
+            margin: 20px;
+            line-height: 1.6;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .test-section {
+            background: #111;
+            border: 1px solid #333;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #333;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        .progress-fill {
+            height: 100%;
+            background: #00ff41;
+            transition: width 0.3s ease;
+        }
+        .content-item {
+            background: #222;
+            padding: 10px;
+            margin: 5px 0;
+            border-left: 3px solid #666;
+        }
+        .content-item.active {
+            border-left-color: #00ff41;
+            background: #1a1a1a;
+        }
+        .content-item.completed {
+            border-left-color: #ff6600;
+            background: #2a1a1a;
+        }
+        .debug-log {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            padding: 10px;
+            height: 200px;
+            overflow-y: auto;
+            font-size: 12px;
+            margin: 10px 0;
+        }
+        button {
+            background: #333;
+            color: #00ff41;
+            border: 1px solid #00ff41;
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+            font-family: inherit;
+        }
+        button:hover {
+            background: #00ff41;
+            color: #000;
+        }
+        .status {
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .time-display {
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🔧 Block Progression Test</h1>
+        
+        <div class="test-section">
+            <h3>📊 Session Progress</h3>
+            <div class="time-display" id="time-display">0:00 / 0:45</div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="session-progress"></div>
+            </div>
+            <div class="status" id="session-status">Ready to start</div>
+        </div>
+
+        <div class="test-section">
+            <h3>📺 Content Items</h3>
+            <div id="content-items">
+                <div class="content-item">
+                    <strong>Loading content...</strong>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3>🔍 Debug Information</h3>
+            <div class="debug-log" id="debug-log"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>🎮 Controls</h3>
+            <button onclick="startTest()">Start Test</button>
+            <button onclick="stopTest()">Stop Test</button>
+            <button onclick="resetTest()">Reset Test</button>
+            <button onclick="clearLog()">Clear Log</button>
+        </div>
+    </div>
+
+    <script>
+        // Test state
+        const testState = {
+            isRunning: false,
+            startTime: null,
+            elapsedTime: 0,
+            currentContentIndex: 0,
+            contentItemStartTime: 0,
+            contentItemDuration: 0,
+            automodeContentItems: [],
+            sessionDuration: 45 * 60, // 45 minutes in seconds
+            animationId: null
+        };
+
+        // Mock content items for testing
+        const mockContentItems = [
+            { title: "Breaking Bad S01E01 - Pilot", duration: "0:45" },
+            { title: "The Dark Knight", duration: "1:30" },
+            { title: "Inception", duration: "1:45" },
+            { title: "The Office S01E01 - Pilot", duration: "0:30" },
+            { title: "Stranger Things S01E01", duration: "1:15" }
+        ];
+
+        function log(message, type = 'info') {
+            const debugLog = document.getElementById('debug-log');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.style.color = type === 'error' ? '#ff4444' : type === 'warning' ? '#ffaa00' : '#00ff41';
+            logEntry.textContent = `[${timestamp}] ${message}`;
+            debugLog.appendChild(logEntry);
+            debugLog.scrollTop = debugLog.scrollHeight;
+            console.log(`[${timestamp}] ${message}`);
+        }
+
+        function updateUI() {
+            // Update time display
+            const elapsedMinutes = Math.floor(testState.elapsedTime / 60);
+            const elapsedSeconds = Math.floor(testState.elapsedTime % 60);
+            const totalMinutes = Math.floor(testState.sessionDuration / 60);
+            const totalSeconds = Math.floor(testState.sessionDuration % 60);
+            
+            document.getElementById('time-display').textContent = 
+                `${elapsedMinutes}:${elapsedSeconds.toString().padStart(2, '0')} / ${totalMinutes}:${totalSeconds.toString().padStart(2, '0')}`;
+
+            // Update progress bar
+            const progress = Math.min((testState.elapsedTime / testState.sessionDuration) * 100, 100);
+            document.getElementById('session-progress').style.width = `${progress}%`;
+
+            // Update content items
+            updateContentItemsDisplay();
+
+            // Update status
+            const currentItem = testState.automodeContentItems[testState.currentContentIndex];
+            if (currentItem) {
+                const timeInCurrentItem = testState.elapsedTime - testState.contentItemStartTime;
+                const itemProgress = Math.min((timeInCurrentItem / testState.contentItemDuration) * 100, 100);
+                document.getElementById('session-status').textContent = 
+                    `Current: "${currentItem.title}" (${itemProgress.toFixed(1)}% complete)`;
+            }
+        }
+
+        function updateContentItemsDisplay() {
+            const container = document.getElementById('content-items');
+            container.innerHTML = '';
+
+            testState.automodeContentItems.forEach((item, index) => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'content-item';
+                
+                if (index < testState.currentContentIndex) {
+                    itemDiv.classList.add('completed');
+                } else if (index === testState.currentContentIndex) {
+                    itemDiv.classList.add('active');
+                }
+
+                const timeInItem = testState.elapsedTime - testState.contentItemStartTime;
+                const itemProgress = index === testState.currentContentIndex ? 
+                    Math.min((timeInItem / testState.contentItemDuration) * 100, 100) : 0;
+
+                itemDiv.innerHTML = `
+                    <strong>${item.title}</strong><br>
+                    <small>Duration: ${item.duration} | Progress: ${itemProgress.toFixed(1)}%</small>
+                `;
+                
+                container.appendChild(itemDiv);
+            });
+        }
+
+        function updateCurrentContentItem(elapsedTime) {
+            if (!testState.automodeContentItems || testState.automodeContentItems.length === 0) {
+                log('⚠️ No content items available for progression', 'warning');
+                return;
+            }
+            
+            // Initialize first content item start time if not set
+            if (testState.contentItemStartTime === 0 && testState.automodeContentItems.length > 0) {
+                testState.contentItemStartTime = elapsedTime;
+                const currentItem = testState.automodeContentItems[testState.currentContentIndex];
+                log(`🎬 Started first content item: "${currentItem?.title}" at ${elapsedTime}s`);
+            }
+            
+            const timeInCurrentItem = elapsedTime - testState.contentItemStartTime;
+            
+            // Debug logging every 5 seconds
+            if (Math.floor(elapsedTime) % 5 === 0) {
+                log(`📊 Block Progression Debug:`, 'info');
+                log(`  Current Index: ${testState.currentContentIndex}/${testState.automodeContentItems.length}`, 'info');
+                log(`  Time in Current Item: ${timeInCurrentItem.toFixed(1)}s`, 'info');
+                log(`  Content Item Duration: ${testState.contentItemDuration}s`, 'info');
+                log(`  Should Progress: ${timeInCurrentItem >= testState.contentItemDuration}`, 'info');
+                log(`  Current Item: "${testState.automodeContentItems[testState.currentContentIndex]?.title}"`, 'info');
+            }
+            
+            // Check if we need to move to next item
+            if (timeInCurrentItem >= testState.contentItemDuration) {
+                log(`🔄 Moving to next content item: ${testState.currentContentIndex + 1}/${testState.automodeContentItems.length}`, 'info');
+                moveToNextContentItem(elapsedTime);
+            }
+        }
+
+        function moveToNextContentItem(elapsedTime) {
+            if (testState.automodeContentItems.length > 0 && testState.currentContentIndex < testState.automodeContentItems.length - 1) {
+                testState.currentContentIndex++;
+                testState.contentItemStartTime = elapsedTime;
+                
+                // Calculate duration for new content item
+                const currentItem = testState.automodeContentItems[testState.currentContentIndex];
+                if (currentItem) {
+                    // Ensure duration is properly set
+                    if (typeof currentItem.duration === 'string' && currentItem.duration.includes(':')) {
+                        // Handle "MM:SS" format
+                        const durationParts = currentItem.duration.split(':');
+                        testState.contentItemDuration = parseInt(durationParts[0]) * 60 + parseInt(durationParts[1]);
+                    } else if (typeof currentItem.duration === 'number') {
+                        // Handle numeric duration (assume minutes)
+                        testState.contentItemDuration = currentItem.duration * 60; // Convert to seconds
+                    } else {
+                        // Fallback to default duration
+                        testState.contentItemDuration = 45 * 60; // 45 minutes default
+                        log(`⚠️ No valid duration for item "${currentItem.title}", using default 45 minutes`, 'warning');
+                    }
+                    
+                    log(`✅ Moved to item ${testState.currentContentIndex + 1}: "${currentItem.title}" (${testState.contentItemDuration/60}min)`, 'info');
+                }
+            } else {
+                // Reached end of all content
+                log('🎯 End of content reached - test complete', 'info');
+                stopTest();
+            }
+        }
+
+        function animate() {
+            if (!testState.isRunning) return;
+
+            const now = Date.now();
+            testState.elapsedTime = (now - testState.startTime) / 1000;
+
+            // Update block progression
+            updateCurrentContentItem(testState.elapsedTime);
+
+            // Update UI
+            updateUI();
+
+            // Continue animation
+            testState.animationId = requestAnimationFrame(animate);
+        }
+
+        function startTest() {
+            if (testState.isRunning) return;
+
+            log('🚀 Starting block progression test...', 'info');
+            
+            // Initialize test state
+            testState.isRunning = true;
+            testState.startTime = Date.now();
+            testState.elapsedTime = 0;
+            testState.currentContentIndex = 0;
+            testState.contentItemStartTime = 0;
+            testState.automodeContentItems = [...mockContentItems];
+
+            // Set initial content item duration
+            if (testState.automodeContentItems.length > 0) {
+                const firstItem = testState.automodeContentItems[0];
+                if (typeof firstItem.duration === 'string' && firstItem.duration.includes(':')) {
+                    const durationParts = firstItem.duration.split(':');
+                    testState.contentItemDuration = parseInt(durationParts[0]) * 60 + parseInt(durationParts[1]);
+                }
+                log(`📺 Initialized with ${testState.automodeContentItems.length} content items`, 'info');
+                log(`🎬 First item: "${firstItem.title}" (${testState.contentItemDuration/60}min)`, 'info');
+            }
+
+            // Start animation
+            animate();
+        }
+
+        function stopTest() {
+            if (!testState.isRunning) return;
+
+            log('⏹️ Stopping block progression test...', 'info');
+            
+            testState.isRunning = false;
+            if (testState.animationId) {
+                cancelAnimationFrame(testState.animationId);
+                testState.animationId = null;
+            }
+        }
+
+        function resetTest() {
+            stopTest();
+            log('🔄 Resetting test...', 'info');
+            
+            testState.elapsedTime = 0;
+            testState.currentContentIndex = 0;
+            testState.contentItemStartTime = 0;
+            testState.contentItemDuration = 0;
+            
+            updateUI();
+        }
+
+        function clearLog() {
+            document.getElementById('debug-log').innerHTML = '';
+        }
+
+        // Initialize UI
+        updateUI();
+        log('🔧 Block Progression Test initialized', 'info');
+        log('📋 Click "Start Test" to begin testing block progression', 'info');
+    </script>
+</body>
+</html> 

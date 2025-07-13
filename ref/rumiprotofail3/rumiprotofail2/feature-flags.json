@@ -1,0 +1,7 @@
+{
+  "USE_OPTIMIZED_GENRE_CHANNEL": true,
+  "ENABLE_MONITORING": true,
+  "ENABLE_ROLLBACK": true,
+  "deploymentTimestamp": "2025-07-06T18:16:01.496Z",
+  "version": "2.0-optimized"
+}

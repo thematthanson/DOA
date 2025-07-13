@@ -1,0 +1,1753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rumi Optimized Genre Channel</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=SF+Mono:wght@400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'SF Mono', 'Monaco', 'Cascadia Code', monospace;
+            background: #000000;
+            color: #ffffff;
+            padding: 16px;
+        }
+
+        .container {
+            max-width: 520px;
+            margin: 0 auto;
+            background: #111111;
+            border: 2px solid #333333;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .header {
+            background: #000000;
+            padding: 16px;
+            border-bottom: 1px solid #333333;
+        }
+
+        .channel-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: #ffffff;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .timeline-container {
+            margin-bottom: 6px;
+            overflow: hidden;
+            max-width: 100%;
+            position: relative;
+        }
+
+        .timeline {
+            display: flex;
+            flex-direction: column;
+            background: #1a1a1a;
+            border-radius: 6px;
+            padding: 6px 10px;
+            position: relative;
+            margin-bottom: 6px;
+            border: 1px solid #333333;
+            width: 100%;
+            transition: width 0.3s ease;
+            min-width: 100%;
+            max-width: 100%;
+            flex-shrink: 0;
+        }
+
+        .timeline-row {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            min-width: 100%;
+        }
+
+        .timeline-row.time-markers {
+            margin-bottom: 4px;
+        }
+
+        .timeline-row.multiplier-markers {
+            border-top: 1px solid #333333;
+            padding-top: 4px;
+        }
+
+        .timeline-marker {
+            flex: 1;
+            text-align: center;
+            font-size: 7px;
+            color: #666666;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            position: relative;
+            padding: 3px 0;
+            min-width: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .timeline-marker:first-child {
+            text-align: left;
+        }
+
+        .timeline-marker:last-child {
+            text-align: right;
+        }
+
+        .timeline-marker.multiplier {
+            color: #00ff41;
+            font-weight: 600;
+        }
+
+        .timeline-marker.multiplier-1 {
+            color: #00ff41;
+        }
+
+        .timeline-marker.multiplier-2 {
+            color: #ffaa00;
+        }
+
+        .timeline-marker.multiplier-3 {
+            color: #ff4444;
+        }
+
+        .timeline-info {
+            position: absolute;
+            top: -25px;
+            left: 10px;
+            font-size: 7px;
+            color: #888888;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .multiplier-display {
+            position: absolute;
+            top: -20px;
+            right: 10px;
+            font-size: 7px;
+            color: #00ff41;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .channel-section {
+            padding: 8px;
+        }
+
+        .channel-header-above-timeline {
+            padding: 8px 16px 4px 16px;
+            border-bottom: 1px solid #333333;
+        }
+
+        .channel-title-section {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .edit-link {
+            font-size: 9px;
+            color: #00ff41;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.2s;
+        }
+
+        .edit-link:hover {
+            color: #00cc33;
+        }
+
+        .channel-controls {
+            display: flex;
+            gap: 6px;
+        }
+
+        .btn {
+            background: #000000;
+            color: #ffffff;
+            border: 1px solid #333333;
+            padding: 5px 10px;
+            font-size: 9px;
+            font-family: 'SF Mono', monospace;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn:hover {
+            border-color: #00ff41;
+            color: #00ff41;
+        }
+
+        .btn.primary {
+            background: #00ff41;
+            color: #000000;
+            border-color: #00ff41;
+        }
+
+        .btn.primary:hover {
+            background: #00cc33;
+        }
+
+        /* Submenu styles */
+        .edit-submenu {
+            background: #1a1a1a;
+            border: 1px solid #333333;
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 6px;
+            display: none;
+        }
+
+        .edit-submenu.visible {
+            display: block;
+        }
+
+        .edit-submenu-row {
+            display: flex;
+            gap: 8px;
+            align-items: flex-end;
+            flex-wrap: wrap;
+        }
+
+        .edit-submenu-controls {
+            display: flex;
+            gap: 6px;
+            align-items: flex-end;
+        }
+
+        .edit-btn {
+            background: #333333;
+            color: #00ff41;
+            border: 1px solid #00ff41;
+            padding: 6px 12px;
+            font-size: 9px;
+            font-family: 'SF Mono', monospace;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-radius: 4px;
+            white-space: nowrap;
+        }
+
+        .edit-btn:hover {
+            background: #00ff41;
+            color: #000000;
+        }
+
+        .edit-btn.cancel {
+            background: #333333;
+            color: #888888;
+            border-color: #666666;
+        }
+
+        .edit-btn.cancel:hover {
+            background: #666666;
+            color: #ffffff;
+        }
+
+        .edit-submenu .form-group {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .edit-submenu .edit-submenu-controls {
+            flex-shrink: 0;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 8px;
+            color: #888888;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .selector, .search-input {
+            width: 100%;
+            background: #000000;
+            color: #ffffff;
+            border: 1px solid #333333;
+            padding: 6px 8px;
+            font-size: 9px;
+            font-family: 'SF Mono', monospace;
+            border-radius: 4px;
+        }
+
+        .selector:focus, .search-input:focus {
+            outline: none;
+            border-color: #00ff41;
+        }
+
+        .search-results {
+            margin-top: 8px;
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #333333;
+            border-radius: 4px;
+            background: #000000;
+        }
+
+        .result-item {
+            padding: 8px 12px;
+            border-bottom: 1px solid #333333;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .result-item:hover {
+            background: #333333;
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+        }
+
+        .result-title {
+            font-size: 10px;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 2px;
+        }
+
+        .result-meta {
+            font-size: 8px;
+            color: #888888;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        /* Program Track with Content Blocks */
+        .program-track {
+            display: block;
+            height: 60px;
+            position: relative;
+            background: #1a1a1a;
+            border-radius: 6px;
+            width: 100%;
+            min-width: 100%;
+            max-width: 100%;
+            border: 2px solid #333;
+            overflow-x: auto;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+
+        .content-block {
+            height: 100%;
+            min-width: 80px;
+            background: #1a1a1a;
+            border: 1px solid #333333;
+            border-radius: 4px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            transition: all 0.3s ease;
+            margin: 0;
+            overflow: hidden;
+            position: absolute;
+            top: 0;
+            padding: 6px;
+            z-index: 1;
+        }
+
+        /* State-based styling */
+        .content-block.state-queued {
+            background: #1a1a1a;
+            border: 1px solid #333333;
+            color: #ffffff;
+            opacity: 1.0;
+        }
+
+        .content-block.state-indexing {
+            background: linear-gradient(135deg, #001a00, #003300);
+            border: 2px solid #00ff41;
+            color: #00ff41;
+            box-shadow: 0 0 12px rgba(0, 255, 65, 0.3);
+            transform: scale(1.02);
+            z-index: 10;
+            opacity: 1;
+        }
+
+        .content-block.state-indexing::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 65, 0.3), transparent);
+            animation: scan 2s infinite;
+            z-index: 1;
+        }
+
+        @keyframes scan {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .content-block.state-indexed {
+            background: #1a1a1a;
+            border: 1px solid #444444;
+            color: #888888;
+            opacity: 0.8;
+            transform: scale(0.98);
+        }
+
+        /* Detected block styling */
+        .content-block[data-type="detected_show"] {
+            background: #2a2a2a; /* Lighter grey background */
+        }
+
+        .content-block[data-type="detected_show"]:hover {
+            border-color: #00cc33; /* Darker green for detected shows */
+        }
+
+        /* Ensure hover effects work for all content types */
+        .content-block[data-type="movie"]:hover {
+            border-color: #66ff66 !important; /* Lighter green for movies */
+        }
+
+        .content-block[data-type="episode"]:hover {
+            border-color: #00cc33 !important; /* Darker green for episodes/shows */
+        }
+
+        .content-block.state-indexed .content-title::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            width: 100%;
+            height: 1px;
+            background: #00ff41;
+            opacity: 0.6;
+        }
+
+        /* Content block elements */
+        .content-title {
+            font-size: 10px;
+            font-weight: 600;
+            color: inherit;
+            margin-bottom: 3px;
+            line-height: 1.3;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            width: 100%;
+        }
+
+        .content-meta {
+            font-size: 8px;
+            color: #888888;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-bottom: 2px;
+            width: 100%;
+        }
+
+        .content-service {
+            font-size: 7px;
+            color: #888888;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            width: 100%;
+        }
+
+        /* Remove button */
+        .remove-btn {
+            opacity: 0;
+            pointer-events: none;
+            position: absolute;
+            top: 3px;
+            right: 3px;
+            background: #ff4444;
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 11px;
+            cursor: pointer;
+            z-index: 100;
+            transition: opacity 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .content-block:hover .remove-btn:not(.protected) {
+            opacity: 0.7;
+            pointer-events: auto;
+        }
+
+        .remove-btn.protected {
+            display: none !important;
+        }
+
+        /* Hover effects */
+        .content-block:hover {
+            background: #222222;
+            z-index: 10;
+        }
+
+        /* Color-coded hover effects for movies vs shows */
+        .content-block[data-type="movie"]:hover {
+            border-color: #66ff66; /* Lighter green for movies */
+        }
+
+        .content-block[data-type="show"]:hover {
+            border-color: #00cc33; /* Darker green for shows */
+        }
+
+        .content-block:hover .content-title,
+        .content-block:hover .content-meta,
+        .content-block:hover .content-service {
+            overflow: visible;
+            white-space: normal;
+        }
+
+
+
+        /* Add button */
+        .add-content-button {
+            position: absolute;
+            top: 10%;
+            height: 80%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 2px dashed #666;
+            border-radius: 4px;
+            background-color: transparent;
+            min-width: 60px;
+        }
+
+        /* Content Metadata Popup */
+        .content-metadata-popup {
+            background: #1a1a1a;
+            border: 1px solid #00ff41;
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 6px;
+            display: none;
+        }
+
+        .content-metadata-popup.visible {
+            display: block;
+        }
+
+        .metadata-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #333333;
+        }
+
+        .metadata-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: #00ff41;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin: 0;
+            line-height: 1.2;
+        }
+
+        .metadata-close {
+            background: none;
+            border: none;
+            color: #888888;
+            font-size: 14px;
+            cursor: pointer;
+            padding: 0;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.2s;
+        }
+
+        .metadata-close:hover {
+            color: #00ff41;
+        }
+
+        .metadata-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+            font-size: 9px;
+            color: #ffffff;
+        }
+
+        .metadata-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .metadata-label {
+            color: #888888;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            font-size: 7px;
+            margin-bottom: 1px;
+        }
+
+        .metadata-value {
+            color: #ffffff;
+            font-weight: 500;
+            word-break: break-word;
+        }
+
+        .metadata-value.highlight {
+            color: #00ff41;
+            font-weight: 600;
+        }
+
+        .metadata-description {
+            grid-column: 1 / -1;
+            margin-top: 4px;
+            padding-top: 8px;
+            border-top: 1px solid #333333;
+        }
+
+        .metadata-description .metadata-value {
+            font-size: 8px;
+            line-height: 1.4;
+            color: #cccccc;
+        }
+
+        .add-content-button:hover {
+            color: #00ff41;
+            border-color: #00ff41;
+            background-color: rgba(0, 255, 65, 0.1);
+        }
+
+        /* State indicator */
+        .state-indicator {
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            z-index: 10;
+            text-shadow: 0 0 4px rgba(0,0,0,0.8);
+        }
+
+        .state-queued .state-indicator {
+            color: #ffa500;
+        }
+
+        .state-indexing .state-indicator {
+            color: #00ff41;
+            animation: pulse-bright 1.5s infinite;
+        }
+
+        @keyframes pulse-bright {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.1); }
+        }
+
+        /* Hover popup */
+        .content-popup {
+            position: absolute;
+            bottom: calc(100% + 6px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: #2a2a2a;
+            border: 2px solid #00ff41;
+            border-radius: 6px;
+            padding: 8px;
+            min-width: 126px;
+            max-width: 175px;
+            box-shadow: 0 6px 17px rgba(0, 0, 0, 0.8), 0 0 14px rgba(0, 255, 65, 0.3);
+            z-index: 9999;
+            opacity: 0;
+            pointer-events: none;
+            font-family: 'SF Mono', monospace;
+            font-size: 8px;
+            line-height: 1.4;
+            color: #ffffff;
+            white-space: nowrap;
+            transition: opacity 0.2s ease;
+        }
+
+        .content-block:hover .content-popup {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .popup-title {
+            font-size: 8px;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 4px;
+            line-height: 1.3;
+        }
+
+        .popup-meta {
+            font-size: 6px;
+            color: #cccccc;
+            margin-bottom: 3px;
+        }
+
+        .popup-service {
+            font-size: 6px;
+            color: #999999;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            margin-bottom: 3px;
+        }
+
+        .popup-duration {
+            font-size: 6px;
+            color: #aaaaaa;
+            margin: 0;
+            text-align: center;
+        }
+
+        /* Empty state */
+        .empty-state {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: #666666;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body>
+            <div class="container">
+
+        <div class="channel-header-above-timeline">
+            <div class="channel-title-section">
+                <div class="channel-title" id="genre-title">GENRE CHANNEL</div>
+                <div class="edit-link" id="edit-genre-btn">EDIT GENRE</div>
+            </div>
+        </div>
+
+        <div class="timeline-container" id="timeline-container">
+            <div class="timeline" id="timeline">
+                <div class="timeline-row time-markers" id="time-markers">
+                    <!-- Time markers will be populated here -->
+                </div>
+                <div class="timeline-row multiplier-markers" id="multiplier-markers">
+                    <!-- Multiplier markers will be populated here -->
+                </div>
+            </div>
+            <div class="timeline-info">TIMELINE (MINUTES)</div>
+            <div class="multiplier-display" id="current-multiplier">1.0x</div>
+
+            <!-- Edit Genre Submenu -->
+            <div class="edit-submenu" id="edit-genre-submenu">
+                <div class="edit-submenu-row">
+                    <div class="form-group">
+                        <label>SELECT GENRE</label>
+                        <select class="selector" id="genre-select-submenu">
+                            <option value="">Choose a genre...</option>
+                        </select>
+                    </div>
+                    <div class="edit-submenu-controls">
+                        <button class="edit-btn" id="auto-populate-btn">AUTO-POPULATE</button>
+                        <button class="edit-btn cancel" id="cancel-genre-btn">CANCEL</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add Content Submenu -->
+            <div class="edit-submenu" id="add-content-submenu">
+                <div class="edit-submenu-row">
+                    <div class="form-group">
+                        <label>SEARCH</label>
+                        <input type="text" class="search-input" id="search-input-submenu" placeholder="Search shows and movies...">
+                    </div>
+                    <div class="form-group">
+                        <label>FILTER BY STREAMER</label>
+                        <select class="selector" id="streamer-filter-submenu">
+                            <option value="">All Streamers</option>
+                            <option value="NETFLIX">Netflix</option>
+                            <option value="HBO MAX">HBO Max</option>
+                            <option value="HULU">Hulu</option>
+                            <option value="PEACOCK">Peacock</option>
+                            <option value="AMAZON PRIME">Amazon Prime</option>
+                            <option value="DISNEY+">Disney+</option>
+                            <option value="APPLE TV+">Apple TV+</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>OR CHOOSE FROM GENRE</label>
+                        <select class="selector" id="content-dropdown-submenu">
+                            <option value="">Select content...</option>
+                        </select>
+                    </div>
+                    <div class="edit-submenu-controls">
+                        <button class="edit-btn" id="add-content-submenu-btn">ADD</button>
+                        <button class="edit-btn cancel" id="cancel-content-btn">CANCEL</button>
+                    </div>
+                </div>
+                <div class="search-results" id="search-results-submenu" style="display: none;"></div>
+            </div>
+
+            <!-- Content Metadata Popup -->
+            <div class="content-metadata-popup" id="content-metadata-popup">
+                <div class="metadata-header">
+                    <h3 class="metadata-title" id="metadata-title">Content Details</h3>
+                    <button class="metadata-close" onclick="closeMetadataPopup()">×</button>
+                </div>
+                <div class="metadata-grid" id="metadata-grid">
+                    <!-- Metadata will be populated dynamically -->
+                </div>
+            </div>
+        </div>
+
+        <div class="channel-section">
+
+            <div class="program-track" id="program-track">
+                <div class="empty-state">SELECT GENRE TO START</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ================================
+        // OPTIMIZED GENRE CHANNEL SYSTEM
+        // ================================
+
+        class OptimizedGenreChannel {
+            constructor() {
+                this.currentContent = [];
+                this.currentGenre = null;
+                this.timelineDuration = 180; // Start at 180 minutes
+                this.contentLibrary = [];
+                this.indexedContent = []; // Track what's been indexed this session
+                this.isIndexing = false;
+                this.currentIndexingIndex = 0;
+                this.indexingInterval = null;
+                
+                this.initializeEventListeners();
+                this.loadContentLibrary();
+                this.notifyReady();
+            }
+
+            // Initialize event listeners
+            initializeEventListeners() {
+                // Listen for messages from parent window
+                window.addEventListener('message', (event) => {
+                    this.handleMessage(event.data);
+                });
+
+                // Edit genre submenu
+                const editGenreBtn = document.getElementById('edit-genre-btn');
+                editGenreBtn.addEventListener('click', () => {
+                    this.openEditGenreSubmenu();
+                });
+
+                // Submenu button handlers
+                document.getElementById('auto-populate-btn').addEventListener('click', () => {
+                    this.autoPopulateFromSubmenu();
+                });
+
+                document.getElementById('cancel-genre-btn').addEventListener('click', () => {
+                    this.cancelSubmenu();
+                });
+
+                document.getElementById('add-content-submenu-btn').addEventListener('click', () => {
+                    this.addContentFromSubmenu();
+                });
+
+                document.getElementById('cancel-content-btn').addEventListener('click', () => {
+                    this.cancelSubmenu();
+                });
+
+                // Search and filter handlers
+                document.getElementById('search-input-submenu').addEventListener('input', () => {
+                    this.searchContentSubmenu();
+                });
+
+                document.getElementById('streamer-filter-submenu').addEventListener('change', () => {
+                    this.filterContentByStreamer();
+                });
+
+                document.getElementById('content-dropdown-submenu').addEventListener('change', () => {
+                    this.selectContentFromDropdown();
+                });
+            }
+
+            // Handle incoming messages
+            handleMessage(message) {
+                if (!message) return;
+
+                console.log('🎯 Optimized Genre Channel received message:', message);
+
+                switch (message.type) {
+                    case 'populateWithContent':
+                        this.handleContentPopulation(message.content, message.genre);
+                        break;
+                    
+                    case 'rumi:showDetected':
+                        this.handleShowDetection(message.payload);
+                        break;
+                    
+                    case 'rumi:updateBlockState':
+                        this.handleBlockStateUpdate(message.payload);
+                        break;
+                    
+                    case 'startIndexing':
+                        this.startIndexing();
+                        break;
+                    
+                    case 'stopIndexing':
+                        this.stopIndexing();
+                        break;
+                    
+                    case 'requestCurrentContent':
+                        this.sendCurrentContent();
+                        break;
+                    
+                    case 'backendData':
+                        this.handleBackendData(message.payload);
+                        break;
+                }
+            }
+
+            // Handle content population from backend
+            handleContentPopulation(content, genre) {
+                console.log('🎯 Populating with content:', content.length, 'items for genre:', genre);
+                
+                this.currentGenre = genre;
+                this.currentContent = content.map(item => ({
+                    ...item,
+                    state: 'queued',
+                    startTime: 0,
+                    originalDuration: item.duration
+                }));
+
+                this.updateChannelTitle();
+                this.createLineup();
+                this.sendPopulationComplete();
+            }
+
+            // Handle show detection
+            handleShowDetection(showData) {
+                console.log('🎯 Show detected:', showData);
+                
+                this.currentGenre = showData.genre;
+                
+                // Add detected show as first item (protected)
+                const detectedShow = {
+                    title: showData.title,
+                    type: showData.type || 'show',
+                    duration: showData.duration || 60,
+                    service: showData.service || 'DETECTED',
+                    season: showData.season,
+                    episode: showData.episode,
+                    year: showData.year,
+                    state: 'queued',
+                    startTime: 0,
+                    originalDuration: showData.duration || 60,
+                    protected: true
+                };
+
+                this.currentContent = [detectedShow];
+                this.autoPopulateFromGenre();
+                this.updateChannelTitle();
+                this.createLineup();
+            }
+
+            // Auto-populate with genre content
+            autoPopulateFromGenre() {
+                if (!this.currentGenre || !this.contentLibrary.length) return;
+
+                const genreContent = this.contentLibrary.filter(item => 
+                    item.genre.toLowerCase() === this.currentGenre.toLowerCase() &&
+                    item.title !== this.currentContent[0]?.title // Exclude detected show
+                );
+
+                let currentTime = this.currentContent[0]?.duration || 0;
+                const maxDuration = 240; // Don't exceed 240 minutes
+
+                for (const item of genreContent) {
+                    if (currentTime >= maxDuration) break;
+
+                    const contentItem = {
+                        ...item,
+                        state: 'queued',
+                        startTime: currentTime,
+                        originalDuration: item.duration
+                    };
+
+                    this.currentContent.push(contentItem);
+                    currentTime += item.duration;
+                }
+
+                this.timelineDuration = Math.max(180, currentTime);
+                this.updateTimeline();
+            }
+
+            // Create lineup display
+            createLineup() {
+                const track = document.getElementById('program-track');
+                track.innerHTML = '';
+
+                if (this.currentContent.length === 0) {
+                    track.innerHTML = '<div class="empty-state">SELECT GENRE TO START</div>';
+                    return;
+                }
+
+                // Calculate total duration and update timeline
+                const totalDuration = this.currentContent.reduce((sum, item) => sum + item.duration, 0);
+                this.timelineDuration = Math.max(180, totalDuration);
+                this.updateTimeline();
+
+                // Create content blocks with proper positioning
+                let currentTime = 0;
+                this.currentContent.forEach((item, index) => {
+                    const block = this.createContentBlock(item, index, currentTime);
+                    track.appendChild(block);
+                    currentTime += item.duration;
+                });
+
+                // Add "+" button
+                this.addPlusButton(track, currentTime);
+            }
+
+            // Create individual content block
+            createContentBlock(item, index, startTime) {
+                const block = document.createElement('div');
+                block.className = `content-block state-${item.state}`;
+                
+                // Add data-type attribute for color-coded hover effects
+                let blockType = item.type || 'unknown';
+                
+                // Special handling for detected shows - they should be marked as detected but keep their content type
+                if (item.protected && index === 0) {
+                    block.setAttribute('data-type', 'detected_show');
+                } else {
+                    block.setAttribute('data-type', blockType);
+                }
+                
+                // Calculate position and width
+                const leftPosition = (startTime / this.timelineDuration) * 100;
+                const width = (item.duration / this.timelineDuration) * 100;
+                
+                block.style.left = `${leftPosition}%`;
+                block.style.width = `${Math.max(5, width)}%`;
+
+                // Content text - simplified to just title + season/episode or year
+                let titleText = item.title;
+                let durationService = `${item.originalDuration}min • ${item.service}`;
+                
+                // Extract just the show/movie name without episode titles
+                if (item.type === 'episode' || item.type === 'show') {
+                    // Remove episode titles (everything after " - ") and existing season/episode codes
+                    let showName = item.title.split(' - ')[0];
+                    // Remove existing season/episode patterns like S01E01, S4E9, etc.
+                    showName = showName.replace(/\s*S\d+E\d+.*$/, '');
+                    
+                    if (item.season && item.episode) {
+                        // Extract numbers from season/episode strings (e.g., "S4" -> "4", "E9" -> "9")
+                        const seasonNum = item.season.replace(/[^0-9]/g, '');
+                        const episodeNum = item.episode.replace(/[^0-9]/g, '');
+                        titleText = `${showName} S${seasonNum}:E${episodeNum}`;
+                    } else {
+                        titleText = showName;
+                    }
+                } else if (item.type === 'movie' && item.year) {
+                    titleText = `${item.title} (${item.year})`;
+                }
+
+                block.innerHTML = `
+                    <div class="content-title">${titleText}</div>
+                    <div class="content-meta">${durationService}</div>
+                    ${!item.protected ? '<button class="remove-btn">×</button>' : ''}
+                    <div class="content-popup">
+                        <div class="popup-title">${titleText}</div>
+                        <div class="popup-meta">${durationService}</div>
+                        <div class="popup-service">Service: ${item.service}</div>
+                        <div class="popup-duration">Duration: ${item.originalDuration} minutes</div>
+                    </div>
+                `;
+
+                // Remove button logic
+                if (!item.protected) {
+                    const removeBtn = block.querySelector('.remove-btn');
+                    removeBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        this.removeContent(index);
+                    });
+                }
+
+                // Add click event to show metadata popup (more reliable than hover)
+                block.addEventListener('click', (e) => {
+                    // Don't trigger if clicking on remove button
+                    if (e.target.classList.contains('remove-btn')) {
+                        return;
+                    }
+                    this.showMetadataPopup(item);
+                });
+
+                // Add hover effects for text change
+                const metaElement = block.querySelector('.content-meta');
+                const originalText = metaElement.textContent;
+                
+                block.addEventListener('mouseenter', () => {
+                    metaElement.textContent = 'click for more';
+                    metaElement.style.color = '#00ff41';
+                    metaElement.style.fontWeight = '600';
+                });
+                
+                block.addEventListener('mouseleave', () => {
+                    metaElement.textContent = originalText;
+                    metaElement.style.color = '';
+                    metaElement.style.fontWeight = '';
+                });
+
+                return block;
+            }
+
+            // Add plus button
+            addPlusButton(track, endTime) {
+                const addButton = document.createElement('div');
+                addButton.className = 'add-content-button';
+                addButton.innerHTML = '+';
+                addButton.title = 'Add content to timeline';
+
+                // Position at end of timeline
+                const buttonLeft = (endTime / this.timelineDuration) * 100 + 1; // Small gap
+                
+                addButton.style.left = `${buttonLeft}%`;
+                addButton.style.width = `${Math.max(5, 100 - buttonLeft)}%`;
+
+                addButton.addEventListener('click', () => {
+                    this.openAddContentSubmenu();
+                });
+
+                track.appendChild(addButton);
+            }
+
+            // Show metadata popup for content block
+            showMetadataPopup(contentItem) {
+                // Hide any existing submenus first
+                this.cancelSubmenu();
+                
+                const popup = document.getElementById('content-metadata-popup');
+                const title = document.getElementById('metadata-title');
+                const grid = document.getElementById('metadata-grid');
+
+                // Set title
+                title.textContent = contentItem.title;
+
+                // Build metadata grid
+                grid.innerHTML = '';
+
+                // Consolidated basic info
+                const typeYear = contentItem.type === 'movie' && contentItem.year ? 
+                    `${contentItem.type} (${contentItem.year})` : contentItem.type || 'Unknown';
+                this.addMetadataItem(grid, 'Type', typeYear, 'highlight');
+                
+                const serviceGenre = `${contentItem.service || 'Unknown'} • ${contentItem.genre || 'Unknown'}`;
+                this.addMetadataItem(grid, 'Service & Genre', serviceGenre);
+                
+                const durationStart = contentItem.startTime !== undefined ? 
+                    `${contentItem.duration}min (starts ${contentItem.startTime}min)` : 
+                    `${contentItem.duration} minutes`;
+                this.addMetadataItem(grid, 'Duration', durationStart);
+
+                // Multiplier and points (combined)
+                const multiplier = this.calculateMultiplier(contentItem.startTime || 0);
+                const projectedPoints = this.calculateProjectedPoints(contentItem.duration, multiplier);
+                const multiplierPoints = `${multiplier}x • ${projectedPoints} pts`;
+                this.addMetadataItem(grid, 'Multiplier & Points', multiplierPoints, 'highlight');
+
+                // Additional info (if available)
+                if (contentItem.rating) {
+                    this.addMetadataItem(grid, 'Rating', contentItem.rating);
+                }
+
+                if (contentItem.director) {
+                    this.addMetadataItem(grid, 'Director', contentItem.director);
+                }
+
+                if (contentItem.cast) {
+                    this.addMetadataItem(grid, 'Cast', contentItem.cast);
+                }
+
+                // State information (skip 'queued' status)
+                if (contentItem.state !== 'queued') {
+                    this.addMetadataItem(grid, 'Status', this.getStateDisplayName(contentItem.state), 'highlight');
+                }
+
+                // Description if available
+                if (contentItem.description) {
+                    this.addMetadataItem(grid, 'Description', contentItem.description, 'description');
+                }
+
+                // Show popup and hide timeline
+                popup.classList.add('visible');
+                document.getElementById('timeline').style.display = 'none';
+            }
+
+            // Add metadata item to grid
+            addMetadataItem(grid, label, value, className = '') {
+                const item = document.createElement('div');
+                item.className = 'metadata-item';
+                if (className === 'description') {
+                    item.className += ' metadata-description';
+                }
+
+                const labelElement = document.createElement('div');
+                labelElement.className = 'metadata-label';
+                labelElement.textContent = label;
+
+                const valueElement = document.createElement('div');
+                valueElement.className = `metadata-value ${className}`;
+                valueElement.textContent = value;
+
+                item.appendChild(labelElement);
+                item.appendChild(valueElement);
+                grid.appendChild(item);
+            }
+
+            // Get display name for state
+            getStateDisplayName(state) {
+                switch (state) {
+                    case 'queued': return 'Queued';
+                    case 'indexing': return 'Indexing';
+                    case 'indexed': return 'Indexed';
+                    default: return 'Unknown';
+                }
+            }
+
+            // Close metadata popup
+            closeMetadataPopup() {
+                const popup = document.getElementById('content-metadata-popup');
+                popup.classList.remove('visible');
+                document.getElementById('timeline').style.display = 'flex';
+            }
+
+            // Calculate multiplier based on start time
+            calculateMultiplier(startTime) {
+                if (startTime >= 180) {
+                    return 1.4;
+                } else if (startTime >= 90) {
+                    return 1.2;
+                } else {
+                    return 1.0;
+                }
+            }
+
+            // Calculate projected points based on duration and multiplier
+            calculateProjectedPoints(duration, multiplier) {
+                // Base points calculation: 1 point per minute
+                const basePoints = duration;
+                return Math.round(basePoints * multiplier);
+            }
+
+            // Remove content
+            removeContent(index) {
+                if (index === 0) return; // Can't remove first item (detected show)
+
+                this.currentContent.splice(index, 1);
+                this.recalculateTiming();
+                this.createLineup();
+            }
+
+            // Recalculate timing after removal
+            recalculateTiming() {
+                let currentTime = 0;
+                this.currentContent.forEach(item => {
+                    item.startTime = currentTime;
+                    currentTime += item.duration;
+                });
+            }
+
+            // Handle block state updates
+            handleBlockStateUpdate(payload) {
+                const { title, state } = payload;
+                console.log(`🎯 Updating block "${title}" to state: ${state}`);
+
+                const blockIndex = this.currentContent.findIndex(item => item.title === title);
+                if (blockIndex !== -1) {
+                    this.currentContent[blockIndex].state = state;
+                    
+                    // Update visual state
+                    const blocks = document.querySelectorAll('.content-block');
+                    if (blocks[blockIndex]) {
+                        blocks[blockIndex].className = `content-block state-${state}`;
+                    }
+
+                    // Track indexed content
+                    if (state === 'indexed') {
+                        this.indexedContent.push(this.currentContent[blockIndex]);
+                    }
+                }
+            }
+
+            // Start indexing with real-time progression
+            startIndexing() {
+                console.log('🎯 Starting indexing...');
+                this.isIndexing = true;
+                this.currentIndexingIndex = 0;
+                this.indexedContent = []; // Reset for new session
+
+                // Start real-time indexing
+                this.processNextItemRealTime();
+            }
+
+            // Stop indexing
+            stopIndexing() {
+                console.log('🎯 Stopping indexing...');
+                this.isIndexing = false;
+                
+                if (this.indexingInterval) {
+                    clearInterval(this.indexingInterval);
+                    this.indexingInterval = null;
+                }
+                
+                this.sendIndexedContent();
+            }
+
+            // Process next item in real-time
+            processNextItemRealTime() {
+                if (!this.isIndexing || this.currentIndexingIndex >= this.currentContent.length) {
+                    this.stopIndexing();
+                    return;
+                }
+
+                const item = this.currentContent[this.currentIndexingIndex];
+                console.log(`🎯 Processing item ${this.currentIndexingIndex + 1}: ${item.title}`);
+
+                // Update state to indexing
+                this.handleBlockStateUpdate({ title: item.title, state: 'indexing' });
+
+                // Real-time processing based on content duration
+                const processingTime = Math.max(2000, item.duration * 50); // 2 seconds minimum, or duration-based
+                
+                setTimeout(() => {
+                    // Mark as indexed
+                    this.handleBlockStateUpdate({ title: item.title, state: 'indexed' });
+                    
+                    // Move to next item
+                    this.currentIndexingIndex++;
+                    this.processNextItemRealTime();
+                }, processingTime);
+            }
+
+            // Submenu methods
+            openEditGenreSubmenu() {
+                document.getElementById('timeline').style.display = 'none';
+                document.getElementById('edit-genre-submenu').classList.add('visible');
+                this.populateGenreSubmenu();
+            }
+
+            openAddContentSubmenu() {
+                document.getElementById('timeline').style.display = 'none';
+                document.getElementById('add-content-submenu').classList.add('visible');
+                this.populateContentSubmenu();
+            }
+
+            cancelSubmenu() {
+                document.getElementById('timeline').style.display = 'flex';
+                document.getElementById('edit-genre-submenu').classList.remove('visible');
+                document.getElementById('add-content-submenu').classList.remove('visible');
+                document.getElementById('content-metadata-popup').classList.remove('visible');
+            }
+
+            populateGenreSubmenu() {
+                const genreSelect = document.getElementById('genre-select-submenu');
+                genreSelect.innerHTML = '<option value="">Choose a genre...</option>';
+                
+                const genres = [...new Set(this.contentLibrary.map(item => item.genre))].sort();
+                genres.forEach(genre => {
+                    const option = document.createElement('option');
+                    option.value = genre;
+                    option.textContent = genre;
+                    genreSelect.appendChild(option);
+                });
+
+                if (this.currentGenre) {
+                    genreSelect.value = this.currentGenre;
+                }
+            }
+
+            populateContentSubmenu() {
+                const contentDropdown = document.getElementById('content-dropdown-submenu');
+                contentDropdown.innerHTML = '<option value="">Select content...</option>';
+
+                if (!this.currentGenre) {
+                    return;
+                }
+
+                const genreContent = this.contentLibrary.filter(item => 
+                    item.genre.toLowerCase() === this.currentGenre.toLowerCase()
+                );
+
+                genreContent.forEach(content => {
+                    const option = document.createElement('option');
+                    option.value = content.title;
+                    
+                    let displayText = content.title;
+                    if (content.type === 'show' && content.season && content.episode) {
+                        displayText += ` ${content.season}:${content.episode}`;
+                    } else if (content.type === 'movie' && content.year) {
+                        displayText += ` (${content.year})`;
+                    }
+                    displayText += ` (${content.duration}min) - ${content.service}`;
+                    
+                    option.textContent = displayText;
+                    option.dataset.type = content.type;
+                    option.dataset.duration = content.duration;
+                    option.dataset.service = content.service;
+                    option.dataset.season = content.season || '';
+                    option.dataset.episode = content.episode || '';
+                    contentDropdown.appendChild(option);
+                });
+            }
+
+            autoPopulateFromSubmenu() {
+                const genreSelect = document.getElementById('genre-select-submenu');
+                const selectedGenre = genreSelect.value;
+                
+                if (!selectedGenre) {
+                    alert('Please select a genre first');
+                    return;
+                }
+                
+                this.currentGenre = selectedGenre;
+                this.currentContent = [];
+                this.updateChannelTitle();
+                this.autoPopulateFromGenre();
+                this.createLineup();
+                this.cancelSubmenu();
+            }
+
+            addContentFromSubmenu() {
+                const contentDropdown = document.getElementById('content-dropdown-submenu');
+                const selectedTitle = contentDropdown.value;
+                
+                if (!selectedTitle) {
+                    alert('Please select content first');
+                    return;
+                }
+                
+                const selectedContent = this.contentLibrary.find(item => item.title === selectedTitle);
+                if (selectedContent) {
+                    this.addContent(selectedContent);
+                    this.cancelSubmenu();
+                }
+            }
+
+            searchContentSubmenu() {
+                const searchInput = document.getElementById('search-input-submenu');
+                const searchResults = document.getElementById('search-results-submenu');
+                const streamerFilter = document.getElementById('streamer-filter-submenu');
+                const selectedStreamer = streamerFilter ? streamerFilter.value : '';
+                const query = searchInput.value.toLowerCase();
+                
+                if (query.length < 2) {
+                    searchResults.style.display = 'none';
+                    return;
+                }
+                
+                let searchContent = this.contentLibrary;
+                
+                // Filter by current genre if set
+                if (this.currentGenre) {
+                    searchContent = searchContent.filter(item => 
+                        item.genre.toLowerCase() === this.currentGenre.toLowerCase()
+                    );
+                }
+                
+                // Apply streamer filter if selected
+                if (selectedStreamer) {
+                    searchContent = searchContent.filter(item => item.service === selectedStreamer);
+                }
+                
+                const results = searchContent.filter(item => 
+                    item.title.toLowerCase().includes(query)
+                );
+                
+                this.displaySearchResults(results);
+            }
+
+            displaySearchResults(results) {
+                const searchResults = document.getElementById('search-results-submenu');
+                
+                if (results.length === 0) {
+                    searchResults.style.display = 'none';
+                    return;
+                }
+                
+                searchResults.innerHTML = '';
+                results.forEach(item => {
+                    const resultDiv = document.createElement('div');
+                    resultDiv.className = 'result-item';
+                    
+                    let metaText = `${item.type} • ${item.duration}min`;
+                    if (item.type === 'show' && item.season && item.episode) {
+                        metaText += ` • ${item.season}:${item.episode}`;
+                    }
+                    metaText += ` • ${item.service}`;
+                    
+                    resultDiv.innerHTML = `
+                        <div class="result-title">${item.title}</div>
+                        <div class="result-meta">${metaText}</div>
+                    `;
+                    resultDiv.onclick = () => this.selectSearchResult(item);
+                    searchResults.appendChild(resultDiv);
+                });
+                
+                searchResults.style.display = 'block';
+            }
+
+            selectSearchResult(item) {
+                document.getElementById('search-input-submenu').value = item.title;
+                document.getElementById('search-results-submenu').style.display = 'none';
+                this.addContent(item);
+                this.cancelSubmenu();
+            }
+
+            filterContentByStreamer() {
+                this.populateContentSubmenu();
+                
+                // Also update search results if currently searching
+                const searchInput = document.getElementById('search-input-submenu');
+                if (searchInput.value.length >= 2) {
+                    this.searchContentSubmenu();
+                }
+            }
+
+            selectContentFromDropdown() {
+                const dropdown = document.getElementById('content-dropdown-submenu');
+                const selectedTitle = dropdown.value;
+                
+                if (selectedTitle) {
+                    const selectedContent = this.contentLibrary.find(item => item.title === selectedTitle);
+                    if (selectedContent) {
+                        this.addContent(selectedContent);
+                        this.cancelSubmenu();
+                    }
+                }
+            }
+
+            // Add content to timeline
+            addContent(item) {
+                const newContent = {
+                    ...item,
+                    state: 'queued',
+                    startTime: this.timelineDuration,
+                    originalDuration: item.duration
+                };
+
+                this.currentContent.push(newContent);
+                this.timelineDuration += item.duration;
+                this.createLineup();
+            }
+
+            // Send indexed content to parent
+            sendIndexedContent() {
+                window.parent.postMessage({
+                    type: 'indexedContentUpdate',
+                    payload: {
+                        indexedContent: this.indexedContent,
+                        totalIndexed: this.indexedContent.length
+                    }
+                }, '*');
+            }
+
+            // Update channel title
+            updateChannelTitle() {
+                const title = this.currentGenre ? `${this.currentGenre.toUpperCase()} CHANNEL` : 'GENRE CHANNEL';
+                document.getElementById('genre-title').textContent = title;
+            }
+
+            // Update timeline display with proper stacking
+            updateTimeline() {
+                const timeMarkers = document.getElementById('time-markers');
+                const multiplierMarkers = document.getElementById('multiplier-markers');
+                
+                // Clear existing markers
+                timeMarkers.innerHTML = '';
+                multiplierMarkers.innerHTML = '';
+
+                // Add time markers
+                const markerInterval = this.timelineDuration <= 180 ? 30 : 60;
+                for (let i = 0; i <= this.timelineDuration; i += markerInterval) {
+                    const marker = document.createElement('div');
+                    marker.className = 'timeline-marker';
+                    marker.textContent = i.toString();
+                    timeMarkers.appendChild(marker);
+                }
+
+                // Add multiplier markers with different colors
+                const multiplierMarkersData = [
+                    { time: 0, multiplier: '1.0x', color: 'multiplier-1' },
+                    { time: 90, multiplier: '1.2x', color: 'multiplier-2' },
+                    { time: 180, multiplier: '1.4x', color: 'multiplier-3' }
+                ];
+
+                multiplierMarkersData.forEach(({ time, multiplier, color }) => {
+                    if (time <= this.timelineDuration) {
+                        const marker = document.createElement('div');
+                        marker.className = `timeline-marker multiplier ${color}`;
+                        marker.textContent = multiplier;
+                        multiplierMarkers.appendChild(marker);
+                    }
+                });
+
+                // Update current multiplier display
+                this.updateCurrentMultiplier();
+            }
+
+            // Update current multiplier display
+            updateCurrentMultiplier() {
+                const currentTime = this.currentContent.reduce((sum, item) => sum + item.duration, 0);
+                let multiplier = '1.0x';
+                
+                if (currentTime >= 180) {
+                    multiplier = '1.4x';
+                } else if (currentTime >= 90) {
+                    multiplier = '1.2x';
+                }
+                
+                document.getElementById('current-multiplier').textContent = multiplier;
+            }
+
+            // Load content library from CSV
+            async loadContentLibrary() {
+                try {
+                    const response = await fetch('content-library-expanded.csv');
+                    const csvText = await response.text();
+                    this.contentLibrary = this.parseCSV(csvText);
+                    console.log(`🎯 Loaded ${this.contentLibrary.length} content items`);
+                } catch (error) {
+                    console.error('❌ Failed to load content library:', error);
+                }
+            }
+
+            // Parse CSV content
+            parseCSV(csvText) {
+                const lines = csvText.split('\n');
+                const headers = lines[0].split(',').map(h => h.replace(/"/g, '').trim());
+                const content = [];
+
+                for (let i = 1; i < lines.length; i++) {
+                    if (!lines[i].trim()) continue;
+                    
+                    const values = lines[i].split(',').map(v => v.replace(/"/g, '').trim());
+                    const item = {};
+                    
+                    headers.forEach((header, index) => {
+                        item[header] = values[index] || '';
+                    });
+
+                    // Convert duration to number
+                    if (item.duration_minutes) {
+                        item.duration = parseInt(item.duration_minutes);
+                    }
+
+                    content.push(item);
+                }
+
+                return content;
+            }
+
+            // Send current content to parent
+            sendCurrentContent() {
+                window.parent.postMessage({
+                    type: 'currentContentResponse',
+                    content: this.currentContent
+                }, '*');
+            }
+
+            // Send population complete message
+            sendPopulationComplete() {
+                window.parent.postMessage({
+                    type: 'contentPopulationComplete',
+                    payload: {
+                        genre: this.currentGenre,
+                        contentCount: this.currentContent.length
+                    }
+                }, '*');
+            }
+
+            // Notify parent that channel is ready
+            notifyReady() {
+                window.parent.postMessage({ type: 'genreChannelReady' }, '*');
+            }
+            
+            // Handle backend data
+            handleBackendData(backendData) {
+                console.log('🎯 Received backend data:', backendData);
+                
+                // Update content library with backend data if available
+                if (backendData.contentLibrary && backendData.contentLibrary.length > 0) {
+                    this.contentLibrary = backendData.contentLibrary;
+                    console.log('📚 Updated content library with backend data:', this.contentLibrary.length, 'items');
+                }
+                
+                // Update configuration with backend settings
+                if (backendData.configuration) {
+                    this.timelineDuration = backendData.configuration.timelineDuration || 180;
+                    console.log('⚙️ Updated configuration from backend');
+                }
+                
+                // Update session data if available
+                if (backendData.sessionData) {
+                    console.log('📊 Received session data from backend:', backendData.sessionData);
+                }
+            }
+        }
+
+        // Global function for closing metadata popup
+        function closeMetadataPopup() {
+            if (window.optimizedGenreChannel) {
+                window.optimizedGenreChannel.closeMetadataPopup();
+            }
+        }
+
+        // Initialize the channel when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            window.optimizedGenreChannel = new OptimizedGenreChannel();
+            console.log('🎯 Optimized Genre Channel initialized');
+            
+            // Ensure timeline is visible by default
+            const timeline = document.getElementById('timeline');
+            if (timeline) {
+                timeline.style.display = 'flex';
+            }
+        });
+    </script>
+</body>
+</html> 

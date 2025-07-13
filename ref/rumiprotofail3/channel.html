@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rumi Channel</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 10px;
+            font-family: 'SF Mono', monospace;
+            background: #000;
+            color: #00ff41;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+
+        .channel-container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .channel-header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #333;
+            border-radius: 4px;
+            background: rgba(0, 255, 65, 0.1);
+        }
+
+        .channel-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .channel-subtitle {
+            font-size: 10px;
+            color: #666;
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 20px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #333;
+        }
+
+        .content-block {
+            position: relative;
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #333;
+            border-radius: 4px;
+            background: rgba(0, 0, 0, 0.8);
+            transition: all 0.3s ease;
+        }
+
+        .content-block::before {
+            content: '';
+            position: absolute;
+            left: -25px;
+            top: 15px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #333;
+            border: 2px solid #000;
+        }
+
+        .content-block.queued {
+            border-color: #666;
+            opacity: 0.6;
+        }
+
+        .content-block.queued::before {
+            background: #666;
+        }
+
+        .content-block.indexing {
+            border-color: #ffff00;
+            opacity: 0.8;
+        }
+
+        .content-block.indexing::before {
+            background: #ffff00;
+            animation: pulse 1s infinite;
+        }
+
+        .content-block.indexed {
+            border-color: #00ff41;
+            opacity: 1;
+        }
+
+        .content-block.indexed::before {
+            background: #00ff41;
+        }
+
+        .content-block.error {
+            border-color: #ff4444;
+            opacity: 0.8;
+        }
+
+        .content-block.error::before {
+            background: #ff4444;
+        }
+
+        .content-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #fff;
+        }
+
+        .content-details {
+            font-size: 10px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .content-status {
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .content-status.queued {
+            color: #666;
+        }
+
+        .content-status.indexing {
+            color: #ffff00;
+        }
+
+        .content-status.indexed {
+            color: #00ff41;
+        }
+
+        .content-status.error {
+            color: #ff4444;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: #333;
+            border-radius: 2px;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #00ff41;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .progress-fill.indexing {
+            background: #ffff00;
+            animation: progress 2s infinite;
+        }
+
+        .progress-fill.error {
+            background: #ff4444;
+        }
+
+        .metadata-popup {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: #000;
+            border: 1px solid #333;
+            border-radius: 4px;
+            padding: 10px;
+            margin-top: 5px;
+            z-index: 1000;
+            display: none;
+            font-size: 10px;
+        }
+
+        .content-block:hover .metadata-popup {
+            display: block;
+        }
+
+        .metadata-item {
+            margin-bottom: 3px;
+        }
+
+        .metadata-label {
+            color: #666;
+            font-weight: bold;
+        }
+
+        .metadata-value {
+            color: #fff;
+        }
+
+        .stats {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #333;
+            border-radius: 4px;
+            background: rgba(0, 0, 0, 0.8);
+        }
+
+        .stats-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            font-size: 10px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 16px;
+            font-weight: bold;
+            color: #00ff41;
+        }
+
+        .stat-label {
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        @keyframes progress {
+            0% { width: 0%; }
+            50% { width: 100%; }
+            100% { width: 0%; }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #666;
+        }
+
+        .empty-state-icon {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .empty-state-text {
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="channel-container">
+        <div class="channel-header">
+            <div class="channel-title">GENRE CHANNEL</div>
+            <div class="channel-subtitle">Content Indexing Timeline</div>
+        </div>
+
+        <div class="timeline" id="timeline">
+            <div class="empty-state" id="empty-state">
+                <div class="empty-state-icon">📺</div>
+                <div class="empty-state-text">No content queued</div>
+            </div>
+        </div>
+
+        <div class="stats" id="stats" style="display: none;">
+            <div class="stats-title">INDEXING STATS</div>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-value" id="total-items">0</div>
+                    <div class="stat-label">Total Items</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="indexed-items">0</div>
+                    <div class="stat-label">Indexed</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="queued-items">0</div>
+                    <div class="stat-label">Queued</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="indexing-items">0</div>
+                    <div class="stat-label">Indexing</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Channel State Management
+        const ChannelState = {
+            content: [],
+            stats: {
+                total: 0,
+                queued: 0,
+                indexing: 0,
+                indexed: 0,
+                error: 0
+            },
+
+            // Add content item
+            addItem: function(item) {
+                this.content.push({
+                    id: item.id || Date.now(),
+                    title: item.title || 'Unknown',
+                    genre: item.genre || 'Unknown',
+                    service: item.service || 'Unknown',
+                    duration: item.duration || 0,
+                    status: 'queued',
+                    progress: 0,
+                    metadata: item.metadata || {}
+                });
+                this.updateStats();
+                this.render();
+            },
+
+            // Update item status
+            updateItemStatus: function(id, status, progress = 0) {
+                const item = this.content.find(item => item.id === id);
+                if (item) {
+                    item.status = status;
+                    item.progress = progress;
+                    this.updateStats();
+                    this.render();
+                }
+            },
+
+            // Update stats
+            updateStats: function() {
+                this.stats.total = this.content.length;
+                this.stats.queued = this.content.filter(item => item.status === 'queued').length;
+                this.stats.indexing = this.content.filter(item => item.status === 'indexing').length;
+                this.stats.indexed = this.content.filter(item => item.status === 'indexed').length;
+                this.stats.error = this.content.filter(item => item.status === 'error').length;
+            },
+
+            // Render timeline
+            render: function() {
+                const timeline = document.getElementById('timeline');
+                const emptyState = document.getElementById('empty-state');
+                const stats = document.getElementById('stats');
+
+                if (this.content.length === 0) {
+                    emptyState.style.display = 'block';
+                    stats.style.display = 'none';
+                    return;
+                }
+
+                emptyState.style.display = 'none';
+                stats.style.display = 'block';
+
+                timeline.innerHTML = '';
+                this.content.forEach(item => {
+                    const block = this.createContentBlock(item);
+                    timeline.appendChild(block);
+                });
+
+                this.updateStatsDisplay();
+            },
+
+            // Create content block
+            createContentBlock: function(item) {
+                const block = document.createElement('div');
+                block.className = `content-block ${item.status}`;
+                block.dataset.id = item.id;
+
+                block.innerHTML = `
+                    <div class="content-title">${item.title}</div>
+                    <div class="content-details">
+                        ${item.genre} • ${item.service} • ${item.duration}m
+                    </div>
+                    <div class="content-status ${item.status}">
+                        ${item.status.toUpperCase()}
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill ${item.status}" style="width: ${item.progress}%"></div>
+                    </div>
+                    <div class="metadata-popup">
+                        <div class="metadata-item">
+                            <span class="metadata-label">ID:</span>
+                            <span class="metadata-value">${item.id}</span>
+                        </div>
+                        <div class="metadata-item">
+                            <span class="metadata-label">Title:</span>
+                            <span class="metadata-value">${item.title}</span>
+                        </div>
+                        <div class="metadata-item">
+                            <span class="metadata-label">Genre:</span>
+                            <span class="metadata-value">${item.genre}</span>
+                        </div>
+                        <div class="metadata-item">
+                            <span class="metadata-label">Service:</span>
+                            <span class="metadata-value">${item.service}</span>
+                        </div>
+                        <div class="metadata-item">
+                            <span class="metadata-label">Duration:</span>
+                            <span class="metadata-value">${item.duration}m</span>
+                        </div>
+                    </div>
+                `;
+
+                return block;
+            },
+
+            // Update stats display
+            updateStatsDisplay: function() {
+                document.getElementById('total-items').textContent = this.stats.total;
+                document.getElementById('indexed-items').textContent = this.stats.indexed;
+                document.getElementById('queued-items').textContent = this.stats.queued;
+                document.getElementById('indexing-items').textContent = this.stats.indexing;
+            },
+
+            // Clear all content
+            clear: function() {
+                this.content = [];
+                this.updateStats();
+                this.render();
+            }
+        };
+
+        // Message handling for iframe communication
+        window.addEventListener('message', function(event) {
+            if (event.data.type === 'updateContent') {
+                const content = event.data.content;
+                
+                if (Array.isArray(content)) {
+                    // Clear existing content and add new items
+                    ChannelState.clear();
+                    content.forEach(item => {
+                        ChannelState.addItem(item);
+                    });
+                } else if (content && content.items) {
+                    // Handle session content
+                    ChannelState.clear();
+                    content.items.forEach(item => {
+                        ChannelState.addItem(item);
+                    });
+                }
+            } else if (event.data.type === 'updateItemStatus') {
+                const { id, status, progress } = event.data;
+                ChannelState.updateItemStatus(id, status, progress);
+            } else if (event.data.type === 'clearContent') {
+                ChannelState.clear();
+            }
+        });
+
+        // Simulate indexing process for demo
+        function simulateIndexing() {
+            if (ChannelState.content.length === 0) return;
+
+            const queuedItems = ChannelState.content.filter(item => item.status === 'queued');
+            if (queuedItems.length === 0) return;
+
+            const item = queuedItems[0];
+            ChannelState.updateItemStatus(item.id, 'indexing', 0);
+
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.random() * 20;
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(interval);
+                    ChannelState.updateItemStatus(item.id, 'indexed', 100);
+                } else {
+                    ChannelState.updateItemStatus(item.id, 'indexing', progress);
+                }
+            }, 500);
+        }
+
+        // Auto-simulate indexing every 3 seconds
+        setInterval(simulateIndexing, 3000);
+
+        // Initialize
+        ChannelState.render();
+    </script>
+</body>
+</html> 

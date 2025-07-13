@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intelligence Buckets - Micro Test</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+        h1 {
+            text-align: center;
+            color: #FFD700;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        .description {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 1.2em;
+            color: #E0E0E0;
+        }
+        .test-controls {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+        .control-group label {
+            font-weight: bold;
+            color: #FFD700;
+        }
+        select, button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        select {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 2px solid #FFD700;
+        }
+        select:focus {
+            outline: none;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+        button {
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            color: #1e3c72;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.5);
+        }
+        .buckets-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        .bucket {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid transparent;
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+        }
+        .bucket:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.3);
+        }
+        .bucket.selected {
+            border-color: #FFD700;
+            background: rgba(255, 215, 0, 0.2);
+        }
+        .bucket-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .bucket-name {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #FFD700;
+        }
+        .bucket-count {
+            background: rgba(255, 215, 0, 0.3);
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+        .bucket-description {
+            color: #E0E0E0;
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+        .bucket-content {
+            display: none;
+            max-height: 300px;
+            overflow-y: auto;
+            border-top: 1px solid rgba(255, 215, 0, 0.3);
+            padding-top: 15px;
+            margin-top: 15px;
+        }
+        .bucket.expanded .bucket-content {
+            display: block;
+        }
+        .content-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 8px;
+            border-left: 4px solid #FFD700;
+        }
+        .content-item-title {
+            font-weight: bold;
+            color: #FFD700;
+            margin-bottom: 5px;
+        }
+        .content-item-details {
+            font-size: 0.9em;
+            color: #B0B0B0;
+        }
+        .filters {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        .filter-btn {
+            padding: 8px 16px;
+            border: 2px solid #FFD700;
+            background: transparent;
+            color: #FFD700;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .filter-btn:hover, .filter-btn.active {
+            background: #FFD700;
+            color: #1e3c72;
+        }
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .stat-item {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px 20px;
+            border-radius: 10px;
+            flex: 1;
+            min-width: 120px;
+        }
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #FFD700;
+        }
+        .stat-label {
+            font-size: 0.9em;
+            color: #B0B0B0;
+        }
+        .controls-row {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        .action-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+        .action-btn.primary {
+            background: linear-gradient(135deg, #00C851 0%, #00A041 100%);
+            color: white;
+        }
+        .action-btn.secondary {
+            background: linear-gradient(135deg, #33B5E5 0%, #0099CC 100%);
+            color: white;
+        }
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+        }
+        .home-link {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        .home-link:hover {
+            background: rgba(255, 215, 0, 0.3);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="home-link">← Back to Tests</a>
+    
+    <div class="container">
+        <h1>🗂️ Content Intelligence Buckets</h1>
+        <div class="description">
+            Test bucket selection, filtering, and content categorization system
+        </div>
+        
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-value" id="totalContent">247</div>
+                <div class="stat-label">Total Content</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="activeBuckets">6</div>
+                <div class="stat-label">Active Buckets</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="filteredItems">247</div>
+                <div class="stat-label">Filtered Items</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="selectedBucket">0</div>
+                <div class="stat-label">Selected Bucket</div>
+            </div>
+        </div>
+        
+        <div class="filters">
+            <button class="filter-btn active" data-filter="all">All Content</button>
+            <button class="filter-btn" data-filter="high-value">High Value</button>
+            <button class="filter-btn" data-filter="recent">Recent</button>
+            <button class="filter-btn" data-filter="popular">Popular</button>
+            <button class="filter-btn" data-filter="unassigned">Unassigned</button>
+        </div>
+        
+        <div class="buckets-grid" id="bucketsGrid">
+            <!-- Buckets will be populated by JavaScript -->
+        </div>
+        
+        <div class="controls-row">
+            <button class="action-btn primary" onclick="autoAssignContent()">Auto-Assign Content</button>
+            <button class="action-btn secondary" onclick="refreshBuckets()">Refresh Buckets</button>
+            <button class="action-btn secondary" onclick="exportBuckets()">Export Data</button>
+        </div>
+    </div>
+
+    <script>
+        // Sample bucket data
+        const bucketData = {
+            'premium-series': {
+                name: 'Premium Series',
+                description: 'High-quality, long-running series with strong viewer engagement',
+                count: 42,
+                color: '#FFD700',
+                content: [
+                    { title: 'Breaking Bad', details: 'Drama • 5 Seasons • 9.5 Rating' },
+                    { title: 'The Sopranos', details: 'Crime Drama • 6 Seasons • 9.2 Rating' },
+                    { title: 'Game of Thrones', details: 'Fantasy • 8 Seasons • 9.3 Rating' },
+                    { title: 'Better Call Saul', details: 'Drama • 6 Seasons • 8.7 Rating' }
+                ]
+            },
+            'blockbuster-movies': {
+                name: 'Blockbuster Movies',
+                description: 'High-budget movies with wide appeal and strong box office performance',
+                count: 67,
+                color: '#FF6B6B',
+                content: [
+                    { title: 'Avengers: Endgame', details: 'Action • 2019 • $2.798B Box Office' },
+                    { title: 'Top Gun: Maverick', details: 'Action • 2022 • $1.489B Box Office' },
+                    { title: 'Spider-Man: No Way Home', details: 'Action • 2021 • $1.921B Box Office' },
+                    { title: 'The Batman', details: 'Action • 2022 • $771M Box Office' }
+                ]
+            },
+            'indie-gems': {
+                name: 'Indie Gems',
+                description: 'Independent films with critical acclaim and unique storytelling',
+                count: 31,
+                color: '#4ECDC4',
+                content: [
+                    { title: 'Parasite', details: 'Thriller • 2019 • 4 Oscars' },
+                    { title: 'Moonlight', details: 'Drama • 2016 • 3 Oscars' },
+                    { title: 'Lady Bird', details: 'Comedy-Drama • 2017 • 5 Oscar Nominations' },
+                    { title: 'The Farewell', details: 'Comedy-Drama • 2019 • Golden Globe Winner' }
+                ]
+            },
+            'comfort-viewing': {
+                name: 'Comfort Viewing',
+                description: 'Feel-good content perfect for relaxation and repeat viewing',
+                count: 58,
+                color: '#95E1D3',
+                content: [
+                    { title: 'The Office', details: 'Comedy • 9 Seasons • Comfort Classic' },
+                    { title: 'Friends', details: 'Comedy • 10 Seasons • Timeless Appeal' },
+                    { title: 'Parks and Recreation', details: 'Comedy • 7 Seasons • Wholesome Fun' },
+                    { title: 'The Great British Bake Off', details: 'Reality • 13 Seasons • Relaxing Watch' }
+                ]
+            },
+            'documentary-deep-dives': {
+                name: 'Documentary Deep Dives',
+                description: 'Thought-provoking documentaries and educational content',
+                count: 29,
+                color: '#A8E6CF',
+                content: [
+                    { title: 'Free Solo', details: 'Documentary • 2018 • Oscar Winner' },
+                    { title: 'Won\'t You Be My Neighbor?', details: 'Documentary • 2018 • Heartwarming' },
+                    { title: 'The Social Dilemma', details: 'Documentary • 2020 • Tech Critical' },
+                    { title: 'My Octopus Teacher', details: 'Documentary • 2020 • Oscar Winner' }
+                ]
+            },
+            'trending-now': {
+                name: 'Trending Now',
+                description: 'Currently popular content with high engagement metrics',
+                count: 20,
+                color: '#FFB347',
+                content: [
+                    { title: 'Wednesday', details: 'Comedy-Horror • 2022 • Netflix Hit' },
+                    { title: 'House of the Dragon', details: 'Fantasy • 2022 • HBO Max Success' },
+                    { title: 'The Bear', details: 'Comedy-Drama • 2022 • Critical Darling' },
+                    { title: 'Stranger Things 4', details: 'Sci-Fi • 2022 • Record Breaking' }
+                ]
+            }
+        };
+
+        let currentFilter = 'all';
+        let selectedBuckets = new Set();
+
+        function initializeBuckets() {
+            const grid = document.getElementById('bucketsGrid');
+            grid.innerHTML = '';
+            
+            Object.entries(bucketData).forEach(([id, bucket]) => {
+                const bucketElement = document.createElement('div');
+                bucketElement.className = 'bucket';
+                bucketElement.setAttribute('data-bucket', id);
+                bucketElement.setAttribute('data-filter', getBucketFilter(bucket));
+                
+                bucketElement.innerHTML = `
+                    <div class="bucket-header">
+                        <div class="bucket-name">${bucket.name}</div>
+                        <div class="bucket-count">${bucket.count}</div>
+                    </div>
+                    <div class="bucket-description">${bucket.description}</div>
+                    <div class="bucket-content">
+                        ${bucket.content.map(item => `
+                            <div class="content-item">
+                                <div class="content-item-title">${item.title}</div>
+                                <div class="content-item-details">${item.details}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                
+                bucketElement.addEventListener('click', () => toggleBucket(id, bucketElement));
+                grid.appendChild(bucketElement);
+            });
+            
+            updateStats();
+        }
+
+        function getBucketFilter(bucket) {
+            if (bucket.count > 50) return 'high-value';
+            if (bucket.name.includes('Trending')) return 'recent';
+            if (bucket.count > 40) return 'popular';
+            return 'standard';
+        }
+
+        function toggleBucket(bucketId, element) {
+            if (selectedBuckets.has(bucketId)) {
+                selectedBuckets.delete(bucketId);
+                element.classList.remove('selected');
+                element.classList.remove('expanded');
+            } else {
+                selectedBuckets.add(bucketId);
+                element.classList.add('selected');
+                element.classList.add('expanded');
+            }
+            updateStats();
+        }
+
+        function filterBuckets(filter) {
+            currentFilter = filter;
+            const buckets = document.querySelectorAll('.bucket');
+            let visibleCount = 0;
+            
+            buckets.forEach(bucket => {
+                const bucketFilter = bucket.getAttribute('data-filter');
+                if (filter === 'all' || bucketFilter === filter) {
+                    bucket.style.display = 'block';
+                    visibleCount++;
+                } else {
+                    bucket.style.display = 'none';
+                }
+            });
+            
+            // Update filter buttons
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.getAttribute('data-filter') === filter) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            updateStats();
+        }
+
+        function updateStats() {
+            const totalContent = Object.values(bucketData).reduce((sum, bucket) => sum + bucket.count, 0);
+            const activeBuckets = Object.keys(bucketData).length;
+            const filteredItems = currentFilter === 'all' ? totalContent : 
+                Object.values(bucketData).filter(bucket => getBucketFilter(bucket) === currentFilter)
+                    .reduce((sum, bucket) => sum + bucket.count, 0);
+            const selectedBucket = selectedBuckets.size;
+            
+            document.getElementById('totalContent').textContent = totalContent;
+            document.getElementById('activeBuckets').textContent = activeBuckets;
+            document.getElementById('filteredItems').textContent = filteredItems;
+            document.getElementById('selectedBucket').textContent = selectedBucket;
+        }
+
+        function autoAssignContent() {
+            // Simulate auto-assignment with animation
+            const buckets = document.querySelectorAll('.bucket');
+            buckets.forEach((bucket, index) => {
+                setTimeout(() => {
+                    bucket.style.transform = 'scale(1.05)';
+                    setTimeout(() => {
+                        bucket.style.transform = 'scale(1)';
+                    }, 200);
+                }, index * 100);
+            });
+            
+            // Update some counts to simulate new assignments
+            setTimeout(() => {
+                bucketData['trending-now'].count += 3;
+                bucketData['comfort-viewing'].count += 2;
+                initializeBuckets();
+            }, 1000);
+        }
+
+        function refreshBuckets() {
+            // Simulate refresh with loading animation
+            const grid = document.getElementById('bucketsGrid');
+            grid.style.opacity = '0.5';
+            
+            setTimeout(() => {
+                // Simulate some data changes
+                bucketData['premium-series'].count = 42 + Math.floor(Math.random() * 5);
+                bucketData['blockbuster-movies'].count = 67 + Math.floor(Math.random() * 8);
+                initializeBuckets();
+                grid.style.opacity = '1';
+            }, 800);
+        }
+
+        function exportBuckets() {
+            const data = {
+                timestamp: new Date().toISOString(),
+                buckets: bucketData,
+                selectedBuckets: Array.from(selectedBuckets),
+                currentFilter: currentFilter
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'intelligence-buckets-data.json';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // Initialize filter buttons
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                filterBuckets(btn.getAttribute('data-filter'));
+            });
+        });
+
+        // Initialize the demo
+        initializeBuckets();
+    </script>
+</body>
+</html> 

@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Genre Population Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f5f5f5;
+        }
+        
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        .test-section h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin: 10px 0;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .btn-primary { background: #007bff; color: white; }
+        .btn-success { background: #28a745; color: white; }
+        .btn-warning { background: #ffc107; color: black; }
+        
+        button:hover {
+            opacity: 0.8;
+        }
+        
+        .iframe-container {
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        
+        iframe {
+            width: 100%;
+            height: 400px;
+            border: none;
+        }
+        
+        .log-container {
+            background: #000;
+            color: #00ff00;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            height: 200px;
+            overflow-y: auto;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>📺 Simple Genre Population Test</h1>
+        <p>Testing basic genre population functionality.</p>
+        
+        <div class="test-section">
+            <h3>🎯 Test Controls</h3>
+            <div class="controls">
+                <button class="btn-primary" onclick="setGenreAndPopulate('Sitcom')">📺 Set Sitcom & Populate</button>
+                <button class="btn-success" onclick="setGenreAndPopulate('Drama')">📺 Set Drama & Populate</button>
+                <button class="btn-warning" onclick="setGenreAndPopulate('Action')">📺 Set Action & Populate</button>
+                <button class="btn-warning" onclick="checkCurrentState()">🔍 Check Current State</button>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h3>📺 Genre Channel Test</h3>
+            <div class="iframe-container">
+                <iframe id="genreChannelFrame" src="Genre-channel_v2.html"></iframe>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h3>📝 Test Logs</h3>
+            <div class="log-container" id="logContainer">
+                <div>📺 Simple Genre Population Test initialized...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let frameWindow;
+        let logContainer;
+        
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            logContainer = document.getElementById('logContainer');
+            
+            // Wait for iframe to load
+            const iframe = document.getElementById('genreChannelFrame');
+            iframe.onload = () => {
+                frameWindow = iframe.contentWindow;
+                log('✅ Genre Channel iframe loaded');
+                
+                // Wait a bit for the channel to initialize
+                setTimeout(() => {
+                    checkCurrentState();
+                }, 2000);
+            };
+            
+            log('📺 Simple Genre Population Test initialized');
+        });
+        
+        // Logging function
+        function log(message) {
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.textContent = `[${timestamp}] ${message}`;
+            logContainer.appendChild(logEntry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+        
+        // Set genre and populate
+        function setGenreAndPopulate(genre) {
+            if (!frameWindow) {
+                log('❌ Frame not available');
+                return;
+            }
+            
+            log(`📺 Setting genre to ${genre} and populating...`);
+            
+            // Set the genre
+            frameWindow.currentGenre = genre;
+            log(`🎭 Set currentGenre to: ${genre}`);
+            
+            // Check if genreContent exists for this genre
+            if (frameWindow.genreContent && frameWindow.genreContent[genre]) {
+                const contentCount = frameWindow.genreContent[genre].length;
+                log(`📦 Found ${contentCount} items for ${genre} genre`);
+            } else {
+                log(`❌ No content found for ${genre} genre`);
+                return;
+            }
+            
+            // Trigger lineup creation
+            if (frameWindow.createLineup) {
+                frameWindow.createLineup(false);
+                log(`✅ Triggered ${genre} lineup creation`);
+                
+                // Check results after a delay
+                setTimeout(() => {
+                    checkPopulationResults(genre);
+                }, 2000);
+            } else {
+                log('❌ createLineup function not available');
+            }
+        }
+        
+        // Check current state
+        function checkCurrentState() {
+            if (!frameWindow) {
+                log('❌ Frame not available');
+                return;
+            }
+            
+            log('🔍 Checking current state...');
+            
+            // Check currentGenre
+            const currentGenre = frameWindow.currentGenre;
+            log(`🎭 Current genre: ${currentGenre || 'null'}`);
+            
+            // Check currentContent
+            const currentContent = frameWindow.currentContent;
+            log(`📦 Current content length: ${currentContent ? currentContent.length : 0}`);
+            
+            // Check genreContent
+            if (frameWindow.genreContent) {
+                const genres = Object.keys(frameWindow.genreContent);
+                log(`📚 Available genres: ${genres.join(', ')}`);
+                
+                genres.forEach(genre => {
+                    const count = frameWindow.genreContent[genre].length;
+                    log(`  - ${genre}: ${count} items`);
+                });
+            } else {
+                log('❌ genreContent not available');
+            }
+            
+            // Check if createLineup function exists
+            if (frameWindow.createLineup) {
+                log('✅ createLineup function available');
+            } else {
+                log('❌ createLineup function not available');
+            }
+            
+            // Check blocks in DOM
+            const blocks = frameWindow.document.querySelectorAll('.program-slot:not(.empty)');
+            log(`📺 Blocks in DOM: ${blocks.length}`);
+            
+            // Check remove buttons
+            const removeButtons = frameWindow.document.querySelectorAll('.remove-btn');
+            log(`❌ Remove buttons in DOM: ${removeButtons.length}`);
+            
+            // Check remove button visibility
+            let visibleButtons = 0;
+            let hiddenButtons = 0;
+            
+            removeButtons.forEach((btn, index) => {
+                const opacity = parseFloat(btn.style.opacity) || 0;
+                const visibility = btn.style.visibility || 'visible';
+                
+                if (opacity > 0 && visibility !== 'hidden') {
+                    visibleButtons++;
+                } else {
+                    hiddenButtons++;
+                }
+            });
+            
+            log(`👁️ Visible remove buttons: ${visibleButtons}, Hidden: ${hiddenButtons}`);
+        }
+        
+        // Check population results
+        function checkPopulationResults(genre) {
+            if (!frameWindow) return;
+            
+            log(`🔍 Checking ${genre} population results...`);
+            
+            const blocks = frameWindow.document.querySelectorAll('.program-slot:not(.empty)');
+            const removeButtons = frameWindow.document.querySelectorAll('.remove-btn');
+            
+            log(`📦 Found ${blocks.length} blocks`);
+            log(`❌ Found ${removeButtons.length} remove buttons`);
+            
+            // Check block positions and widths
+            blocks.forEach((block, index) => {
+                const left = parseFloat(block.style.left) || 0;
+                const width = parseFloat(block.style.width) || 0;
+                const title = block.querySelector('.program-title')?.textContent || `Block ${index}`;
+                
+                log(`Block ${index + 1}: "${title}" - Left: ${left.toFixed(2)}%, Width: ${width.toFixed(2)}%`);
+            });
+            
+            // Check remove button visibility
+            let visibleButtons = 0;
+            let hiddenButtons = 0;
+            
+            removeButtons.forEach((btn, index) => {
+                const opacity = parseFloat(btn.style.opacity) || 0;
+                const visibility = btn.style.visibility || 'visible';
+                
+                if (opacity > 0 && visibility !== 'hidden') {
+                    visibleButtons++;
+                } else {
+                    hiddenButtons++;
+                }
+            });
+            
+            log(`👁️ Visible remove buttons: ${visibleButtons}, Hidden: ${hiddenButtons}`);
+            
+            if (hiddenButtons === removeButtons.length) {
+                log('✅ All remove buttons are properly hidden');
+            } else {
+                log('⚠️ Some remove buttons are visible when they should be hidden');
+            }
+        }
+    </script>
+</body>
+</html> 

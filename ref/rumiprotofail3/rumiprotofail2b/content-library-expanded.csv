@@ -1,0 +1,95 @@
+title,duration_minutes,duration_seconds,type,genre,service,season,episode,year,description,automode_eligible,content_id,intelligence_bucket
+"The Office S03E20 - Product Recall",22,1320,episode,Comedy,peacock,3,20,2007,"Paper recall chaos at Dunder Mifflin",true,office-s03e20,Scene Description Pipeline
+"Parks and Recreation S03E07 - Harvest Festival",22,1320,episode,Comedy,peacock,3,7,2011,"Leslie Knope saves the festival",true,parks-rec-s03e07,Scene Description Pipeline
+"Community S02E14 - Advanced Dungeons & Dragons",22,1320,episode,Comedy,netflix,2,14,2011,"The group plays D&D",true,community-s02e14,Scene Description Pipeline
+"30 Rock S05E10 - Christmas Attack Zone",22,1320,episode,Comedy,hulu,5,10,2010,"Jack's mom visits for Christmas",true,30rock-s05e10,Scene Description Pipeline
+"Arrested Development S01E01 - Pilot",22,1320,episode,Comedy,netflix,1,1,2003,"Bluth family loses fortune",true,arrested-s01e01,Scene Description Pipeline
+"The Hangover",100,6000,movie,Comedy,hbo,,,2009,"Bachelor party gone wrong in Vegas",true,hangover-movie,Content Intelligence
+"Superbad",113,6780,movie,Comedy,netflix,,,2007,"Teens seek party adventure",true,superbad-movie,Content Intelligence
+"Bridesmaids",125,7500,movie,Comedy,peacock,,,2011,"Maid of honor's life unravels",true,bridesmaids-movie,Content Intelligence
+"Friends S06E15 - The One That Could Have Been",22,1320,episode,Sitcom,hbo,6,15,2000,"Alternate realities for the group",true,friends-s06e15,Story Tree
+"Seinfeld S04E11 - The Contest",22,1320,episode,Sitcom,netflix,4,11,1992,"A bet about self-control",true,seinfeld-s04e11,Story Tree
+"Modern Family S07E03 - The Closet Case",22,1320,episode,Sitcom,hulu,7,3,2015,"Haley's new boyfriend",true,modernfamily-s07e03,Scene Description Pipeline
+"Brooklyn Nine-Nine S04E12 - The Fugitive",22,1320,episode,Sitcom,hulu,4,12,2017,"Jake and Rosa hunt a fugitive",true,brooklyn99-s04e12,Scene Description Pipeline
+"How I Met Your Mother S05E12 - Girls vs. Suits",22,1320,episode,Sitcom,netflix,5,12,2010,"Barney faces a tough choice",true,himym-s05e12,Scene Description Pipeline
+"Anchorman",94,5640,movie,Sitcom,netflix,,,2004,"Ron Burgundy's news team",true,anchorman-movie,Content Intelligence
+"Ferris Bueller's Day Off",103,6180,movie,Sitcom,peacock,,,1986,"Ferris skips school",true,ferris-movie,Content Intelligence
+"The Truman Show",103,6180,movie,Sitcom,hulu,,,1998,"Man's life is a TV show",true,truman-movie,Content Intelligence
+"Dave Chappelle: Sticks & Stones",60,3600,episode,Standup,netflix,,,2019,"Chappelle's standup special",true,chappelle-standup,Content Intelligence
+"John Mulaney: Kid Gorgeous",65,3900,episode,Standup,netflix,,,2018,"Mulaney at Radio City",true,mulaney-standup,Content Intelligence
+"Ali Wong: Baby Cobra",55,3300,episode,Standup,netflix,,,2016,"Ali Wong's pregnancy special",true,wong-standup,Content Intelligence
+"Hannibal Buress: Comedy Camisado",58,3480,episode,Standup,netflix,,,2016,"Buress's unique humor",true,buress-standup,Content Intelligence
+"Tig Notaro: Happy To Be Here",55,3300,episode,Standup,netflix,,,2018,"Tig's dry wit",true,tig-standup,Content Intelligence
+"The Big Sick",120,7200,movie,Standup,amazon,,,2017,"Comedian's real-life romance",true,bigsick-movie,Content Intelligence
+"Funny People",146,8760,movie,Standup,netflix,,,2009,"Comedian faces illness",true,funnypeople-movie,Content Intelligence
+"Punchline",123,7380,movie,Standup,hulu,,,1988,"Standup comedy drama",true,punchline-movie,Content Intelligence
+"SNL S47E15 - Oscar Isaac",90,5400,episode,Sketch,hulu,47,15,2022,"Oscar Isaac hosts SNL",true,snl-s47e15,Scene Description Pipeline
+"Key & Peele S03E08 - Georgina and Esther and Satan",22,1320,episode,Sketch,netflix,3,8,2013,"Key & Peele sketches",true,keypeele-s03e08,Scene Description Pipeline
+"I Think You Should Leave S02E04",15,900,episode,Sketch,netflix,2,4,2021,"Absurd sketch comedy",true,itysl-s02e04,Scene Description Pipeline
+"A Black Lady Sketch Show S03E06",30,1800,episode,Sketch,hbo,3,6,2022,"Black women in sketch comedy",true,abls-s03e06,Scene Description Pipeline
+"Portlandia S05E10 - Rise of the Machines",22,1320,episode,Sketch,netflix,5,10,2015,"Satirical sketches in Portland",true,portlandia-s05e10,Scene Description Pipeline
+"Scary Movie",88,5280,movie,Sketch,hulu,,,2000,"Horror parody film",true,scarymovie-movie,Content Intelligence
+"Not Another Teen Movie",89,5340,movie,Sketch,netflix,,,2001,"Teen movie parody",true,natm-movie,Content Intelligence
+"Walk Hard: The Dewey Cox Story",96,5760,movie,Sketch,hulu,,,2007,"Music biopic parody",true,walkhard-movie,Content Intelligence
+"Scary Movie",88,5280,movie,Parody,hulu,,,2000,"Horror parody film",true,scarymovie-movie,Content Intelligence
+"Not Another Teen Movie",89,5340,movie,Parody,netflix,,,2001,"Teen movie parody",true,natm-movie,Content Intelligence
+"Airplane!",88,5280,movie,Parody,hulu,,,1980,"Classic disaster parody",true,airplane-movie,Content Intelligence
+"The Naked Gun",85,5100,movie,Parody,hulu,,,1988,"Police spoof comedy",true,nakedgun-movie,Content Intelligence
+"Key & Peele S03E08 - Georgina and Esther and Satan",22,1320,episode,Parody,netflix,3,8,2013,"Key & Peele sketches",true,keypeele-s03e08,Scene Description Pipeline
+"Weird Al Show S01E01 - Bad Influence",22,1320,episode,Parody,netflix,1,1,1997,"Weird Al's parody show",true,weirdal-s01e01,Scene Description Pipeline
+"The Crown S06E10 - Sleep, Dearie Sleep",58,3480,episode,Drama,netflix,6,10,2023,"Queen Elizabeth's later years",true,crown-s06e10,Story Tree
+"Breaking Bad S05E16 - Felina",47,2820,episode,Drama,netflix,5,16,2013,"Walt's final showdown",true,breakingbad-s05e16,Content Intelligence
+"Succession S03E09 - All the Bells Say",60,3600,episode,Drama,hbo,3,9,2021,"Roy family drama escalates",true,success-s03e09,Content Intelligence
+"The Sopranos S01E01 - Pilot",55,3300,episode,Drama,hbo,1,1,1999,"Tony Soprano starts therapy",true,sopranos-s01e01,Content Intelligence
+"Mad Men S01E01 - Smoke Gets in Your Eyes",48,2880,episode,Drama,amc,1,1,2007,"Don Draper in 1960s NYC",true,madmen-s01e01,Content Intelligence
+"The Godfather",175,10500,movie,Drama,netflix,,,1972,"Mafia family saga",true,godfather-movie,Content Intelligence
+"Forrest Gump",142,8520,movie,Drama,netflix,,,1994,"Man's journey through history",true,forrestgump-movie,Content Intelligence
+"Joker",122,7320,movie,Drama,hbo,,,2019,"Arthur Fleck's transformation",true,joker-movie,Content Intelligence
+"Survivor S42E13 - Finale",60,3600,episode,Reality,paramount,42,13,2022,"Final tribal council",true,survivor-s42e13,Content Intelligence
+"The Bachelor S26E10 - Finale",120,7200,episode,Reality,hulu,26,10,2022,"Bachelor chooses winner",true,bachelor-s26e10,Content Intelligence
+"Top Chef S19E15 - Finale",60,3600,episode,Reality,bravo,19,15,2022,"Top Chef winner crowned",true,topchef-s19e15,Content Intelligence
+"Amazing Race S33E12 - Finale",60,3600,episode,Reality,paramount,33,12,2022,"Race around the world ends",true,amazingrace-s33e12,Content Intelligence
+"Queer Eye S06E10 - Snow White of Central Texas",50,3000,episode,Reality,netflix,6,10,2022,"Makeover in Texas",true,queereye-s06e10,Content Intelligence
+"The Truman Show",103,6180,movie,Reality,hulu,,,1998,"Man's life is a TV show",true,truman-movie,Content Intelligence
+"The Social Dilemma",94,5640,movie,Reality,netflix,,,2020,"Social media documentary",true,socialdilemma-movie,Content Intelligence
+"Free Solo",100,6000,movie,Reality,disney,,,2018,"Climbing El Capitan",true,free-solo-movie,Content Intelligence
+"Stranger Things S04E09 - Piggyback",51,3060,episode,Thriller,netflix,4,9,2022,"Final battle in Hawkins",true,strangerthings-s04e09,Story Tree
+"Mindhunter S01E01 - Pilot",50,3000,episode,Thriller,netflix,1,1,2017,"FBI studies serial killers",true,mindhunter-s01e01,Content Intelligence
+"Ozark S01E01 - Sugarwood",60,3600,episode,Thriller,netflix,1,1,2017,"Marty moves to Ozarks",true,ozark-s01e01,Content Intelligence
+"The Night Of S01E01 - The Beach",78,4680,episode,Thriller,hbo,1,1,2016,"Naz is accused of murder",true,nightof-s01e01,Content Intelligence
+"Severance S01E01 - Good News About Hell",50,3000,episode,Thriller,appletv,1,1,2022,"Work-life separation mystery",true,severance-s01e01,Content Intelligence
+"Gone Girl",149,8940,movie,Thriller,hbo,,,2014,"Wife disappears, husband suspected",true,gonegirl-movie,Content Intelligence
+"Prisoners",153,9180,movie,Thriller,netflix,,,2013,"Child abduction thriller",true,prisoners-movie,Content Intelligence
+"Zodiac",157,9420,movie,Thriller,netflix,,,2007,"Zodiac killer investigation",true,zodiac-movie,Content Intelligence
+"Blade Runner 2049",164,9840,movie,Sci-Fi,hbo,,,2017,"K discovers replicant secret",true,blade-runner-2049-movie,Content Intelligence
+"Dune",155,9300,movie,Sci-Fi,hbo,,,2021,"Paul Atreides on Arrakis",true,dune-movie,Content Intelligence
+"The Expanse S01E01 - Dulcinea",45,2700,episode,Sci-Fi,amazon,1,1,2015,"Detective investigates disappearance",true,expanse-s01e01,Content Intelligence
+"Black Mirror S03E04 - San Junipero",60,3600,episode,Sci-Fi,netflix,3,4,2016,"Virtual afterlife romance",true,blackmirror-s03e04,Content Intelligence
+"Westworld S01E01 - The Original",60,3600,episode,Sci-Fi,hbo,1,1,2016,"Robots gain consciousness",true,westworld-s01e01,Content Intelligence
+"Severance S01E01 - Good News About Hell",50,3000,episode,Sci-Fi,appletv,1,1,2022,"Work-life separation mystery",true,severance-s01e01,Content Intelligence
+"Arrival",116,6960,movie,Sci-Fi,netflix,,,2016,"Linguist communicates with aliens",true,arrival-movie,Content Intelligence
+"Interstellar",169,10140,movie,Sci-Fi,netflix,,,2014,"Journey through a wormhole",true,interstellar-movie,Content Intelligence
+"The Haunting of Bly Manor S02E10",60,3600,episode,Horror,netflix,2,10,2020,"Ghosts at Bly Manor",true,blymanor-s02e10,Story Tree
+"Midnight Mass S01E07",60,3600,episode,Horror,netflix,1,7,2021,"Supernatural events on an island",true,midnightmass-s01e07,Content Intelligence
+"The Walking Dead S11E24",45,2700,episode,Horror,amc,11,24,2022,"Finale of zombie saga",true,walkingdead-s11e24,Content Intelligence
+"American Horror Story S10E10",45,2700,episode,Horror,hulu,10,10,2021,"Anthology horror finale",true,ahs-s10e10,Content Intelligence
+"The Exorcist",122,7320,movie,Horror,hulu,,,1973,"Classic possession horror",true,exorcist-movie,Content Intelligence
+"Get Out",104,6240,movie,Horror,netflix,,,2017,"Man visits girlfriend's family",true,getout-movie,Content Intelligence
+"A Quiet Place",90,5400,movie,Horror,amazon,,,2018,"Family survives in silence",true,quietplace-movie,Content Intelligence
+"Planet Earth II S01E01",50,3000,episode,Documentary,discovery,1,1,2016,"Wildlife across the globe",true,planetearthii-s01e01,Content Intelligence
+"The Last Dance S01E01",50,3000,episode,Documentary,netflix,1,1,2020,"Michael Jordan's Bulls",true,lastdance-s01e01,Content Intelligence
+"Our Planet S01E01",50,3000,episode,Documentary,netflix,1,1,2019,"Nature documentary series",true,ourplanet-s01e01,Content Intelligence
+"Cosmos S01E01",44,2640,episode,Documentary,fox,1,1,2014,"Journey through space and time",true,cosmos-s01e01,Story Tree
+"Blue Planet S01E01",50,3000,episode,Documentary,bbc,1,1,2001,"Ocean exploration begins",true,blueplanet-s01e01,Character Summaries
+"My Octopus Teacher",85,5100,movie,Documentary,netflix,,,2020,"Octopus-human friendship",true,octopus-movie,Content Intelligence
+"Free Solo",100,6000,movie,Documentary,disney,,,2018,"Climbing El Capitan",true,free-solo-movie,Content Intelligence
+"Icarus",121,7260,movie,Documentary,netflix,,,2017,"Doping in sports",true,icarus-movie,Content Intelligence
+"American Factory",110,6600,movie,Documentary,netflix,,,2019,"Chinese factory in Ohio",true,amfactory-movie,Content Intelligence
+"BoJack Horseman S06E16",25,1500,episode,Animation,netflix,6,16,2020,"BoJack's final episode",true,bojack-s06e16,Story Tree
+"Rick and Morty S05E10",22,1320,episode,Animation,hulu,5,10,2021,"Season 5 finale",true,rickmorty-s05e10,Scene Description Pipeline
+"Arcane S01E09",40,2400,episode,Animation,netflix,1,9,2021,"Arcane's season finale",true,arcane-s01e09,Scene Description Pipeline
+"Love Death + Robots S03E09",15,900,episode,Animation,netflix,3,9,2022,"Animated sci-fi anthology",true,ldrobots-s03e09,Scene Description Pipeline
+"Adventure Time S10E13",11,660,episode,Animation,hulu,10,13,2018,"Adventure Time finale",true,adventuretime-s10e13,Scene Description Pipeline
+"Spider-Man: Into the Spider-Verse",117,7020,movie,Animation,netflix,,,2018,"Animated Spider-Man adventure",true,spiderman-movie,Content Intelligence
+"Toy Story 4",100,6000,movie,Animation,disney,,,2019,"Woody and friends' new adventure",true,toystory4-movie,Content Intelligence
+"Coco",105,6300,movie,Animation,disney,,,2017,"Boy visits Land of the Dead",true,coco-movie,Content Intelligence 

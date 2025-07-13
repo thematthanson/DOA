@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gap Filling Fixes Test</title>
+    <style>
+        body {
+            font-family: 'SF Mono', monospace;
+            background: #0a0a0a;
+            color: #00ff41;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: #00ff41;
+            margin-bottom: 30px;
+            text-shadow: 0 0 10px rgba(0, 255, 65, 0.5);
+        }
+
+        .test-section {
+            background: #1a1a1a;
+            border: 2px solid #333;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .test-section h2 {
+            color: #00ff41;
+            margin-top: 0;
+            border-bottom: 1px solid #333;
+            padding-bottom: 10px;
+        }
+
+        .status {
+            background: #2a2a2a;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid #444;
+            margin-bottom: 20px;
+        }
+
+        .status h3 {
+            margin-top: 0;
+            color: #00ff41;
+        }
+
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            margin: 5px 0;
+            padding: 5px 0;
+            border-bottom: 1px solid #333;
+        }
+
+        .status-label {
+            font-weight: bold;
+        }
+
+        .status-value {
+            color: #ffffff;
+        }
+
+        .status-value.enabled {
+            color: #00ff41;
+        }
+
+        .status-value.disabled {
+            color: #ff4444;
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .control-group {
+            background: #2a2a2a;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid #444;
+        }
+
+        .control-group h3 {
+            margin-top: 0;
+            color: #00ff41;
+            font-size: 14px;
+        }
+
+        button {
+            background: #333;
+            color: #00ff41;
+            border: 1px solid #00ff41;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'SF Mono', monospace;
+            font-size: 12px;
+            margin: 5px;
+            transition: all 0.2s ease;
+        }
+
+        button:hover {
+            background: #00ff41;
+            color: #000;
+            box-shadow: 0 0 10px rgba(0, 255, 65, 0.3);
+        }
+
+        .test-results {
+            background: #2a2a2a;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid #444;
+            margin-top: 20px;
+        }
+
+        .test-results h3 {
+            margin-top: 0;
+            color: #00ff41;
+        }
+
+        .log {
+            background: #000;
+            border: 1px solid #333;
+            border-radius: 4px;
+            padding: 10px;
+            height: 300px;
+            overflow-y: auto;
+            font-family: 'SF Mono', monospace;
+            font-size: 11px;
+            color: #00ff41;
+        }
+
+        .iframe-container {
+            background: #1a1a1a;
+            border: 2px solid #333;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .iframe-container h3 {
+            margin-top: 0;
+            color: #00ff41;
+        }
+
+        iframe {
+            width: 100%;
+            height: 500px;
+            border: 1px solid #333;
+            border-radius: 4px;
+            background: #000;
+        }
+
+        .fix-list {
+            background: #2a2a2a;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid #444;
+            margin-bottom: 20px;
+        }
+
+        .fix-list h3 {
+            margin-top: 0;
+            color: #00ff41;
+        }
+
+        .fix-item {
+            margin: 10px 0;
+            padding: 10px;
+            background: #1a1a1a;
+            border-radius: 4px;
+            border-left: 3px solid #00ff41;
+        }
+
+        .fix-title {
+            font-weight: bold;
+            color: #00ff41;
+            margin-bottom: 5px;
+        }
+
+        .fix-description {
+            color: #cccccc;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Gap Filling Fixes Test</h1>
+
+        <div class="fix-list">
+            <h3>🔧 Fixes Applied</h3>
+            <div class="fix-item">
+                <div class="fix-title">✅ Infinite Loop Prevention</div>
+                <div class="fix-description">Added flags and timing checks to prevent infinite gap filling loops</div>
+            </div>
+            <div class="fix-item">
+                <div class="fix-title">✅ Gap Indicator Visibility</div>
+                <div class="fix-description">Changed gap indicators to transparent background with green borders</div>
+            </div>
+            <div class="fix-item">
+                <div class="fix-title">✅ Remove Button Visibility</div>
+                <div class="fix-description">Enhanced remove button styling to ensure they're always visible on hover</div>
+            </div>
+            <div class="fix-item">
+                <div class="fix-title">✅ Z-Index Management</div>
+                <div class="fix-description">Proper z-index layering to prevent UI elements from overlapping</div>
+            </div>
+        </div>
+
+        <div class="status">
+            <h3>📊 System Status</h3>
+            <div id="status-content">
+                <div class="status-item">
+                    <span class="status-label">Overlap Fix:</span>
+                    <span class="status-value" id="overlap-status">Checking...</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">Auto Gap Filling:</span>
+                    <span class="status-value" id="gap-filling-status">Checking...</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">Is Filling Gaps:</span>
+                    <span class="status-value" id="filling-status">Checking...</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">Block Count:</span>
+                    <span class="status-value" id="block-count">Checking...</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">Gap Count:</span>
+                    <span class="status-value" id="gap-count">Checking...</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">Remove Buttons:</span>
+                    <span class="status-value" id="remove-buttons-status">Checking...</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>🧪 Test Controls</h2>
+            
+            <div class="controls">
+                <div class="control-group">
+                    <h3>Gap Filling Tests</h3>
+                    <button id="test-remove-middle">Remove Middle Block</button>
+                    <button id="test-remove-first">Remove First Block</button>
+                    <button id="test-remove-last">Remove Last Block</button>
+                    <button id="test-multiple-removes">Test Multiple Removes</button>
+                </div>
+
+                <div class="control-group">
+                    <h3>System Tests</h3>
+                    <button id="test-overlap-fix">Test Overlap Fix</button>
+                    <button id="test-remove-buttons">Test Remove Buttons</button>
+                    <button id="test-gap-indicators">Test Gap Indicators</button>
+                    <button id="refresh-status">Refresh Status</button>
+                </div>
+
+                <div class="control-group">
+                    <h3>Debug Tools</h3>
+                    <button id="clear-log">Clear Log</button>
+                    <button id="debug-layout">Debug Layout</button>
+                    <button id="test-infinite-loop">Test Loop Prevention</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-results">
+            <h3>📝 Test Log</h3>
+            <div class="log" id="test-log"></div>
+        </div>
+
+        <div class="iframe-container">
+            <h3>🎬 Genre Channel Test Environment</h3>
+            <iframe id="test-frame" src="Genre-channel_v2.html"></iframe>
+        </div>
+    </div>
+
+    <script>
+        let frameWindow = null;
+        let statusUpdateInterval = null;
+        let testCount = 0;
+
+        // Initialize the test environment
+        document.addEventListener('DOMContentLoaded', () => {
+            log('🚀 Gap Filling Fixes Test initialized');
+            
+            // Wait for iframe to load
+            const iframe = document.getElementById('test-frame');
+            iframe.onload = () => {
+                frameWindow = iframe.contentWindow;
+                log('✅ Test frame loaded');
+                
+                // Start status monitoring
+                startStatusMonitoring();
+                
+                // Initial status check
+                updateStatus();
+            };
+
+            // Setup event listeners
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            // Gap filling tests
+            document.getElementById('test-remove-middle').onclick = () => testRemoveBlock('middle');
+            document.getElementById('test-remove-first').onclick = () => testRemoveBlock('first');
+            document.getElementById('test-remove-last').onclick = () => testRemoveBlock('last');
+            document.getElementById('test-multiple-removes').onclick = testMultipleRemoves;
+            
+            // System tests
+            document.getElementById('test-overlap-fix').onclick = testOverlapFix;
+            document.getElementById('test-remove-buttons').onclick = testRemoveButtons;
+            document.getElementById('test-gap-indicators').onclick = testGapIndicators;
+            document.getElementById('refresh-status').onclick = updateStatus;
+            
+            // Debug tools
+            document.getElementById('clear-log').onclick = clearLog;
+            document.getElementById('debug-layout').onclick = debugLayout;
+            document.getElementById('test-infinite-loop').onclick = testInfiniteLoopPrevention;
+        }
+
+        function log(message) {
+            const logElement = document.getElementById('test-log');
+            const timestamp = new Date().toLocaleTimeString();
+            logElement.innerHTML += `[${timestamp}] ${message}\n`;
+            logElement.scrollTop = logElement.scrollHeight;
+            console.log(message);
+        }
+
+        function clearLog() {
+            document.getElementById('test-log').innerHTML = '';
+            log('🧹 Log cleared');
+        }
+
+        function startStatusMonitoring() {
+            if (statusUpdateInterval) {
+                clearInterval(statusUpdateInterval);
+            }
+            
+            statusUpdateInterval = setInterval(updateStatus, 2000);
+            log('📊 Status monitoring started');
+        }
+
+        function updateStatus() {
+            if (!frameWindow) return;
+
+            try {
+                // Check if overlap fix is available
+                if (frameWindow.genreChannelOverlapFix) {
+                    const status = frameWindow.genreChannelOverlapFix.getStatus();
+                    
+                    document.getElementById('overlap-status').textContent = status.isEnabled ? 'Enabled' : 'Disabled';
+                    document.getElementById('overlap-status').className = status.isEnabled ? 'status-value enabled' : 'status-value disabled';
+                    
+                    document.getElementById('gap-filling-status').textContent = status.autoFillGaps ? 'Enabled' : 'Disabled';
+                    document.getElementById('gap-filling-status').className = status.autoFillGaps ? 'status-value enabled' : 'status-value disabled';
+                    
+                    document.getElementById('filling-status').textContent = status.isFillingGaps ? 'Active' : 'Inactive';
+                    document.getElementById('filling-status').className = status.isFillingGaps ? 'status-value enabled' : 'status-value disabled';
+                    
+                    document.getElementById('block-count').textContent = status.blockCount;
+                    document.getElementById('gap-count').textContent = status.gapCount;
+                    
+                    // Check remove buttons
+                    const removeButtons = frameWindow.document.querySelectorAll('.remove-btn');
+                    document.getElementById('remove-buttons-status').textContent = `${removeButtons.length} found`;
+                    document.getElementById('remove-buttons-status').className = removeButtons.length > 0 ? 'status-value enabled' : 'status-value disabled';
+                } else {
+                    document.getElementById('overlap-status').textContent = 'Not Found';
+                    document.getElementById('overlap-status').className = 'status-value disabled';
+                }
+            } catch (error) {
+                log(`❌ Status update error: ${error.message}`);
+            }
+        }
+
+        function testRemoveBlock(position) {
+            if (!frameWindow) {
+                log('❌ Frame window not available');
+                return;
+            }
+
+            try {
+                const blocks = frameWindow.document.querySelectorAll('.program-slot:not(.empty)');
+                if (blocks.length === 0) {
+                    log('❌ No blocks to remove');
+                    return;
+                }
+
+                let blockIndex = 0;
+                if (position === 'middle' && blocks.length > 2) {
+                    blockIndex = Math.floor(blocks.length / 2);
+                } else if (position === 'last') {
+                    blockIndex = blocks.length - 1;
+                }
+
+                const block = blocks[blockIndex];
+                const title = block.querySelector('.program-title')?.textContent || `Block ${blockIndex + 1}`;
+                
+                log(`🗑️ Removing ${position} block: "${title}"`);
+                
+                // Find the index in currentContent
+                if (frameWindow.currentContent && frameWindow.removeContent) {
+                    const contentIndex = frameWindow.currentContent.findIndex(item => 
+                        item.title === title || item.title.includes(title)
+                    );
+                    
+                    if (contentIndex !== -1) {
+                        frameWindow.removeContent(contentIndex);
+                        log(`✅ Removed block at index ${contentIndex}`);
+                    } else {
+                        log('❌ Could not find block in currentContent');
+                    }
+                } else {
+                    log('❌ currentContent or removeContent not available');
+                }
+                
+                updateStatus();
+            } catch (error) {
+                log(`❌ Test remove block error: ${error.message}`);
+            }
+        }
+
+        function testMultipleRemoves() {
+            log('🧪 Testing multiple block removals...');
+            
+            // Remove multiple blocks with delays
+            setTimeout(() => testRemoveBlock('middle'), 100);
+            setTimeout(() => testRemoveBlock('last'), 500);
+            setTimeout(() => testRemoveBlock('first'), 1000);
+            
+            log('✅ Multiple remove test initiated');
+        }
+
+        function testOverlapFix() {
+            if (!frameWindow || !frameWindow.genreChannelOverlapFix) {
+                log('❌ Overlap fix not available');
+                return;
+            }
+
+            try {
+                const result = frameWindow.genreChannelOverlapFix.test();
+                log(`🧪 Overlap fix test result: ${JSON.stringify(result, null, 2)}`);
+                updateStatus();
+            } catch (error) {
+                log(`❌ Test overlap fix error: ${error.message}`);
+            }
+        }
+
+        function testRemoveButtons() {
+            if (!frameWindow) {
+                log('❌ Frame window not available');
+                return;
+            }
+
+            try {
+                const removeButtons = frameWindow.document.querySelectorAll('.remove-btn');
+                log(`🔍 Found ${removeButtons.length} remove buttons`);
+                
+                removeButtons.forEach((btn, index) => {
+                    const parent = btn.closest('.program-slot');
+                    const title = parent?.querySelector('.program-title')?.textContent || `Block ${index + 1}`;
+                    const opacity = window.getComputedStyle(btn).opacity;
+                    const visibility = window.getComputedStyle(btn).visibility;
+                    
+                    log(`  Button ${index + 1}: "${title}" - opacity: ${opacity}, visibility: ${visibility}`);
+                });
+                
+                log('✅ Remove button test completed');
+            } catch (error) {
+                log(`❌ Remove button test error: ${error.message}`);
+            }
+        }
+
+        function testGapIndicators() {
+            if (!frameWindow) {
+                log('❌ Frame window not available');
+                return;
+            }
+
+            try {
+                const gapIndicators = frameWindow.document.querySelectorAll('.program-slot.empty.gap-indicator');
+                const plusButtons = Array.from(gapIndicators).filter(slot => slot.textContent === '+');
+                
+                log(`🔍 Found ${plusButtons.length} gap indicators (+ buttons)`);
+                
+                plusButtons.forEach((button, index) => {
+                    const left = parseFloat(button.style.left) || 0;
+                    const width = parseFloat(button.style.width) || 0;
+                    const bgColor = window.getComputedStyle(button).backgroundColor;
+                    const borderColor = window.getComputedStyle(button).borderColor;
+                    
+                    log(`  Gap ${index + 1}: left=${left.toFixed(2)}%, width=${width.toFixed(2)}%, bg=${bgColor}, border=${borderColor}`);
+                });
+                
+                log('✅ Gap indicators test completed');
+            } catch (error) {
+                log(`❌ Gap indicators test error: ${error.message}`);
+            }
+        }
+
+        function debugLayout() {
+            if (!frameWindow) {
+                log('❌ Frame window not available');
+                return;
+            }
+
+            try {
+                log('🔍 Debugging layout...');
+                
+                const blocks = frameWindow.document.querySelectorAll('.program-slot:not(.empty)');
+                log(`📊 Found ${blocks.length} content blocks`);
+                
+                blocks.forEach((block, index) => {
+                    const left = parseFloat(block.style.left) || 0;
+                    const width = parseFloat(block.style.width) || 0;
+                    const title = block.querySelector('.program-title')?.textContent || `Block ${index + 1}`;
+                    const removeBtn = block.querySelector('.remove-btn');
+                    
+                    log(`  Block ${index + 1}: "${title}" - left: ${left.toFixed(2)}%, width: ${width.toFixed(2)}%, removeBtn: ${removeBtn ? 'present' : 'missing'}`);
+                });
+                
+                const gaps = frameWindow.document.querySelectorAll('.program-slot.empty.gap-indicator');
+                log(`📊 Found ${gaps.length} gap indicators`);
+                
+                log('✅ Layout debug completed');
+            } catch (error) {
+                log(`❌ Debug layout error: ${error.message}`);
+            }
+        }
+
+        function testInfiniteLoopPrevention() {
+            if (!frameWindow || !frameWindow.genreChannelOverlapFix) {
+                log('❌ Overlap fix not available');
+                return;
+            }
+
+            try {
+                log('🧪 Testing infinite loop prevention...');
+                
+                // Try to trigger gap filling multiple times quickly
+                for (let i = 0; i < 5; i++) {
+                    setTimeout(() => {
+                        frameWindow.genreChannelOverlapFix.fillGapsIfEnabled();
+                        log(`🔧 Gap fill attempt ${i + 1}`);
+                    }, i * 100);
+                }
+                
+                // Check status after attempts
+                setTimeout(() => {
+                    const status = frameWindow.genreChannelOverlapFix.getStatus();
+                    log(`📊 After rapid attempts - isFillingGaps: ${status.isFillingGaps}`);
+                    log('✅ Infinite loop prevention test completed');
+                }, 1000);
+                
+            } catch (error) {
+                log(`❌ Infinite loop prevention test error: ${error.message}`);
+            }
+        }
+    </script>
+</body>
+</html> 

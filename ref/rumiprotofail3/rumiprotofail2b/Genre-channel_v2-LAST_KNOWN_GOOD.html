@@ -1,0 +1,3896 @@
+<!DOCTYPE html>
+<!-- CACHE BUST: v1.3 - Fixed duplicate content issue - 2025-06-24 01:00 - FORCE RELOAD -->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Rumi Genre Channel</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=SF+Mono:wght@400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'SF Mono', 'Monaco', 'Cascadia Code', monospace;
+            background: #000000;
+            color: #ffffff;
+            padding: 16px;
+        }
+
+        .container {
+            max-width: 520px;
+            margin: 0 auto;
+            background: #111111;
+            border: 2px solid #333333;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .header {
+            background: #000000;
+            padding: 16px;
+            border-bottom: 1px solid #333333;
+        }
+
+        .rumi-logo {
+            font-weight: 700;
+            font-size: 16px;
+            color: #00ff41;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+        }
+
+        .timeline-container {
+            margin-bottom: 10px;
+            overflow: hidden;
+            max-width: 100%;
+            position: relative;
+        }
+
+        .program-track-container {
+            overflow: hidden;
+            margin-bottom: 10px;
+            max-width: 100%;
+            position: relative;
+        }
+
+        .timeline {
+            display: flex;
+            flex-direction: column;
+            background: #1a1a1a;
+            border-radius: 6px;
+            padding: 6px 10px;
+            position: relative;
+            margin-bottom: 6px;
+            border: 1px solid #333333;
+            width: 100%;
+            transition: width 0.3s ease;
+            min-width: 100%;
+            max-width: 100%;
+            flex-shrink: 0;
+        }
+
+        .timeline.expanded {
+            border-color: #00ff41;
+            background: #1a2a1a;
+        }
+
+        .timeline-row {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            min-width: 100%;
+        }
+
+        .timeline-marker {
+            flex: 1;
+            text-align: center;
+            font-size: 7px;
+            color: #666666;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            position: relative;
+            padding: 3px 0;
+            min-width: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .timeline-marker:first-child {
+            text-align: left;
+        }
+
+        .timeline-marker::after {
+            content: '';
+            position: absolute;
+            top: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 1px;
+            height: 3px;
+            background: #333333;
+        }
+
+        .timeline-marker:first-child::after {
+            left: 0; /* Align the tick mark with the text */
+            transform: translateX(0);
+        }
+
+        .timeline-marker:last-child {
+            text-align: right;
+        }
+
+        .timeline-marker:last-child::after {
+            left: auto; /* Unset the left property */
+            right: 0;   /* Align the tick mark to the right */
+            transform: translateX(0);
+        }
+
+        .timeline-marker.multiplier {
+            color: #00ff41;
+            font-weight: 600;
+        }
+
+        .timeline-marker.info {
+            color: #888888;
+            font-size: 7px;
+            letter-spacing: 0.3px;
+        }
+
+        .timeline-info {
+            position: absolute;
+            top: -25px;
+            left: 10px;
+            font-size: 7px;
+            color: #888888;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .multiplier-display {
+            position: absolute;
+            top: -20px;
+            right: 10px;
+            font-size: 7px;
+            color: #00ff41;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .channel-section {
+            padding: 16px;
+        }
+
+        .channel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .channel-title-section {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .channel-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: #ffffff;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .edit-link {
+            font-size: 9px;
+            color: #00ff41;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.2s;
+        }
+
+        .edit-link:hover {
+            color: #00cc33;
+        }
+
+        .channel-controls {
+            display: flex;
+            gap: 6px;
+        }
+
+        .btn {
+            background: #000000;
+            color: #ffffff;
+            border: 1px solid #333333;
+            padding: 5px 10px;
+            font-size: 9px;
+            font-family: 'SF Mono', monospace;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn:hover {
+            border-color: #00ff41;
+            color: #00ff41;
+        }
+
+        .btn.primary {
+            background: #00ff41;
+            color: #000000;
+            border-color: #00ff41;
+        }
+
+        .btn.primary:hover {
+            background: #00cc33;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 3px;
+        }
+
+        /* --- ABSOLUTE POSITIONING LAYOUT FOR PROGRAM TRACK --- */
+        .program-track {
+            display: block;
+            height: 90px;
+            position: relative;
+            background: #1a1a1a;
+            border-radius: 6px;
+            width: 100%;
+            min-width: 100%;
+            max-width: 100%;
+            border: 2px solid #333;
+            overflow-x: auto;
+        }
+
+        .program-slot {
+            height: 80%;
+            min-width: 80px;
+            background: #1a1a1a;
+            border-top: 1px solid #333333;
+            border-bottom: 1px solid #333333;
+            border-radius: 4px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            transition: box-shadow 0.2s, background 0.2s;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        .program-slot:not(:first-child) {
+            /* No left margin needed, gap handles spacing */
+        }
+
+        .program-slot .remove-btn {
+            opacity: 0;
+            pointer-events: none;
+            position: absolute;
+            top: 3px;
+            right: 3px;
+            background: #ff4444;
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 11px;
+            cursor: pointer;
+            z-index: 100;
+            transition: opacity 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .program-slot:hover .remove-btn:not(.protected) {
+            opacity: 0.7;
+            pointer-events: auto;
+        }
+
+        .program-slot .remove-btn.protected {
+            display: none !important;
+        }
+
+        .program-slot:hover {
+            background: #222222;
+            box-shadow: 0 0 8px #ffaa00;
+            z-index: 10;
+        }
+
+        /* Popup for full show info */
+        .program-slot .show-info-popup {
+            display: none;
+            position: absolute;
+            left: 0;
+            top: 100%;
+            min-width: 220px;
+            background: #181818;
+            color: #fff;
+            border: 1px solid #333;
+            border-radius: 6px;
+            padding: 12px 16px;
+            font-size: 13px;
+            z-index: 200;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+            margin-top: 8px;
+        }
+
+        .program-slot:hover .show-info-popup {
+            display: block;
+        }
+
+        .program-slot.has-overflow:hover {
+            /* Removed scaling - now using popup */
+            z-index: 20;
+        }
+
+        .program-slot.no-overflow:hover {
+            /* No scaling for blocks without overflow */
+        }
+
+        .program-title {
+            font-size: 10px;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 3px;
+            line-height: 1.3;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .program-slot.has-overflow:hover .program-title {
+            /* No scaling needed with popup */
+            overflow: visible;
+        }
+
+        .program-meta {
+            font-size: 8px;
+            color: #888888;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-bottom: 2px;
+        }
+
+        .program-service {
+            font-size: 7px;
+            color: #888888;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .program-slot.has-overflow:hover .program-meta,
+        .program-slot.has-overflow:hover .program-service {
+            /* No scaling needed with popup */
+            overflow: visible;
+        }
+
+        /* Transition state styles for program slots */
+        .program-slot.completed {
+            opacity: 0.7;
+            background: #2a2a2a;
+            border: 1px solid #444;
+        }
+        
+        .program-slot.current {
+            transform: scale(1.02);
+            box-shadow: 0 0 8px rgba(0, 255, 65, 0.4);
+            border: 2px solid #00ff41;
+            background: #1a2a1a;
+        }
+        
+        .program-slot.playing {
+            /* Additional styles for playing state if needed */
+        }
+        
+        /* Only show green border on first slot if it's marked as current/playing */
+        .program-slot:first-child.current,
+        .program-slot:first-child.playing {
+            border-color: #00ff41;
+        }
+        
+        /* Status icon styles */
+        .status-icon {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            font-size: 8px;
+            font-weight: bold;
+            z-index: 10;
+            pointer-events: none;
+        }
+        
+        .program-slot.completed .status-icon {
+            color: #00ff41;
+        }
+        
+        .program-slot.current .status-icon,
+        .program-slot.playing .status-icon {
+            color: #00ff41;
+        }
+
+        .remove-btn {
+            position: absolute;
+            top: 3px;
+            right: 3px;
+            background: #ff4444;
+            color: #ffffff;
+            border: none;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 11px;
+            cursor: pointer;
+            opacity: 0;
+            transition: all 0.1s; /* FAST: Reduced from 0.2s to 0.1s */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100; /* Higher z-index to ensure visibility */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            /* Ensure button stays in visible area even with overflow scaling */
+            transform-origin: top right;
+            pointer-events: auto;
+        }
+
+        .remove-btn:hover {
+            background: #ff6666;
+            transform: scale(1.1);
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.4);
+            z-index: 60;
+        }
+
+        .remove-btn.protected {
+            background: #666666;
+            color: #cccccc;
+            cursor: not-allowed;
+            opacity: 0.3;
+        }
+
+        .remove-btn.protected:hover {
+            background: #666666;
+            transform: none;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        /* ===== STATE BLOCK SYSTEM ===== */
+        /* Enhanced Content Block State System */
+        .content-block.state-indexing, .content-block.state-indexed, .content-block.state-queued,
+        .program-slot.state-indexing, .program-slot.state-indexed, .program-slot.state-queued {
+            transition: all 0.15s ease !important; /* FAST: Reduced from 0.4s to 0.15s */
+            position: absolute !important;
+            overflow: hidden !important;
+            display: block !important;
+        }
+        
+        /* CURRENTLY INDEXING STATE */
+        .content-block.state-indexing, .program-slot.state-indexing {
+            background: linear-gradient(135deg, #001a00, #003300) !important;
+            border: 2px solid #00ff41 !important;
+            color: #00ff41 !important;
+            box-shadow: 0 0 12px rgba(0, 255, 65, 0.3) !important;
+            transform: scale(1.02) !important;
+            z-index: 10 !important;
+            opacity: 1 !important;
+        }
+        
+        .content-block.state-indexing::before, .program-slot.state-indexing::before {
+            content: '' !important;
+            position: absolute !important;
+            top: 0 !important;
+            left: -100% !important;
+            width: 100% !important;
+            height: 100% !important;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 65, 0.3), transparent) !important;
+            animation: scan 2s infinite !important;
+            z-index: 1 !important;
+        }
+        
+        @keyframes scan {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        
+        .content-block.state-indexing .state-indicator, .program-slot.state-indexing .state-indicator {
+            color: #00ff41 !important;
+            animation: pulse-bright 1.5s infinite !important;
+        }
+        
+        @keyframes pulse-bright {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.1); }
+        }
+        
+        /* INDEXED/COMPLETED STATE */
+        .content-block.state-indexed, .program-slot.state-indexed {
+            background: #1a1a1a !important;
+            border: 1px solid #444444 !important;
+            color: #888888 !important;
+            opacity: 1.0 !important;
+            transform: scale(0.98) !important;
+            z-index: 5 !important;
+        }
+        
+        .content-block.state-indexed .content-title, .program-slot.state-indexed .program-title {
+            opacity: 0.8 !important;
+            position: relative !important;
+        }
+        
+        .content-block.state-indexed .content-title::after, .program-slot.state-indexed .program-title::after {
+            content: '' !important;
+            position: absolute !important;
+            left: 0 !important;
+            top: 50% !important;
+            width: 100% !important;
+            height: 1px !important;
+            background: #00ff41 !important;
+            opacity: 0.6 !important;
+        }
+        
+        /* QUEUED/UPCOMING STATE */
+        .content-block.state-queued, .program-slot.state-queued {
+            background: #1a1a1a !important;
+            border: 1px solid #333333 !important;
+            color: #ffffff !important;
+            opacity: 1.0 !important;
+            z-index: 8 !important;
+        }
+        
+        .content-block.state-queued .state-indicator, .program-slot.state-queued .state-indicator {
+            color: #ffa500 !important;
+        }
+        
+        /* State Indicators */
+        .state-indicator {
+            position: absolute !important;
+            bottom: 8px !important;
+            right: 8px !important;
+            font-size: 14px !important;
+            font-weight: bold !important;
+            z-index: 10 !important;
+            text-shadow: 0 0 4px rgba(0,0,0,0.8) !important;
+        }
+        
+        /* Transitions */
+        .content-block.transitioning-to-indexing, .program-slot.transitioning-to-indexing {
+            animation: transition-to-active 0.6s ease-out forwards !important;
+        }
+        
+        .content-block.transitioning-to-indexed, .program-slot.transitioning-to-indexed {
+            animation: transition-to-completed 0.8s ease-out forwards !important;
+        }
+        
+        @keyframes transition-to-active {
+            0% { transform: scale(1); border-color: #333; }
+            50% { transform: scale(1.05); border-color: #00ff41; }
+            100% { transform: scale(1.02); border-color: #00ff41; }
+        }
+        
+        @keyframes transition-to-completed {
+            0% { transform: scale(1.02); border-color: #00ff41; }
+            50% { transform: scale(0.95); opacity: 0.8; }
+            100% { transform: scale(0.98); opacity: 1; border-color: #444; }
+        }
+
+        /* Ensure remove button is always visible and properly positioned for overflow blocks */
+        .program-slot.has-overflow .remove-btn {
+            z-index: 200 !important; /* Very high z-index to ensure visibility */
+            transform-origin: top right !important;
+            pointer-events: auto !important;
+        }
+
+        .program-slot.has-overflow:hover .remove-btn {
+            opacity: 0.7 !important;
+            visibility: visible !important;
+            z-index: 200 !important;
+        }
+
+        .program-slot.has-overflow:hover .remove-btn:hover {
+            /* Normal hover state */
+            z-index: 250 !important;
+            transform: scale(1.1) !important;
+        }
+
+        /* FIXED: Hover Popup Styles - Position ABOVE blocks within container - 70% SIZE */
+        .content-popup, .content-hover-popup {
+            position: absolute !important;
+            bottom: calc(100% + 6px) !important; /* ABOVE the block */
+            left: 50% !important;
+            transform: translateX(-50%) !important;
+            background: #2a2a2a !important;
+            border: 2px solid #00ff41 !important;
+            border-radius: 6px !important;
+            padding: 8px !important;
+            min-width: 126px !important; /* 70% of 180px */
+            max-width: 175px !important; /* 70% of 250px */
+            box-shadow: 0 6px 17px rgba(0, 0, 0, 0.8), 0 0 14px rgba(0, 255, 65, 0.3) !important;
+            z-index: 9999 !important;
+            opacity: 1 !important;
+            pointer-events: none !important;
+            font-family: 'SF Mono', monospace !important;
+            font-size: 8px !important; /* 70% of 11px */
+            line-height: 1.4 !important;
+            color: #ffffff !important;
+            white-space: nowrap !important;
+            transition: none !important; /* INSTANT: No transition delays */
+        }
+
+        .program-slot:hover .content-popup {
+            opacity: 1 !important;
+            pointer-events: auto !important;
+            transform: translateX(-50%) translateY(-2px) !important;
+        }
+
+        .popup-title {
+            font-size: 8px !important; /* 70% of 11px */
+            font-weight: 600 !important;
+            color: #ffffff !important;
+            margin-bottom: 4px !important; /* 70% of 6px */
+            line-height: 1.3 !important;
+        }
+
+        .popup-meta {
+            font-size: 6px !important; /* 70% of 9px */
+            color: #cccccc !important;
+            margin-bottom: 3px !important; /* 70% of 4px */
+        }
+
+        .popup-service {
+            font-size: 6px !important; /* 70% of 8px */
+            color: #999999 !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.3px !important; /* 70% of 0.5px */
+            margin-bottom: 3px !important; /* 70% of 4px */
+        }
+
+        .popup-duration {
+            font-size: 6px !important; /* 70% of 9px */
+            color: #aaaaaa !important;
+            margin: 0 !important;
+            text-align: center !important;
+        }
+
+        /* Popup arrow pointing down to the block */
+        .content-popup::after, .content-hover-popup::after {
+            content: '' !important;
+            position: absolute !important;
+            top: 100% !important;
+            left: 50% !important;
+            transform: translateX(-50%) !important;
+            border: 4px solid transparent !important; /* 70% of 6px */
+            border-top-color: #00ff41 !important;
+            z-index: 10000 !important;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+            margin-bottom: 10px;
+        }
+
+        .form-group {
+            flex: 1;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 8px;
+            color: #888;
+            margin-bottom: 3px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .selector {
+            width: 100%;
+            background: #000000;
+            color: #ffffff;
+            border: 1px solid #333333;
+            padding: 6px 10px;
+            font-size: 9px;
+            font-family: 'SF Mono', monospace;
+            border-radius: 4px;
+        }
+
+        .selector:focus {
+            outline: none;
+            border-color: #00ff41;
+        }
+
+        .search-input {
+            width: 100%;
+            background: #000000;
+            color: #ffffff;
+            border: 1px solid #333333;
+            padding: 6px 10px;
+            font-size: 9px;
+            font-family: 'SF Mono', monospace;
+            border-radius: 4px;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #00ff41;
+        }
+
+        .search-results {
+            max-height: 150px;
+            overflow-y: auto;
+            background: #000000;
+            border: 1px solid #333333;
+            border-radius: 4px;
+            margin-top: 6px;
+        }
+
+        .result-item {
+            padding: 6px 10px;
+            cursor: pointer;
+            border-bottom: 1px solid #222222;
+            transition: background 0.2s;
+        }
+
+        .result-item:hover {
+            background: #222222;
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+        }
+
+        .result-title {
+            font-size: 9px;
+            color: #ffffff;
+            margin-bottom: 2px;
+        }
+
+        .result-meta {
+            font-size: 7px;
+            color: #888888;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .queue-section {
+            background: #1a1a1a;
+            border: 1px solid #333333;
+            border-radius: 6px;
+            padding: 12px;
+            margin-top: 16px;
+        }
+
+        .queue-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .queue-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: #00ff41;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .queue-summary {
+            font-size: 9px;
+            color: #888888;
+        }
+
+        .queue-items {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .queue-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 10px;
+            background: #000000;
+            border-radius: 4px;
+            border: 1px solid #333333;
+        }
+
+        .queue-item-info {
+            flex: 1;
+        }
+
+        .queue-item-title {
+            font-size: 9px;
+            color: #ffffff;
+            margin-bottom: 2px;
+        }
+
+        .queue-item-meta {
+            font-size: 7px;
+            color: #888888;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .queue-remove-btn {
+            background: none;
+            border: none;
+            color: #ff4444;
+            cursor: pointer;
+            font-size: 11px;
+            padding: 3px;
+        }
+
+        .queue-remove-btn:hover {
+            color: #ff6666;
+        }
+
+        .program-slot.is-cropped::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: 40px; /* Reduced width for smaller extension */
+            background: linear-gradient(to left, #1a1a1a 40%, transparent);
+            pointer-events: none; /* Ensure it doesn't block mouse events */
+        }
+
+        /* Edit mode styles */
+        .edit-mode {
+            border-color: #00ff41;
+            box-shadow: 0 0 0 1px #00ff41;
+        }
+
+        .edit-submenu {
+            background: #1a1a1a;
+            border: 1px solid #333333;
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 10px;
+            display: none;
+        }
+
+        .edit-submenu.visible {
+            display: block;
+        }
+
+        .edit-submenu-row {
+            display: flex;
+            gap: 8px;
+            align-items: flex-end;
+            flex-wrap: wrap;
+        }
+
+        .edit-submenu-controls {
+            display: flex;
+            gap: 6px;
+            align-items: flex-end;
+        }
+
+        .edit-btn {
+            background: #333333;
+            color: #00ff41;
+            border: 1px solid #00ff41;
+            padding: 6px 12px;
+            font-size: 9px;
+            font-family: 'SF Mono', monospace;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-radius: 4px;
+            white-space: nowrap;
+        }
+
+        .edit-btn:hover {
+            background: #00ff41;
+            color: #000000;
+        }
+
+        .edit-btn.cancel {
+            background: #333333;
+            color: #888888;
+            border-color: #666666;
+        }
+
+        .edit-btn.cancel:hover {
+            background: #666666;
+            color: #ffffff;
+        }
+
+        .edit-submenu .form-group {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .edit-submenu .edit-submenu-controls {
+            flex-shrink: 0;
+        }
+
+        /* Responsive adjustments for very small screens */
+        @media (max-width: 540px) {
+            .edit-submenu-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .edit-submenu-controls {
+                justify-content: flex-end;
+                margin-top: 8px;
+            }
+            
+            .form-row {
+                flex-direction: column;
+                gap: 8px;
+            }
+        }
+        
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="channel-section">
+            <div class="channel-header">
+                <div class="channel-title-section">
+                    <div class="channel-title">GENRE CHANNEL</div>
+                    <div class="edit-link" onclick="toggleEditPanel()">EDIT GENRE</div>
+                </div>
+            </div>
+
+            <div class="timeline-container" id="timeline-container">
+                <div class="timeline" id="timeline">
+                    <div class="timeline-row" id="timeline-markers">
+                        <div class="timeline-marker">0</div>
+                        <div class="timeline-marker">30</div>
+                        <div class="timeline-marker">60</div>
+                        <div class="timeline-marker">90</div>
+                        <div class="timeline-marker">120</div>
+                        <div class="timeline-marker">150</div>
+                        <div class="timeline-marker">180</div>
+                    </div>
+                    <div class="timeline-row" id="multiplier-markers">
+                        <div class="timeline-marker multiplier" style="color: #00ff41; font-weight: 600;">1.0x</div>
+                        <div class="timeline-marker multiplier" style="color: #ffaa00; font-weight: 600;">1.2x</div>
+                        <div class="timeline-marker multiplier" style="color: #a985ff; font-weight: 600;">1.8x</div>
+                    </div>
+                </div>
+                <div class="multiplier-display" id="multiplier-display">1.0x</div>
+
+                <!-- Auto-Populate by Genre Submenu -->
+                <div class="edit-submenu" id="auto-populate-submenu">
+                    <div class="edit-submenu-row">
+                        <div class="form-group">
+                            <label>SELECT GENRE</label>
+                            <select class="selector" id="genre-select-submenu" onchange="handleGenreChangeSubmenu(this)">
+                                <option value="">Choose a genre...</option>
+                                <option value="Comedy">Comedy</option>
+                                <option value="Sitcom">Sitcom</option>
+                                <option value="Standup">Standup</option>
+                                <option value="Sketch">Sketch</option>
+                                <option value="Parody">Parody</option>
+                                <option value="Drama">Drama</option>
+                                <option value="Reality">Reality</option>
+                                <option value="Thriller">Thriller</option>
+                                <option value="Sci-Fi">Sci-Fi</option>
+                                <option value="Horror">Horror</option>
+                                <option value="Documentary">Documentary</option>
+                                <option value="Animation">Animation</option>
+                            </select>
+                        </div>
+                        <div class="edit-submenu-controls">
+                            <button class="edit-btn" onclick="autoPopulate()">AUTO-POPULATE</button>
+                            <button class="edit-btn cancel" onclick="cancelEdit()">CANCEL</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Add Individual Content Submenu -->
+                <div class="edit-submenu" id="individual-content-submenu">
+                    <div class="edit-submenu-row">
+                        <div class="form-group">
+                            <label>SEARCH</label>
+                            <input type="text" class="search-input" id="search-input-submenu" placeholder="Search shows and movies..." oninput="searchContentSubmenu()">
+                        </div>
+                        <div class="form-group">
+                            <label>FILTER BY STREAMER</label>
+                            <select class="selector" id="streamer-filter-submenu" onchange="filterContentByStreamer()">
+                                <option value="">All Streamers</option>
+                                <option value="NETFLIX">Netflix</option>
+                                <option value="HBO MAX">HBO Max</option>
+                                <option value="HULU">Hulu</option>
+                                <option value="PEACOCK">Peacock</option>
+                                <option value="AMAZON PRIME">Amazon Prime</option>
+                                <option value="DISNEY+">Disney+</option>
+                                <option value="APPLE TV+">Apple TV+</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>OR CHOOSE FROM GENRE</label>
+                            <select class="selector" id="content-dropdown-submenu" onchange="selectContentSubmenu()">
+                                <option value="">Select content...</option>
+                            </select>
+                        </div>
+                        <div class="edit-submenu-controls">
+                            <button class="edit-btn" onclick="addContentSubmenu()">ADD</button>
+                            <button class="edit-btn cancel" onclick="cancelEdit()">CANCEL</button>
+                        </div>
+                    </div>
+                    <div class="search-results" id="search-results-submenu" style="display: none;"></div>
+                </div>
+            </div>
+
+            <div class="program-track-container">
+                <div class="program-track" id="program-track">
+                    <div class="program-slot empty rumi-state-block" onclick="openAddContentMode()">
+                        + ADD SHOW
+                    </div>
+                </div>
+            </div>
+
+            <div class="queue-section" id="queue-section" style="display: none;">
+                <div class="queue-header">
+                    <div class="queue-title">QUEUE</div>
+                    <div class="queue-summary" id="queue-summary">0 items • 0 min</div>
+                </div>
+                <div class="queue-items" id="queue-items"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        console.log('Genre Channel script starting...');
+        
+        // Timeline configuration
+        const TIMELINE_DURATION = 240; // 240 minutes total timeline
+        let currentTimelineDuration = TIMELINE_DURATION; // Dynamic timeline duration
+
+        // Content database by genre with enhanced information
+        const genreContent = {
+            'Comedy': [
+                {title: 'The Office', type: 'show', duration: 22, service: 'PEACOCK', season: 'S3', episode: 'E20'},
+                {title: 'Parks and Recreation', type: 'show', duration: 22, service: 'PEACOCK', season: 'S3', episode: 'E7'},
+                {title: 'Community', type: 'show', duration: 22, service: 'NETFLIX', season: 'S2', episode: 'E14'},
+                {title: '30 Rock', type: 'show', duration: 22, service: 'HULU', season: 'S5', episode: 'E10'},
+                {title: 'Arrested Development', type: 'show', duration: 22, service: 'NETFLIX', season: 'S1', episode: 'E1'},
+                {title: 'Veep', type: 'show', duration: 28, service: 'HBO MAX', season: 'S4', episode: 'E6'}
+            ],
+            'Sitcom': [
+                {title: 'The Office', type: 'show', duration: 22, service: 'NETFLIX', season: 'S2', episode: 'E7'},
+                {title: 'Parks & Rec', type: 'show', duration: 22, service: 'HULU', season: 'S3', episode: 'E4'},
+                {title: 'Brooklyn 99', type: 'show', duration: 22, service: 'HULU', season: 'S4', episode: 'E12'},
+                {title: '30 Rock', type: 'show', duration: 22, service: 'HULU', season: 'S5', episode: 'E8'},
+                {title: 'Friends', type: 'show', duration: 22, service: 'HBO MAX', season: 'S6', episode: 'E15'},
+                {title: 'Seinfeld', type: 'show', duration: 22, service: 'NETFLIX', season: 'S4', episode: 'E11'},
+                {title: 'Modern Family', type: 'show', duration: 22, service: 'HULU', season: 'S7', episode: 'E3'},
+                {title: 'Anchorman', type: 'movie', duration: 94, service: 'NETFLIX'}
+            ],
+            'Standup': [
+                {title: 'Dave Chappelle', type: 'show', duration: 60, service: 'NETFLIX'},
+                {title: 'John Mulaney', type: 'show', duration: 65, service: 'NETFLIX'},
+                {title: 'Ali Wong', type: 'show', duration: 55, service: 'NETFLIX'},
+                {title: 'Hannibal Buress', type: 'show', duration: 58, service: 'NETFLIX'},
+                {title: 'Kevin Hart', type: 'show', duration: 60, service: 'NETFLIX'},
+                {title: 'Tig Notaro', type: 'show', duration: 55, service: 'NETFLIX'},
+                {title: 'The Hangover', type: 'movie', duration: 100, service: 'HBO MAX'}
+            ],
+            'Sketch': [
+                {title: 'SNL', type: 'show', duration: 90, service: 'HULU', season: 'S47', episode: 'E15'},
+                {title: 'Key & Peele', type: 'show', duration: 22, service: 'NETFLIX', season: 'S3', episode: 'E8'},
+                {title: 'I Think You Should Leave', type: 'show', duration: 15, service: 'NETFLIX', season: 'S2', episode: 'E4'},
+                {title: 'A Black Lady Sketch Show', type: 'show', duration: 30, service: 'HBO MAX', season: 'S3', episode: 'E6'},
+                {title: 'Scary Movie', type: 'movie', duration: 88, service: 'HULU'}
+            ],
+            'Parody': [
+                {title: 'Scary Movie', type: 'movie', duration: 88, service: 'HULU'},
+                {title: 'Not Another Teen Movie', type: 'movie', duration: 89, service: 'NETFLIX'},
+                {title: 'Airplane!', type: 'movie', duration: 88, service: 'HULU'},
+                {title: 'The Naked Gun', type: 'movie', duration: 85, service: 'HULU'},
+                {title: 'Key & Peele', type: 'show', duration: 22, service: 'NETFLIX', season: 'S3', episode: 'E8'}
+            ],
+            'Drama': [
+                {title: 'The Crown', type: 'show', duration: 58, service: 'NETFLIX', season: 'S6', episode: 'E10'},
+                {title: 'Breaking Bad', type: 'show', duration: 47, service: 'NETFLIX', season: 'S5', episode: 'E16'},
+                {title: 'Succession', type: 'show', duration: 60, service: 'HBO MAX', season: 'S3', episode: 'E9'},
+                {title: 'The Sopranos', type: 'show', duration: 55, service: 'HBO MAX', season: 'S1', episode: 'E1'},
+                {title: 'Mad Men', type: 'show', duration: 48, service: 'AMC+', season: 'S1', episode: 'E1'},
+                {title: 'The Wire', type: 'show', duration: 60, service: 'HBO MAX', season: 'S1', episode: 'E1'}
+            ],
+            'Reality': [
+                {title: 'Survivor', type: 'show', duration: 60, service: 'PARAMOUNT+', season: 'S42', episode: 'E13'},
+                {title: 'The Bachelor', type: 'show', duration: 120, service: 'HULU', season: 'S26', episode: 'E10'},
+                {title: 'Top Chef', type: 'show', duration: 60, service: 'BRAVO', season: 'S19', episode: 'E15'},
+                {title: 'Amazing Race', type: 'show', duration: 60, service: 'PARAMOUNT+', season: 'S33', episode: 'E12'}
+            ],
+            'Crime': [
+                {title: 'True Detective', type: 'show', duration: 60, service: 'HBO MAX', season: 'S3', episode: 'E8'},
+                {title: 'Mindhunter', type: 'show', duration: 60, service: 'NETFLIX', season: 'S2', episode: 'E9'},
+                {title: 'The Wire', type: 'show', duration: 60, service: 'HBO MAX', season: 'S5', episode: 'E10'},
+                {title: 'Luther', type: 'show', duration: 60, service: 'BRITBOX', season: 'S5', episode: 'E4'}
+            ],
+            'Sci-Fi': [
+                {title: 'Blade Runner 2049', type: 'movie', duration: 164, service: 'HBO MAX'},
+                {title: 'Dune', type: 'movie', duration: 155, service: 'HBO MAX'},
+                {title: 'The Expanse', type: 'show', duration: 45, service: 'AMAZON', season: 'S1', episode: 'E1'},
+                {title: 'Black Mirror', type: 'show', duration: 60, service: 'NETFLIX', season: 'S3', episode: 'E4'},
+                {title: 'Westworld', type: 'show', duration: 60, service: 'HBO MAX', season: 'S1', episode: 'E1'},
+                {title: 'Severance', type: 'show', duration: 50, service: 'APPLE TV+', season: 'S1', episode: 'E1'}
+            ],
+            'Horror': [
+                {title: 'The Haunting', type: 'show', duration: 60, service: 'NETFLIX', season: 'S2', episode: 'E10'},
+                {title: 'Midnight Mass', type: 'show', duration: 60, service: 'NETFLIX', season: 'S1', episode: 'E7'},
+                {title: 'The Walking Dead', type: 'show', duration: 45, service: 'AMC+', season: 'S11', episode: 'E24'},
+                {title: 'American Horror Story', type: 'show', duration: 45, service: 'HULU', season: 'S10', episode: 'E10'}
+            ],
+            'Thriller': [
+                {title: 'Stranger Things', type: 'show', duration: 51, service: 'NETFLIX', season: 'S4', episode: 'E9'},
+                {title: 'Mindhunter', type: 'show', duration: 50, service: 'NETFLIX', season: 'S1', episode: 'E1'},
+                {title: 'Ozark', type: 'show', duration: 60, service: 'NETFLIX', season: 'S1', episode: 'E1'},
+                {title: 'The Night Of', type: 'show', duration: 78, service: 'HBO MAX', season: 'S1', episode: 'E1'},
+                {title: 'Severance', type: 'show', duration: 50, service: 'APPLE TV+', season: 'S1', episode: 'E1'}
+            ],
+            'Action': [
+                {title: 'John Wick', type: 'movie', duration: 101, service: 'HBO MAX'},
+                {title: 'Mad Max: Fury Road', type: 'movie', duration: 120, service: 'HBO MAX'},
+                {title: 'Mission: Impossible', type: 'movie', duration: 110, service: 'PARAMOUNT+'},
+                {title: 'The Matrix', type: 'movie', duration: 136, service: 'HBO MAX'},
+                {title: 'Die Hard', type: 'movie', duration: 132, service: 'HULU'},
+                {title: 'Top Gun: Maverick', type: 'movie', duration: 130, service: 'PARAMOUNT+'}
+            ],
+            'Documentary': [
+                {title: 'Planet Earth II', type: 'show', duration: 50, service: 'DISCOVERY+', season: 'S1', episode: 'E1'},
+                {title: 'My Octopus Teacher', type: 'movie', duration: 85, service: 'NETFLIX'},
+                {title: 'The Last Dance', type: 'show', duration: 50, service: 'NETFLIX', season: 'S1', episode: 'E1'},
+                {title: 'Free Solo', type: 'movie', duration: 100, service: 'DISNEY+'},
+                {title: 'Icarus', type: 'movie', duration: 121, service: 'NETFLIX'},
+                {title: 'American Factory', type: 'movie', duration: 110, service: 'NETFLIX'}
+            ],
+            'Animation': [
+                {title: 'BoJack Horseman', type: 'show', duration: 25, service: 'NETFLIX', season: 'S6', episode: 'E16'},
+                {title: 'Rick and Morty', type: 'show', duration: 22, service: 'HULU', season: 'S5', episode: 'E10'},
+                {title: 'Arcane', type: 'show', duration: 40, service: 'NETFLIX', season: 'S1', episode: 'E9'},
+                {title: 'Love Death + Robots', type: 'show', duration: 15, service: 'NETFLIX', season: 'S3', episode: 'E9'}
+            ]
+        };
+
+        // Expose genreContent globally for testing
+        window.genreContent = genreContent;
+
+        // State management
+        let currentContent = [];
+        let selectedContent = null;
+        let currentGenre = null; // Start with no genre, will be set based on detected show
+        let queue = [];
+        let hasProcessedCurrentDetectedShow = false; // Track if we've already processed the current detected show
+        
+        // Edit mode state management
+        let editMode = null; // null, 'genre', or 'individual'
+        let previousTimelineState = null; // Store timeline state before edit mode
+
+        // === DEBUG: Auto-set genre for testing ===
+        const DEBUG_AUTO_GENRE = false; // Set to false to disable
+        // =========================================
+
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Genre Channel loaded and ready');
+            
+            // Clean up any existing weird content containers
+            cleanupWeirdContentContainers();
+            
+            // DEBUG: Auto-set genre and populate lineup for testing
+            if (DEBUG_AUTO_GENRE) {
+                currentGenre = 'Sci-Fi';
+                createLineup(true);
+            }
+            
+            // Don't auto-populate with a default genre - let user choose
+            // if (!currentGenre) {
+            //     currentGenre = 'Drama'; // Default to Drama
+            //     createLineup(true); // Pass true to indicate initial load
+            // }
+            
+            // Update the dropdowns to reflect the initial state
+            updateGenreDropdown(); // This will populate the individual content dropdown
+
+            // --- FIX: Show program track if content exists on load ---
+            if (Array.isArray(currentContent) && currentContent.length > 0) {
+                document.getElementById('program-track').style.display = 'block';
+                updateProgramTrack();
+            }
+            
+            // DEBUG: Force show program track for testing
+            console.log('Initial currentContent length:', currentContent.length);
+            if (currentContent.length > 0) {
+                console.log('Showing program track on load');
+                document.getElementById('program-track').style.display = 'block';
+                updateProgramTrack();
+            }
+            // --------------------------------------------------------
+            
+            // Listen for messages from the parent window (the extension popup)
+            window.addEventListener('message', function(event) {
+                console.log('Genre Channel received message:', event.data);
+                
+                if (event.data.type === 'rumi:showDetected') {
+                    console.log('=== SHOW DETECTION HANDLER START ===');
+                    console.log('Detected show:', event.data.payload);
+                    
+                    const detectedShow = event.data.payload;
+                    
+                    // Add null check to prevent TypeError
+                    if (!detectedShow) {
+                        console.log('No show detected (null payload), skipping genre mapping');
+                        console.log('=== SHOW DETECTION HANDLER COMPLETE (NO SHOW) ===');
+                        return;
+                    }
+                    
+                    // Map detected show genre to our available genres (case-insensitive)
+                    const genreMapping = {
+                        'drama': 'Drama',
+                        'comedy': 'Comedy', 
+                        'thriller': 'Thriller',
+                        'sci-fi': 'Sci-Fi',
+                        'scifi': 'Sci-Fi',
+                        'horror': 'Horror',
+                        'action': 'Action',
+                        'romance': 'Romance',
+                        'documentary': 'Documentary',
+                        'animation': 'Animation'
+                    };
+                    
+                    // Convert detected show genre to lowercase for case-insensitive matching
+                    const detectedGenreLower = detectedShow.genre ? detectedShow.genre.toLowerCase() : '';
+                    const mappedGenre = genreMapping[detectedGenreLower] || 'Drama';
+                    if (!genreContent[mappedGenre]) {
+                        console.warn('Mapped genre not found in genreContent:', mappedGenre, 'Defaulting to Drama');
+                        currentGenre = 'Drama';
+                    } else {
+                        currentGenre = mappedGenre;
+                    }
+                    console.log('Final currentGenre set to:', currentGenre);
+                    
+                    // Update the channel title
+                    const channelTitle = document.querySelector('.channel-title');
+                    if (channelTitle) {
+                        channelTitle.textContent = `${currentGenre.toUpperCase()} CHANNEL`;
+                        console.log('Channel title updated to:', channelTitle.textContent);
+                    }
+                    
+                    // Update the genre dropdown
+                    const genreSelect = document.getElementById('genre-select');
+                    if (genreSelect) {
+                        genreSelect.value = currentGenre;
+                        console.log('Genre dropdown updated to:', genreSelect.value);
+                    }
+                    
+                    // Add the detected show as the first item in currentContent
+                    // Determine if it's a movie or show based on season/episode data
+                    const hasRealEpisodeData = detectedShow.season && detectedShow.episode && 
+                                             detectedShow.season !== 'N/A' && detectedShow.episode !== 'N/A' &&
+                                             detectedShow.season !== '' && detectedShow.episode !== '';
+                    const detectedType = hasRealEpisodeData ? 'detected_show' : 'movie';
+                    
+                    const detectedShowItem = {
+                        title: detectedShow.title,
+                        type: detectedType,
+                        duration: detectedShow.duration || 45,
+                        service: 'DETECTED',
+                        season: detectedShow.season || '',
+                        episode: detectedShow.episode || '',
+                        startTime: 0,
+                        originalDuration: detectedShow.duration || 45
+                    };
+                    
+                    // Clear existing content and add detected show as first item
+                    currentContent = [detectedShowItem];
+                    console.log('Added detected show to currentContent:', detectedShowItem);
+                    
+                    // Create lineup with the new genre
+                    console.log('About to call createLineup(true) for auto-population');
+                    console.log('Current genre:', currentGenre);
+                    console.log('Available genre content:', genreContent[currentGenre] ? genreContent[currentGenre].length : 0, 'items');
+                    createLineup(true); // Pass true to indicate this is initial load with detected show
+                    
+                    console.log('Final currentContent after createLineup:', JSON.stringify(currentContent, null, 2));
+                    console.log('Final currentGenre:', currentGenre);
+                    console.log('Final hasProcessedCurrentDetectedShow:', hasProcessedCurrentDetectedShow);
+                    console.log('=== SHOW DETECTION HANDLER COMPLETE ===');
+                    
+                    // Send confirmation back to parent that show detection was received and processed
+                    window.parent.postMessage({
+                        type: 'showDetectionReceived',
+                        payload: {
+                            showTitle: detectedShow.title,
+                            genre: mappedGenre,
+                            contentCount: currentContent ? currentContent.length : 0
+                        }
+                    }, '*');
+                }
+                
+                // NEW: Handle content request from main app
+                if (event.data.type === 'requestCurrentContent') {
+                    console.log('Received request for current content');
+                    
+                    // Send current content back to parent
+                    window.parent.postMessage({
+                        type: 'currentContentResponse',
+                        content: currentContent || []
+                    }, '*');
+                    
+                    console.log('Sent current content to parent:', currentContent);
+                }
+
+                // NEW: Handle content block updates from main app
+                if (event.data.type === 'updateContentBlocks') {
+                    console.log('Received content block update:', event.data.data);
+                    updateContentBlocksDisplay(event.data.data);
+                }
+                
+                // NEW: Handle style validation requests
+                if (event.data.type === 'validateStyles') {
+                    console.log('🎨 Channel received style validation request');
+                    
+                    const programSlots = document.querySelectorAll('.program-slot');
+                    const programTrack = document.getElementById('program-track');
+                    
+                    const blockData = Array.from(programSlots).map(slot => {
+                        const computedStyle = window.getComputedStyle(slot);
+                        const title = slot.querySelector('.program-title')?.textContent?.trim() || 'Unknown';
+                        const statusIcon = slot.querySelector('.status-icon')?.textContent?.trim() || '';
+                        
+                        return {
+                            title: title,
+                            display: computedStyle.display,
+                            visibility: computedStyle.visibility,
+                            opacity: computedStyle.opacity,
+                            classes: Array.from(slot.classList),
+                            statusIcon: statusIcon,
+                            backgroundColor: computedStyle.backgroundColor,
+                            color: computedStyle.color,
+                            borderColor: computedStyle.borderColor
+                        };
+                    });
+                    
+                    const validationResults = {
+                        blocks: blockData,
+                        programTrackDisplay: programTrack ? window.getComputedStyle(programTrack).display : 'not found',
+                        totalBlocks: programSlots.length,
+                        timestamp: new Date().toISOString()
+                    };
+                    
+                    console.log('🎨 Sending style validation results:', validationResults);
+                    
+                    event.source.postMessage({
+                        type: 'styleValidationResponse',
+                        results: validationResults
+                    }, '*');
+                }
+                
+                // NEW: Handle content count requests (for transition testing)
+                if (event.data.type === 'contentCountRequest') {
+                    console.log('📊 Channel received content count request');
+                    
+                    const programSlots = document.querySelectorAll('.program-slot');
+                    const contentItems = Array.from(programSlots).map(slot => {
+                        const title = slot.querySelector('.program-title')?.textContent?.trim() || '';
+                        const time = slot.querySelector('.program-time')?.textContent?.trim() || '';
+                        return { title, time };
+                    });
+                    
+                    console.log(`📊 Sending content count response: ${programSlots.length} items`);
+                    
+                    event.source.postMessage({
+                        type: 'contentCountResponse',
+                        count: programSlots.length,
+                        items: contentItems,
+                        testContext: event.data.testContext || null // Pass through test context for transition testing
+                    }, '*');
+                }
+                
+                // NEW: Handle layout position requests (for vertical stability testing)
+                if (event.data.type === 'getLayoutPositions') {
+                    console.log('📐 Channel received layout position request');
+                    
+                    const programSlots = document.querySelectorAll('.program-slot:not(.empty)');
+                    const positions = [];
+                    
+                    programSlots.forEach(slot => {
+                        const rect = slot.getBoundingClientRect();
+                        const style = window.getComputedStyle(slot);
+                        const title = slot.querySelector('.program-title')?.textContent?.trim() || 'Unknown';
+                        
+                        positions.push({
+                            title: title,
+                            top: Math.round(rect.top),
+                            left: Math.round(parseFloat(slot.style.left) || 0),
+                            width: Math.round(rect.width),
+                            height: Math.round(rect.height),
+                            computedTop: Math.round(parseFloat(style.top) || 0),
+                            computedHeight: Math.round(parseFloat(style.height) || rect.height),
+                            offsetTop: slot.offsetTop,
+                            offsetLeft: slot.offsetLeft
+                        });
+                    });
+                    
+                    console.log(`📐 Sending layout positions for ${positions.length} blocks`);
+                    
+                    event.source.postMessage({
+                        type: 'layoutPositionsResponse',
+                        positions: positions
+                    }, '*');
+                }
+                
+                // NEW: Handle layout sizing validation requests
+                if (event.data.type === 'validateLayoutSizing') {
+                    console.log('🔍 Channel: Received layout sizing validation request');
+                    
+                    const programTrack = document.getElementById('program-track');
+                    const timeline = document.getElementById('timeline');
+                    
+                    if (!programTrack || !timeline) {
+                        event.source.postMessage({
+                            type: 'layoutValidationResponse',
+                            error: 'Timeline or program track not found'
+                        }, '*');
+                        return;
+                    }
+                    
+                    // Get timeline dimensions
+                    const timelineRect = timeline.getBoundingClientRect();
+                    const timelineWidth = timelineRect.width;
+                    
+                    // Get all program slots
+                    const programSlots = document.querySelectorAll('.program-slot:not(.empty)');
+                    
+                    const blocks = Array.from(programSlots).map((slot, index) => {
+                        const rect = slot.getBoundingClientRect();
+                        const computedStyle = window.getComputedStyle(slot);
+                        
+                        // Extract content data
+                        const titleElement = slot.querySelector('.program-title');
+                        const metaElement = slot.querySelector('.program-meta');
+                        
+                        let title = titleElement ? titleElement.textContent : 'Unknown';
+                        let duration = 0;
+                        let startTime = 0;
+                        
+                        // Parse duration from meta text (e.g., "MOVIE • 165min")
+                        if (metaElement) {
+                            const metaText = metaElement.textContent;
+                            const durationMatch = metaText.match(/(\d+)min/);
+                            if (durationMatch) {
+                                duration = parseInt(durationMatch[1]);
+                            }
+                        }
+                        
+                        // Find corresponding content item to get accurate data
+                        const contentItem = currentContent.find(item => {
+                            const itemTitle = item.title + (item.season && item.episode ? ` ${item.season}:${item.episode}` : '');
+                            return itemTitle === title || item.title === title;
+                        });
+                        
+                        if (contentItem) {
+                            duration = contentItem.originalDuration || contentItem.duration;
+                            startTime = contentItem.startTime || 0;
+                        }
+                        
+                        return {
+                            index: index,
+                            title: title,
+                            duration: duration,
+                            startTime: startTime,
+                            computedWidth: computedStyle.width.replace('px', ''),
+                            computedLeft: computedStyle.left.replace('px', ''),
+                            computedWidthPercent: ((rect.width / timelineWidth) * 100).toFixed(2),
+                            computedLeftPercent: (((rect.left - timelineRect.left) / timelineWidth) * 100).toFixed(2),
+                            actualPixelWidth: rect.width,
+                            actualPixelLeft: rect.left - timelineRect.left
+                        };
+                    });
+                    
+                    const validationData = {
+                        timelineDuration: currentTimelineDuration,
+                        timelineWidth: timelineWidth,
+                        totalBlocks: blocks.length,
+                        blocks: blocks,
+                        timestamp: Date.now()
+                    };
+                    
+                    console.log('📊 Channel: Sending validation data:', validationData);
+                    
+                    event.source.postMessage({
+                        type: 'layoutValidationResponse',
+                        data: validationData
+                    }, '*');
+                }
+                
+                // NEW: Handle block state updates from Ludicrous Speed
+                if (event.data.type === 'rumi:updateBlockState') {
+                    console.log('🚀 Genre Channel received block state update:', event.data);
+                    
+                    const { title, state } = event.data.payload;
+                    
+                    // Find the program slot that matches this title
+                    const programSlots = document.querySelectorAll('.program-slot');
+                    let targetSlot = null;
+                    
+                    programSlots.forEach(slot => {
+                        const slotTitle = slot.querySelector('.program-title')?.textContent?.trim();
+                        if (slotTitle === title) {
+                            targetSlot = slot;
+                        }
+                    });
+                    
+                    if (targetSlot) {
+                        // Remove existing state classes
+                        targetSlot.classList.remove('state-queued', 'state-indexing', 'state-indexed');
+                        
+                        // Add new state class with proper prefix
+                        targetSlot.classList.add(`state-${state}`);
+                        
+                        console.log(`🎯 Updated block "${title}" to state: state-${state}`);
+                    } else {
+                        console.log(`❌ Could not find block with title: "${title}"`);
+                    }
+                }
+
+                // NEW: Handle content population from backend
+                if (event.data.type === 'populateWithContent') {
+                    console.log('=== POPULATE WITH CONTENT HANDLER START ===');
+                    console.log('Received content to populate:', event.data.content);
+                    console.log('Target genre:', event.data.genre);
+                    
+                    const receivedContent = event.data.content || [];
+                    const targetGenre = event.data.genre || 'Drama';
+                    
+                    // Update current genre
+                    currentGenre = targetGenre;
+                    
+                    // Update the channel title
+                    const channelTitle = document.querySelector('.channel-title');
+                    if (channelTitle) {
+                        channelTitle.textContent = `${currentGenre.toUpperCase()} CHANNEL`;
+                        console.log('Channel title updated to:', channelTitle.textContent);
+                    }
+                    
+                    // Update the genre dropdown
+                    const genreSelect = document.getElementById('genre-select');
+                    if (genreSelect) {
+                        genreSelect.value = currentGenre;
+                        console.log('Genre dropdown updated to:', genreSelect.value);
+                    }
+                    
+                    // Convert received content to channel format
+                    const channelContent = receivedContent.map(item => ({
+                        title: item.title,
+                        type: item.type || 'episode',
+                        duration: item.duration || 45,
+                        service: item.service || 'netflix',
+                        season: item.season || '',
+                        episode: item.episode || '',
+                        startTime: 0,
+                        originalDuration: item.duration || 45
+                    }));
+                    
+                    // Set current content
+                    currentContent = channelContent;
+                    console.log('Updated currentContent with backend-filtered content:', currentContent);
+                    
+                    // Update the display
+                    createLineup(true);
+                    
+                    console.log('=== POPULATE WITH CONTENT HANDLER COMPLETE ===');
+                    
+                    // Send confirmation back to parent
+                    window.parent.postMessage({
+                        type: 'contentPopulationComplete',
+                        payload: {
+                            genre: targetGenre,
+                            contentCount: currentContent ? currentContent.length : 0
+                        }
+                    }, '*');
+                }
+            });
+
+            // Let the parent window know that the iframe is loaded and ready
+            console.log('Sending genreChannelReady message to parent');
+            window.parent.postMessage({ type: 'genreChannelReady' }, '*');
+            
+            // Make test functions available globally for console access
+            window.testDuplicatePrevention = testDuplicatePrevention;
+            window.debugContentState = debugContentState;
+            window.forceShowProgramTrack = forceShowProgramTrack;
+            window.debugPositioning = debugPositioning;
+            console.log('✅ Debug functions available: testDuplicatePrevention(), debugContentState(), forceShowProgramTrack(), debugPositioning()');
+            
+            // Also make them available via a global test object for easier access
+            window.ChannelTests = {
+                testDuplicatePrevention: testDuplicatePrevention,
+                debugContentState: debugContentState,
+                forceShowProgramTrack: forceShowProgramTrack,
+                debugPositioning: debugPositioning,
+                runAllTests: function() {
+                    console.log('🧪 Running all channel tests...');
+                    this.testDuplicatePrevention();
+                    setTimeout(() => this.debugContentState(), 1000);
+                }
+            };
+            
+            // Add a simple way to run the test via console
+            console.log('💡 To test duplicate prevention, open browser console and run:');
+            console.log('   Right-click on the channel area → Inspect → Console tab');
+            console.log('   Then type: ChannelTests.testDuplicatePrevention()');
+            console.log('   Or run all tests: ChannelTests.runAllTests()');
+        });
+
+        // Update channel title based on genre
+        function updateChannelTitle() {
+            const channelTitle = document.querySelector('.channel-title');
+            if (currentGenre) {
+                channelTitle.textContent = `${currentGenre.toUpperCase()} CHANNEL`;
+            } else {
+                channelTitle.textContent = 'GENRE CHANNEL';
+            }
+        }
+
+        // Update genre dropdown content based on the global currentGenre
+        function updateGenreDropdown() {
+            const genreSelect = document.getElementById('genre-select-submenu');
+            const contentDropdown = document.getElementById('content-dropdown-submenu');
+
+            // Sync the dropdown with the current state
+            if (currentGenre) {
+                genreSelect.value = currentGenre;
+            } else {
+                genreSelect.value = ''; // No genre selected yet
+            }
+
+            contentDropdown.innerHTML = '<option value="">Select content...</option>';
+
+            if (currentGenre && genreContent[currentGenre]) {
+                const content = genreContent[currentGenre];
+                content.forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = item.title;
+
+                    // Format display text based on content type
+                    let displayText = item.title;
+                    if (item.type === 'show' && item.season && item.episode) {
+                        displayText += ` ${item.season}:${item.episode}`;
+                    }
+                    displayText += ` (${item.duration}min)`;
+
+                    option.textContent = displayText;
+                    option.dataset.type = item.type;
+                    option.dataset.duration = item.duration;
+                    option.dataset.service = item.service;
+                    option.dataset.season = item.season || '';
+                    option.dataset.episode = item.episode || '';
+                    contentDropdown.appendChild(option);
+                });
+            }
+        }
+
+        // Handle the user changing the genre from the dropdown
+        function handleGenreChange(selectElement) {
+            currentGenre = selectElement.value; // Update state from the DOM
+            updateGenreDropdown(); // Refresh the UI based on the new state
+        }
+
+        // Create lineup from selected genre
+        function createLineup(isInitialLoad = false) {
+            const genre = currentGenre; // Use the globally set genre
+            console.log('=== CREATE LINEUP ===');
+            console.log('Genre:', genre, 'Initial load:', isInitialLoad, 'Edit mode:', window.isInEditMode);
+
+            if (!genre) {
+                console.log('No genre selected yet, waiting for show detection...');
+                return;
+            }
+            
+            // Prevent infinite loops during edit mode operations
+            if (window.isInEditMode && !isInitialLoad) {
+                console.log('🛡️ Skipping createLineup during edit mode to prevent infinite loops');
+                return;
+            }
+            
+
+
+            const content = genreContent[genre];
+            console.log('Content found:', content ? content.length : 0, 'items');
+            
+            if (content) {
+                const lineupContent = [];
+                let currentTime = 0;
+
+                // Always preserve the first block if it is a detected/playing show or automode content
+                let preserveFirst = false;
+                let firstItem = null;
+                if (currentContent.length > 0) {
+                    firstItem = currentContent[0];
+                    // Detected show, automode, or currently playing logic
+                    if (
+                        (firstItem.type === 'detected_show') ||
+                        (firstItem.startTime === 0 && firstItem.type && firstItem.type.toLowerCase().includes('show')) ||
+                        (firstItem.service === 'DETECTED')
+                    ) {
+                        preserveFirst = true;
+                    }
+                }
+                if (preserveFirst && firstItem) {
+                    lineupContent.push({ ...firstItem, startTime: 0 });
+                    currentTime = firstItem.duration;
+                    console.log(`✅ Preserved detected show as first item: "${firstItem.title}" (${firstItem.duration}min)`);
+                }
+
+                // Note: Don't clear currentContent here as we need to preserve the detected show
+
+                // NEW: Get content tracking data from parent window to prevent duplicates
+                let excludeContentIds = new Set();
+                let playedContentIds = new Set();
+                
+                // Add the preserved show's ID to exclude it from genre content
+                if (preserveFirst && firstItem) {
+                    const preservedId = getContentId(firstItem);
+                    excludeContentIds.add(preservedId);
+                    console.log('Excluding preserved show from genre content');
+                }
+                
+                // Simplified approach: Always auto-populate immediately, then optimize later
+                console.log('Auto-populating channel with genre content...');
+                
+                try {
+                    // Request content tracking data from parent window (for future optimization)
+                    window.parent.postMessage({ 
+                        type: 'requestContentTrackingData',
+                        channelName: 'genre-channel'
+                    }, '*');
+                    
+                    // Check if we already have content tracking data for filtering
+                    if (window.contentTrackingData) {
+                        excludeContentIds = new Set([...excludeContentIds, ...window.contentTrackingData.excludeContentIds]);
+                        playedContentIds = window.contentTrackingData.playedContentIds;
+                        console.log('Using cached content tracking data for filtering');
+                        populateLineupWithFilteredContent(content, currentTime, lineupContent, excludeContentIds, playedContentIds);
+                    } else {
+                        // No content tracking data available, proceed with filtered auto-population to prevent duplicates
+                        console.log('🔄 No content tracking data, proceeding with filtered auto-population');
+                        populateLineupWithFilteredContent(content, currentTime, lineupContent, excludeContentIds, new Set());
+                    }
+                    
+                } catch (error) {
+                    console.error('❌ Error with content tracking, using filtered fallback auto-population:', error);
+                    // Always fallback to filtered auto-population to prevent duplicates
+                    populateLineupWithFilteredContent(content, currentTime, lineupContent, excludeContentIds, new Set());
+                }
+                
+            } else {
+                console.error(`No content found for genre: ${genre}`);
+            }
+        }
+
+        // Helper function to populate lineup with filtered content (prevents duplicates)
+        function populateLineupWithFilteredContent(content, currentTime, lineupContent, excludeContentIds, playedContentIds) {
+            // Create a set of existing content IDs to prevent duplicates within the channel
+            const existingIds = new Set(lineupContent.map(item => getContentId(item)));
+            
+            // Filter content to exclude played content and duplicates
+            const filteredContent = content.filter(item => {
+                const contentId = getContentId(item);
+                
+                // Exclude if it's in the excludeContentIds set (sent from parent)
+                if (excludeContentIds.has(contentId)) {
+                    return false;
+                }
+                
+                // Exclude if it's in playedContentIds set (sent from parent)
+                if (playedContentIds.has(contentId)) {
+                    return false;
+                }
+                
+                // Exclude if it's already in the current channel lineup
+                if (existingIds.has(contentId)) {
+                    console.log(`🚫 Skipping duplicate in filtered population: "${item.title}" (ID: ${contentId})`);
+                    return false;
+                }
+                
+                return true;
+            });
+            
+            console.log('Filtered content:', filteredContent.length, 'items');
+            
+            // Populate remaining time slots with filtered genre content
+            // AUTO-POPULATION: Add content at full duration, let timeline expand naturally
+            for (const item of filteredContent) {
+                // Don't artificially limit during auto-population - let timeline expand
+                const positionedItem = {
+                    ...item,
+                    originalDuration: item.duration, // Always store original
+                    duration: item.duration,          // Use full duration during auto-population
+                    startTime: currentTime
+                };
+
+                lineupContent.push(positionedItem);
+                existingIds.add(getContentId(item)); // Track added content to prevent duplicates
+                currentTime += item.duration;
+                console.log(`✅ Added "${item.title}" during filtered auto-population (${item.duration}min at full duration)`);
+            }
+
+            currentContent = lineupContent;
+            console.log('Lineup created:', lineupContent.length, 'items,', currentTime, 'minutes');
+
+            // Update channel title but don't re-assign the global genre
+            updateChannelTitle();
+
+            // Show program track after genre is selected
+            document.getElementById('program-track').style.display = 'block';
+            updateProgramTrack();
+        }
+
+        // Helper function to populate lineup (extracted from original createLineup logic)
+        function populateLineupWithContent(content, currentTime, lineupContent) {
+            console.log('=== POPULATE LINEUP WITH CONTENT ===');
+            console.log('Available content:', content.length, 'items');
+            console.log('Starting currentTime:', currentTime, 'minutes');
+            console.log('Starting lineupContent:', lineupContent.length, 'items');
+            
+            // Create a set of existing content IDs to prevent duplicates
+            const existingIds = new Set(lineupContent.map(item => getContentId(item)));
+            console.log('📋 Existing content IDs:', Array.from(existingIds));
+            
+            // Populate remaining time slots with new genre content
+            // AUTO-POPULATION: Add content at full duration, let timeline expand naturally
+            for (const item of content) {
+                // Check for duplicates before adding
+                const itemId = getContentId(item);
+                console.log(`🔍 Checking item "${item.title}" with ID: ${itemId}`);
+                
+                if (existingIds.has(itemId)) {
+                    console.log(`🚫 DUPLICATE DETECTED: Skipping "${item.title}" (ID: ${itemId}) - already exists in lineup`);
+                    continue;
+                }
+
+                // Don't artificially limit during auto-population - let timeline expand
+                const positionedItem = {
+                    ...item,
+                    originalDuration: item.duration, // Always store original
+                    duration: item.duration,          // Use full duration during auto-population
+                    startTime: currentTime
+                };
+
+                lineupContent.push(positionedItem);
+                existingIds.add(itemId); // Add to existing IDs set
+                currentTime += item.duration;
+                console.log(`✅ Added "${item.title}" during auto-population (${item.duration}min at full duration)`);
+            }
+
+            currentContent = lineupContent;
+            console.log('Lineup created:', lineupContent.length, 'items,', currentTime, 'minutes');
+            
+            // FINAL DUPLICATE CHECK: Remove any duplicates that might have slipped through
+            const finalContent = [];
+            const finalIds = new Set();
+            
+            for (const item of currentContent) {
+                const itemId = getContentId(item);
+                if (!finalIds.has(itemId)) {
+                    finalContent.push(item);
+                    finalIds.add(itemId);
+                } else {
+                    console.log(`🧹 Final cleanup: Removing duplicate "${item.title}" (ID: ${itemId})`);
+                }
+            }
+            
+            if (finalContent.length !== currentContent.length) {
+                console.log(`🧹 Final cleanup: Removed ${currentContent.length - finalContent.length} duplicates`);
+                currentContent = finalContent;
+            }
+
+            // Update channel title but don't re-assign the global genre
+            updateChannelTitle();
+
+            // Show program track after genre is selected
+            document.getElementById('program-track').style.display = 'block';
+            updateProgramTrack();
+        }
+
+        // Search content
+        function searchContent() {
+            const searchInput = document.getElementById('search-input');
+            const searchResults = document.getElementById('search-results');
+            const query = searchInput.value.toLowerCase();
+            
+            if (query.length < 2) {
+                searchResults.style.display = 'none';
+                return;
+            }
+            
+            const results = [];
+            // Filter by current genre if set
+            const searchContent = currentGenre ? genreContent[currentGenre] : Object.values(genreContent).flat();
+            searchContent.forEach(item => {
+                if (item.title.toLowerCase().includes(query)) {
+                    results.push(item);
+                }
+            });
+            
+            displaySearchResults(results);
+        }
+
+        // Display search results
+        function displaySearchResults(results) {
+            const searchResults = document.getElementById('search-results');
+            
+            if (results.length === 0) {
+                searchResults.style.display = 'none';
+                return;
+            }
+            
+            searchResults.innerHTML = '';
+            results.forEach(item => {
+                const resultDiv = document.createElement('div');
+                resultDiv.className = 'result-item';
+                
+                let metaText = `${item.type} • ${item.duration}min`;
+                if (item.type === 'show' && item.season && item.episode) {
+                    metaText += ` • ${item.season}:${item.episode}`;
+                }
+                metaText += ` • ${item.service}`;
+                
+                resultDiv.innerHTML = `
+                    <div class="result-title">${item.title}</div>
+                    <div class="result-meta">${metaText}</div>
+                `;
+                resultDiv.onclick = () => selectSearchResult(item);
+                searchResults.appendChild(resultDiv);
+            });
+            
+            searchResults.style.display = 'block';
+        }
+
+        // Select search result
+        function selectSearchResult(item) {
+            selectedContent = item;
+            document.getElementById('search-input').value = item.title;
+            document.getElementById('search-results').style.display = 'none';
+        }
+
+        // Select content from dropdown
+        function selectContent() {
+            const dropdown = document.getElementById('content-dropdown');
+            const selectedOption = dropdown.options[dropdown.selectedIndex];
+            
+            if (selectedOption.value) {
+                selectedContent = {
+                    title: selectedOption.value,
+                    type: selectedOption.dataset.type,
+                    duration: parseInt(selectedOption.dataset.duration),
+                    service: selectedOption.dataset.service,
+                    season: selectedOption.dataset.season,
+                    episode: selectedOption.dataset.episode
+                };
+            }
+        }
+
+        // Add content to channel (append to end)
+        function addContent() {
+            if (!selectedContent) {
+                alert('Please select content first');
+                return;
+            }
+            
+            // Check for duplicates before adding
+            if (isDuplicateContent(selectedContent)) {
+                alert(`"${selectedContent.title}" is already in the channel. Duplicates are not allowed.`);
+                return;
+            }
+            
+            // Find the next available start time
+            let nextStartTime = 0;
+            if (currentContent.length > 0) {
+                const sortedContent = [...currentContent].sort((a, b) => (a.startTime + a.duration) - (b.startTime + b.duration));
+                nextStartTime = sortedContent[sortedContent.length - 1].startTime + sortedContent[sortedContent.length - 1].duration;
+            }
+            
+            const newContent = {
+                ...selectedContent,
+                originalDuration: selectedContent.duration, // Ensure this property exists
+                startTime: nextStartTime
+            };
+            
+            currentContent.push(newContent);
+            console.log(`✅ Added "${newContent.title}" to channel (no duplicates)`);
+            
+            // Show program track if not already visible
+            document.getElementById('program-track').style.display = 'block';
+            updateProgramTrack();
+            selectedContent = null;
+            document.getElementById('search-input').value = '';
+            document.getElementById('content-dropdown').value = '';
+            updateMultiplier();
+        }
+
+        // Function to calculate total content duration
+        function calculateTotalContentDuration() {
+            const total = currentContent.reduce((total, item) => {
+                const endTime = item.startTime + item.duration;
+                return Math.max(total, endTime);
+            }, 0);
+            
+            console.log('calculateTotalContentDuration:', total, 'minutes');
+            console.log('Content details:', currentContent.map(item => ({
+                title: item.title,
+                startTime: item.startTime,
+                duration: item.duration,
+                endTime: item.startTime + item.duration
+            })));
+            
+            return total;
+        }
+
+        // Function to expand or contract timeline as needed
+        function expandTimelineIfNeeded() {
+            const totalDuration = calculateTotalContentDuration();
+            const needsExpansion = totalDuration > currentTimelineDuration;
+            const needsContraction = totalDuration < currentTimelineDuration && currentTimelineDuration > TIMELINE_DURATION;
+            
+            console.log('expandTimelineIfNeeded called:');
+            console.log('- totalDuration:', totalDuration);
+            console.log('- currentTimelineDuration:', currentTimelineDuration);
+            console.log('- needsExpansion:', needsExpansion);
+            console.log('- needsContraction:', needsContraction);
+            console.log('- TIMELINE_DURATION:', TIMELINE_DURATION);
+            
+            if (needsExpansion) {
+                // Calculate new timeline duration (round up to nearest 30 minutes)
+                const newDuration = Math.ceil(totalDuration / 30) * 30;
+                const oldDuration = currentTimelineDuration;
+                currentTimelineDuration = newDuration; // Remove artificial cap, let it expand naturally
+                
+                console.log('EXPANSION TRIGGERED:');
+                console.log('- oldDuration:', oldDuration);
+                console.log('- newDuration:', newDuration);
+                console.log('- currentTimelineDuration set to:', currentTimelineDuration);
+                
+                console.log('About to call updateTimelineMarkers...');
+                
+                // Update timeline markers
+                try {
+                    updateTimelineMarkers();
+                    console.log('updateTimelineMarkers completed successfully');
+                } catch (error) {
+                    console.error('Error in updateTimelineMarkers:', error);
+                }
+                
+                // Update multiplier display
+                try {
+                    updateMultiplier();
+                    console.log('updateMultiplier completed successfully');
+                } catch (error) {
+                    console.error('Error in updateMultiplier:', error);
+                }
+                
+                console.log(`Timeline expanded from ${oldDuration} to ${currentTimelineDuration} minutes`);
+                return true;
+            } else if (needsContraction) {
+                // Calculate new timeline duration (round down to nearest 30 minutes)
+                const newDuration = Math.floor(totalDuration / 30) * 30;
+                // Don't go below the base timeline duration
+                const oldDuration = currentTimelineDuration;
+                currentTimelineDuration = Math.max(newDuration, TIMELINE_DURATION);
+                
+                console.log('About to call updateTimelineMarkers for contraction...');
+                
+                // Update timeline markers
+                try {
+                    updateTimelineMarkers();
+                    console.log('updateTimelineMarkers completed successfully for contraction');
+                } catch (error) {
+                    console.error('Error in updateTimelineMarkers for contraction:', error);
+                }
+                
+                // Update multiplier display
+                try {
+                    updateMultiplier();
+                    console.log('updateMultiplier completed successfully for contraction');
+                } catch (error) {
+                    console.error('Error in updateMultiplier for contraction:', error);
+                }
+                
+                console.log(`Timeline contracted from ${oldDuration} to ${currentTimelineDuration} minutes`);
+                return true;
+            }
+            
+            console.log('No timeline change needed');
+            return false;
+        }
+
+        // Function to update timeline markers based on actual content
+        function updateTimelineMarkers() {
+            const timelineRow = document.getElementById('timeline-markers');
+            const multiplierRow = document.getElementById('multiplier-markers');
+            const timeline = document.getElementById('timeline');
+            const programTrack = document.getElementById('program-track');
+            
+            // Calculate actual timeline duration from content
+            if (currentContent && currentContent.length > 0) {
+                const maxEndTime = Math.max(...currentContent.map(item => item.startTime + item.duration));
+                currentTimelineDuration = Math.max(maxEndTime, 240); // Minimum 240min for gaps
+            } else {
+                currentTimelineDuration = 240; // Default when no content
+            }
+            
+            console.log('updateTimelineMarkers called');
+            console.log('- currentTimelineDuration:', currentTimelineDuration);
+            console.log('- timelineRow exists:', !!timelineRow);
+            console.log('- multiplierRow exists:', !!multiplierRow);
+            
+            if (!timelineRow) return;
+            
+            // Clear existing markers
+            timelineRow.innerHTML = '';
+            if (multiplierRow) {
+                multiplierRow.innerHTML = '';
+            }
+            
+            // Generate timeline markers based on currentTimelineDuration
+            const markerInterval = 30; // 30min per marker
+            const markerCount = Math.ceil(currentTimelineDuration / markerInterval) + 1;
+            timelineRow.innerHTML = '';
+            multiplierRow.innerHTML = '';
+            for (let i = 0; i < markerCount; i++) {
+                const marker = document.createElement('div');
+                marker.className = 'timeline-marker';
+                marker.textContent = i * markerInterval;
+                timelineRow.appendChild(marker);
+
+                // Multiplier logic: distribute from 1.0x to max across the timeline (dynamic scaling)
+                const baseMultiplier = 1.0;
+                const scaleFactor = currentTimelineDuration / 180; // Base timeline is 180 minutes
+                const maxMultiplier = Math.min(1.0 + (scaleFactor * 0.8), 3.0); // Cap at 3.0x, same as main timeline
+                const multiplier = (markerCount === 1)
+                    ? baseMultiplier
+                    : (baseMultiplier + (i / (markerCount - 1)) * (maxMultiplier - baseMultiplier));
+                const multiplierDiv = document.createElement('div');
+                multiplierDiv.className = 'timeline-marker';
+                multiplierDiv.style.color = (i === 0 || i === markerCount - 1) ? '#00ff41' : '#ffaa00';
+                multiplierDiv.textContent = multiplier.toFixed(1) + 'X';
+                multiplierRow.appendChild(multiplierDiv);
+            }
+            
+            console.log('Created timeline markers:', timelineRow.children);
+            
+            // Add multiplier markers based on current timeline duration
+            if (multiplierRow) {
+                const multiplier = getMultiplier();
+                
+                // Create multiplier marker
+                const multiplierMarker = document.createElement('div');
+                multiplierMarker.className = 'timeline-marker multiplier';
+                multiplierMarker.style.color = '#00ff41';
+                multiplierMarker.style.fontWeight = '600';
+                multiplierMarker.textContent = `${multiplier.toFixed(1)}x`;
+                multiplierRow.appendChild(multiplierMarker);
+                
+                console.log('Created multiplier marker:', `${multiplier.toFixed(1)}x`);
+            }
+        }
+
+        // Function to calculate width based on current timeline duration
+        function calculateWidth(duration) {
+            return (duration / currentTimelineDuration) * 100;
+        }
+
+        // Function to calculate left position based on current timeline duration
+        function calculateLeftPosition(minutes) {
+            return (minutes / currentTimelineDuration) * 100;
+        }
+
+        // Find gaps in the timeline
+        function findGaps() {
+            const gaps = [];
+            let currentTime = 0;
+            
+            // Sort content by start time
+            const sortedContent = [...currentContent].sort((a, b) => a.startTime - b.startTime);
+            
+            sortedContent.forEach(item => {
+                if (item.startTime > currentTime) {
+                    gaps.push({
+                        start: currentTime,
+                        end: item.startTime,
+                        duration: item.startTime - currentTime
+                    });
+                }
+                currentTime = item.startTime + item.duration;
+            });
+            
+            // Check for gap at the end
+            if (currentTime < currentTimelineDuration) {
+                gaps.push({
+                    start: currentTime,
+                    end: currentTimelineDuration,
+                    duration: currentTimelineDuration - currentTime
+                });
+            }
+            
+            return gaps;
+        }
+
+        // Check if text content overflows its container
+        function hasTextOverflow(element) {
+            return element.scrollWidth > element.clientWidth;
+        }
+
+        // Determine intelligent scaling direction based on available space
+        function getScalingDirection(leftPosition, blockWidth) {
+            const spaceOnLeft = leftPosition;
+            const spaceOnRight = 100 - (leftPosition + blockWidth);
+
+            // Scale in the direction with more available space
+            if (spaceOnRight >= spaceOnLeft) {
+                return 'left center'; // More space on the right, so expand right
+            } else {
+                return 'right center'; // More space on the left, so expand left
+            }
+        }
+
+        // Trim content to target duration (240 minutes) with precise positioning
+        function trimContentToTarget() {
+            if (!currentContent || currentContent.length === 0) return;
+            
+            const TARGET_DURATION = 240;
+            let totalDuration = currentContent.reduce((total, item) => total + item.duration, 0);
+            
+            console.log('trimContentToTarget called');
+            console.log('Current total duration:', totalDuration, 'minutes');
+            console.log('Target duration:', TARGET_DURATION, 'minutes');
+            
+            if (totalDuration <= TARGET_DURATION) {
+                console.log('✅ Content duration is within target, no trimming needed');
+                // Set timeline duration to actual content duration for proper block spacing
+                currentTimelineDuration = totalDuration;
+                console.log('📏 Timeline duration set to actual content duration:', totalDuration, 'minutes');
+                return;
+            }
+            
+            console.log('⚠️ Content exceeds target, trimming...');
+            
+            // Keep content that fits within 240 minutes
+            let runningTime = 0;
+            const trimmedContent = [];
+            
+            // Sort by current order to maintain sequence
+            const sortedContent = [...currentContent].sort((a, b) => a.startTime - b.startTime);
+            
+            for (let i = 0; i < sortedContent.length; i++) {
+                const item = { ...sortedContent[i] };
+                
+                if (runningTime + item.duration <= TARGET_DURATION) {
+                    // Fits completely - add at full duration
+                    item.startTime = runningTime;
+                    runningTime += item.duration;
+                    trimmedContent.push(item);
+                    console.log('✅ Keeping:', item.title, 'duration:', item.duration, 'startTime:', item.startTime);
+                } else if (runningTime < TARGET_DURATION) {
+                    // Partially fits - crop to remaining time
+                    const remainingTime = TARGET_DURATION - runningTime;
+                    if (remainingTime >= 10) { // Only add if at least 10 minutes remain
+                        item.startTime = runningTime;
+                        item.originalDuration = item.duration; // Store original
+                        item.duration = remainingTime; // Crop to fit
+                        trimmedContent.push(item);
+                        console.log('✅ Cropping:', item.title, 'from', item.originalDuration, 'to', item.duration, 'minutes');
+                    }
+                    break; // Timeline is full
+                } else {
+                    // No more room
+                    console.log('⏹️ Timeline full, skipping:', item.title);
+                    break;
+                }
+            }
+            
+            // Update the content array
+            currentContent = trimmedContent;
+            console.log('✅ Content trimmed to', trimmedContent.length, 'items, total duration:', TARGET_DURATION, 'minutes');
+            
+            // Set timeline duration to exactly 240 minutes
+            currentTimelineDuration = TARGET_DURATION;
+            console.log('Timeline duration set to', TARGET_DURATION, 'minutes');
+        }
+
+        // GLOBAL POPUP MANAGEMENT - ensure only one popup at a time
+        window.currentActivePopup = null;
+        window.currentActiveSlot = null;
+        
+        function removeAllPopups() {
+            // AGGRESSIVE: Remove all popups from document using multiple selectors
+            const allPopups = document.querySelectorAll('.content-hover-popup, .content-popup');
+            allPopups.forEach(popup => {
+                popup.remove();
+                console.log('🔧 Removed popup:', popup.className);
+            });
+            
+            // AGGRESSIVE: Also clean up any orphaned popups in all slots
+            const allSlots = document.querySelectorAll('.program-slot');
+            allSlots.forEach(slot => {
+                const popupsInSlot = slot.querySelectorAll('.content-hover-popup, .content-popup');
+                popupsInSlot.forEach(popup => {
+                    popup.remove();
+                    console.log('🔧 Removed popup from slot:', popup.className);
+                });
+                
+                // Reset slot styling
+                slot.style.backgroundColor = '';
+                slot.style.borderColor = '';
+            });
+            
+            // Clear global references
+            window.currentActivePopup = null;
+            window.currentActiveSlot = null;
+            
+            console.log('🔧 AGGRESSIVE popup cleanup complete');
+        }
+        
+        // MANUAL FIX FUNCTIONS - can be called from console
+        window.fixPopups = function() {
+            removeAllPopups();
+            console.log('🔧 Manual popup fix applied');
+        };
+        
+        window.fixBlocks = function() {
+            console.log('🔧 Block positioning disabled - preserving time-unit accuracy');
+        };
+        
+        window.fixAll = function() {
+            removeAllPopups();
+            console.log('🔧 Manual popup fix applied (block positioning disabled)');
+        };
+        
+        // Add selective event listeners for popup cleanup (LESS AGGRESSIVE)
+        document.addEventListener('DOMContentLoaded', () => {
+            // Only remove popups on escape key - let hover events manage their own popups
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    removeAllPopups();
+                }
+            });
+            
+            // Remove popups only on window resize (layout changes)
+            window.addEventListener('resize', removeAllPopups);
+        });
+
+        // Test helper functions
+        window.loadTestContent = function(content) {
+            let currentTime = 0;
+            currentContent = content.map((item, index) => {
+                const itemWithTime = {
+                    ...item,
+                    startTime: currentTime,
+                    id: `test-${index}`
+                };
+                currentTime += item.duration; // Sequential timing
+                return itemWithTime;
+            });
+            
+            updateProgramTrack();
+            console.log('🧪 Test content loaded:', content.length, 'items');
+        };
+
+        // Update program track display with absolute positioning and simple gaps
+        function updateProgramTrack() {
+            const track = document.getElementById('program-track');
+            track.innerHTML = '';
+            if (currentContent.length === 0) {
+                const emptySlot = document.createElement('div');
+                emptySlot.className = 'program-slot empty';
+                emptySlot.textContent = 'SELECT GENRE TO START';
+                track.appendChild(emptySlot);
+                return;
+            }
+            
+            // Sort content by start time to ensure proper order
+            const sortedContent = [...currentContent].sort((a, b) => a.startTime - b.startTime);
+            
+            sortedContent.forEach((item, index) => {
+                const slot = document.createElement('div');
+                slot.className = 'program-slot rumi-state-block state-queued';
+                
+                // Calculate position and width using original functions
+                const leftPosition = calculateLeftPosition(item.startTime);
+                const blockWidth = calculateWidth(item.duration);
+                
+                // Apply precision rounding to eliminate micro-overlaps
+                const leftRounded = Math.round(leftPosition * 10000) / 10000;
+                const widthRounded = Math.round(blockWidth * 10000) / 10000;
+                
+                // Add simple spacing: ensure blocks don't overlap by adding a small gap
+                const spacingGap = 0.5; // 0.5% gap between blocks
+                
+                // Accumulate gaps: each block after the first gets an additional gap
+                let adjustedLeft = leftRounded;
+                if (index > 0) {
+                    // Add accumulated gaps: block 1 gets 0.5%, block 2 gets 1.0%, block 3 gets 1.5%, etc.
+                    const accumulatedGap = spacingGap * index;
+                    adjustedLeft = leftRounded + accumulatedGap;
+                }
+                
+                // Set absolute positioning with adjusted left position
+                slot.style.left = `${adjustedLeft}%`;
+                slot.style.width = `${Math.max(5, widthRounded)}%`;
+                slot.style.top = '10%'; // Center blocks vertically with 10% top margin
+                slot.style.height = '80%'; // 80% of container height to create vertical padding
+                slot.style.position = 'absolute';
+                
+                // Block content
+                let titleText = item.title;
+                const durationToShow = item.originalDuration || item.duration;
+                let metaText = `${item.type} • ${durationToShow}min`;
+                if (item.type === 'show' && item.season && item.episode) {
+                    titleText += ` ${item.season}:${item.episode}`;
+                }
+                slot.innerHTML = `
+                    <div class="program-title">${titleText}</div>
+                    <div class="program-meta">${metaText}</div>
+                    <div class="program-service">${item.service}</div>
+                    <button class="remove-btn${index === 0 ? ' protected' : ''}">×</button>
+                    <div class="show-info-popup">
+                        <div class="popup-title">${titleText}</div>
+                        <div class="popup-meta">${metaText}</div>
+                        <div class="popup-service">Service: ${item.service}</div>
+                        <div class="popup-duration">Duration: ${durationToShow} minutes</div>
+                    </div>
+                `;
+                // Remove button logic
+                const removeBtn = slot.querySelector('.remove-btn');
+                if (index === 0) {
+                    removeBtn.onclick = (e) => {
+                        e.stopPropagation();
+                        // Protected: do nothing
+                    };
+                } else {
+                    removeBtn.onclick = (e) => {
+                        e.stopPropagation();
+                        removeContent(index);
+                    };
+                }
+                // Hover popup handled by CSS
+                track.appendChild(slot);
+            });
+        }
+
+        // Add content at a specific timeline position
+        function addContentAtPosition(startTime) {
+            if (!selectedContent) {
+                // Open edit mode for individual content
+                openAddContentMode();
+                return;
+            }
+            
+            // Check for duplicates before adding
+            if (isDuplicateContent(selectedContent)) {
+                alert(`"${selectedContent.title}" is already in the channel. Duplicates are not allowed.`);
+                return;
+            }
+            
+            // Add content with start time
+            const newContent = {
+                ...selectedContent,
+                originalDuration: selectedContent.duration, // Ensure this property exists
+                startTime: startTime
+            };
+            
+            currentContent.push(newContent);
+            console.log(`✅ Added "${newContent.title}" to channel at ${startTime}min (no duplicates)`);
+            
+            // Show program track if not already visible
+            document.getElementById('program-track').style.display = 'block';
+            updateProgramTrack();
+            selectedContent = null;
+            document.getElementById('search-input-submenu').value = '';
+            document.getElementById('content-dropdown-submenu').value = '';
+            updateMultiplier();
+        }
+
+        // Remove content from channel and preserve time-based positioning
+        function removeContent(index) {
+            // Check if we're in content detection mode and trying to remove the first item
+            if (index === 0 && isContentDetectionMode() && isFirstItemCurrentlyPlaying()) {
+                alert('Cannot remove currently playing content. This show is actively being tracked.');
+                return;
+            }
+            
+            const removedItem = currentContent[index];
+            currentContent.splice(index, 1);
+            
+            // DON'T slide blocks - preserve their time-based positions
+            // This will create gaps that can be filled with + buttons
+            console.log(`✅ Removed "${removedItem.title}" - preserving time-based positions of remaining blocks`);
+            
+            // Update display to show gaps and + buttons
+            updateProgramTrack();
+            updateMultiplier();
+        }
+
+        // DISABLED: optimizeBlockPositioning breaks time-unit accuracy
+        function optimizeBlockPositioning() {
+            console.log('🚫 optimizeBlockPositioning DISABLED - preserving time-unit accuracy');
+            console.log('⏰ Blocks maintain their actual time positions and durations');
+            return;
+            
+            // OLD CODE COMMENTED OUT:
+            /*
+            console.log('🔧 AGGRESSIVE block positioning fix starting...');
+            
+            if (typeof currentContent === 'undefined' || !Array.isArray(currentContent)) {
+                console.log('❌ No currentContent found');
+                return;
+            }
+            
+            if (currentContent.length === 0) {
+                console.log('❌ currentContent is empty');
+                return;
+            }
+            
+            console.log('Current content before fix:', currentContent.length, 'items');
+            
+            // FORCE SEQUENTIAL: Completely rebuild positioning from scratch
+            const sortedContent = [...currentContent].sort((a, b) => a.startTime - b.startTime);
+            
+            // AGGRESSIVE: Force sequential positioning with NO overlaps
+            let currentTime = 0;
+            sortedContent.forEach((item, index) => {
+                const oldStartTime = item.startTime;
+                item.startTime = currentTime;
+                currentTime += item.duration;
+                console.log(`🔧 FORCED sequential: Item ${index + 1}: "${item.title}" ${oldStartTime}min → ${item.startTime}min (${item.duration}min)`);
+            });
+            
+            // Update currentContent with fixed positions
+            currentContent = sortedContent;
+            
+            // IMMEDIATE DOM UPDATE: Force immediate visual update
+            updateProgramTrackDOM();
+            
+            console.log('✅ AGGRESSIVE positioning complete - NO overlaps possible');
+            console.log('Total timeline duration:', currentTime, 'minutes');
+            */
+        }
+        
+        // IMMEDIATE DOM update function
+        function updateProgramTrackDOM() {
+            const track = document.querySelector('.program-track, #program-track');
+            if (!track) return;
+            
+            const blocks = Array.from(track.querySelectorAll('.program-slot:not(.empty)'));
+            console.log(`🔧 Updating DOM for ${blocks.length} blocks`);
+            
+            blocks.forEach((block, index) => {
+                if (index < currentContent.length) {
+                    const item = currentContent[index];
+                    const leftPosition = calculateLeftPosition(item.startTime);
+                    const blockWidth = calculateWidth(item.duration);
+                    
+                    // AGGRESSIVE: Force exact positioning
+                    const leftRounded = Math.round(leftPosition * 10000) / 10000;
+                    const widthRounded = Math.round(blockWidth * 10000) / 10000;
+                    
+                    block.style.left = `${leftRounded}%`;
+                    block.style.width = `${Math.max(5, widthRounded)}%`;
+                    block.style.top = '0px';
+                    block.style.height = '100%';
+                    block.style.position = 'absolute';
+                    
+                    console.log(`🔧 Block ${index + 1}: left=${leftRounded}%, width=${widthRounded}%`);
+                }
+            });
+            
+            console.log('✅ DOM positioning update complete');
+        }
+
+        // Generate a unique ID for a piece of content
+        function getContentId(item) {
+            // Normalize title case for consistent comparison (convert to uppercase)
+            let id = item.title.toUpperCase();
+            
+            // Normalize content type for consistent ID generation
+            const normalizedType = normalizeContentType(item.type);
+            
+            // Only include season/episode for actual show content (not movies misclassified as detected_show)
+            // Check if it's truly show-type content by having both season AND episode info
+            const hasSeasonEpisode = item.season && item.episode && 
+                                   item.season !== 'N/A' && item.episode !== 'N/A' &&
+                                   item.season !== '' && item.episode !== '';
+            
+            if (hasSeasonEpisode && isShowType(item.type)) {
+                id += `-${item.season}-${item.episode}`;
+            }
+            
+            // For debugging: log the ID generation
+            console.log(`🔍 Generated ID for "${item.title}" (type: ${item.type}): "${id}"`);
+            
+            return id;
+        }
+        
+        // Helper function to normalize content types for consistent matching
+        function normalizeContentType(type) {
+            if (!type) return 'unknown';
+            
+            const lowerType = type.toLowerCase();
+            
+            // Normalize show-related types
+            if (lowerType.includes('show') || lowerType.includes('series') || lowerType.includes('episode')) {
+                return 'show';
+            }
+            
+            // Normalize movie-related types
+            if (lowerType.includes('movie') || lowerType.includes('film')) {
+                return 'movie';
+            }
+            
+            // Return original type if no normalization needed
+            return type;
+        }
+        
+        // Helper function to check if content is show-type (has episodes)
+        function isShowType(type) {
+            if (!type) return false;
+            
+            const lowerType = type.toLowerCase();
+            return lowerType.includes('show') || 
+                   lowerType.includes('series') || 
+                   lowerType.includes('episode') ||
+                   lowerType === 'show';
+        }
+        
+        // Function to clean up duplicates in current channel
+        function cleanupDuplicatesInChannel() {
+            console.log('\n🧹 Channel-level duplicate cleanup initiated...');
+            
+            if (!currentContent || !Array.isArray(currentContent)) {
+                console.log('❌ No current content to clean up');
+                return false;
+            }
+            
+            const originalLength = currentContent.length;
+            console.log(`📊 Starting with ${originalLength} items`);
+            
+            // Track unique items by their ID
+            const seenIds = new Set();
+            const uniqueContent = [];
+            let duplicatesRemoved = 0;
+            
+            currentContent.forEach((item, index) => {
+                const itemId = getContentId(item);
+                
+                if (seenIds.has(itemId)) {
+                    console.log(`🚫 Channel cleanup: Removing duplicate #${index + 1}: "${item.title}" (ID: ${itemId})`);
+                    duplicatesRemoved++;
+                } else {
+                    seenIds.add(itemId);
+                    uniqueContent.push(item);
+                    console.log(`✅ Channel cleanup: Keeping unique #${index + 1}: "${item.title}" (ID: ${itemId})`);
+                }
+            });
+            
+            if (duplicatesRemoved > 0) {
+                // Update the content array
+                currentContent = uniqueContent;
+                
+                // Recalculate start times to ensure proper sequencing
+                let currentTime = 0;
+                currentContent.forEach((item, index) => {
+                    item.startTime = currentTime;
+                    currentTime += item.duration;
+                });
+                
+                // Update the display
+                updateProgramTrack();
+                
+                console.log(`✅ Channel cleanup: Removed ${duplicatesRemoved} duplicate(s), ${uniqueContent.length} items remaining`);
+                
+                // Notify parent window
+                if (window.parent !== window) {
+                    window.parent.postMessage({
+                        type: 'duplicatesCleanedUp',
+                        removed: duplicatesRemoved,
+                        remaining: uniqueContent.length
+                    }, '*');
+                }
+                
+                return true;
+            } else {
+                console.log('✅ Channel cleanup: No duplicates found');
+                return false;
+            }
+        }
+        
+        // Listen for cleanup messages from parent
+        window.addEventListener('message', function(event) {
+            if (event.data.type === 'cleanupDuplicates') {
+                cleanupDuplicatesInChannel();
+            } else if (event.data.type === 'executeFunction' && event.data.functionName === 'cleanupDuplicatesInChannel') {
+                cleanupDuplicatesInChannel();
+            }
+        });
+
+        // Check if content is already in the channel (duplicate prevention)
+        function isDuplicateContent(newItem) {
+            if (!newItem || !currentContent || currentContent.length === 0) {
+                return false;
+            }
+            
+            const newItemId = getContentId(newItem);
+            
+            // Check if any existing content has the same ID
+            const isDuplicate = currentContent.some(existingItem => {
+                const existingId = getContentId(existingItem);
+                return existingId === newItemId;
+            });
+            
+            if (isDuplicate) {
+                console.log(`🚫 Duplicate detected: "${newItem.title}" (ID: ${newItemId}) already exists in channel`);
+                return true;
+            }
+            
+            return false;
+        }
+
+        // Add to queue, preventing duplicates
+        function addToQueue() {
+            if (currentContent.length === 0) {
+                alert('No content to add to queue');
+                return;
+            }
+
+            const queueIds = new Set(queue.map(getContentId));
+            const newContent = currentContent.filter(item => !queueIds.has(getContentId(item)));
+
+            if (newContent.length === 0) {
+                alert('All content from this channel is already in the queue.');
+                return;
+            }
+            
+            queue.push(...newContent);
+            updateQueue();
+            document.getElementById('queue-section').style.display = 'block';
+        }
+
+        // Play now, preventing duplicates
+        function playNow() {
+            if (currentContent.length === 0) {
+                alert('No content to play');
+                return;
+            }
+            
+            const queueIds = new Set(queue.map(getContentId));
+            const newContent = currentContent.filter(item => !queueIds.has(getContentId(item)));
+
+            // Even if there's nothing new to add, we can still "play" the existing queue
+            if (newContent.length > 0) {
+                queue.push(...newContent);
+                updateQueue();
+            }
+            
+            document.getElementById('queue-section').style.display = 'block';
+            
+            // Simulate starting playback
+            alert('Starting playback of channel content...');
+        }
+
+        // Update queue display
+        function updateQueue() {
+            const queueItems = document.getElementById('queue-items');
+            const queueSummary = document.getElementById('queue-summary');
+            
+            queueItems.innerHTML = '';
+            queue.forEach((item, index) => {
+                const queueItem = document.createElement('div');
+                queueItem.className = 'queue-item';
+                
+                let titleText = item.title;
+                if (item.type === 'show' && item.season && item.episode) {
+                    titleText += ` ${item.season}:${item.episode}`;
+                }
+                
+                queueItem.innerHTML = `
+                    <div class="queue-item-info">
+                        <div class="queue-item-title">${titleText}</div>
+                        <div class="queue-item-meta">${item.type} • ${item.duration}min • ${item.service}</div>
+                    </div>
+                    <button class="queue-remove-btn" onclick="removeFromQueue(${index})">×</button>
+                `;
+                queueItems.appendChild(queueItem);
+            });
+            
+            const totalDuration = queue.reduce((sum, item) => sum + item.duration, 0);
+            const currentMultiplier = getMultiplier();
+            const estimatedPoints = totalDuration * currentMultiplier;
+            
+            queueSummary.textContent = `${queue.length} items • ${totalDuration} min • ~${estimatedPoints.toFixed(1)}pts`;
+        }
+
+        // Remove from queue
+        function removeFromQueue(index) {
+            queue.splice(index, 1);
+            updateQueue();
+            
+            if (queue.length === 0) {
+                document.getElementById('queue-section').style.display = 'none';
+            }
+        }
+
+        function getMultiplier() {
+            const totalDuration = currentContent.reduce((sum, item) => sum + item.duration, 0);
+            let multiplier = 1.0;
+
+            // Simple multiplier logic based on total content duration
+            if (totalDuration >= 300) {
+                multiplier = 2.0; // 300+ minutes = 2.0x
+            } else if (totalDuration >= 240) {
+                multiplier = 1.8; // 240+ minutes = 1.8x
+            } else if (totalDuration >= 180) {
+                multiplier = 1.5; // 180+ minutes = 1.5x
+            } else if (totalDuration >= 120) {
+                multiplier = 1.3; // 120+ minutes = 1.3x
+            } else if (totalDuration >= 60) {
+                multiplier = 1.1; // 60+ minutes = 1.1x
+            }
+            
+            return multiplier;
+        }
+
+        // Update multiplier display
+        function updateMultiplier() {
+            const multiplier = getMultiplier();
+            const multiplierDisplay = document.getElementById('multiplier-display');
+            // Add a null check for safety
+            if (multiplierDisplay) {
+                multiplierDisplay.textContent = `${multiplier.toFixed(1)}x`;
+            }
+        }
+
+        // ===== NEW EDIT MODE FUNCTIONS =====
+
+        // Open edit mode for genre selection
+        function openGenreEditMode() {
+            // Store current timeline state
+            previousTimelineState = {
+                timeline: document.getElementById('timeline').innerHTML,
+                container: document.getElementById('timeline-container').className
+            };
+            
+            // Set edit mode
+            editMode = 'genre';
+            
+            // Hide timeline, show genre submenu
+            document.getElementById('timeline').style.display = 'none';
+            document.getElementById('auto-populate-submenu').classList.add('visible');
+            
+            // Add edit mode styling
+            document.getElementById('timeline-container').classList.add('edit-mode');
+            
+            // Sync genre dropdown with current state
+            const genreSelect = document.getElementById('genre-select-submenu');
+            if (currentGenre) {
+                genreSelect.value = currentGenre;
+            }
+            
+            // Set a flag to prevent change monitor reactions during edit mode
+            window.isInEditMode = true;
+        }
+
+        // Open edit mode for adding individual content
+        function openAddContentMode() {
+            // Store current timeline state
+            previousTimelineState = {
+                timeline: document.getElementById('timeline').innerHTML,
+                container: document.getElementById('timeline-container').className
+            };
+            
+            // Set edit mode
+            editMode = 'individual';
+            
+            // Hide timeline, show individual content submenu
+            document.getElementById('timeline').style.display = 'none';
+            document.getElementById('individual-content-submenu').classList.add('visible');
+            
+            // Add edit mode styling
+            document.getElementById('timeline-container').classList.add('edit-mode');
+            
+            // Populate content dropdown
+            updateContentDropdownSubmenu();
+        }
+
+        // Cancel edit mode and restore timeline
+        function cancelEdit() {
+            if (editMode === null) return;
+            
+            // Restore timeline state
+            if (previousTimelineState) {
+                document.getElementById('timeline').innerHTML = previousTimelineState.timeline;
+                document.getElementById('timeline-container').className = previousTimelineState.container;
+            }
+            
+            // Show timeline, hide submenus
+            document.getElementById('timeline').style.display = 'block';
+            document.getElementById('auto-populate-submenu').classList.remove('visible');
+            document.getElementById('individual-content-submenu').classList.remove('visible');
+            
+            // Remove edit mode styling
+            document.getElementById('timeline-container').classList.remove('edit-mode');
+            
+            // Reset state
+            editMode = null;
+            previousTimelineState = null;
+            
+            // Clear edit mode flag
+            window.isInEditMode = false;
+        }
+
+        // Auto-populate function for submenu
+        function autoPopulate() {
+            const genreSelect = document.getElementById('genre-select-submenu');
+            const selectedGenre = genreSelect.value;
+            
+            if (!selectedGenre) {
+                alert('Please select a genre first');
+                return;
+            }
+            
+            // Set current genre and create lineup with initial load flag to prevent infinite loops
+            currentGenre = selectedGenre;
+            createLineup(true); // Pass true to indicate this is an initial load, not a change event
+            
+            // Exit edit mode
+            cancelEdit();
+        }
+
+        // Handle genre change in submenu
+        function handleGenreChangeSubmenu(selectElement) {
+            currentGenre = selectElement.value;
+            updateContentDropdownSubmenu();
+        }
+
+        // Update content dropdown for submenu with streamer filtering
+        function updateContentDropdownSubmenu() {
+            const contentDropdown = document.getElementById('content-dropdown-submenu');
+            const streamerFilter = document.getElementById('streamer-filter-submenu');
+            const selectedStreamer = streamerFilter ? streamerFilter.value : '';
+            
+            contentDropdown.innerHTML = '<option value="">Select content...</option>';
+
+            if (currentGenre && genreContent[currentGenre]) {
+                let content = genreContent[currentGenre];
+                
+                // Filter by streamer if selected
+                if (selectedStreamer) {
+                    content = content.filter(item => item.service === selectedStreamer);
+                }
+                
+                content.forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = item.title;
+
+                    // Format display text based on content type
+                    let displayText = item.title;
+                    if (item.type === 'show' && item.season && item.episode) {
+                        displayText += ` ${item.season}:${item.episode}`;
+                    }
+                    displayText += ` (${item.duration}min) - ${item.service}`;
+
+                    option.textContent = displayText;
+                    option.dataset.type = item.type;
+                    option.dataset.duration = item.duration;
+                    option.dataset.service = item.service;
+                    option.dataset.season = item.season || '';
+                    option.dataset.episode = item.episode || '';
+                    contentDropdown.appendChild(option);
+                });
+            }
+        }
+
+        // Filter content by streamer
+        function filterContentByStreamer() {
+            updateContentDropdownSubmenu();
+            
+            // Also update search results if currently searching
+            const searchInput = document.getElementById('search-input-submenu');
+            if (searchInput.value.length >= 2) {
+                searchContentSubmenu();
+            }
+        }
+
+        // Search content for submenu with streamer filtering
+        function searchContentSubmenu() {
+            const searchInput = document.getElementById('search-input-submenu');
+            const searchResults = document.getElementById('search-results-submenu');
+            const streamerFilter = document.getElementById('streamer-filter-submenu');
+            const selectedStreamer = streamerFilter ? streamerFilter.value : '';
+            const query = searchInput.value.toLowerCase();
+            
+            if (query.length < 2) {
+                searchResults.style.display = 'none';
+                return;
+            }
+            
+            const results = [];
+            // Filter by current genre if set, otherwise search all content
+            let searchContent = currentGenre ? genreContent[currentGenre] : Object.values(genreContent).flat();
+            
+            // Apply streamer filter if selected
+            if (selectedStreamer) {
+                searchContent = searchContent.filter(item => item.service === selectedStreamer);
+            }
+            
+            searchContent.forEach(item => {
+                if (item.title.toLowerCase().includes(query)) {
+                    results.push(item);
+                }
+            });
+            
+            displaySearchResultsSubmenu(results);
+        }
+
+        // Display search results for submenu
+        function displaySearchResultsSubmenu(results) {
+            const searchResults = document.getElementById('search-results-submenu');
+            
+            if (results.length === 0) {
+                searchResults.style.display = 'none';
+                return;
+            }
+            
+            searchResults.innerHTML = '';
+            results.forEach(item => {
+                const resultDiv = document.createElement('div');
+                resultDiv.className = 'result-item';
+                
+                let metaText = `${item.type} • ${item.duration}min`;
+                if (item.type === 'show' && item.season && item.episode) {
+                    metaText += ` • ${item.season}:${item.episode}`;
+                }
+                metaText += ` • ${item.service}`;
+                
+                resultDiv.innerHTML = `
+                    <div class="result-title">${item.title}</div>
+                    <div class="result-meta">${metaText}</div>
+                `;
+                resultDiv.onclick = () => selectSearchResultSubmenu(item);
+                searchResults.appendChild(resultDiv);
+            });
+            
+            searchResults.style.display = 'block';
+        }
+
+        // Select search result for submenu
+        function selectSearchResultSubmenu(item) {
+            selectedContent = item;
+            document.getElementById('search-input-submenu').value = item.title;
+            document.getElementById('search-results-submenu').style.display = 'none';
+        }
+
+        // Select content from dropdown for submenu
+        function selectContentSubmenu() {
+            const dropdown = document.getElementById('content-dropdown-submenu');
+            const selectedOption = dropdown.options[dropdown.selectedIndex];
+            
+            if (selectedOption.value) {
+                selectedContent = {
+                    title: selectedOption.value,
+                    type: selectedOption.dataset.type,
+                    duration: parseInt(selectedOption.dataset.duration),
+                    service: selectedOption.dataset.service,
+                    season: selectedOption.dataset.season,
+                    episode: selectedOption.dataset.episode
+                };
+            }
+        }
+
+        // Add content for submenu
+        function addContentSubmenu() {
+            if (!selectedContent) {
+                alert('Please select content first');
+                return;
+            }
+            
+            // Check for duplicates before adding
+            if (isDuplicateContent(selectedContent)) {
+                alert(`"${selectedContent.title}" is already in the channel. Duplicates are not allowed.`);
+                return;
+            }
+            
+            // Find the next available start time
+            let nextStartTime = 0;
+            if (currentContent.length > 0) {
+                const sortedContent = [...currentContent].sort((a, b) => (a.startTime + a.duration) - (b.startTime + b.duration));
+                nextStartTime = sortedContent[sortedContent.length - 1].startTime + sortedContent[sortedContent.length - 1].duration;
+            }
+            
+            const newContent = {
+                ...selectedContent,
+                originalDuration: selectedContent.duration,
+                startTime: nextStartTime
+            };
+            
+            currentContent.push(newContent);
+            console.log(`✅ Added "${newContent.title}" to channel via submenu (no duplicates)`);
+            
+            // Show program track if not already visible
+            document.getElementById('program-track').style.display = 'block';
+            updateProgramTrack();
+            
+            // Reset form
+            selectedContent = null;
+            document.getElementById('search-input-submenu').value = '';
+            document.getElementById('content-dropdown-submenu').value = '';
+            document.getElementById('search-results-submenu').style.display = 'none';
+            
+            updateMultiplier();
+            
+            // Exit edit mode
+            cancelEdit();
+        }
+
+        // Update the edit link click handler
+        function toggleEditPanel() {
+            openGenreEditMode();
+        }
+
+        // Simulate show detection for demo purposes
+        function simulateShowDetection() {
+            const demoShows = [
+                {
+                    showTitle: 'BREAKING BAD',
+                    showType: 'show',
+                    duration: 47,
+                    service: 'NETFLIX',
+                    season: 'S5',
+                    episode: 'E16'
+                },
+                {
+                    showTitle: 'STRANGER THINGS',
+                    showType: 'show',
+                    duration: 51,
+                    service: 'NETFLIX',
+                    season: 'S4',
+                    episode: 'E9'
+                },
+                {
+                    showTitle: 'THE CROWN',
+                    showType: 'show',
+                    duration: 58,
+                    service: 'NETFLIX',
+                    season: 'S6',
+                    episode: 'E10'
+                }
+            ];
+            
+            // Randomly select a show to simulate detection
+            const randomShow = demoShows[Math.floor(Math.random() * demoShows.length)];
+            
+            // Simulate the detection with a slight delay
+            setTimeout(() => {
+                handleShowDetection(randomShow);
+            }, 1000);
+        }
+
+        // Handle show detection from parent window (FIXED: Put detected show first and auto-populate)
+        function handleShowDetection(payload) {
+            const { showTitle, showType, duration, service, season, episode, genre } = payload;
+            
+            console.log('🎯 Processing show detection for channel auto-population:', payload);
+            
+            // Create new content item for the detected show
+            const detectedShow = {
+                title: showTitle,
+                type: 'detected_show', // Mark as detected show for protection
+                duration: duration || 60,
+                service: service || 'DETECTED',
+                season: season || '',
+                episode: episode || '',
+                originalDuration: duration || 60,
+                startTime: 0 // Always first item
+            };
+            
+            // Check for duplicates in current content
+            const detectedShowId = getContentId(detectedShow);
+            console.log(`🔍 Detected show ID: "${detectedShowId}" (title: "${detectedShow.title}", type: "${detectedShow.type}", season: "${detectedShow.season}", episode: "${detectedShow.episode}")`);
+            
+            const existingShow = currentContent.find(item => {
+                const existingId = getContentId(item);
+                console.log(`🔍 Comparing with existing item ID: "${existingId}" (title: "${item.title}", type: "${item.type}", season: "${item.season}", episode: "${item.episode}")`);
+                return existingId === detectedShowId;
+            });
+            
+            if (existingShow) {
+                console.log(`⚠️ Detected show "${detectedShow.title}" (ID: ${detectedShowId}) is already in channel, skipping duplicate`);
+                console.log(`⚠️ Existing show: "${existingShow.title}" (ID: ${getContentId(existingShow)})`);
+                // Still send confirmation back to parent
+                window.parent.postMessage({
+                    type: 'rumi:showAdded',
+                    payload: { showTitle, position: 'existing' }
+                }, '*');
+                return;
+            }
+            
+            // Set/map the genre if provided
+            if (genre) {
+                const genreMapping = {
+                    'drama': 'Drama',
+                    'comedy': 'Comedy', 
+                    'thriller': 'Thriller',
+                    'sci-fi': 'Sci-Fi',
+                    'scifi': 'Sci-Fi',
+                    'horror': 'Horror',
+                    'action': 'Action',
+                    'romance': 'Romance',
+                    'documentary': 'Documentary',
+                    'animation': 'Animation'
+                };
+                
+                const detectedGenreLower = genre.toLowerCase();
+                const mappedGenre = genreMapping[detectedGenreLower] || 'Drama';
+                currentGenre = mappedGenre;
+                
+                console.log(`🎬 Set genre to: ${currentGenre} based on detected show`);
+                
+                // Update the channel title
+                const channelTitle = document.querySelector('.channel-title');
+                if (channelTitle) {
+                    channelTitle.textContent = `${currentGenre.toUpperCase()} CHANNEL`;
+                }
+            }
+            
+            // Clear existing content and add detected show as first item
+            currentContent = [detectedShow];
+            console.log(`✅ Added detected show "${detectedShow.title}" as first item`);
+            
+            // Auto-populate the rest of the channel with genre content
+            if (currentGenre) {
+                console.log(`🔄 Auto-populating channel with ${currentGenre} content...`);
+                // Get genre content but exclude the detected show
+                const availableGenreContent = genreContent[currentGenre] || [];
+                const filteredContent = availableGenreContent.filter(item => {
+                    const itemId = getContentId(item);
+                    const detectedId = getContentId(detectedShow);
+                    return itemId !== detectedId;
+                });
+                
+                console.log(`📋 Filtered ${availableGenreContent.length} genre items to ${filteredContent.length} (excluded detected show)`);
+                
+                // Add filtered content to lineup
+                                        populateLineupWithContent(filteredContent, detectedShow.duration, currentContent);
+            }
+            
+            // Update the display
+            updateProgramTrack();
+            updateMultiplier();
+            
+            // Send confirmation back to parent
+            window.parent.postMessage({
+                type: 'rumi:showAdded',
+                payload: { showTitle, position: 'first', genre: currentGenre }
+            }, '*');
+        }
+
+        // NEW: Message handler for content tracking data from parent window
+        window.addEventListener('message', function(event) {
+            if (event.data.type === 'contentTrackingData') {
+                console.log('Received content tracking data from parent:', event.data);
+                
+                // Store the content tracking data for use in createLineup
+                window.contentTrackingData = {
+                    excludeContentIds: new Set(event.data.excludeContentIds || []),
+                    playedContentIds: new Set(event.data.playedContentIds || []),
+                    channelContentIds: new Set(event.data.channelContentIds || [])
+                };
+                
+                // If we're waiting for this data to complete createLineup, trigger it
+                if (window.pendingLineupCreation) {
+                    window.pendingLineupCreation();
+                    window.pendingLineupCreation = null;
+                }
+            }
+            
+            // NEW: Handle function execution requests from parent window
+            if (event.data.type === 'executeFunction') {
+                const { functionName, args } = event.data;
+                console.log(`📥 Received request to execute '${functionName}' with args:`, args);
+                
+                try {
+                    // Check if the function exists in the global scope
+                    if (typeof window[functionName] === 'function') {
+                        console.log(`✅ Executing '${functionName}'...`);
+                        const result = window[functionName](...(args || []));
+                        console.log(`✅ Function '${functionName}' executed successfully`);
+                        return result;
+                    } else {
+                        console.error(`❌ Function '${functionName}' not found in channel iframe`);
+                    }
+                } catch (error) {
+                    console.error(`❌ Error executing function '${functionName}':`, error);
+                }
+            }
+        });
+
+        // Check if we're in content detection mode
+        function isContentDetectionMode() {
+            // Check if we have a detected show as the first item
+            if (currentContent.length > 0) {
+                const firstItem = currentContent[0];
+                
+                // Check for explicit detected_show type
+                if (firstItem && firstItem.type === 'detected_show') {
+                    return true;
+                }
+                
+                // Check if first item has startTime: 0 (likely currently playing)
+                if (firstItem && firstItem.startTime === 0) {
+                    return true;
+                }
+                
+                // Check if first item has service: 'DETECTED'
+                if (firstItem && firstItem.service === 'DETECTED') {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        // Check if the first item is currently playing
+        function isFirstItemCurrentlyPlaying() {
+            if (currentContent.length === 0) return false;
+            
+            const firstItem = currentContent[0];
+            
+            // Check if this is a detected show (currently playing)
+            if (firstItem.type === 'detected_show') {
+                return true;
+            }
+            
+            // Additional check: if the first item has startTime: 0, it's likely currently playing
+            if (firstItem.startTime === 0) {
+                return true;
+            }
+            
+            // Check if first item has service: 'DETECTED'
+            if (firstItem.service === 'DETECTED') {
+                return true;
+            }
+            
+            return false;
+        }
+
+        // Test function to verify content protection
+        function testContentProtection() {
+            console.log('=== Testing Content Protection ===');
+            
+            // Test 1: Check if we're in content detection mode
+            const isDetectionMode = isContentDetectionMode();
+            console.log('Is content detection mode:', isDetectionMode);
+            
+            // Test 2: Check if first item is currently playing
+            const isFirstPlaying = isFirstItemCurrentlyPlaying();
+            console.log('Is first item currently playing:', isFirstPlaying);
+        }
+
+        // NEW: Test function to verify duplicate prevention system
+        function testDuplicatePrevention() {
+            console.log('🧪 === TESTING DUPLICATE PREVENTION SYSTEM ===');
+            
+            // Store original content
+            const originalContent = [...currentContent];
+            const originalContentCount = currentContent.length;
+            
+            console.log(`📊 Starting with ${originalContentCount} items in channel`);
+            
+            // Test 1: Try to add the same content via different methods
+            if (currentContent.length > 0) {
+                const testItem = currentContent[0];
+                console.log(`\n🔬 Test 1: Attempting to add duplicate of "${testItem.title}"`);
+                
+                // Test manual addition
+                selectedContent = { ...testItem };
+                addContent(); // Should be blocked
+                
+                console.log(`📊 After manual add attempt: ${currentContent.length} items (should be ${originalContentCount})`);
+                
+                // Test position-based addition
+                selectedContent = { ...testItem };
+                addContentAtPosition(60); // Should be blocked
+                
+                console.log(`📊 After position add attempt: ${currentContent.length} items (should be ${originalContentCount})`);
+                
+                // Test submenu addition
+                selectedContent = { ...testItem };
+                addContentSubmenu(); // Should be blocked
+                
+                console.log(`📊 After submenu add attempt: ${currentContent.length} items (should be ${originalContentCount})`);
+                
+                // Clear selected content
+                selectedContent = null;
+            }
+            
+            // Test 2: Test show detection duplicate prevention
+            if (currentContent.length > 0) {
+                const testShow = currentContent[0];
+                console.log(`\n🔬 Test 2: Attempting to add duplicate detected show "${testShow.title}"`);
+                
+                const detectionPayload = {
+                    showTitle: testShow.title,
+                    showType: testShow.type,
+                    duration: testShow.duration,
+                    service: testShow.service,
+                    season: testShow.season,
+                    episode: testShow.episode
+                };
+                
+                handleShowDetection(detectionPayload); // Should be blocked
+                console.log(`📊 After show detection attempt: ${currentContent.length} items (should be ${originalContentCount})`);
+            }
+            
+            // Test 3: Test auto-population duplicate prevention
+            console.log(`\n🔬 Test 3: Testing auto-population duplicate prevention`);
+            
+            // Create a test genre with some duplicate content
+            const testGenre = 'TestGenre';
+            const testContent = [
+                {title: 'Test Show 1', type: 'show', duration: 30, service: 'TEST', season: 'S1', episode: 'E1'},
+                {title: 'Test Show 2', type: 'show', duration: 45, service: 'TEST', season: 'S1', episode: 'E2'}
+            ];
+            
+            // Add one of the test items manually first
+            if (testContent.length > 0) {
+                const firstTestItem = testContent[0];
+                const manualItem = {
+                    ...firstTestItem,
+                    originalDuration: firstTestItem.duration,
+                    startTime: originalContent.length > 0 ? 
+                        Math.max(...originalContent.map(item => item.startTime + item.duration)) : 0
+                };
+                
+                // Add manually (this should work)
+                currentContent.push(manualItem);
+                console.log(`✅ Manually added "${firstTestItem.title}" for testing`);
+                
+                // Now try auto-population with the same content - should skip duplicates
+                const lineupContent = [...currentContent];
+                                    populateLineupWithContent(testContent, manualItem.startTime + manualItem.duration, lineupContent);
+                
+                // Count how many test items were added (should be only 1 new one, not the duplicate)
+                const testItemsInChannel = currentContent.filter(item => item.title.startsWith('Test Show')).length;
+                console.log(`📊 Test items in channel after auto-population: ${testItemsInChannel} (should be 2 total, 1 existing + 1 new)`);
+            }
+            
+            // Test 4: Verify duplicate detection function directly
+            console.log(`\n🔬 Test 4: Testing isDuplicateContent function directly`);
+            
+            if (currentContent.length > 0) {
+                const existingItem = currentContent[0];
+                const duplicateItem = { ...existingItem };
+                const uniqueItem = { title: 'Unique Test Item', type: 'show', duration: 30, service: 'TEST' };
+                
+                const isDup1 = isDuplicateContent(duplicateItem);
+                const isDup2 = isDuplicateContent(uniqueItem);
+                
+                console.log(`📊 Duplicate check for existing item: ${isDup1} (should be true)`);
+                console.log(`📊 Duplicate check for unique item: ${isDup2} (should be false)`);
+            }
+            
+            // Restore original content
+            currentContent.length = 0;
+            currentContent.push(...originalContent);
+            updateProgramTrack();
+            
+            console.log(`\n✅ Duplicate prevention test completed. Channel restored to ${currentContent.length} items.`);
+            console.log('🎉 === DUPLICATE PREVENTION TEST COMPLETE ===');
+        }
+
+        // Debug function to inspect current content state
+        function debugContentState() {
+            console.log('=== Content State Debug ===');
+            console.log('Current content length:', currentContent.length);
+            
+            if (currentContent.length > 0) {
+                console.log('First item details:', {
+                    title: currentContent[0].title,
+                    type: currentContent[0].type,
+                    service: currentContent[0].service,
+                    startTime: currentContent[0].startTime,
+                    duration: currentContent[0].duration
+                });
+                
+                console.log('Is detection mode:', isContentDetectionMode());
+                console.log('Is first playing:', isFirstItemCurrentlyPlaying());
+                console.log('Is protected:', currentContent.length > 0 && 
+                           isContentDetectionMode() && 
+                           isFirstItemCurrentlyPlaying());
+            }
+            
+            console.log('All content items:', currentContent);
+            console.log('=== Debug Complete ===');
+        }
+
+        // Debug function to force show program track
+        function forceShowProgramTrack() {
+            console.log('=== Force Show Program Track ===');
+            const programTrack = document.getElementById('program-track');
+            console.log('Program track element:', programTrack);
+            console.log('Program track display style:', programTrack.style.display);
+            
+            programTrack.style.display = 'block';
+            console.log('Set program track display to block');
+            
+            updateProgramTrack();
+            console.log('Updated program track');
+            
+            console.log('Program track children count:', programTrack.children.length);
+            console.log('=== Force Show Complete ===');
+        }
+
+        // Debug function to check positioning
+        function debugPositioning() {
+            console.log('=== Debug Positioning ===');
+            
+            if (currentContent.length > 0) {
+                const firstItem = currentContent[0];
+                console.log('First item:', firstItem);
+                
+                const leftPosition = calculateLeftPosition(firstItem.startTime);
+                const blockWidth = calculateWidth(firstItem.duration);
+                
+                console.log('Calculated left position:', leftPosition + '%');
+                console.log('Calculated block width:', blockWidth + '%');
+                console.log('Start time:', firstItem.startTime);
+                console.log('Duration:', firstItem.duration);
+            }
+            
+            const track = document.getElementById('program-track');
+            console.log('Program track dimensions:', {
+                offsetWidth: track.offsetWidth,
+                offsetHeight: track.offsetHeight,
+                clientWidth: track.clientWidth,
+                clientHeight: track.clientHeight
+            });
+            
+            console.log('=== Positioning Debug Complete ===');
+        }
+
+
+
+        // Debug function to test show detection and auto-population
+        function testShowDetection() {
+            console.log('=== Testing Show Detection ===');
+            
+            // Simulate a detected show
+            const testShow = {
+                title: 'Blade Runner 2049',
+                genre: 'Sci-Fi',
+                duration: 164,
+                season: 'N/A',
+                episode: 'N/A'
+            };
+            
+            console.log('Simulating show detection with:', testShow);
+            
+            // Trigger the show detection handler
+            window.dispatchEvent(new MessageEvent('message', {
+                data: {
+                    type: 'rumi:showDetected',
+                    payload: testShow
+                }
+            }));
+            
+            console.log('Show detection triggered');
+            console.log('Current genre:', currentGenre);
+            console.log('Current content length:', currentContent.length);
+            
+            setTimeout(() => {
+                console.log('After timeout - Current content:', currentContent);
+                if (currentContent.length > 0) {
+                    console.log('First item:', currentContent[0]);
+                    console.log('Program track visible:', document.getElementById('program-track').style.display);
+                }
+            }, 1000);
+            
+            console.log('=== Test Complete ===');
+        }
+
+        // NEW: Update content blocks display based on transition system data
+        function updateContentBlocksDisplay(data) {
+            console.log('=== UPDATING CONTENT BLOCKS IN CHANNEL ===');
+            console.log('Received data:', data);
+            
+            // Instead of creating a separate content section, we should update the existing
+            // program track blocks to reflect the transition system state
+            
+            const { playedContent, currentShow, elapsedTime, fastModeActive, preserveAllContent, isSessionStart, isTransition, updateType } = data;
+            
+            // In fast mode, session start, transitions, or when preserveAllContent is true, ensure all program blocks remain visible
+            if (fastModeActive || preserveAllContent || isSessionStart || isTransition) {
+                console.log('Fast mode, session start, transition, or preserve all content - keeping all blocks visible');
+                const programTrack = document.getElementById('program-track');
+                if (programTrack) {
+                    programTrack.style.display = 'block';
+                    // Ensure all program slots are visible
+                    const programSlots = programTrack.querySelectorAll('.program-slot');
+                    programSlots.forEach(slot => {
+                        slot.style.display = 'block';
+                        slot.style.visibility = 'visible';
+                    });
+                }
+                
+                // If this is a session start and we don't have transition data yet, skip the update
+                if (isSessionStart && (!playedContent || playedContent.length === 0)) {
+                    console.log('Session start with no transition data - preserving existing content');
+                    return;
+                }
+                
+                // If this is a transition with minimal data, only update status, don't replace content
+                if (isTransition && updateType === 'status_update') {
+                    console.log('Transition status update - preserving existing content, updating status only');
+                    updateProgramTrackStatusOnly(playedContent, currentShow, elapsedTime);
+                    return;
+                }
+            }
+            
+            // Update existing program track blocks based on transition system data
+            updateProgramTrackWithTransitionData(playedContent, currentShow, elapsedTime);
+            
+            console.log('Content blocks display updated in channel');
+            console.log('=== END CONTENT BLOCKS UPDATE ===');
+        }
+        
+        // NEW: Helper function to update only the status of program blocks during transitions (preserves all content)
+        function updateProgramTrackStatusOnly(playedContent, currentShow, elapsedTime) {
+            const programBlocks = document.querySelectorAll('.program-slot');
+            
+            if (programBlocks.length === 0) {
+                console.log('No program blocks found to update status');
+                return;
+            }
+            
+            console.log(`Updating status only for ${programBlocks.length} program blocks (preserving all content)`);
+            
+            // Only update visual status classes and icons, don't remove or hide any blocks
+            programBlocks.forEach(block => {
+                // Remove status classes but keep the block visible
+                block.classList.remove('completed', 'current', 'playing');
+                
+                // Remove any existing status icons
+                const existingIcons = block.querySelectorAll('.status-icon');
+                existingIcons.forEach(icon => icon.remove());
+                
+                // Reset status-related styles but keep block visible
+                block.style.opacity = '';
+                block.style.transform = '';
+                block.style.boxShadow = '';
+                block.style.border = '';
+                block.style.background = '';
+                
+                // Ensure block remains visible
+                block.style.display = 'block';
+                block.style.visibility = 'visible';
+            });
+            
+            // Mark played content as completed (status only)
+            if (playedContent && playedContent.length > 0) {
+                playedContent.forEach((content, index) => {
+                    const matchingBlock = findMatchingProgramBlock(content);
+                    if (matchingBlock) {
+                        console.log(`Updating status to completed: ${content.title}`);
+                        matchingBlock.classList.add('completed');
+                        
+                        // Add checkmark icon
+                        const checkIcon = document.createElement('span');
+                        checkIcon.className = 'status-icon';
+                        checkIcon.textContent = '✓';
+                        checkIcon.style.position = 'absolute';
+                        checkIcon.style.top = '5px';
+                        checkIcon.style.right = '5px';
+                        checkIcon.style.fontSize = '12px';
+                        checkIcon.style.color = '#4CAF50';
+                        matchingBlock.style.position = 'relative';
+                        matchingBlock.appendChild(checkIcon);
+                    }
+                });
+            }
+            
+            // Mark current show as active/playing (status only)
+            if (currentShow) {
+                const currentBlock = findMatchingProgramBlock(currentShow);
+                if (currentBlock) {
+                    console.log(`Updating status to current: ${currentShow.title}`);
+                    currentBlock.classList.add('current', 'playing');
+                    
+                    // Add play icon
+                    const playIcon = document.createElement('span');
+                    playIcon.className = 'status-icon';
+                    playIcon.textContent = '▶';
+                    playIcon.style.position = 'absolute';
+                    playIcon.style.top = '5px';
+                    playIcon.style.right = '5px';
+                    playIcon.style.fontSize = '12px';
+                    playIcon.style.color = '#2196F3';
+                    currentBlock.style.position = 'relative';
+                    currentBlock.appendChild(playIcon);
+                }
+            }
+            
+            console.log('Status-only update completed - all content preserved');
+        }
+        
+        // Helper function to update program track blocks with transition system data
+        function updateProgramTrackWithTransitionData(playedContent, currentShow, elapsedTime) {
+            const programBlocks = document.querySelectorAll('.program-slot');
+            
+            if (programBlocks.length === 0) {
+                console.log('No program blocks found to update');
+                return;
+            }
+            
+            console.log(`Updating ${programBlocks.length} program blocks with transition data`);
+            
+            // Reset all blocks to default state first
+            programBlocks.forEach(block => {
+                block.classList.remove('completed', 'current', 'playing');
+                // Reset inline styles to let CSS take over
+                block.style.opacity = '';
+                block.style.transform = '';
+                block.style.boxShadow = '';
+                block.style.border = '';
+                block.style.background = '';
+                
+                // Remove any existing status icons
+                const existingIcons = block.querySelectorAll('.status-icon');
+                existingIcons.forEach(icon => icon.remove());
+            });
+            
+            // Mark played content as completed
+            if (playedContent && playedContent.length > 0) {
+                playedContent.forEach((content, index) => {
+                    const matchingBlock = findMatchingProgramBlock(content);
+                    if (matchingBlock) {
+                        console.log(`Marking block as completed: ${content.title}`);
+                        matchingBlock.classList.add('completed');
+                        
+                        // Add checkmark icon
+                        const checkIcon = document.createElement('span');
+                        checkIcon.className = 'status-icon';
+                        checkIcon.textContent = '✓';
+                        matchingBlock.style.position = 'relative';
+                        matchingBlock.appendChild(checkIcon);
+                    }
+                });
+            }
+            
+            // Mark current show as active/playing
+            if (currentShow) {
+                const currentBlock = findMatchingProgramBlock(currentShow);
+                if (currentBlock) {
+                    console.log(`Marking block as current: ${currentShow.title}`);
+                    currentBlock.classList.add('current', 'playing');
+                    
+                    // Add play icon
+                    const playIcon = document.createElement('span');
+                    playIcon.className = 'status-icon';
+                    playIcon.textContent = '▶';
+                    currentBlock.style.position = 'relative';
+                    currentBlock.appendChild(playIcon);
+                }
+            }
+        }
+        
+        // Helper function to find matching program block for content
+        function findMatchingProgramBlock(content) {
+            const programBlocks = document.querySelectorAll('.program-slot');
+            
+            for (const block of programBlocks) {
+                const blockTitle = block.querySelector('.program-title')?.textContent;
+                if (blockTitle && content.title && blockTitle.includes(content.title)) {
+                    return block;
+                }
+                
+                // Also try matching the full block text content
+                const blockText = block.textContent;
+                if (blockText && content.title && blockText.includes(content.title)) {
+                    return block;
+                }
+            }
+            
+            console.log(`No matching program block found for: ${content.title}`);
+            return null;
+        }
+
+        // Function to clean up any weird content containers that were incorrectly added
+        function cleanupWeirdContentContainers() {
+            console.log('Cleaning up weird content containers...');
+            
+            // Remove the incorrect content-blocks-container if it exists
+            const weirdContainer = document.getElementById('content-blocks-container');
+            if (weirdContainer) {
+                console.log('Removing weird content-blocks-container');
+                weirdContainer.remove();
+            }
+            
+            // Remove any other weird content sections
+            const weirdSections = document.querySelectorAll('.content-block, .session-content');
+            weirdSections.forEach(section => {
+                console.log('Removing weird content section:', section.className);
+                section.remove();
+            });
+            
+            console.log('Cleanup complete');
+        }
+ 
+        // Initialize
+    </script>
+    
+    <!-- Change Monitor Agent -->
+    <script src="change-monitor.js"></script>
+    
+    <!-- Genre Channel Layout Fixes -->
+    <script src="genre-channel-layout-fixes.js"></script>
+    
+    <!-- Overlap Detection Agent -->
+    <script src="overlap-detector.js"></script>
+    
+    <!-- Comprehensive Overlap Fix -->
+    <script src="genre-channel-overlap-fix.js"></script>
+    
+    <script>
+        // Initialize all monitoring and fix agents after page load
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                // Initialize change monitor
+                if (window.ChangeMonitor) {
+                    window.ChangeMonitor.initialize();
+                    console.log('🛡️ Change monitor initialized in genre channel');
+                } else {
+                    console.warn('⚠️ Change monitor not found');
+                }
+                
+                // Permanently disable overlap detector to prevent infinite loops
+                if (window.overlapDetector) {
+                    window.overlapDetector.disable(); // Actually disable it
+                    console.log('🔍 Overlap detector permanently disabled to prevent infinite loops');
+                } else {
+                    console.warn('⚠️ Overlap detector not found');
+                }
+                
+                // Permanently disable comprehensive overlap fix to prevent infinite loops
+                if (window.genreChannelOverlapFix) {
+                    window.genreChannelOverlapFix.disable(); // Actually disable it
+                    console.log('🔧 Comprehensive overlap fix permanently disabled to prevent infinite loops');
+                } else {
+                    console.warn('⚠️ Comprehensive overlap fix not found');
+                }
+                
+                // Log initialization status
+                console.log('🎯 All monitoring and fix agents initialized');
+            }, 2000);
+        });
+    </script>
+</body>
+</html> 

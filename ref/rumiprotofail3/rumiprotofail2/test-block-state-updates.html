@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Block State Updates Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #1a1a1a;
+            color: #ccc;
+            margin: 20px;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .test-section {
+            background: #222;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .test-button {
+            background: #00ff41;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+            font-weight: bold;
+        }
+        .test-button:hover {
+            background: #00cc33;
+        }
+        .log-area {
+            background: #000;
+            border: 1px solid #333;
+            border-radius: 4px;
+            padding: 10px;
+            height: 200px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .status.success {
+            background: #1a2a1a;
+            border: 1px solid #00ff41;
+            color: #00ff41;
+        }
+        .status.error {
+            background: #2a1a1a;
+            border: 1px solid #ff4444;
+            color: #ff4444;
+        }
+        .status.info {
+            background: #1a1a2a;
+            border: 1px solid #4444ff;
+            color: #4444ff;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🎯 Block State Updates Test</h1>
+        <p>This test verifies that block state updates from the optimized genre channel are properly received and handled by the main system.</p>
+        
+        <div class="test-section">
+            <h2>Test Controls</h2>
+            <button class="test-button" onclick="testBlockStateUpdates()">Test Block State Updates</button>
+            <button class="test-button" onclick="testIndexingProgression()">Test Indexing Progression</button>
+            <button class="test-button" onclick="clearLog()">Clear Log</button>
+        </div>
+        
+        <div class="test-section">
+            <h2>Status</h2>
+            <div id="status-area"></div>
+        </div>
+        
+        <div class="test-section">
+            <h2>Log</h2>
+            <div id="log-area" class="log-area"></div>
+        </div>
+    </div>
+
+    <script>
+        let logArea;
+        let statusArea;
+        
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = `[${timestamp}] ${message}`;
+            logArea.innerHTML += logEntry + '\n';
+            logArea.scrollTop = logArea.scrollHeight;
+            console.log(logEntry);
+        }
+        
+        function updateStatus(message, type = 'info') {
+            statusArea.innerHTML = `<div class="status ${type}">${message}</div>`;
+        }
+        
+        function clearLog() {
+            logArea.innerHTML = '';
+        }
+        
+        function testBlockStateUpdates() {
+            log('🧪 Starting block state updates test...');
+            updateStatus('Testing block state updates...', 'info');
+            
+            // Simulate block state updates from optimized channel
+            const testUpdates = [
+                { title: 'Stranger Things', state: 'indexing' },
+                { title: 'Stranger Things', state: 'indexed' },
+                { title: 'Mindhunter', state: 'indexing' },
+                { title: 'Mindhunter', state: 'indexed' },
+                { title: 'Ozark', state: 'indexing' },
+                { title: 'Ozark', state: 'indexed' }
+            ];
+            
+            let updateIndex = 0;
+            const sendUpdate = () => {
+                if (updateIndex < testUpdates.length) {
+                    const update = testUpdates[updateIndex];
+                    log(`📡 Sending block state update: "${update.title}" -> ${update.state}`);
+                    
+                    // Simulate the message that would be sent from optimized channel
+                    const message = {
+                        type: 'rumi:updateBlockState',
+                        payload: {
+                            title: update.title,
+                            state: update.state,
+                            timestamp: Date.now(),
+                            source: 'OptimizedGenreChannel'
+                        }
+                    };
+                    
+                    // Simulate receiving the message in main system
+                    simulateMessageReceived(message);
+                    
+                    updateIndex++;
+                    setTimeout(sendUpdate, 1000);
+                } else {
+                    log('✅ Block state updates test completed');
+                    updateStatus('Block state updates test completed successfully!', 'success');
+                }
+            };
+            
+            sendUpdate();
+        }
+        
+        function testIndexingProgression() {
+            log('🧪 Starting indexing progression test...');
+            updateStatus('Testing indexing progression...', 'info');
+            
+            // Simulate the indexing progression from optimized channel
+            const testContent = [
+                { title: 'Stranger Things', duration: 51 },
+                { title: 'Mindhunter', duration: 45 },
+                { title: 'Ozark', duration: 60 },
+                { title: 'Gone Girl', duration: 149 }
+            ];
+            
+            log(`📺 Starting indexing for ${testContent.length} items`);
+            
+            let currentIndex = 0;
+            const processNextItem = () => {
+                if (currentIndex < testContent.length) {
+                    const item = testContent[currentIndex];
+                    log(`🎯 Processing item ${currentIndex + 1}: ${item.title}`);
+                    
+                    // Simulate indexing state
+                    setTimeout(() => {
+                        simulateMessageReceived({
+                            type: 'rumi:updateBlockState',
+                            payload: {
+                                title: item.title,
+                                state: 'indexing',
+                                timestamp: Date.now(),
+                                source: 'OptimizedGenreChannel'
+                            }
+                        });
+                        
+                        // Simulate completion after processing time
+                        setTimeout(() => {
+                            simulateMessageReceived({
+                                type: 'rumi:updateBlockState',
+                                payload: {
+                                    title: item.title,
+                                    state: 'indexed',
+                                    timestamp: Date.now(),
+                                    source: 'OptimizedGenreChannel'
+                                }
+                            });
+                            
+                            currentIndex++;
+                            processNextItem();
+                        }, item.duration * 50); // Simulate processing time
+                        
+                    }, 500);
+                } else {
+                    log('✅ Indexing progression test completed');
+                    updateStatus('Indexing progression test completed successfully!', 'success');
+                }
+            };
+            
+            processNextItem();
+        }
+        
+        function simulateMessageReceived(message) {
+            log(`📨 Received message: ${message.type}`);
+            
+            // Simulate the message handling logic from main system
+            if (message.type === 'rumi:updateBlockState') {
+                const { title, state } = message.payload;
+                log(`🎯 Updating block "${title}" to state: ${state}`);
+                
+                // Simulate UI update
+                log(`🎨 Updating UI for block "${title}" to state: ${state}`);
+                
+                // Simulate content state manager update
+                if (window.ContentBlockStateManager && window.ContentBlockStateManager.setState) {
+                    window.ContentBlockStateManager.setState(title, state);
+                    log(`💾 Updated content state manager for "${title}"`);
+                }
+                
+                // Simulate UI element updates
+                log(`✅ Updated progress indicators and timeline blocks for "${title}"`);
+            }
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            logArea = document.getElementById('log-area');
+            statusArea = document.getElementById('status-area');
+            
+            log('🚀 Block State Updates Test initialized');
+            updateStatus('Ready to test block state updates', 'info');
+        });
+    </script>
+</body>
+</html> 

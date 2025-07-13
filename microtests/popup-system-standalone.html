@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Popup Information System - Micro Test</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background: #000;
+            color: #00ff41;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #111;
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #00ff41;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #00ff41;
+            padding-bottom: 20px;
+        }
+        
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            background: #1a1a1a;
+            border-radius: 5px;
+            border-left: 4px solid #00ff41;
+        }
+        
+        .popup-triggers {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .trigger-button {
+            padding: 20px;
+            background: #333;
+            border: 2px solid #00ff41;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            color: #00ff41;
+        }
+        
+        .trigger-button:hover {
+            background: #444;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 255, 65, 0.3);
+        }
+        
+        .trigger-button.automode {
+            border-color: #ffff00;
+            color: #ffff00;
+        }
+        
+        .trigger-button.automode:hover {
+            box-shadow: 0 5px 15px rgba(255, 255, 0, 0.3);
+        }
+        
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .popup-content {
+            background: #222;
+            border: 2px solid #00ff41;
+            border-radius: 10px;
+            padding: 20px;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+        }
+        
+        .popup-content.automode {
+            border-color: #ffff00;
+        }
+        
+        .popup-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #444;
+        }
+        
+        .popup-close {
+            background: #ff4444;
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .popup-close:hover {
+            background: #ff6666;
+        }
+        
+        .metadata-grid {
+            display: grid;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .metadata-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 12px;
+            background: #333;
+            border-radius: 5px;
+            border-left: 3px solid #00ff41;
+        }
+        
+        .metadata-item.automode {
+            border-left-color: #ffff00;
+        }
+        
+        .metadata-label {
+            font-weight: bold;
+            color: #ccc;
+        }
+        
+        .metadata-value {
+            color: #00ff41;
+        }
+        
+        .metadata-value.automode {
+            color: #ffff00;
+        }
+        
+        .info-panel {
+            background: #333;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        
+        .bucket-info {
+            background: #2a2a2a;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+            border: 1px solid #444;
+        }
+        
+        .bucket-info.automode {
+            border-color: #666;
+        }
+        
+        .feature-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .feature-item {
+            background: #333;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 4px solid #00ff41;
+        }
+        
+        .feature-item h4 {
+            margin: 0 0 10px 0;
+            color: #00ff41;
+        }
+        
+        .demo-controls {
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .demo-controls button {
+            padding: 10px 20px;
+            background: #00ff41;
+            color: #000;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 0 5px;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+        }
+        
+        .demo-controls button:hover {
+            background: #00cc33;
+        }
+        
+        .demo-controls button.automode {
+            background: #ffff00;
+        }
+        
+        .demo-controls button.automode:hover {
+            background: #cccc00;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>💬 POPUP INFORMATION SYSTEM</h1>
+            <p>Micro Test - Content Types, Bucket Info & Metadata Display</p>
+        </div>
+        
+        <div class="test-section">
+            <h2>Test Overview</h2>
+            <p>This micro-test demonstrates the Popup Information System used throughout the Rumi Extension. Different popup types showcase various content metadata, intelligence bucket information, and system details.</p>
+        </div>
+        
+        <div class="test-section">
+            <h2>Detection Mode Popups</h2>
+            <div class="popup-triggers">
+                <div class="trigger-button" onclick="showContentPopup()">
+                    <h3>📺 Content Metadata</h3>
+                    <p>Show information about detected content</p>
+                </div>
+                <div class="trigger-button" onclick="showGenrePopup()">
+                    <h3>🎬 Genre Channel</h3>
+                    <p>Display genre and timeline information</p>
+                </div>
+                <div class="trigger-button" onclick="showSessionPopup()">
+                    <h3>⏱️ Session Details</h3>
+                    <p>Current session progress and stats</p>
+                </div>
+                <div class="trigger-button" onclick="showPointsPopup()">
+                    <h3>💎 Points Breakdown</h3>
+                    <p>Point calculation and multipliers</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2>Automode Popups</h2>
+            <div class="popup-triggers">
+                <div class="trigger-button automode" onclick="showIntelligenceBucketPopup()">
+                    <h3>🧠 Intelligence Bucket</h3>
+                    <p>AI learning category and metadata</p>
+                </div>
+                <div class="trigger-button automode" onclick="showCampaignPopup()">
+                    <h3>⚡ Campaign Details</h3>
+                    <p>Mining campaign information</p>
+                </div>
+                <div class="trigger-button automode" onclick="showLearningPopup()">
+                    <h3>📚 Learning Progress</h3>
+                    <p>AI training contribution stats</p>
+                </div>
+                <div class="trigger-button automode" onclick="showMinerPopup()">
+                    <h3>⛏️ Miner Profile</h3>
+                    <p>User mining statistics</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2>Key Features Demonstrated</h2>
+            <div class="feature-list">
+                <div class="feature-item">
+                    <h4>📊 Metadata Display</h4>
+                    <p>Structured information presentation with labels and values</p>
+                </div>
+                <div class="feature-item">
+                    <h4>🎨 Theme Consistency</h4>
+                    <p>Detection mode (green) and Automode (yellow) theming</p>
+                </div>
+                <div class="feature-item">
+                    <h4>📱 Responsive Design</h4>
+                    <p>Adapts to different screen sizes and orientations</p>
+                </div>
+                <div class="feature-item">
+                    <h4>⚡ Quick Access</h4>
+                    <p>Fast popup loading with smooth animations</p>
+                </div>
+                <div class="feature-item">
+                    <h4>🔍 Content Filtering</h4>
+                    <p>Context-aware information based on current state</p>
+                </div>
+                <div class="feature-item">
+                    <h4>📈 Real-time Updates</h4>
+                    <p>Live data reflection in popup content</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2>Technical Implementation</h2>
+            <div class="info-panel">
+                <h3>🛠️ System Architecture:</h3>
+                <ul>
+                    <li><strong>Modal Management:</strong> JavaScript-driven popup system with overlay</li>
+                    <li><strong>Data Binding:</strong> Dynamic content population from application state</li>
+                    <li><strong>Event Handling:</strong> Click, hover, and keyboard interaction support</li>
+                    <li><strong>Styling:</strong> CSS Grid and Flexbox for responsive layouts</li>
+                </ul>
+                
+                <h3>📝 Popup Types:</h3>
+                <ul>
+                    <li><strong>Content Popups:</strong> Show/movie metadata and details</li>
+                    <li><strong>Bucket Popups:</strong> Intelligence bucket information</li>
+                    <li><strong>Session Popups:</strong> Current session progress and stats</li>
+                    <li><strong>System Popups:</strong> Configuration and settings</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="demo-controls">
+            <button onclick="showAllPopups()">Show All Popups</button>
+            <button onclick="closeAllPopups()">Close All</button>
+            <button class="automode" onclick="toggleTheme()">Toggle Theme</button>
+        </div>
+    </div>
+    
+    <!-- Popup Overlays -->
+    <div id="popupOverlay" class="popup-overlay" onclick="closePopup()">
+        <div class="popup-content" id="popupContent" onclick="event.stopPropagation()">
+            <div class="popup-header">
+                <h3 id="popupTitle">Popup Title</h3>
+                <button class="popup-close" onclick="closePopup()">×</button>
+            </div>
+            <div id="popupBody">
+                <!-- Content will be dynamically inserted here -->
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let currentTheme = 'detection';
+        
+        function showPopup(title, content, theme = 'detection') {
+            const overlay = document.getElementById('popupOverlay');
+            const popupContent = document.getElementById('popupContent');
+            const popupTitle = document.getElementById('popupTitle');
+            const popupBody = document.getElementById('popupBody');
+            
+            popupTitle.textContent = title;
+            popupBody.innerHTML = content;
+            
+            // Apply theme
+            if (theme === 'automode') {
+                popupContent.classList.add('automode');
+            } else {
+                popupContent.classList.remove('automode');
+            }
+            
+            overlay.style.display = 'flex';
+        }
+        
+        function closePopup() {
+            const overlay = document.getElementById('popupOverlay');
+            overlay.style.display = 'none';
+        }
+        
+        function showContentPopup() {
+            const content = `
+                <div class="metadata-grid">
+                    <div class="metadata-item">
+                        <span class="metadata-label">Title:</span>
+                        <span class="metadata-value">Breaking Bad</span>
+                    </div>
+                    <div class="metadata-item">
+                        <span class="metadata-label">Year:</span>
+                        <span class="metadata-value">2008</span>
+                    </div>
+                    <div class="metadata-item">
+                        <span class="metadata-label">Genre:</span>
+                        <span class="metadata-value">Drama, Crime, Thriller</span>
+                    </div>
+                    <div class="metadata-item">
+                        <span class="metadata-label">Duration:</span>
+                        <span class="metadata-value">47 minutes</span>
+                    </div>
+                    <div class="metadata-item">
+                        <span class="metadata-label">Season:</span>
+                        <span class="metadata-value">Season 1, Episode 1</span>
+                    </div>
+                    <div class="metadata-item">
+                        <span class="metadata-label">Point Value:</span>
+                        <span class="metadata-value">280 points</span>
+                    </div>
+                </div>
+                <div class="bucket-info">
+                    <h4>📊 Content Analysis</h4>
+                    <p>This content has been analyzed for genre classification, sentiment analysis, and narrative structure. Watching contributes to content recommendation algorithms.</p>
+                </div>
+            `;
+            showPopup('📺 Content Metadata', content, 'detection');
+        }
+        
+        function showGenrePopup() {
+            const content = `
+                <div class="metadata-grid">
+                    <div class="metadata-item">
+                        <span class="metadata-label">Selected Genre:</span>
+                        <span class="metadata-value">Drama</span>
+                    </div>
+                    <div class="metadata-item">
+                        <span class="metadata-label">Content Count:</span>
+                        <span class="metadata-value">8 shows</span>
+                    </div>
+                    <div class="metadata-item">
+                        <span class="metadata-label">Total Duration:</span>
+                        <span class="metadata-value">6 hours 32 minutes</span>
+                    </div>
+                    <div class="metadata-item">
+                        <span class="metadata-label">Avg. Rating:</span>
+                        <span class="metadata-value">8.7/10</span>
+                    </div>
+                </div>
+                <div class="bucket-info">
+                    <h4>🎬 Genre Channel Info</h4>
+                    <p>This genre channel contains curated content selected based on your viewing history and preferences. Each show contributes to genre classification training.</p>
+                </div>
+            `;
+            showPopup('🎬 Genre Channel', content, 'detection');
+        }
+        
+        function showSessionPopup() {
+            const content = `
+                <div class="metadata-grid">
+                    <div class="metadata-item">
+                        <span class="metadata-label">Session Time:</span>
+                        <span class="metadata-value">23:45</span>
+                    </div>
+                    <div class="metadata-item">
+                        <span class="metadata-label">Current Multiplier:</span>
+                        <span class="metadata-value">2.5x</span>
+                    </div>
+                    <div class="metadata-item">
+                        <span class="metadata-label">Points Earned:</span>
+                        <span class="metadata-value">156 points</span>
+                    </div>
+                    <div class="metadata-item">
+                        <span class="metadata-label">Next Diamond:</span>
+                        <span class="metadata-value">12 minutes</span>
+                    </div>
+                </div>
+                <div class="bucket-info">
+                    <h4>⏱️ Session Progress</h4>
+                    <p>Your current indexing session is progressing well. You've passed 3 diamond milestones and are approaching the 3.0x multiplier threshold.</p>
+                </div>
+            `;
+            showPopup('⏱️ Session Details', content, 'detection');
+        }
+        
+        function showPointsPopup() {
+            const content = `
+                <div class="metadata-grid">
+                    <div class="metadata-item">
+                        <span class="metadata-label">Base Rate:</span>
+                        <span class="metadata-value">0.1 pts/5s</span>
+                    </div>
+                    <div class="metadata-item">
+                        <span class="metadata-label">Current Multiplier:</span>
+                        <span class="metadata-value">2.5x</span>
+                    </div>
+                    <div class="metadata-item">
+                        <span class="metadata-label">Effective Rate:</span>
+                        <span class="metadata-value">0.25 pts/5s</span>
+                    </div>
+                    <div class="metadata-item">
+                        <span class="metadata-label">Session Total:</span>
+                        <span class="metadata-value">156 points</span>
+                    </div>
+                </div>
+                <div class="bucket-info">
+                    <h4>💎 Points Calculation</h4>
+                    <p>Points are calculated based on your base rate multiplied by your current multiplier. Diamond milestones increase your multiplier throughout the session.</p>
+                </div>
+            `;
+            showPopup('💎 Points Breakdown', content, 'detection');
+        }
+        
+        function showIntelligenceBucketPopup() {
+            const content = `
+                <div class="metadata-grid">
+                    <div class="metadata-item automode">
+                        <span class="metadata-label">Learning Category:</span>
+                        <span class="metadata-value automode">Content Intelligence</span>
+                    </div>
+                    <div class="metadata-item automode">
+                        <span class="metadata-label">Focus Area:</span>
+                        <span class="metadata-value automode">Metadata Processing</span>
+                    </div>
+                    <div class="metadata-item automode">
+                        <span class="metadata-label">Total Content:</span>
+                        <span class="metadata-value automode">15 clips • 35 minutes</span>
+                    </div>
+                    <div class="metadata-item automode">
+                        <span class="metadata-label">Estimated Points:</span>
+                        <span class="metadata-value automode">520 points</span>
+                    </div>
+                    <div class="metadata-item automode">
+                        <span class="metadata-label">Base Rate:</span>
+                        <span class="metadata-value automode">0.12 pts/5s</span>
+                    </div>
+                    <div class="metadata-item automode">
+                        <span class="metadata-label">Current Multiplier:</span>
+                        <span class="metadata-value automode">1.2x active</span>
+                    </div>
+                </div>
+                <div class="bucket-info automode">
+                    <h4>🧠 Intelligence Bucket Description</h4>
+                    <p>This bucket focuses on training AI models to understand and categorize content metadata. Your viewing contributes to improving content recommendation and classification systems.</p>
+                </div>
+            `;
+            showPopup('🧠 Intelligence Bucket', content, 'automode');
+        }
+        
+        function showCampaignPopup() {
+            const content = `
+                <div class="metadata-grid">
+                    <div class="metadata-item automode">
+                        <span class="metadata-label">Campaign Type:</span>
+                        <span class="metadata-value automode">Pattern Recognition</span>
+                    </div>
+                    <div class="metadata-item automode">
+                        <span class="metadata-label">Priority:</span>
+                        <span class="metadata-value automode">High</span>
+                    </div>
+                    <div class="metadata-item automode">
+                        <span class="metadata-label">Participants:</span>
+                        <span class="metadata-value automode">1,247 miners</span>
+                    </div>
+                    <div class="metadata-item automode">
+                        <span class="metadata-label">Progress:</span>
+                        <span class="metadata-value automode">73% complete</span>
+                    </div>
+                </div>
+                <div class="bucket-info automode">
+                    <h4>⚡ Campaign Details</h4>
+                    <p>This mining campaign focuses on identifying narrative patterns in drama series. Your contribution helps improve AI understanding of storytelling structures.</p>
+                </div>
+            `;
+            showPopup('⚡ Campaign Details', content, 'automode');
+        }
+        
+        function showLearningPopup() {
+            const content = `
+                <div class="metadata-grid">
+                    <div class="metadata-item automode">
+                        <span class="metadata-label">Training Progress:</span>
+                        <span class="metadata-value automode">87% complete</span>
+                    </div>
+                    <div class="metadata-item automode">
+                        <span class="metadata-label">Data Contributed:</span>
+                        <span class="metadata-value automode">2.3 GB</span>
+                    </div>
+                    <div class="metadata-item automode">
+                        <span class="metadata-label">Model Accuracy:</span>
+                        <span class="metadata-value automode">94.2%</span>
+                    </div>
+                    <div class="metadata-item automode">
+                        <span class="metadata-label">Your Impact:</span>
+                        <span class="metadata-value automode">+0.7% improvement</span>
+                    </div>
+                </div>
+                <div class="bucket-info automode">
+                    <h4>📚 Learning Progress</h4>
+                    <p>Your viewing sessions are actively contributing to AI model training. The system learns from your engagement patterns to improve content understanding.</p>
+                </div>
+            `;
+            showPopup('📚 Learning Progress', content, 'automode');
+        }
+        
+        function showMinerPopup() {
+            const content = `
+                <div class="metadata-grid">
+                    <div class="metadata-item automode">
+                        <span class="metadata-label">Miner Level:</span>
+                        <span class="metadata-value automode">Advanced</span>
+                    </div>
+                    <div class="metadata-item automode">
+                        <span class="metadata-label">Sessions:</span>
+                        <span class="metadata-value automode">147 completed</span>
+                    </div>
+                    <div class="metadata-item automode">
+                        <span class="metadata-label">Total Points:</span>
+                        <span class="metadata-value automode">34,520 points</span>
+                    </div>
+                    <div class="metadata-item automode">
+                        <span class="metadata-label">Avg. Multiplier:</span>
+                        <span class="metadata-value automode">2.8x</span>
+                    </div>
+                </div>
+                <div class="bucket-info automode">
+                    <h4>⛏️ Miner Profile</h4>
+                    <p>You're an advanced-level miner with excellent contribution metrics. Your consistent participation significantly improves AI training quality.</p>
+                </div>
+            `;
+            showPopup('⛏️ Miner Profile', content, 'automode');
+        }
+        
+        function showAllPopups() {
+            // Demo sequence
+            setTimeout(() => showContentPopup(), 100);
+            setTimeout(() => showIntelligenceBucketPopup(), 3000);
+            setTimeout(() => showSessionPopup(), 6000);
+        }
+        
+        function closeAllPopups() {
+            closePopup();
+        }
+        
+        function toggleTheme() {
+            currentTheme = currentTheme === 'detection' ? 'automode' : 'detection';
+            // Update UI to reflect theme change
+            alert(`Theme switched to: ${currentTheme}`);
+        }
+        
+        // Keyboard support
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closePopup();
+            }
+        });
+    </script>
+</body>
+</html> 

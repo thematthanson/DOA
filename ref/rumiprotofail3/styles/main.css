@@ -1,0 +1,1002 @@
+/* ================================
+   RUMI MAIN STYLES
+   Core styles for the application
+   ================================ */
+
+/* Import modular stylesheets */
+@import url('components.css');
+@import url('responsive.css');
+
+/* Import fonts */
+@import url('https://fonts.googleapis.com/css2?family=SF+Mono:wght@400;500;600;700&display=swap');
+
+/* ================================
+   RESET AND BASE STYLES
+   ================================ */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #111;
+    color: #fff;
+    font-family: 'SF Mono', 'Menlo', 'Courier New', monospace;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 50px;
+    min-height: 100vh;
+}
+
+/* ================================
+   LAYOUT CONTAINERS
+   ================================ */
+
+.simulation-container {
+    display: flex;
+    gap: 30px;
+    align-items: flex-start;
+}
+
+.entry-point-panel {
+    width: 220px;
+    padding: 20px;
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.entry-point-header {
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #888;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+/* ================================
+   EXTENSION POPUP
+   ================================ */
+
+.extension-popup {
+    width: 320px;
+    background: #000;
+    border: 2px solid #333;
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+
+.popup-header {
+    background: #111;
+    padding: 12px 16px;
+    border-bottom: 1px solid #333;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.popup-logo {
+    font-size: 16px;
+    font-weight: 700;
+    color: #00ff41;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.header-controls {
+    display: flex;
+    gap: 8px;
+}
+
+.popup-body {
+    flex: 1;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ================================
+   POINTS SECTION
+   ================================ */
+
+.points-section {
+    background: #1a1a1a;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 20px;
+    border: none;
+}
+
+.points-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.points-display {
+    display: flex;
+    flex-direction: column;
+}
+
+.points-total {
+    font-size: 20px;
+    font-weight: 700;
+    color: #00ff41;
+}
+
+.points-pending {
+    font-size: 11px;
+    color: #ffaa00;
+}
+
+.points-multiplier {
+    font-size: 14px;
+    font-weight: 600;
+    color: #00ff41;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* ================================
+   NOKIA VISUAL
+   ================================ */
+
+.nokia-visual {
+    width: 100%;
+    height: 45px;
+    background: linear-gradient(45deg, #001100, #003300);
+    border: 1px solid #00ff41;
+    border-radius: 4px;
+    margin: 0 auto 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: monospace;
+    font-size: 6px;
+    color: #00ff41;
+    overflow: hidden;
+}
+
+/* ================================
+   HOLISTIC PANEL
+   ================================ */
+
+.holistic-panel {
+    background: #111;
+    border: 1px solid #333;
+    border-radius: 6px;
+    padding: 12px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.holistic-section {
+    width: 100%;
+}
+
+#holistic-show-info {
+    font-size: 11px;
+    color: #ccc;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+#holistic-animation pre {
+    margin: 0;
+    padding: 0;
+    color: #00ff41;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    font-weight: bold;
+    line-height: 1.4;
+    white-space: pre-wrap;
+    text-align: center;
+}
+
+#holistic-animation pre.automode {
+    color: #00ff41 !important;
+}
+
+#holistic-progress {
+    font-size: 11px;
+    color: #888;
+    margin-top: 8px;
+}
+
+/* ================================
+   BUTTONS
+   ================================ */
+
+.primary-cta {
+    width: 100%;
+    padding: 12px 20px;
+    background: #222;
+    color: #00ff41;
+    border: 2px solid #00ff41;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-family: 'SF Mono', monospace;
+    transition: all 0.3s ease;
+}
+
+.primary-cta:hover {
+    background: #00ff41;
+    color: #000;
+}
+
+.primary-cta:disabled {
+    background: #333;
+    color: #666;
+    border-color: #666;
+    cursor: not-allowed;
+}
+
+.primary-cta:disabled:hover {
+    background: #333;
+    color: #666;
+}
+
+.primary-cta.automode {
+    background: linear-gradient(135deg, #ffff00, #ffaa00);
+    color: #000;
+    border-color: #ffaa00;
+}
+
+.primary-cta.automode:hover {
+    background: linear-gradient(135deg, #ffaa00, #ff8800);
+    color: #000;
+}
+
+.secondary-button {
+    width: 100%;
+    padding: 12px 16px;
+    background: #222;
+    color: #00ff41;
+    border: 2px solid #00ff41;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-family: 'SF Mono', monospace;
+    transition: all 0.3s ease;
+}
+
+.secondary-button:hover {
+    background: #00ff41;
+    color: #000;
+}
+
+.automode-button {
+    background: linear-gradient(135deg, #a985ff, #8e6ee6);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 15px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.automode-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(169, 133, 255, 0.3);
+}
+
+.settings-button {
+    background: #222;
+    border: 1px solid #555;
+    color: #ccc;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-family: 'SF Mono', monospace;
+    font-size: 10px;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.2s ease;
+}
+
+.settings-button:hover {
+    background: #333;
+    border-color: #666;
+    color: #fff;
+}
+
+/* ================================
+   STREAM DETECTOR
+   ================================ */
+
+.stream-detector {
+    background: #222;
+    border: 1px solid #444;
+    border-radius: 8px;
+    padding: 15px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.stream-detector:hover {
+    border-color: #00ff41;
+    background: #2a2a2a;
+}
+
+.stream-detector .status {
+    font-size: 14px;
+    color: #00ff41;
+    font-weight: bold;
+}
+
+.stream-detector .subtext {
+    font-size: 11px;
+    color: #888;
+    margin-top: 5px;
+}
+
+/* ================================
+   ACTIVATION CIRCLE
+   ================================ */
+
+.activation-circle {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 120px;
+    height: 120px;
+    background: rgba(0, 255, 65, 0.1);
+    border: 2px solid #00ff41;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 1000;
+}
+
+.activation-circle:hover {
+    background: rgba(0, 255, 65, 0.2);
+    transform: translate(-50%, -50%) scale(1.1);
+}
+
+.activation-text {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: 8px;
+    white-space: nowrap;
+    color: #ccc;
+    font-size: 12px;
+    text-align: center;
+}
+
+/* ================================
+   MESSAGE AREA
+   ================================ */
+
+.message-area {
+    background: #2a2a2a;
+    color: #cccccc;
+    padding: 10px 18px;
+    font-size: 14px;
+    font-weight: 600;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    max-height: 46px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    border-radius: 8px;
+    margin-top: 20px;
+}
+
+.message-area.error {
+    background: #2a2a2a;
+    color: #ff0000;
+}
+
+.message-area.warning {
+    background: #2a2a2a;
+    color: #ff6600;
+}
+
+.message-area.info {
+    background: #2a2a2a;
+    color: #8b5cf6;
+}
+
+.message-area.collapsed {
+    padding: 6px 18px;
+    font-size: 12px;
+}
+
+.message-area.expanded {
+    max-height: none;
+    padding: 14px 18px;
+    font-size: 14px;
+}
+
+/* ================================
+   EXPANDABLE SECTIONS
+   ================================ */
+
+.expandable-section {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-in-out;
+    background: #111111;
+    border: 1px solid #333333;
+    margin: 8px 0;
+}
+
+.expandable-section.expanded {
+    max-height: 800px;
+}
+
+.expandable-content {
+    padding: 12px;
+    font-size: 10px;
+    line-height: 1.4;
+}
+
+.expandable-title {
+    font-size: 11px;
+    font-weight: 600;
+    color: #00ff41;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    padding: 8px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.expand-icon {
+    transition: transform 0.3s ease;
+}
+
+.expandable-section.expanded .expand-icon {
+    transform: rotate(180deg);
+}
+
+/* ================================
+   CHANNEL SECTION
+   ================================ */
+
+.expandable-channel-section {
+    background: #111111;
+    border: 1px solid #333333;
+    margin: 8px 0;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.expand-channel-header {
+    padding: 12px 16px;
+    background: #1a1a1a;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+    font-weight: 600;
+    color: #00ff41;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.2s ease;
+}
+
+.expand-channel-header:hover {
+    background: #222;
+}
+
+.channel-expanded-container {
+    padding: 12px;
+    background: #000;
+}
+
+/* ================================
+   RECEIPT VIEW
+   ================================ */
+
+.receipt-container {
+    background: #0d0d0d;
+    border: 1px solid #333;
+    border-radius: 12px;
+    padding: 20px;
+    max-width: 520px;
+    margin: 0 auto;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.receipt-header {
+    text-align: center;
+    margin-bottom: 12px;
+}
+
+.receipt-title {
+    font-size: 14px;
+    color: #888;
+    font-weight: 600;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+}
+
+.receipt-points {
+    font-size: 24px;
+    font-weight: 700;
+    color: #00ff41;
+}
+
+.receipt-subtitle {
+    font-size: 12px;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+}
+
+.receipt-details {
+    background: #111;
+    border: 1px solid #333;
+    border-radius: 6px;
+    padding: 12px;
+    margin-bottom: 16px;
+}
+
+.receipt-section-title {
+    font-size: 12px;
+    color: #00ff41;
+    font-weight: 600;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.receipt-info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.receipt-info-item {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+}
+
+.receipt-label {
+    color: #ccc;
+}
+
+.receipt-value {
+    color: #fff;
+    font-weight: 600;
+}
+
+.receipt-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* ================================
+   PAUSED STATE
+   ================================ */
+
+.paused .points-total,
+.paused .points-pending,
+.paused .holistic-progress,
+.paused .holistic-show-info,
+.paused .primary-cta,
+.paused .secondary-button {
+    color: #888 !important;
+    opacity: 0.6;
+}
+
+.paused .primary-cta,
+.paused .secondary-button {
+    border-color: #666 !important;
+    color: #888 !important;
+    opacity: 0.6;
+}
+
+.paused .nokia-visual {
+    border-color: #666 !important;
+    color: #666 !important;
+}
+
+/* ================================
+   UTILITY CLASSES
+   ================================ */
+
+.hidden {
+    display: none !important;
+}
+
+.visible {
+    display: block !important;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.text-left {
+    text-align: left;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.mt-10 {
+    margin-top: 10px;
+}
+
+.mb-10 {
+    margin-bottom: 10px;
+}
+
+.ml-10 {
+    margin-left: 10px;
+}
+
+.mr-10 {
+    margin-right: 10px;
+}
+
+.p-10 {
+    padding: 10px;
+}
+
+.p-20 {
+    padding: 20px;
+}
+
+/* ================================
+   THEME VARIABLES
+   ================================ */
+
+:root {
+    /* Colors */
+    --primary-color: #00ff41;
+    --secondary-color: #ffaa00;
+    --background-color: #111;
+    --surface-color: #1a1a1a;
+    --border-color: #333;
+    --text-primary: #fff;
+    --text-secondary: #888;
+    --text-accent: #00ff41;
+    --error-color: #ff0000;
+    --warning-color: #ffaa00;
+    --info-color: #0088ff;
+
+    /* Spacing */
+    --spacing-xs: 4px;
+    --spacing-sm: 8px;
+    --spacing-md: 12px;
+    --spacing-lg: 16px;
+    --spacing-xl: 20px;
+    --spacing-xxl: 24px;
+
+    /* Border Radius */
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+
+    /* Transitions */
+    --transition-fast: 0.2s ease;
+    --transition-normal: 0.3s ease;
+    --transition-slow: 0.5s ease;
+
+    /* Shadows */
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.2);
+    --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.3);
+    --shadow-xl: 0 8px 32px rgba(0, 0, 0, 0.5);
+
+    /* Font Sizes */
+    --font-xs: 10px;
+    --font-sm: 11px;
+    --font-md: 12px;
+    --font-lg: 14px;
+    --font-xl: 16px;
+    --font-xxl: 20px;
+
+    /* Font Weights */
+    --weight-normal: 400;
+    --weight-medium: 500;
+    --weight-semibold: 600;
+    --weight-bold: 700;
+
+    /* Z-Index Layers */
+    --z-base: 1;
+    --z-above: 2;
+    --z-modal: 100;
+    --z-overlay: 200;
+    --z-tooltip: 300;
+
+    /* Mode-specific colors */
+    --detected-color: #00ff41;
+    --detected-bg: rgba(0, 255, 65, 0.1);
+    --auto-color: #ffff00;
+    --auto-bg: rgba(255, 255, 0, 0.1);
+    --current-mode-color: var(--detected-color);
+    --current-mode-bg: var(--detected-bg);
+}
+
+/* Section visibility controls */
+.section-1 {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.section-1.hidden-during-indexing {
+    display: none !important;
+}
+
+/* Updated activation states */
+.activation-circle {
+    border-color: #00ff41;
+}
+
+.activation-circle.active {
+    background: #00ff41;
+    box-shadow: 0 0 15px #00ff41;
+}
+
+/* Channel menu visibility */
+.channel-menu {
+    display: flex !important;
+    opacity: 1 !important;
+}
+
+/* Base styles for detected mode */
+.detected-mode {
+    --current-mode-color: var(--detected-color);
+    --current-mode-bg: var(--detected-bg);
+}
+
+.detected-mode .points-total,
+.detected-mode .points-multiplier,
+.detected-mode .nokia-visual,
+.detected-mode .holistic-animation pre,
+.detected-mode .primary-cta {
+    color: var(--current-mode-color) !important;
+    border-color: var(--current-mode-color);
+}
+
+.detected-mode .nokia-visual {
+    background: linear-gradient(45deg, var(--current-mode-bg), #000000);
+    border-color: var(--current-mode-color);
+}
+
+.detected-mode .primary-cta:hover {
+    background: var(--current-mode-color);
+    color: #000 !important;
+}
+
+.detected-mode .activation-circle {
+    border-color: var(--current-mode-color);
+    background: radial-gradient(circle at center, var(--current-mode-bg), #000000);
+}
+
+.detected-mode .activation-circle.active {
+    background: var(--current-mode-color);
+    box-shadow: 0 0 15px var(--current-mode-color);
+}
+
+/* Automode specific styles */
+.automode {
+    --current-mode-color: var(--auto-color);
+    --current-mode-bg: var(--auto-bg);
+}
+
+.automode .points-total,
+.automode .points-multiplier,
+.automode .nokia-visual,
+.automode .holistic-animation pre,
+.automode .primary-cta {
+    color: var(--current-mode-color) !important;
+    border-color: var(--current-mode-color);
+}
+
+.automode .nokia-visual {
+    background: linear-gradient(45deg, var(--current-mode-bg), #000000);
+    border-color: var(--current-mode-color);
+}
+
+.automode .primary-cta:hover {
+    background: var(--current-mode-color);
+    color: #000 !important;
+}
+
+.automode .activation-circle {
+    border-color: var(--current-mode-color);
+    background: radial-gradient(circle at center, var(--current-mode-bg), #000000);
+}
+
+.automode .activation-circle.active {
+    background: var(--current-mode-color);
+    box-shadow: 0 0 15px var(--current-mode-color);
+}
+
+/* Receipt view mode-specific styles */
+.receipt-container.detected-mode {
+    border-color: var(--detected-color);
+}
+
+.receipt-container.automode {
+    border-color: var(--auto-color);
+}
+
+.receipt-container.detected-mode .receipt-title {
+    color: var(--detected-color);
+}
+
+.receipt-container.automode .receipt-title {
+    color: var(--auto-color);
+}
+
+/* Progress indicators mode-specific styles */
+.progress-bar.detected-mode .progress {
+    background-color: var(--detected-color);
+}
+
+.progress-bar.automode .progress {
+    background-color: var(--auto-color);
+}
+
+/* Mode-specific variables */
+:root {
+    --detected-color: #00ff41;
+    --detected-bg: rgba(0, 255, 65, 0.1);
+    --auto-color: #ffff00;
+    --auto-bg: rgba(255, 255, 0, 0.1);
+    --current-mode-color: var(--detected-color);
+    --current-mode-bg: var(--detected-bg);
+}
+
+/* Mode classes */
+body.detected-mode {
+    --current-mode-color: var(--detected-color);
+    --current-mode-bg: var(--detected-bg);
+}
+
+body.auto-mode {
+    --current-mode-color: var(--auto-color);
+    --current-mode-bg: var(--auto-bg);
+}
+
+/* Mode indicator */
+.mode-indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.mode-color-bar {
+    width: 4px;
+    height: 20px;
+    background-color: var(--current-mode-color);
+    border-radius: 2px;
+}
+
+.mode-label {
+    font-size: 12px;
+    color: var(--current-mode-color);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Content blocks */
+.content-blocks {
+    margin-top: 15px;
+}
+
+.content-block {
+    padding: 10px;
+    border: 1px solid var(--current-mode-color);
+    border-radius: 4px;
+    margin-bottom: 10px;
+    background: var(--current-mode-bg);
+}
+
+.block-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 12px;
+    color: var(--current-mode-color);
+}
+
+.block-title {
+    font-size: 16px;
+    font-weight: bold;
+    color: var(--current-mode-color);
+    margin-bottom: 8px;
+}
+
+.block-description {
+    font-size: 14px;
+    line-height: 1.4;
+    color: #ccc;
+}
+
+/* Nokia display modifications */
+.nokia-section {
+    border-color: var(--current-mode-color);
+    background: var(--current-mode-bg);
+}
+
+.nokia-section pre {
+    color: var(--current-mode-color);
+}
+
+/* Mode-specific buttons */
+.mode-button {
+    padding: 8px 16px;
+    border-radius: 4px;
+    border: 1px solid var(--current-mode-color);
+    background: var(--current-mode-bg);
+    color: var(--current-mode-color);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.mode-button:hover {
+    background: var(--current-mode-color);
+    color: #111;
+}
+
+/* Mode info display */
+.mode-info {
+    background: var(--current-mode-bg);
+    border-color: var(--current-mode-color);
+}
+
+.mode-info-label {
+    color: var(--current-mode-color);
+}
+
+/* Receipt view mode-specific styles */
+.receipt-mode {
+    color: var(--current-mode-color);
+    font-weight: bold;
+} 

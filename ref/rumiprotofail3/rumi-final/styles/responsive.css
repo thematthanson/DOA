@@ -1,0 +1,287 @@
+/* Responsive Design - Based on indexD_LUDICROUS_WORKING.html */
+
+/* Main Container Responsive */
+@media (max-width: 800px) {
+    .extension-popup {
+        width: 100%;
+        max-width: 700px;
+        margin: 0 10px;
+    }
+}
+
+@media (max-width: 600px) {
+    .extension-popup {
+        width: 100%;
+        margin: 0;
+        border-radius: 0;
+    }
+    
+    .popup-header {
+        padding: 10px 15px;
+    }
+    
+    .popup-body {
+        padding: 15px;
+    }
+}
+
+/* Height-based Responsive Design */
+@media (max-height: 600px) {
+    .extension-popup {
+        height: 450px;
+    }
+    
+    .popup-body {
+        padding: 15px;
+    }
+    
+    .points-section {
+        padding: 12px 15px;
+        margin-bottom: 15px;
+    }
+    
+    .section {
+        padding: 12px 15px;
+        margin-bottom: 15px;
+    }
+}
+
+@media (max-height: 450px) {
+    .extension-popup {
+        height: 350px;
+    }
+    
+    .popup-body {
+        padding: 10px;
+    }
+    
+    .points-section {
+        padding: 10px 12px;
+        margin-bottom: 10px;
+    }
+    
+    .section {
+        padding: 10px 12px;
+        margin-bottom: 10px;
+    }
+    
+    .nokia-visual {
+        height: 35px;
+        margin-bottom: 8px;
+    }
+    
+    .primary-cta {
+        padding: 10px 16px;
+        margin-bottom: 8px;
+    }
+}
+
+@media (max-height: 350px) {
+    .extension-popup {
+        height: 250px;
+    }
+    
+    .popup-body {
+        padding: 8px;
+    }
+    
+    .points-section {
+        padding: 8px 10px;
+        margin-bottom: 8px;
+    }
+    
+    .section {
+        padding: 8px 10px;
+        margin-bottom: 8px;
+    }
+    
+    .nokia-visual {
+        height: 30px;
+        margin-bottom: 6px;
+    }
+    
+    .primary-cta {
+        padding: 8px 12px;
+        margin-bottom: 6px;
+        font-size: 11px;
+    }
+    
+    .points-total {
+        font-size: 16px;
+    }
+    
+    .points-pending {
+        font-size: 10px;
+    }
+}
+
+/* Channel Section Responsive */
+@media (max-width: 500px) {
+    .channel-header {
+        padding: 6px 10px;
+    }
+    
+    .channel-title {
+        font-size: 16px;
+    }
+    
+    .edit-genre-btn {
+        font-size: 10px;
+    }
+    
+    .indexing-info {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    
+    .stats-info {
+        text-align: left;
+    }
+}
+
+/* Indexing Components Responsive */
+@media (max-width: 400px) {
+    .indexing-progress-bar-container {
+        height: 60px;
+        gap: 1px;
+    }
+    
+    .progress-bar-segment {
+        width: 8px;
+    }
+    
+    .progress-bar-segment.special-segment {
+        width: 20px;
+    }
+    
+    .progress-bar-annotation {
+        font-size: 6px;
+    }
+    
+    .horizontal-progress-bar {
+        height: 8px;
+    }
+}
+
+/* Debug Panel Responsive */
+@media (max-width: 600px) {
+    .debug-panel {
+        position: fixed;
+        bottom: 5px;
+        left: 5px;
+        right: 5px;
+        min-width: auto;
+        max-width: none;
+    }
+    
+    .debug-trigger {
+        bottom: 5px;
+        left: 5px;
+    }
+}
+
+/* Entry Point Panel Responsive */
+@media (max-width: 500px) {
+    .entry-point-panel {
+        width: 100%;
+        max-width: 300px;
+        padding: 15px;
+    }
+    
+    .stream-detector {
+        padding: 12px;
+    }
+    
+    .automode-button {
+        padding: 12px;
+        font-size: 12px;
+    }
+}
+
+/* Message Area Responsive */
+@media (max-width: 400px) {
+    .message-area {
+        padding: 8px 12px;
+        font-size: 12px;
+    }
+    
+    .message-area.expanded {
+        padding: 10px 12px;
+        font-size: 12px;
+    }
+}
+
+/* Settings Responsive */
+@media (max-width: 500px) {
+    .settings-section {
+        padding: 12px;
+    }
+    
+    .settings-item {
+        font-size: 12px;
+        margin-bottom: 10px;
+    }
+    
+    .settings-section-header {
+        font-size: 11px;
+        margin-bottom: 12px;
+    }
+}
+
+/* Queue Section Responsive */
+@media (max-width: 400px) {
+    .queue-section {
+        padding: 8px 10px;
+    }
+    
+    .queue-header {
+        font-size: 8px;
+    }
+    
+    .queue-item {
+        font-size: 9px;
+        padding: 4px 8px;
+    }
+}
+
+/* Status Indicators Responsive */
+@media (max-width: 500px) {
+    .status-indicator-terminal {
+        padding: 10px;
+        font-size: 10px;
+        margin: 10px 0;
+    }
+}
+
+/* Toggle Switch Responsive */
+@media (max-width: 400px) {
+    .switch {
+        width: 30px;
+        height: 18px;
+    }
+    
+    .slider:before {
+        height: 12px;
+        width: 12px;
+        left: 3px;
+        bottom: 3px;
+    }
+    
+    input:checked + .slider:before {
+        transform: translateX(12px);
+    }
+}
+
+/* Print Styles */
+@media print {
+    .extension-popup {
+        box-shadow: none;
+        border: 1px solid #333;
+    }
+    
+    .debug-panel,
+    .debug-trigger {
+        display: none !important;
+    }
+} 

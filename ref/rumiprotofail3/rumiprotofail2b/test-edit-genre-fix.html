@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Genre Fix Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f5f5f5;
+        }
+        
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        .test-section h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin: 10px 0;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .btn-primary { background: #007bff; color: white; }
+        .btn-success { background: #28a745; color: white; }
+        .btn-warning { background: #ffc107; color: black; }
+        .btn-danger { background: #dc3545; color: white; }
+        
+        button:hover {
+            opacity: 0.8;
+        }
+        
+        .iframe-container {
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        
+        iframe {
+            width: 100%;
+            height: 400px;
+            border: none;
+        }
+        
+        .log-container {
+            background: #000;
+            color: #00ff00;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            height: 300px;
+            overflow-y: auto;
+            margin: 10px 0;
+        }
+        
+        .status-display {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 11px;
+            margin: 10px 0;
+        }
+        
+        .test-instructions {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        
+        .warning {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🎭 Edit Genre Fix Test</h1>
+        <p>Testing that the edit genre functionality works without infinite loops.</p>
+        
+        <div class="test-section">
+            <h3>🎯 Test Controls</h3>
+            <div class="controls">
+                <button class="btn-primary" onclick="testEditGenreFlow()">🎭 Test Edit Genre Flow</button>
+                <button class="btn-success" onclick="testDirectPopulation()">📺 Test Direct Population</button>
+                <button class="btn-warning" onclick="checkForInfiniteLoops()">🔍 Check for Infinite Loops</button>
+                <button class="btn-danger" onclick="clearLogs()">🗑️ Clear Logs</button>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h3>📺 Genre Channel Test</h3>
+            <div class="iframe-container">
+                <iframe id="genreChannelFrame" src="Genre-channel_v2.html"></iframe>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h3>📊 Status Display</h3>
+            <div class="status-display" id="statusDisplay">
+                Waiting for test...
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h3>📝 Test Logs</h3>
+            <div class="log-container" id="logContainer">
+                <div>🎭 Edit Genre Fix Test initialized...</div>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h3>💡 Test Instructions</h3>
+            <div class="test-instructions">
+                <strong>How to test the edit genre fix:</strong><br>
+                1. Click "Test Edit Genre Flow" to simulate the edit genre button workflow<br>
+                2. Click "Test Direct Population" to test direct genre population (should work fine)<br>
+                3. Watch the logs for any infinite loop indicators<br>
+                4. The edit genre flow should complete without hanging or crashing<br>
+                5. Use "Check for Infinite Loops" to monitor for repeated function calls
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h3>⚠️ What to Watch For</h3>
+            <div class="warning">
+                <strong>Infinite loop indicators:</strong><br>
+                • Repeated "CREATE LINEUP" messages in quick succession<br>
+                • Multiple "🛡️ Skipping createLineup during edit mode" messages<br>
+                • Browser becoming unresponsive<br>
+                • Console errors about maximum call stack size<br>
+                • Rapid repeated function calls
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let frameWindow;
+        let logContainer;
+        let statusDisplay;
+        let loopDetectionInterval;
+        let lastLogCount = 0;
+        let repeatedCalls = 0;
+        
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            logContainer = document.getElementById('logContainer');
+            statusDisplay = document.getElementById('statusDisplay');
+            
+            // Wait for iframe to load
+            const iframe = document.getElementById('genreChannelFrame');
+            iframe.onload = () => {
+                frameWindow = iframe.contentWindow;
+                log('✅ Genre Channel iframe loaded');
+                
+                // Wait a bit for the channel to initialize
+                setTimeout(() => {
+                    testEditGenreFlow();
+                }, 2000);
+            };
+            
+            log('🎭 Edit Genre Fix Test initialized');
+        });
+        
+        // Logging function
+        function log(message) {
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.textContent = `[${timestamp}] ${message}`;
+            logContainer.appendChild(logEntry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+        
+        // Test the edit genre flow
+        function testEditGenreFlow() {
+            if (!frameWindow) {
+                log('❌ Frame not available');
+                return;
+            }
+            
+            log('🎭 Testing edit genre flow...');
+            
+            // Start monitoring for infinite loops
+            startLoopDetection();
+            
+            // Simulate clicking the edit genre button
+            const editLink = frameWindow.document.querySelector('.edit-link');
+            if (editLink) {
+                log('✅ Found edit genre button, clicking it...');
+                editLink.click();
+                
+                // Wait for edit mode to open
+                setTimeout(() => {
+                    log('📋 Edit mode should be open now');
+                    
+                    // Check if edit mode is active
+                    const isEditMode = frameWindow.window.isInEditMode;
+                    log(`🎭 Edit mode flag: ${isEditMode}`);
+                    
+                    // Simulate selecting a genre and auto-populating
+                    setTimeout(() => {
+                        simulateGenreSelection();
+                    }, 1000);
+                    
+                }, 1000);
+            } else {
+                log('❌ Edit genre button not found');
+            }
+        }
+        
+        // Simulate genre selection and auto-population
+        function simulateGenreSelection() {
+            if (!frameWindow) {
+                log('❌ Frame not available');
+                return;
+            }
+            
+            log('🎭 Simulating genre selection...');
+            
+            // Find the genre select dropdown in edit mode
+            const genreSelect = frameWindow.document.getElementById('genre-select-submenu');
+            if (genreSelect) {
+                log('✅ Found genre select dropdown');
+                
+                // Select a genre (Action has long titles that might trigger overflow)
+                genreSelect.value = 'Action';
+                log('🎬 Selected Action genre');
+                
+                // Trigger the change event
+                const changeEvent = new Event('change', { bubbles: true });
+                genreSelect.dispatchEvent(changeEvent);
+                
+                // Wait a bit, then trigger auto-populate
+                setTimeout(() => {
+                    log('📺 Triggering auto-populate...');
+                    
+                    // Find and click the auto-populate button
+                    const autoPopulateBtn = frameWindow.document.querySelector('button[onclick*="autoPopulate"]');
+                    if (autoPopulateBtn) {
+                        autoPopulateBtn.click();
+                        log('✅ Clicked auto-populate button');
+                        
+                        // Monitor for completion
+                        setTimeout(() => {
+                            checkEditGenreCompletion();
+                        }, 3000);
+                    } else {
+                        log('❌ Auto-populate button not found');
+                    }
+                }, 1000);
+            } else {
+                log('❌ Genre select dropdown not found');
+            }
+        }
+        
+        // Check if edit genre flow completed successfully
+        function checkEditGenreCompletion() {
+            if (!frameWindow) {
+                log('❌ Frame not available');
+                return;
+            }
+            
+            log('🔍 Checking edit genre completion...');
+            
+            // Check if edit mode is closed
+            const isEditMode = frameWindow.window.isInEditMode;
+            const editModeActive = frameWindow.document.querySelector('.edit-mode');
+            const blocks = frameWindow.document.querySelectorAll('.program-slot:not(.empty)');
+            
+            log(`🎭 Edit mode flag: ${isEditMode}`);
+            log(`📋 Edit mode active: ${!!editModeActive}`);
+            log(`📦 Blocks created: ${blocks.length}`);
+            
+            if (!isEditMode && !editModeActive && blocks.length > 0) {
+                log('✅ Edit genre flow completed successfully!');
+                statusDisplay.innerHTML = '<strong style="color: green;">✅ Edit genre flow completed successfully!</strong><br>No infinite loops detected.';
+            } else {
+                log('⚠️ Edit genre flow may not have completed properly');
+                statusDisplay.innerHTML = '<strong style="color: orange;">⚠️ Edit genre flow may not have completed properly</strong>';
+            }
+            
+            // Stop loop detection
+            stopLoopDetection();
+        }
+        
+        // Test direct population (should work fine)
+        function testDirectPopulation() {
+            if (!frameWindow) {
+                log('❌ Frame not available');
+                return;
+            }
+            
+            log('📺 Testing direct population...');
+            
+            // Start monitoring for infinite loops
+            startLoopDetection();
+            
+            // Set genre and create lineup directly
+            frameWindow.currentGenre = 'Sitcom';
+            log('🎭 Set currentGenre to Sitcom');
+            
+            frameWindow.createLineup(false);
+            log('✅ Called createLineup directly');
+            
+            // Monitor for completion
+            setTimeout(() => {
+                const blocks = frameWindow.document.querySelectorAll('.program-slot:not(.empty)');
+                log(`📦 Direct population created ${blocks.length} blocks`);
+                
+                if (blocks.length > 0) {
+                    log('✅ Direct population completed successfully!');
+                    statusDisplay.innerHTML = '<strong style="color: green;">✅ Direct population completed successfully!</strong>';
+                } else {
+                    log('⚠️ Direct population may not have completed properly');
+                    statusDisplay.innerHTML = '<strong style="color: orange;">⚠️ Direct population may not have completed properly</strong>';
+                }
+                
+                // Stop loop detection
+                stopLoopDetection();
+            }, 2000);
+        }
+        
+        // Check for infinite loops
+        function checkForInfiniteLoops() {
+            if (!frameWindow) {
+                log('❌ Frame not available');
+                return;
+            }
+            
+            log('🔍 Checking for infinite loops...');
+            
+            // Check console logs for repeated patterns
+            const consoleLogs = frameWindow.console.log;
+            const createLineupCalls = [];
+            const skipMessages = [];
+            
+            // This is a simplified check - in a real scenario you'd need to intercept console.log
+            log('📊 Loop detection status:');
+            log(`  Repeated calls detected: ${repeatedCalls}`);
+            log(`  Edit mode flag: ${frameWindow.window.isInEditMode}`);
+            
+            if (repeatedCalls > 10) {
+                log('⚠️ WARNING: High number of repeated calls detected - possible infinite loop!');
+                statusDisplay.innerHTML = '<strong style="color: red;">⚠️ WARNING: Possible infinite loop detected!</strong>';
+            } else {
+                log('✅ No obvious infinite loop indicators found');
+                statusDisplay.innerHTML = '<strong style="color: green;">✅ No obvious infinite loop indicators found</strong>';
+            }
+        }
+        
+        // Start monitoring for infinite loops
+        function startLoopDetection() {
+            log('🔍 Starting loop detection...');
+            repeatedCalls = 0;
+            lastLogCount = logContainer.children.length;
+            
+            loopDetectionInterval = setInterval(() => {
+                const currentLogCount = logContainer.children.length;
+                if (currentLogCount === lastLogCount) {
+                    repeatedCalls++;
+                } else {
+                    lastLogCount = currentLogCount;
+                }
+            }, 100);
+        }
+        
+        // Stop monitoring for infinite loops
+        function stopLoopDetection() {
+            if (loopDetectionInterval) {
+                clearInterval(loopDetectionInterval);
+                log('🔍 Stopped loop detection');
+            }
+        }
+        
+        // Clear logs
+        function clearLogs() {
+            logContainer.innerHTML = '<div>🎭 Edit Genre Fix Test initialized...</div>';
+            statusDisplay.innerHTML = 'Waiting for test...';
+            repeatedCalls = 0;
+            log('🗑️ Logs cleared');
+        }
+    </script>
+</body>
+</html> 

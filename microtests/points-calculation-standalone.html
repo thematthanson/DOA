@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Points Calculation - Micro Test</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #8B5CF6 0%, #A855F7 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+        h1 {
+            text-align: center;
+            color: #FFD700;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        .description {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 1.2em;
+            color: #E0E0E0;
+        }
+        .calculator-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        .input-panel {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 25px;
+            border-radius: 12px;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+        }
+        .input-panel h3 {
+            color: #FFD700;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 1.5em;
+        }
+        .input-group {
+            margin-bottom: 20px;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #E0E0E0;
+        }
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #FFD700;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        .input-group input:focus, .input-group select:focus {
+            outline: none;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+        .slider-container {
+            margin-top: 10px;
+        }
+        .slider {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.2);
+            outline: none;
+            -webkit-appearance: none;
+        }
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #FFD700;
+            cursor: pointer;
+        }
+        .slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #FFD700;
+            cursor: pointer;
+            border: none;
+        }
+        .results-panel {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 25px;
+            border-radius: 12px;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+        }
+        .results-panel h3 {
+            color: #FFD700;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 1.5em;
+        }
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            margin-bottom: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            border-left: 4px solid #FFD700;
+        }
+        .result-label {
+            font-weight: bold;
+            color: #E0E0E0;
+        }
+        .result-value {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #FFD700;
+        }
+        .result-value.final {
+            font-size: 1.5em;
+            color: #00FF88;
+        }
+        .scenarios-section {
+            margin-bottom: 40px;
+        }
+        .scenarios-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .scenarios-header h3 {
+            color: #FFD700;
+            font-size: 1.8em;
+            margin-bottom: 10px;
+        }
+        .scenarios-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .scenario-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .scenario-card:hover {
+            border-color: #FFD700;
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.3);
+        }
+        .scenario-card.active {
+            border-color: #00FF88;
+            background: rgba(0, 255, 136, 0.1);
+        }
+        .scenario-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #FFD700;
+            margin-bottom: 15px;
+        }
+        .scenario-stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        .scenario-stat {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 8px 12px;
+            border-radius: 15px;
+            font-size: 0.9em;
+            color: #E0E0E0;
+        }
+        .scenario-result {
+            text-align: center;
+            padding: 15px;
+            background: rgba(255, 215, 0, 0.2);
+            border-radius: 8px;
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #FFD700;
+        }
+        .controls-section {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        .control-btn {
+            padding: 12px 24px;
+            border: 2px solid #FFD700;
+            background: transparent;
+            color: #FFD700;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        .control-btn:hover {
+            background: #FFD700;
+            color: #8B5CF6;
+        }
+        .control-btn.active {
+            background: #FFD700;
+            color: #8B5CF6;
+        }
+        .breakdown-section {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+        .breakdown-header {
+            color: #FFD700;
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .breakdown-step {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+        }
+        .step-number {
+            background: #FFD700;
+            color: #8B5CF6;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 15px;
+        }
+        .step-description {
+            flex: 1;
+            color: #E0E0E0;
+        }
+        .step-calculation {
+            color: #FFD700;
+            font-weight: bold;
+            margin-left: 15px;
+        }
+        .home-link {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        .home-link:hover {
+            background: rgba(255, 215, 0, 0.3);
+            transform: translateY(-2px);
+        }
+        @media (max-width: 768px) {
+            .calculator-section {
+                grid-template-columns: 1fr;
+            }
+            .scenarios-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="home-link">← Back to Tests</a>
+    
+    <div class="container">
+        <h1>🎯 Points Calculation System</h1>
+        <div class="description">
+            Test different scenarios with base rates, multipliers, and bonuses
+        </div>
+        
+        <div class="calculator-section">
+            <div class="input-panel">
+                <h3>⚙️ Configuration</h3>
+                
+                <div class="input-group">
+                    <label for="contentType">Content Type:</label>
+                    <select id="contentType" onchange="updateCalculation()">
+                        <option value="movie">Movie</option>
+                        <option value="series">TV Series</option>
+                        <option value="documentary">Documentary</option>
+                        <option value="short">Short Film</option>
+                    </select>
+                </div>
+                
+                <div class="input-group">
+                    <label for="watchTime">Watch Time (minutes):</label>
+                    <input type="number" id="watchTime" value="120" min="1" max="600" onchange="updateCalculation()">
+                    <div class="slider-container">
+                        <input type="range" id="watchTimeSlider" class="slider" min="1" max="600" value="120" oninput="syncSlider('watchTime', 'watchTimeSlider')">
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <label for="baseRate">Base Rate (points/minute):</label>
+                    <input type="number" id="baseRate" value="1.0" min="0.1" max="10" step="0.1" onchange="updateCalculation()">
+                    <div class="slider-container">
+                        <input type="range" id="baseRateSlider" class="slider" min="0.1" max="10" step="0.1" value="1.0" oninput="syncSlider('baseRate', 'baseRateSlider')">
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <label for="multiplier">Time Multiplier:</label>
+                    <input type="number" id="multiplier" value="1.0" min="1.0" max="5.0" step="0.1" onchange="updateCalculation()">
+                    <div class="slider-container">
+                        <input type="range" id="multiplierSlider" class="slider" min="1.0" max="5.0" step="0.1" value="1.0" oninput="syncSlider('multiplier', 'multiplierSlider')">
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <label for="bonus">Bonus Points:</label>
+                    <input type="number" id="bonus" value="0" min="0" max="1000" onchange="updateCalculation()">
+                    <div class="slider-container">
+                        <input type="range" id="bonusSlider" class="slider" min="0" max="1000" value="0" oninput="syncSlider('bonus', 'bonusSlider')">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="results-panel">
+                <h3>📊 Results</h3>
+                
+                <div class="result-item">
+                    <span class="result-label">Base Points:</span>
+                    <span class="result-value" id="basePoints">120</span>
+                </div>
+                
+                <div class="result-item">
+                    <span class="result-label">Multiplier Applied:</span>
+                    <span class="result-value" id="multiplierApplied">1.0x</span>
+                </div>
+                
+                <div class="result-item">
+                    <span class="result-label">Multiplied Points:</span>
+                    <span class="result-value" id="multipliedPoints">120</span>
+                </div>
+                
+                <div class="result-item">
+                    <span class="result-label">Bonus Points:</span>
+                    <span class="result-value" id="bonusPoints">0</span>
+                </div>
+                
+                <div class="result-item">
+                    <span class="result-label">Total Points:</span>
+                    <span class="result-value final" id="totalPoints">120</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="breakdown-section">
+            <div class="breakdown-header">📋 Calculation Breakdown</div>
+            <div id="breakdownSteps">
+                <!-- Steps will be populated by JavaScript -->
+            </div>
+        </div>
+        
+        <div class="scenarios-section">
+            <div class="scenarios-header">
+                <h3>🎮 Test Scenarios</h3>
+                <div class="controls-section">
+                    <button class="control-btn" onclick="loadScenario('quick')">Quick Watch</button>
+                    <button class="control-btn" onclick="loadScenario('standard')">Standard Session</button>
+                    <button class="control-btn" onclick="loadScenario('marathon')">Marathon Session</button>
+                    <button class="control-btn" onclick="loadScenario('premium')">Premium Content</button>
+                </div>
+            </div>
+            
+            <div class="scenarios-grid">
+                <div class="scenario-card" onclick="loadScenario('quick')">
+                    <div class="scenario-title">🚀 Quick Watch</div>
+                    <div class="scenario-stats">
+                        <div class="scenario-stat">30 min</div>
+                        <div class="scenario-stat">1.0x rate</div>
+                        <div class="scenario-stat">No bonus</div>
+                    </div>
+                    <div class="scenario-result">30 Points</div>
+                </div>
+                
+                <div class="scenario-card" onclick="loadScenario('standard')">
+                    <div class="scenario-title">📺 Standard Session</div>
+                    <div class="scenario-stats">
+                        <div class="scenario-stat">90 min</div>
+                        <div class="scenario-stat">1.5x rate</div>
+                        <div class="scenario-stat">+50 bonus</div>
+                    </div>
+                    <div class="scenario-result">185 Points</div>
+                </div>
+                
+                <div class="scenario-card" onclick="loadScenario('marathon')">
+                    <div class="scenario-title">🏃 Marathon Session</div>
+                    <div class="scenario-stats">
+                        <div class="scenario-stat">300 min</div>
+                        <div class="scenario-stat">3.0x rate</div>
+                        <div class="scenario-stat">+200 bonus</div>
+                    </div>
+                    <div class="scenario-result">1100 Points</div>
+                </div>
+                
+                <div class="scenario-card" onclick="loadScenario('premium')">
+                    <div class="scenario-title">⭐ Premium Content</div>
+                    <div class="scenario-stats">
+                        <div class="scenario-stat">120 min</div>
+                        <div class="scenario-stat">2.5x rate</div>
+                        <div class="scenario-stat">+150 bonus</div>
+                    </div>
+                    <div class="scenario-result">450 Points</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const scenarios = {
+            'quick': {
+                contentType: 'short',
+                watchTime: 30,
+                baseRate: 1.0,
+                multiplier: 1.0,
+                bonus: 0
+            },
+            'standard': {
+                contentType: 'movie',
+                watchTime: 90,
+                baseRate: 1.0,
+                multiplier: 1.5,
+                bonus: 50
+            },
+            'marathon': {
+                contentType: 'series',
+                watchTime: 300,
+                baseRate: 1.0,
+                multiplier: 3.0,
+                bonus: 200
+            },
+            'premium': {
+                contentType: 'movie',
+                watchTime: 120,
+                baseRate: 1.0,
+                multiplier: 2.5,
+                bonus: 150
+            }
+        };
+        
+        function syncSlider(inputId, sliderId) {
+            const input = document.getElementById(inputId);
+            const slider = document.getElementById(sliderId);
+            
+            if (event.target.id === sliderId) {
+                input.value = slider.value;
+            } else {
+                slider.value = input.value;
+            }
+            
+            updateCalculation();
+        }
+        
+        function updateCalculation() {
+            const contentType = document.getElementById('contentType').value;
+            const watchTime = parseFloat(document.getElementById('watchTime').value);
+            const baseRate = parseFloat(document.getElementById('baseRate').value);
+            const multiplier = parseFloat(document.getElementById('multiplier').value);
+            const bonus = parseFloat(document.getElementById('bonus').value);
+            
+            // Calculate base points
+            const basePoints = watchTime * baseRate;
+            
+            // Apply multiplier
+            const multipliedPoints = basePoints * multiplier;
+            
+            // Add bonus
+            const totalPoints = multipliedPoints + bonus;
+            
+            // Update display
+            document.getElementById('basePoints').textContent = basePoints.toFixed(1);
+            document.getElementById('multiplierApplied').textContent = multiplier.toFixed(1) + 'x';
+            document.getElementById('multipliedPoints').textContent = multipliedPoints.toFixed(1);
+            document.getElementById('bonusPoints').textContent = bonus.toFixed(1);
+            document.getElementById('totalPoints').textContent = totalPoints.toFixed(1);
+            
+            updateBreakdown(watchTime, baseRate, basePoints, multiplier, multipliedPoints, bonus, totalPoints);
+        }
+        
+        function updateBreakdown(watchTime, baseRate, basePoints, multiplier, multipliedPoints, bonus, totalPoints) {
+            const breakdownSteps = document.getElementById('breakdownSteps');
+            
+            breakdownSteps.innerHTML = `
+                <div class="breakdown-step">
+                    <div class="step-number">1</div>
+                    <div class="step-description">Calculate base points from watch time</div>
+                    <div class="step-calculation">${watchTime} min × ${baseRate} rate = ${basePoints.toFixed(1)} points</div>
+                </div>
+                
+                <div class="breakdown-step">
+                    <div class="step-number">2</div>
+                    <div class="step-description">Apply time-based multiplier</div>
+                    <div class="step-calculation">${basePoints.toFixed(1)} × ${multiplier.toFixed(1)} = ${multipliedPoints.toFixed(1)} points</div>
+                </div>
+                
+                <div class="breakdown-step">
+                    <div class="step-number">3</div>
+                    <div class="step-description">Add bonus points</div>
+                    <div class="step-calculation">${multipliedPoints.toFixed(1)} + ${bonus.toFixed(1)} = ${totalPoints.toFixed(1)} points</div>
+                </div>
+            `;
+        }
+        
+        function loadScenario(scenarioName) {
+            const scenario = scenarios[scenarioName];
+            
+            // Clear active state from all cards
+            document.querySelectorAll('.scenario-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            
+            // Add active state to clicked card
+            event.target.closest('.scenario-card').classList.add('active');
+            
+            // Update inputs
+            document.getElementById('contentType').value = scenario.contentType;
+            document.getElementById('watchTime').value = scenario.watchTime;
+            document.getElementById('watchTimeSlider').value = scenario.watchTime;
+            document.getElementById('baseRate').value = scenario.baseRate;
+            document.getElementById('baseRateSlider').value = scenario.baseRate;
+            document.getElementById('multiplier').value = scenario.multiplier;
+            document.getElementById('multiplierSlider').value = scenario.multiplier;
+            document.getElementById('bonus').value = scenario.bonus;
+            document.getElementById('bonusSlider').value = scenario.bonus;
+            
+            // Update calculation
+            updateCalculation();
+        }
+        
+        // Initialize calculation
+        updateCalculation();
+    </script>
+</body>
+</html> 

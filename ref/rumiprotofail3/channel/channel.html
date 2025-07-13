@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rumi Genre Channel</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=SF+Mono:wght@400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'SF Mono', 'Monaco', 'Cascadia Code', monospace;
+            background: #000000;
+            color: #ffffff;
+            padding: 16px;
+        }
+
+        .container {
+            max-width: 520px;
+            margin: 0 auto;
+            background: #111111;
+            border: 2px solid #333333;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .header {
+            background: #000000;
+            padding: 16px;
+            border-bottom: 1px solid #333333;
+        }
+
+        .channel-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: #ffffff;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .timeline-container {
+            margin-bottom: 6px;
+            overflow: hidden;
+            max-width: 100%;
+            position: relative;
+        }
+
+        .timeline {
+            display: flex;
+            flex-direction: column;
+            background: #1a1a1a;
+            border-radius: 6px;
+            padding: 6px 10px;
+            position: relative;
+            margin-bottom: 6px;
+            border: 1px solid #333333;
+            width: 100%;
+            transition: width 0.3s ease;
+            min-width: 100%;
+            max-width: 100%;
+            flex-shrink: 0;
+        }
+
+        .timeline-row {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            min-width: 100%;
+        }
+
+        .timeline-row.time-markers {
+            margin-bottom: 4px;
+        }
+
+        .timeline-row.multiplier-markers {
+            border-top: 1px solid #333333;
+            padding-top: 4px;
+        }
+
+        .timeline-marker {
+            flex: 1;
+            text-align: center;
+            font-size: 7px;
+            color: #666666;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            position: relative;
+            padding: 3px 0;
+            min-width: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .timeline-marker:first-child {
+            text-align: left;
+        }
+
+        .timeline-marker:last-child {
+            text-align: right;
+        }
+
+        .timeline-marker.multiplier {
+            color: #00ff41;
+            font-weight: 600;
+        }
+
+        .timeline-marker.multiplier-1 {
+            color: #00ff41;
+        }
+
+        .timeline-marker.multiplier-2 {
+            color: #ffaa00;
+        }
+
+        .timeline-marker.multiplier-3 {
+            color: #ff4444;
+        }
+
+        .timeline-info {
+            position: absolute;
+            top: -25px;
+            left: 10px;
+            font-size: 7px;
+            color: #888888;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .multiplier-display {
+            position: absolute;
+            top: -20px;
+            right: 10px;
+            font-size: 7px;
+            color: #00ff41;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .channel-section {
+            padding: 8px;
+        }
+
+        .channel-header-above-timeline {
+            padding: 8px 16px 4px 16px;
+            border-bottom: 1px solid #333333;
+        }
+
+        .channel-title-section {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .edit-link {
+            font-size: 9px;
+            color: #00ff41;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.2s;
+        }
+
+        .edit-link:hover {
+            color: #00cc33;
+        }
+
+        .channel-controls {
+            display: flex;
+            gap: 6px;
+        }
+
+        .btn {
+            background: #000000;
+            color: #ffffff;
+            border: 1px solid #333333;
+            padding: 5px 10px;
+            font-size: 9px;
+            font-family: 'SF Mono', monospace;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn:hover {
+            border-color: #00ff41;
+            color: #00ff41;
+        }
+
+        .btn.primary {
+            background: #00ff41;
+            color: #000000;
+            border-color: #00ff41;
+        }
+
+        .btn.primary:hover {
+            background: #00cc33;
+            border-color: #00cc33;
+        }
+
+        .program-track {
+            background: #1a1a1a;
+            border-radius: 6px;
+            padding: 8px;
+            margin-top: 8px;
+            border: 1px solid #333333;
+        }
+
+        .program-item {
+            display: flex;
+            align-items: center;
+            padding: 8px;
+            margin-bottom: 4px;
+            background: #222222;
+            border-radius: 4px;
+            border: 1px solid #333333;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .program-item:hover {
+            border-color: #00ff41;
+            background: #2a2a2a;
+        }
+
+        .program-item.active {
+            border-color: #00ff41;
+            background: #1a2a1a;
+            box-shadow: 0 0 10px rgba(0, 255, 65, 0.3);
+        }
+
+        .program-item.completed {
+            border-color: #666666;
+            background: #1a1a1a;
+            opacity: 0.7;
+        }
+
+        .program-item.current {
+            border-color: #00ff41;
+            background: #1a2a1a;
+        }
+
+        .program-content {
+            flex: 1;
+            margin-right: 8px;
+        }
+
+        .program-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 2px;
+        }
+
+        .program-meta {
+            font-size: 9px;
+            color: #888888;
+            display: flex;
+            gap: 8px;
+        }
+
+        .program-duration {
+            font-size: 9px;
+            color: #00ff41;
+            font-weight: 600;
+        }
+
+        .remove-btn {
+            background: #333333;
+            color: #ffffff;
+            border: 1px solid #555555;
+            padding: 4px 8px;
+            font-size: 8px;
+            cursor: pointer;
+            border-radius: 3px;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .remove-btn:hover {
+            background: #ff4444;
+            border-color: #ff4444;
+            color: #ffffff;
+        }
+
+        .add-content-btn {
+            width: 100%;
+            padding: 12px;
+            background: #1a1a1a;
+            color: #00ff41;
+            border: 2px dashed #00ff41;
+            border-radius: 4px;
+            font-size: 11px;
+            font-family: 'SF Mono', monospace;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .add-content-btn:hover {
+            background: #2a2a2a;
+            border-color: #00cc33;
+            color: #00cc33;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: #333333;
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #00ff41;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .current-time {
+            font-size: 9px;
+            color: #888888;
+            text-align: center;
+            margin-top: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="channel-title">GENRE CHANNEL</div>
+        </div>
+
+        <div class="channel-header-above-timeline">
+            <div class="channel-title-section">
+                <div class="channel-title">Your Personalized Lineup</div>
+                <div class="edit-link" onclick="editChannel()">EDIT</div>
+            </div>
+            <div class="channel-controls">
+                <button class="btn" onclick="refreshContent()">REFRESH</button>
+                <button class="btn primary" onclick="startPlayback()">PLAY</button>
+            </div>
+        </div>
+
+        <div class="timeline-container">
+            <div class="timeline">
+                <div class="timeline-info">TIMELINE</div>
+                <div class="multiplier-display">1.0×</div>
+                
+                <div class="timeline-row time-markers">
+                    <div class="timeline-marker" data-time="0">0m</div>
+                    <div class="timeline-marker" data-time="30">30m</div>
+                    <div class="timeline-marker" data-time="60">1h</div>
+                    <div class="timeline-marker" data-time="90">1.5h</div>
+                    <div class="timeline-marker" data-time="120">2h</div>
+                    <div class="timeline-marker" data-time="180">3h</div>
+                    <div class="timeline-marker" data-time="240">4h</div>
+                </div>
+                
+                <div class="timeline-row multiplier-markers">
+                    <div class="timeline-marker multiplier multiplier-1" data-time="0">1.0×</div>
+                    <div class="timeline-marker multiplier multiplier-1" data-time="30">1.1×</div>
+                    <div class="timeline-marker multiplier multiplier-2" data-time="60">1.2×</div>
+                    <div class="timeline-marker multiplier multiplier-2" data-time="90">1.4×</div>
+                    <div class="timeline-marker multiplier multiplier-3" data-time="120">1.6×</div>
+                    <div class="timeline-marker multiplier multiplier-3" data-time="180">1.8×</div>
+                    <div class="timeline-marker multiplier multiplier-3" data-time="240">1.8×</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="channel-section">
+            <div class="program-track" id="program-track">
+                <!-- Program items will be populated by JavaScript -->
+                <div class="add-content-btn" onclick="addContent()">+ ADD SHOW</div>
+            </div>
+            
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+            <div class="current-time" id="current-time">0m elapsed</div>
+        </div>
+    </div>
+
+    <script>
+        // State management
+        let currentContent = [];
+        let currentIndex = 0;
+        let isPlaying = false;
+        let blockDuration = 0;
+        let blockStartTime = 0;
+        let totalDuration = 0;
+        let genre = null;
+        
+        // Initialize channel
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeChannel();
+            notifyParentReady();
+        });
+        
+        function initializeChannel() {
+            // Listen for messages from parent
+            window.addEventListener('message', handleMessage);
+            console.log('🎯 CHANNEL: Initialized');
+        }
+        
+        function notifyParentReady() {
+            window.parent.postMessage({
+                type: 'channelReady',
+                data: { timestamp: Date.now() }
+            }, '*');
+        }
+        
+        function handleMessage(event) {
+            // Verify origin for security
+            if (event.origin !== window.location.origin) {
+                return;
+            }
+            
+            const message = event.data;
+            if (!message || !message.type) {
+                return;
+            }
+            
+            console.log('🎯 CHANNEL: Received message:', message.type);
+            
+            switch (message.type) {
+                case 'setBlockProgression':
+                    handleBlockProgression(message.data);
+                    break;
+                case 'updateProgress':
+                    handleProgressUpdate(message.data);
+                    break;
+                case 'setGenre':
+                    handleGenreUpdate(message.data);
+                    break;
+                case 'reset':
+                    handleReset();
+                    break;
+            }
+        }
+        
+        function handleBlockProgression(data) {
+            if (!data || !data.blocks) {
+                console.error('🎯 CHANNEL: Invalid block progression data');
+                return;
+            }
+            
+            currentContent = data.blocks;
+            currentIndex = data.currentBlock || 0;
+            blockDuration = data.blockDuration || 0;
+            totalDuration = data.totalDuration || 0;
+            genre = data.genre;
+            
+            // Update UI
+            renderProgramTrack();
+            updateCurrentBlock(currentContent[currentIndex]);
+            updateProgress(0, 0);
+            
+            console.log(`🎯 CHANNEL: Block progression set - ${currentContent.length} blocks`);
+        }
+        
+        function handleProgressUpdate(data) {
+            if (!data) return;
+            
+            const { progress, currentTime } = data;
+            updateProgress(progress, currentTime);
+        }
+        
+        function handleGenreUpdate(data) {
+            if (!data || !data.genre) return;
+            
+            genre = data.genre;
+            updateGenreDisplay();
+        }
+        
+        function handleReset() {
+            currentContent = [];
+            currentIndex = 0;
+            isPlaying = false;
+            blockDuration = 0;
+            blockStartTime = 0;
+            totalDuration = 0;
+            genre = null;
+            
+            // Reset UI
+            renderProgramTrack();
+            updateProgress(0, 0);
+            updateGenreDisplay();
+        }
+        
+        function updateCurrentBlock(block) {
+            if (!block) return;
+            
+            const items = document.querySelectorAll('.program-item');
+            items.forEach((item, index) => {
+                if (index === currentIndex) {
+                    item.classList.add('current');
+                } else if (index < currentIndex) {
+                    item.classList.add('completed');
+                } else {
+                    item.classList.remove('current', 'completed');
+                }
+            });
+            
+            // Update timeline markers
+            updateTimelineMarkers();
+            
+            console.log(`🎯 CHANNEL: Current block updated to ${block.title}`);
+        }
+        
+        function updateProgress(progress, currentTime) {
+            const progressFill = document.getElementById('progress-fill');
+            const currentTimeDisplay = document.getElementById('current-time');
+            
+            if (progressFill) {
+                progressFill.style.width = `${progress}%`;
+            }
+            
+            if (currentTimeDisplay) {
+                const hours = Math.floor(currentTime / 60);
+                const minutes = Math.floor(currentTime % 60);
+                currentTimeDisplay.textContent = `${hours}h ${minutes}m elapsed`;
+            }
+        }
+        
+        function updateGenreDisplay() {
+            const genreDisplay = document.querySelector('.channel-title');
+            if (genreDisplay) {
+                genreDisplay.textContent = genre ? `${genre} Channel` : 'Genre Channel';
+            }
+        }
+        
+        function updateTimelineMarkers() {
+            const markers = document.querySelectorAll('.timeline-marker');
+            const totalDuration = currentContent.reduce((sum, item) => sum + (item.duration_minutes || 45), 0);
+            const currentTime = currentContent.slice(0, currentIndex + 1).reduce((sum, item) => sum + (item.duration_minutes || 45), 0);
+            
+            markers.forEach(marker => {
+                const markerTime = parseInt(marker.dataset.time) || 0;
+                if (currentTime >= markerTime) {
+                    marker.classList.add('active');
+                } else {
+                    marker.classList.remove('active');
+                }
+            });
+        }
+        
+        // ================================
+        // CONTENT MANAGEMENT
+        // ================================
+        
+        function loadDefaultContent() {
+            const defaultContent = [
+                {
+                    title: 'Planet Earth II',
+                    service: 'Netflix',
+                    genre: 'Documentary',
+                    duration: 60
+                },
+                {
+                    title: 'Breaking Bad',
+                    service: 'Netflix',
+                    genre: 'Drama',
+                    duration: 45
+                },
+                {
+                    title: 'The Office',
+                    service: 'Netflix',
+                    genre: 'Comedy',
+                    duration: 22
+                }
+            ];
+            
+            setContent(defaultContent);
+        }
+        
+        function setContent(content) {
+            currentContent = content;
+            currentIndex = 0;
+            renderProgramTrack();
+            updateProgress(0, 0);
+        }
+        
+        function renderProgramTrack() {
+            const programTrack = document.getElementById('program-track');
+            programTrack.innerHTML = '';
+            
+            currentContent.forEach((item, index) => {
+                const programItem = createProgramItem(item, index);
+                programTrack.appendChild(programItem);
+            });
+            
+            // Add the "add content" button
+            const addButton = document.createElement('div');
+            addButton.className = 'add-content-btn';
+            addButton.textContent = '+ ADD SHOW';
+            addButton.onclick = addContent;
+            programTrack.appendChild(addButton);
+        }
+        
+        function createProgramItem(item, index) {
+            const programItem = document.createElement('div');
+            programItem.className = 'program-item';
+            programItem.dataset.index = index;
+            
+            if (index === currentIndex) {
+                programItem.classList.add('current');
+            } else if (index < currentIndex) {
+                programItem.classList.add('completed');
+            }
+            
+            programItem.innerHTML = `
+                <div class="program-content">
+                    <div class="program-title">${item.title}</div>
+                    <div class="program-meta">
+                        <span>${item.service}</span>
+                        <span>${item.genre}</span>
+                    </div>
+                </div>
+                <div class="program-duration">${item.duration}m</div>
+                <button class="remove-btn" onclick="removeContent(${index})">REMOVE</button>
+            `;
+            
+            programItem.onclick = () => selectContent(index);
+            
+            return programItem;
+        }
+        
+        // ================================
+        // PLAYBACK CONTROL
+        // ================================
+        
+        function startPlayback() {
+            if (isPlaying) return;
+            
+            isPlaying = true;
+            startTime = Date.now();
+            
+            updateInterval = setInterval(() => {
+                updatePlayback();
+            }, 1000);
+            
+            console.log('🎯 CHANNEL: Playback started');
+        }
+        
+        function stopPlayback() {
+            if (!isPlaying) return;
+            
+            isPlaying = false;
+            if (updateInterval) {
+                clearInterval(updateInterval);
+                updateInterval = null;
+            }
+            
+            console.log('🎯 CHANNEL: Playback stopped');
+        }
+        
+        function updatePlayback() {
+            if (!startTime) return;
+            
+            const elapsed = Date.now() - startTime;
+            const elapsedMinutes = elapsed / (1000 * 60);
+            
+            // Calculate total duration
+            const totalDuration = currentContent.reduce((sum, item) => sum + item.duration, 0);
+            
+            // Calculate progress
+            const progress = Math.min((elapsedMinutes / totalDuration) * 100, 100);
+            
+            // Update current index based on elapsed time
+            let currentTime = 0;
+            let newIndex = 0;
+            
+            for (let i = 0; i < currentContent.length; i++) {
+                currentTime += currentContent[i].duration;
+                if (elapsedMinutes <= currentTime) {
+                    newIndex = i;
+                    break;
+                }
+            }
+            
+            if (newIndex !== currentIndex) {
+                currentIndex = newIndex;
+                updateCurrentBlock(currentContent[currentIndex]);
+            }
+            
+            updateProgress(progress, elapsedMinutes);
+        }
+        
+        // ================================
+        // CONTENT ACTIONS
+        // ================================
+        
+        function addContent() {
+            // This would typically open a content selection modal
+            console.log('🎯 CHANNEL: Add content clicked');
+            
+            // For demo purposes, add a random show
+            const newShow = {
+                title: 'New Show ' + (currentContent.length + 1),
+                service: 'Demo Service',
+                genre: 'Demo Genre',
+                duration: 45
+            };
+            
+            currentContent.push(newShow);
+            renderProgramTrack();
+        }
+        
+        function removeContent(index) {
+            if (index >= 0 && index < currentContent.length) {
+                currentContent.splice(index, 1);
+                renderProgramTrack();
+                console.log(`🎯 CHANNEL: Removed content at index ${index}`);
+            }
+        }
+        
+        function selectContent(index) {
+            if (index >= 0 && index < currentContent.length) {
+                currentIndex = index;
+                updateCurrentBlock(currentContent[currentIndex]);
+                console.log(`🎯 CHANNEL: Selected content at index ${index}`);
+            }
+        }
+        
+        // ================================
+        // UTILITY FUNCTIONS
+        // ================================
+        
+        function editChannel() {
+            console.log('🎯 CHANNEL: Edit channel clicked');
+            // This would typically open an edit modal
+        }
+        
+        function refreshContent() {
+            console.log('🎯 CHANNEL: Refresh content clicked');
+            loadDefaultContent();
+        }
+        
+        // ================================
+        // EXPORT FUNCTIONS
+        // ================================
+        
+        // Make functions available to parent window
+        window.channelAPI = {
+            setContent,
+            startPlayback,
+            stopPlayback,
+            updateProgress,
+            getCurrentContent: () => currentContent,
+            getCurrentIndex: () => currentIndex
+        };
+        
+        console.log('🎯 CHANNEL: Channel API ready');
+    </script>
+</body>
+</html> 

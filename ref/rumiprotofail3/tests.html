@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rumi Genre Channel Tests</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/components.css">
+    <link rel="stylesheet" href="styles/responsive.css">
+    <style>
+        /* Test runner specific styles */
+        .test-controls {
+            position: relative;
+            top: 0;
+            right: 0;
+            width: 340px;
+            min-width: 240px;
+            max-width: 360px;
+            height: 100vh;
+            background: #111;
+            border-left: 1px solid #222;
+            border-radius: 0;
+            padding: 24px 24px 24px 16px;
+            z-index: 10;
+            overflow-y: auto;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .test-log {
+            position: fixed;
+            bottom: 24px;
+            right: 360px;
+            width: 400px;
+            height: 300px;
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 20px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 12px;
+            z-index: 1002;
+        }
+
+        .test-log pre {
+            margin: 0;
+            white-space: pre-wrap;
+        }
+
+        .test-status {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .status-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .status-label {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .status-value {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .status-value.passed { color: #00ff41; }
+        .status-value.failed { color: #ff4141; }
+        .status-value.total { color: #fff; }
+
+        /* Mode-specific test elements */
+        .test-container {
+            position: relative;
+            flex: 1 1 auto;
+            min-width: 0;
+            max-width: 100%;
+            height: 100vh;
+            background: #111;
+            border: none;
+            border-radius: 0;
+            padding: 40px 32px;
+            z-index: 1;
+            overflow-y: auto;
+            box-sizing: border-box;
+        }
+
+        .mode-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .mode-button {
+            padding: 8px 16px;
+            border-radius: 4px;
+            border: 1px solid #333;
+            background: #222;
+            color: #ccc;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .mode-button.active {
+            border-color: var(--current-mode-color);
+            color: var(--current-mode-color);
+            background: var(--current-mode-bg);
+        }
+
+        .content-display {
+            margin-top: 20px;
+            padding: 20px;
+            border: 1px solid #333;
+            border-radius: 4px;
+        }
+
+        .block-info {
+            margin-top: 10px;
+            padding: 10px;
+            border: 1px solid #444;
+            border-radius: 4px;
+        }
+
+        .block-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 12px;
+            color: #888;
+        }
+
+        .block-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .block-description {
+            font-size: 14px;
+            line-height: 1.4;
+            color: #ccc;
+        }
+
+        /* Main app UI styles for tests */
+        .activation-circle {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 60px;
+            height: 60px;
+            background: #00ff41;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 999;
+            font-size: 10px;
+            color: #000;
+            text-align: center;
+        }
+
+        .simulation-container {
+            position: relative;
+            top: 0;
+            left: 0;
+            width: 320px;
+            min-width: 240px;
+            max-width: 360px;
+            height: 100vh;
+            background: #111;
+            border-right: 1px solid #222;
+            border-radius: 0;
+            padding: 24px 16px 24px 24px;
+            z-index: 10;
+            overflow-y: auto;
+            box-sizing: border-box;
+        }
+
+        .entry-point-panel {
+            color: #ccc;
+        }
+
+        .entry-point-header {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stream-detector {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .stream-detector .status {
+            color: #00ff41;
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .stream-detector .subtext {
+            color: #888;
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+
+        .show-select {
+            width: 100%;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            color: #ccc;
+            padding: 8px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .automode-button {
+            width: 100%;
+            background: #ffff00;
+            color: #000;
+            border: none;
+            padding: 12px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .extension-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 400px;
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 8px;
+            z-index: 1000;
+        }
+
+        .popup-header {
+            background: #1a1a1a;
+            padding: 15px;
+            border-bottom: 1px solid #333;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .popup-logo {
+            color: #00ff41;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .popup-body {
+            padding: 20px;
+        }
+
+        .points-section {
+            margin-bottom: 20px;
+        }
+
+        .points-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .points-total {
+            font-size: 24px;
+            font-weight: bold;
+            color: #00ff41;
+        }
+
+        .points-pending {
+            font-size: 12px;
+            color: #888;
+        }
+
+        .points-multiplier {
+            background: #1a1a1a;
+            padding: 8px 12px;
+            border-radius: 4px;
+            color: #00ff41;
+            font-weight: bold;
+        }
+
+        .holistic-panel {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .holistic-section {
+            text-align: center;
+        }
+
+        #holistic-show-info {
+            color: #ccc;
+            margin-bottom: 10px;
+        }
+
+        #holistic-animation pre {
+            color: #00ff41;
+            font-family: monospace;
+            margin: 0;
+        }
+
+        #holistic-progress {
+            color: #888;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+
+        .primary-cta {
+            width: 100%;
+            background: #00ff41;
+            color: #000;
+            border: none;
+            padding: 15px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .expandable-channel-section {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 6px;
+        }
+
+        .expand-channel-header {
+            padding: 12px 15px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #ccc;
+        }
+
+        .channel-expanded-container {
+            padding: 15px;
+            border-top: 1px solid #333;
+        }
+
+        .receipt-container {
+            text-align: center;
+        }
+
+        .receipt-header {
+            margin-bottom: 20px;
+        }
+
+        .receipt-title {
+            font-size: 18px;
+            color: #ccc;
+            margin-bottom: 10px;
+        }
+
+        .receipt-points {
+            color: #00ff41;
+            font-weight: bold;
+        }
+
+        .nokia-section {
+            background: #000;
+            border: 2px solid #333;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            font-family: monospace;
+            color: #00ff41;
+        }
+
+        .receipt-details {
+            text-align: left;
+        }
+
+        .receipt-section-title {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .receipt-info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .receipt-info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #333;
+        }
+
+        .receipt-label {
+            color: #888;
+            font-size: 12px;
+        }
+
+        .receipt-value {
+            color: #ccc;
+            font-size: 12px;
+        }
+
+        /* ASCII Art Display Styles */
+        .ascii-art {
+            font-family: monospace;
+            font-size: 8px;
+            line-height: 1.2;
+            color: #00ff41;
+            white-space: pre;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        .metadata-line {
+            font-family: monospace;
+            font-size: 10px;
+            color: #888;
+            text-align: center;
+            margin-top: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .nokia-section .content-blocks {
+            text-align: center;
+        }
+
+        /* Layout: Sidebars and Main Content */
+        #layout {
+            display: flex;
+            flex-direction: row;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+        }
+        .main-content {
+            flex: 1 1 0;
+            min-width: 0;
+            max-width: 100%;
+            height: 100vh;
+            background: #111;
+            border: none;
+            border-radius: 0;
+            padding: 40px 32px;
+            z-index: 1;
+            overflow-y: auto;
+            box-sizing: border-box;
+            position: relative;
+        }
+        /* Message area & program track styles (imported from indexD.html) */
+        .message-area {
+            background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+            color: #00ff41;
+            padding: 12px 20px;
+            font-size: 13px;
+            font-weight: 600;
+            display: flex;
+            flex-direction: column;
+            border-radius: 8px;
+            border: 1px solid #00ff41;
+            margin: 16px 0;
+            box-shadow: 0 2px 8px rgba(0, 255, 65, 0.1);
+            transition: all 0.3s ease;
+            font-family: 'SF Mono', monospace;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .message-area.collapsed {
+            font-size: 11px;
+            padding: 8px 16px;
+            opacity: 0.8;
+        }
+        .message-area.error {
+            background: linear-gradient(135deg, #2a1a1a, #3a2a2a);
+            color: #ff4444;
+            border-color: #ff4444;
+            box-shadow: 0 2px 8px rgba(255, 68, 68, 0.2);
+        }
+        .message-area.warning {
+            background: linear-gradient(135deg, #2a2a1a, #3a3a2a);
+            color: #ffaa00;
+            border-color: #ffaa00;
+            box-shadow: 0 2px 8px rgba(255, 170, 0, 0.2);
+        }
+        .message-area.info {
+            background: linear-gradient(135deg, #1a1a2a, #2a2a3a);
+            color: #0088ff;
+            border-color: #0088ff;
+            box-shadow: 0 2px 8px rgba(0, 136, 255, 0.2);
+        }
+        .message-area.success {
+            background: linear-gradient(135deg, #1a2a1a, #2a3a2a);
+            color: #00ff41;
+            border-color: #00ff41;
+            box-shadow: 0 2px 8px rgba(0, 255, 65, 0.2);
+        }
+        #message-details {
+            margin-top: 8px;
+            font-size: 11px;
+            color: #888;
+            font-weight: normal;
+            text-transform: none;
+            letter-spacing: normal;
+        }
+        .message-area.collapsed #message-close,
+        .message-area.collapsed #message-settings {
+            display: none;
+        }
+        .program-item {
+            font-family: 'SF Mono', monospace;
+            font-size: 9px;
+            color: #888;
+            padding: 2px 4px;
+            border: 1px solid #333;
+            border-radius: 3px;
+            transition: all 0.2s;
+        }
+        .program-item.active {
+            background: #00ff41;
+            color: #000;
+            border-color: #00ff41;
+            font-weight: 700;
+        }
+        .program-item.completed {
+            background: #111;
+            color: #444;
+        }
+        .automode-select {
+            width: 100%;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            color: #ccc;
+            padding: 8px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+    </style>
+    <!-- MODULE IMPORTS -->
+    <script type="module" src="js/core/error-handling.js"></script>
+    <script type="module" src="js/core/state-management.js"></script>
+    <script type="module" src="js/core/genre-channel-engine.js"></script>
+    <script type="module" src="js/core/indexing-engine.js"></script>
+    <script type="module" src="js/backend/content-manager.js"></script>
+    <script type="module" src="js/ui/components.js"></script>
+    <script type="module" src="js/ui/ascii-display.js"></script>
+    <script type="module" src="js/channel/timeline-manager.js"></script>
+    <script type="module" src="js/ui/debug-tools.js"></script>
+    <script type="module" src="js/ui/animations.js"></script>
+</head>
+<body>
+<!-- MESSAGE AREA & PROGRESS DISPLAY -->
+<div id="message-area" class="message-area collapsed">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <span id="message-text">🚀 RUMI INDEXING SYSTEM READY</span>
+        <div style="display: flex; align-items: center; gap: 8px;">
+            <button id="message-settings" style="background: none; border: none; color: inherit; font-size: 12px; cursor: pointer; opacity: 0.7; transition: opacity 0.2s; text-transform: uppercase; letter-spacing: 0.5px; font-family: 'SF Mono', monospace;" onclick="openSettings()">⚙ SETTINGS</button>
+            <button id="message-close" style="background: none; border: none; color: inherit; font-size: 16px; cursor: pointer; opacity: 0.7; transition: opacity 0.2s;" onclick="hideMessage()">×</button>
+        </div>
+    </div>
+    <span id="message-details" style="display:none;"></span>
+</div>
+<div id="program-track" style="margin-top:16px; display:flex; flex-direction:column; gap:4px;"></div>
+<div style="background:#222; border:1px solid #333; border-radius:4px; height:8px; overflow:hidden; margin-top:8px;">
+    <div class="progress-bar-fill" style="height:100%; width:0%; background:#00ff41; transition:width 0.3s;"></div>
+</div>
+    <div id="layout">
+        <div class="simulation-container">
+            <!-- Main Application UI Elements (for UI validation tests) -->
+            <div class="activation-circle" id="activation-circle" onclick="activateExtension()">
+                <div class="activation-text">
+                    ← click to enable extension
+                </div>
+            </div>
+            <div class="entry-point-panel">
+                <div class="entry-point-header">SIMULATED ENTRY POINTS</div>
+                <div id="stream-detector-entry" class="stream-detector">
+                    <div class="status">STREAM DETECTED</div>
+                    <div class="subtext">Select a show to begin</div>
+                    <select id="show-select" class="show-select" onchange="selectShow(this.value)">
+                        <option value="">-- Select a Show --</option>
+                    </select>
+                </div>
+            <div style="margin-bottom: 10px; display:flex; flex-direction:column; gap:8px;">
+                <select id="automode-select" class="automode-select">
+                    <option value="content-intelligence">🧠 Content Intelligence</option>
+                    <option value="scene-description">🎬 Scene Description Pipeline</option>
+                    <option value="story-tree">🌳 Story Tree</option>
+                    <option value="character-summaries">👥 Character Summaries</option>
+                </select>
+                    <button class="automode-button" onclick="launchWithAutomode()">
+                    START AUTOMODE
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="right-stack">
+            <div class="test-controls">
+                <div class="test-status">
+                    <div class="status-item">
+                        <span class="status-label">PASSED</span>
+                        <span class="status-value passed" id="passed-count">0</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">FAILED</span>
+                        <span class="status-value failed" id="failed-count">0</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">TOTAL</span>
+                        <span class="status-value total" id="total-count">0</span>
+                    </div>
+                </div>
+                <button class="primary-cta" onclick="window.RumiTests.runAllTests()">
+                    Run All Tests
+                </button>
+                <button onclick="window.RumiTests.runTest(document.getElementById('testSelector').value)">Run Selected Test</button>
+                <select id="testSelector">
+                    <option value="show-detection">Show Detection</option>
+                    <option value="content-blocks">Content Blocks</option>
+                    <option value="genre-matching">Genre Matching</option>
+                    <option value="pause-resume">Pause/Resume</option>
+                    <option value="block-progression">Block Progression</option>
+                </select>
+                <button class="secondary-button" onclick="window.uiValidator.runAll()">Run UI Validation</button>
+                <button onclick="populateShowDropdown()" style="margin-top: 10px;">Populate Dropdown</button>
+                <button onclick="testAsciiArt()" style="margin-top: 10px;">Test ASCII Art</button>
+            </div>
+            <div class="main-content test-container">
+                <div class="mode-selector">
+                    <button class="mode-button" onclick="setTestMode('detected')" data-mode="detected">Detected Mode</button>
+                    <button class="mode-button" onclick="setTestMode('auto')" data-mode="auto">Auto Mode</button>
+                </div>
+                <div class="nokia-visual">
+                    <div class="content-display">
+                        <!-- Content will be populated by JS -->
+                    </div>
+                </div>
+            <!-- Expandable Channel Section (Section 2 requirements) -->
+            <div id="expandable-channel-section" class="expandable-channel-section" style="margin-top:24px;">
+                <div class="expand-channel-header" onclick="toggleChannelExpansion()">
+                    <span>Channel Details</span>
+                    <span id="expand-channel-icon">▲</span>
+                </div>
+                <div id="channel-expanded-container" class="channel-expanded-container" style="display:block;">
+                    <p style="font-size:12px; color:#888; margin-bottom:8px;">Block lineup and session info will appear here as indexing progresses.</p>
+                    <!-- Placeholder list – will be dynamically populated by timeline listeners if desired -->
+                    <ul id="channel-block-list" style="list-style:none; padding-left:0; font-size:11px; color:#ccc;"></ul>
+                </div>
+            </div>
+
+            <!-- Holistic Panel with show info (Section 2 requirement) -->
+            <div class="holistic-panel" style="margin-top:24px;" id="holistic-panel">
+                <div class="holistic-section">
+                    <div id="holistic-show-info">No show selected</div>
+                    <div id="holistic-animation"><pre>Ready</pre></div>
+                    <div id="holistic-progress">Progress: 0%</div>
+                </div>
+            </div>
+                <div class="block-info">
+                    <!-- Block details will be populated by JS -->
+                </div>
+                <!-- Hidden receipt view for UI validation -->
+                <div id="receipt-view" style="display:none">
+                    <div class="popup-body">
+                        <div class="receipt-container">
+                            <div class="receipt-header">
+                                <div class="receipt-title">
+                                    <span>SESSION COMPLETED for</span>
+                                    <span class="receipt-points" id="receipt-total-points">+0.00</span>
+                                    <span>POINTS</span>
+                                </div>
+                            </div>
+                            <div class="receipt-details"></div>
+                            <div class="nokia-section"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="test-log" id="test-log">
+        <pre id="testOutput"></pre>
+    </div>
+    
+    <script>
+        async function initializeApp() {
+            console.log('🎯 INIT: Waiting for DOMContentLoaded...');
+            await new Promise(resolve => {
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', resolve);
+                } else {
+                    resolve();
+                }
+            });
+            console.log('🎯 INIT: DOMContentLoaded');
+
+            // Initialize global instances
+            if (!window.rumiState) {
+                window.rumiState = new RumiState();
+                console.log('🎯 INIT: rumiState initialized');
+            }
+            if (!window.RumiContent) {
+                window.RumiContent = new ContentManager();
+                console.log('🎯 INIT: RumiContent initialized');
+            }
+            if (!window.RumiAscii) {
+                window.RumiAscii = RumiASCII;
+                console.log('🎯 INIT: RumiAscii initialized');
+            }
+            if (!window.RumiTests) {
+                window.RumiTests = new E2ETests();
+                console.log('🎯 INIT: RumiTests initialized');
+            }
+            if (!window.uiValidator) {
+                window.uiValidator = new UIValidationTests();
+                console.log('🎯 INIT: UIValidationTests initialized');
+            }
+
+            // Wait for content to load
+            console.log('🎯 INIT: Loading content library...');
+            await window.RumiContent.loadContentLibrary();
+            console.log('🎯 INIT: Content library loaded');
+
+            // Populate dropdowns
+            await populateShowDropdown();
+            console.log('🎯 INIT: Show dropdown populated');
+
+            // Set up UI event handlers (if any additional needed)
+            // (Handlers are already set inline for most buttons)
+
+            // Enable test controls (if you want to disable them initially, add logic here)
+            console.log('🎯 INIT: App initialization complete');
+        }
+
+        // Replace all previous DOMContentLoaded and setTimeout inits with this:
+        initializeApp();
+
+        // Placeholder functions for UI elements (for UI validation tests)
+        function activateExtension() {
+            console.log('🎯 UI: Extension activated');
+            document.querySelector('.extension-popup').style.display = 'block';
+        }
+
+        function selectShow(showTitle) {
+            console.log('🎯 UI: Show selected:', showTitle);
+            if (window.rumiState) {
+                window.rumiState.set('currentShow', showTitle);
+            }
+        }
+
+        function launchWithAutomode() {
+        const modeSelect = document.getElementById('automode-select');
+        const selected = modeSelect ? modeSelect.value : 'content-intelligence';
+        console.log('🎯 UI: Automode launched', selected);
+            if (window.rumiState) {
+            window.rumiState.setMode('auto');
+            window.rumiState.setState('automodeType', selected);
+            }
+        }
+
+        function startIndexing() {
+            console.log('🎯 UI: Indexing started');
+            if (window.rumiState) {
+                window.rumiState.set('isActive', true);
+            }
+        }
+
+        function toggleChannelExpansion() {
+            console.log('🎯 UI: Channel expansion toggled');
+            const container = document.getElementById('channel-expanded-container');
+            const icon = document.getElementById('expand-channel-icon');
+            const isExpanded = container.style.display !== 'none';
+            
+            if (isExpanded) {
+                container.style.display = 'none';
+                icon.textContent = '▼';
+            } else {
+                container.style.display = 'block';
+                icon.textContent = '▲';
+            }
+        }
+
+        // Test ASCII art functionality
+        async function testAsciiArt() {
+            console.log('🎯 ASCII: Testing ASCII art functionality...');
+            
+            if (window.RumiAscii) {
+                await window.RumiAscii.init();
+                
+                // Test with a show title
+                const display = await window.RumiAscii.generateNokiaDisplay('Breaking Bad', {
+                    mode: 'detected',
+                    duration: '45:30',
+                    blocks: '12'
+                });
+                
+                window.RumiAscii.updateNokiaSection(display);
+                console.log('🎯 ASCII: ASCII art test completed');
+            } else {
+                console.error('🎯 ASCII: RumiAscii not available');
+            }
+        }
+
+        // Populate the show dropdown with available shows
+        async function populateShowDropdown() {
+            try {
+                console.log('🎯 UI: Attempting to populate show dropdown...');
+                console.log('🎯 UI: RumiContent available:', !!window.RumiContent);
+                
+                if (window.RumiContent) {
+                    console.log('🎯 UI: Loading show titles...');
+                    const showTitles = await window.RumiContent.getShowTitles();
+                    console.log('🎯 UI: Retrieved show titles:', showTitles);
+                    
+                    const showSelect = document.getElementById('show-select');
+                    console.log('🎯 UI: Show select element found:', !!showSelect);
+                    
+                    if (showSelect && showTitles.length > 0) {
+                        // Clear existing options except the first one
+                        showSelect.innerHTML = '<option value="">-- Select a Show --</option>';
+                        
+                        // Add show titles to dropdown
+                        showTitles.forEach(title => {
+                            const option = document.createElement('option');
+                            option.value = title;
+                            option.textContent = title;
+                            showSelect.appendChild(option);
+                        });
+                        
+                        console.log('🎯 UI: Successfully populated show dropdown with', showTitles.length, 'shows');
+                    } else {
+                        console.warn('🎯 UI: No show titles found or show select element missing');
+                    }
+                } else {
+                    console.error('🎯 UI: RumiContent not available');
+                }
+            } catch (error) {
+                console.error('🎯 UI: Error populating show dropdown:', error);
+            }
+    }
+        // ============================
+        // Timeline-driven UI enhancements for expandable channel section & holistic panel
+        // ============================
+        if (window.RumiTimeline) {
+            // Populate block list when timeline is set
+            window.RumiTimeline.subscribe?.('timelineSet', ({ timeline }) => {
+                const listEl = document.getElementById('channel-block-list');
+                if (!listEl) return;
+                listEl.innerHTML = '';
+                timeline.filter(b=>b.type==='content').forEach((block, idx) => {
+                    const li = document.createElement('li');
+                    li.textContent = `${idx + 1}. ${block.title} (${block.duration}m)`;
+                    listEl.appendChild(li);
+                });
+            });
+
+            // Update holistic panel on block change
+            window.RumiTimeline.subscribe?.('blockChange', ({ block, index }) => {
+                const showInfoEl = document.getElementById('holistic-show-info');
+                const progressEl = document.getElementById('holistic-progress');
+                if (showInfoEl) showInfoEl.textContent = block?.title || 'Unknown';
+                if (progressEl) {
+                    const pct = window.RumiTimeline.getProgress?.() || 0;
+                    progressEl.textContent = `Progress: ${pct.toFixed(1)}%`;
+                }
+            });
+        }
+    </script>
+<script src="js/tests/e2e-tests.js"></script>
+<script src="js/tests/ui-validation.test.js"></script>
+</body>
+</html> 

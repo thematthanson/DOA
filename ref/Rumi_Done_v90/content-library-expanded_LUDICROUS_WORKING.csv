@@ -1,0 +1,79 @@
+title,duration_minutes,duration_seconds,type,genre,service,season,episode,year,description,automode_eligible,content_id,intelligence_bucket
+"The Office - Michael's Diversity Day Speech",3,180,clip,Comedy,peacock,1,2,2005,"Michael's awkward diversity training",true,office-diversity-clip,Scene Description Pipeline
+"Parks and Rec - Leslie's Waffle Rant",2,120,clip,Comedy,peacock,4,8,2012,"Leslie defends her waffle obsession",true,parks-waffle-clip,Scene Description Pipeline
+"Community - Troy's Emotions",4,240,clip,Comedy,netflix,2,3,2010,"Troy has an emotional breakdown",true,community-troy-clip,Scene Description Pipeline
+"30 Rock - Liz Lemon's Food Moments",5,300,clip,Comedy,hulu,3,12,2009,"Liz's relationship with food",true,30rock-food-clip,Scene Description Pipeline
+"Arrested Development - Banana Stand",3,180,clip,Comedy,netflix,1,2,2003,"There's always money in the banana stand",true,arrested-banana-clip,Scene Description Pipeline
+"Brooklyn 99 - Cold Open Pranks",6,360,clip,Comedy,hulu,2,14,2015,"Jake and Charles prank each other",true,brooklyn-prank-clip,Scene Description Pipeline
+"Modern Family - Phil's Real Estate Pitch",4,240,clip,Sitcom,abc,5,7,2013,"Phil's overly enthusiastic house tours",true,modern-phil-clip,Scene Description Pipeline
+"How I Met Your Mother - Barney's Suit Up",2,120,clip,Sitcom,cbs,3,9,2008,"Barney explains the importance of suits",true,himym-suit-clip,Scene Description Pipeline
+"Friends - Ross and the Couch",7,420,clip,Sitcom,nbc,5,16,1999,"Ross tries to move a couch up stairs",true,friends-couch-clip,Scene Description Pipeline
+"Seinfeld - Soup Nazi Confrontation",5,300,clip,Sitcom,nbc,7,6,1995,"Jerry encounters the Soup Nazi",true,seinfeld-soup-clip,Scene Description Pipeline
+"Key & Peele - Substitute Teacher",4,240,clip,Sketch,comedy central,2,1,2012,"Substitute teacher mispronounces names",true,keypeele-sub-clip,Scene Description Pipeline
+"SNL - More Cowbell Sketch",6,360,clip,Sketch,nbc,26,1,2000,"Blue Oyster Cult needs more cowbell",true,snl-cowbell-clip,Scene Description Pipeline
+"Rick and Morty - Pickle Rick Scene",8,480,clip,Animation,adult swim,3,3,2017,"Rick turns himself into a pickle",true,rickmorty-pickle-clip,Scene Description Pipeline
+"Avatar - Cabbage Man Compilation",3,180,clip,Animation,nickelodeon,1,8,2005,"My cabbages! moments throughout series",true,avatar-cabbage-clip,Scene Description Pipeline
+"SpongeBob - Krabby Patty Secret",4,240,clip,Animation,nickelodeon,2,12,2001,"SpongeBob makes the perfect patty",true,spongebob-patty-clip,Scene Description Pipeline
+"Family Guy - Chicken Fight",9,540,clip,Animation,fox,4,1,2005,"Peter vs Giant Chicken battle",true,familyguy-chicken-clip,Scene Description Pipeline
+"South Park - Underpants Gnomes",5,300,clip,Animation,comedy central,2,17,1998,"Phase 1: Collect underpants",true,southpark-gnomes-clip,Scene Description Pipeline
+"Simpsons - Homer vs Donut",3,180,clip,Animation,fox,4,11,1992,"Homer can't resist pink donut",true,simpsons-donut-clip,Scene Description Pipeline
+"I Think You Should Leave - Tables",7,420,clip,Sketch,netflix,1,1,2019,"Guy who definitely didn't break tables",true,itysl-tables-clip,Scene Description Pipeline
+"Chappelle Show - Prince Basketball",8,480,clip,Sketch,comedy central,2,1,2004,"Charlie Murphy's Hollywood stories",true,chappelle-prince-clip,Scene Description Pipeline
+"Mad TV - Stuart at Blockbuster",6,360,clip,Sketch,fox,3,8,1997,"Look what I can do!",true,madtv-stuart-clip,Scene Description Pipeline
+"In Living Color - Homie Clowns",5,300,clip,Sketch,fox,2,15,1991,"Homie don't play that",true,livingcolor-homie-clip,Scene Description Pipeline
+"Mr. Bean - Restaurant Disaster",10,600,clip,Comedy,itv,1,3,1990,"Mr. Bean orders steak tartare",true,mrbean-restaurant-clip,Scene Description Pipeline
+"Monty Python - Dead Parrot Sketch",8,480,clip,Sketch,bbc,2,8,1970,"This parrot is no more",true,python-parrot-clip,Scene Description Pipeline
+"Kids in the Hall - Crushing Heads",4,240,clip,Sketch,cbc,3,12,1992,"I'm crushing your head",true,kith-heads-clip,Scene Description Pipeline
+"Whose Line - Scenes from a Hat",12,720,clip,Improv,abc,4,15,1999,"Things you don't want to hear",true,whoseline-scenes-clip,Scene Description Pipeline
+"Saturday Night Live - Wayne's World",11,660,clip,Sketch,nbc,16,5,1990,"Party on, Wayne! Party on, Garth!",true,snl-waynes-clip,Scene Description Pipeline
+"Chapelle Show - Rick James Interview",9,540,clip,Sketch,comedy central,2,1,2004,"I'm Rick James, bitch!",true,chappelle-rick-clip,Scene Description Pipeline
+"Mad TV - Ms. Swan at DMV",7,420,clip,Sketch,fox,5,12,1999,"He look-a like a man",true,madtv-swan-clip,Scene Description Pipeline
+"SCTV - Bob and Doug McKenzie",13,780,clip,Sketch,cbc,4,8,1981,"Take off, eh! Hosers",true,sctv-mckenzie-clip,Scene Description Pipeline
+"Portlandia - Put a Bird On It",6,360,clip,Sketch,ifc,1,1,2011,"We can put a bird on it!",true,portlandia-bird-clip,Scene Description Pipeline
+"Tim and Eric - Cinco Products",5,300,clip,Sketch,adult swim,3,7,2009,"Cinco de Mayo commercial",true,timeric-cinco-clip,Scene Description Pipeline
+"Mr. Show - Druggachusetts",8,480,clip,Sketch,hbo,2,4,1996,"The state where drugs are legal",true,mrshow-drugs-clip,Scene Description Pipeline
+"Upright Citizens - Ass Pennies",4,240,clip,Sketch,comedy central,1,8,1998,"You handle my ass pennies",true,ucb-pennies-clip,Scene Description Pipeline
+"Breaking Bad - Say My Name",12,720,clip,Drama,amc,5,7,2012,"Walter White's intimidation scene",true,breakingbad-name-clip,Content Intelligence
+"The Sopranos - Pine Barrens Chase",15,900,clip,Drama,hbo,3,11,2001,"Paulie and Christopher get lost",true,sopranos-barrens-clip,Content Intelligence
+"The Wire - Omar's Testimony",10,600,clip,Drama,hbo,2,11,2003,"Omar takes the stand in court",true,wire-omar-clip,Content Intelligence
+"Mad Men - Carousel Pitch",8,480,clip,Drama,amc,1,13,2007,"Don's emotional Kodak presentation",true,madmen-carousel-clip,Content Intelligence
+"Game of Thrones - Red Wedding",14,840,clip,Fantasy,hbo,3,9,2013,"The Lannisters send their regards",true,got-wedding-clip,Content Intelligence
+"Lost - Hatch Discovery",11,660,clip,Mystery,abc,1,23,2005,"Locke and Boone find the hatch",true,lost-hatch-clip,Content Intelligence
+"Stranger Things - Demogorgon Fight",9,540,clip,Horror,netflix,1,8,2016,"Eleven confronts the Demogorgon",true,stranger-demo-clip,Content Intelligence
+"Twin Peaks - Laura Palmer Discovery",7,420,clip,Mystery,abc,1,1,1990,"She's wrapped in plastic",true,twinpeaks-laura-clip,Content Intelligence
+"The X-Files - Flukeman Encounter",13,780,clip,Horror,fox,2,2,1994,"Mulder faces the Flukeman",true,xfiles-fluke-clip,Content Intelligence
+"Sherlock - Reichenbach Fall",15,900,clip,Mystery,bbc,2,3,2012,"Sherlock's apparent death",true,sherlock-fall-clip,Content Intelligence
+"House - Everybody Lies",6,360,clip,Medical,fox,1,1,2004,"House's philosophy on patients",true,house-lies-clip,Content Intelligence
+"Dexter - Code of Harry",8,480,clip,Crime,showtime,1,2,2006,"Dexter follows his father's code",true,dexter-code-clip,Content Intelligence
+"CSI - Grissom's Evidence",10,600,clip,Crime,cbs,1,6,2000,"Gil finds the crucial evidence",true,csi-evidence-clip,Content Intelligence
+"NCIS - Gibbs' Rules",5,300,clip,Crime,cbs,3,12,2006,"Rule #1: Never let suspects sit together",true,ncis-rules-clip,Content Intelligence
+"Criminal Minds - Reid's Statistics",4,240,clip,Crime,cbs,2,8,2007,"Spencer rattles off crime statistics",true,minds-stats-clip,Content Intelligence
+"Law & Order - Dun Dun Moment",3,180,clip,Crime,nbc,5,14,1995,"The classic scene transition sound",true,laworder-dun-clip,Content Intelligence
+"Friends - Pivot Scene",8,480,clip,Sitcom,nbc,5,16,1999,"Ross screams PIVOT while moving couch",true,friends-pivot-clip,Story Tree
+"Seinfeld - Master of Your Domain",12,720,clip,Sitcom,nbc,4,11,1992,"The Contest - who can last longest",true,seinfeld-contest-clip,Story Tree
+"The Office - Jim's Pranks on Dwight",10,600,clip,Comedy,nbc,3,7,2007,"Jim puts Dwight's stapler in Jello",true,office-stapler-clip,Story Tree
+"Parks and Rec - Ron Swanson Meat",6,360,clip,Comedy,nbc,3,13,2011,"Ron explains his love of meat",true,parks-meat-clip,Story Tree
+"Arrested Development - Gob's Magic",9,540,clip,Comedy,fox,2,1,2004,"It's not a trick, it's an illusion",true,arrested-magic-clip,Story Tree
+"Community - Paintball Episode",15,900,clip,Comedy,nbc,1,23,2010,"The study group in paintball war",true,community-paintball-clip,Story Tree
+"30 Rock - Tracy's Outburst",7,420,clip,Comedy,nbc,2,11,2008,"Tracy has a public meltdown",true,30rock-tracy-clip,Story Tree
+"How I Met Your Mother - Slap Bet",11,660,clip,Sitcom,cbs,2,9,2006,"Marshall wins the right to slap Barney",true,himym-slap-clip,Story Tree
+"Brooklyn Nine-Nine - Halloween Heist",13,780,clip,Comedy,fox,1,6,2013,"First annual Halloween heist begins",true,brooklyn-heist-clip,Story Tree
+"Modern Family - Phil's Philosophy",5,300,clip,Sitcom,abc,1,2,2009,"Phil explains his parenting style",true,modern-philosophy-clip,Story Tree
+"Cheers - Norm Entrance",4,240,clip,Sitcom,nbc,3,1,1984,"NORM! Everyone knows your name",true,cheers-norm-clip,Story Tree
+"Frasier - Psychiatrist Analysis",8,480,clip,Sitcom,nbc,5,12,1998,"Frasier analyzes everyone at party",true,frasier-analysis-clip,Story Tree
+"Will & Grace - Jack's Dramatics",6,360,clip,Sitcom,nbc,2,8,2000,"Jack overreacts to minor situation",true,willgrace-jack-clip,Story Tree
+"Sex and the City - Carrie's Voiceover",7,420,clip,Comedy,hbo,3,5,2000,"Carrie wonders about relationships",true,satc-carrie-clip,Story Tree
+"Everybody Loves Raymond - Family Dinner",9,540,clip,Sitcom,cbs,4,11,2000,"Ray gets caught between Marie and Debra",true,raymond-dinner-clip,Story Tree
+"King of Queens - Doug's Schemes",12,720,clip,Sitcom,cbs,6,7,2004,"Doug tries to avoid work",true,queens-scheme-clip,Story Tree
+"Sherlock - Deduction Scene",8,480,clip,Mystery,bbc,1,1,2010,"Holmes deduces Watson's background",true,sherlock-deduction-clip,Character Summaries
+"House - Differential Diagnosis",10,600,clip,Medical,fox,2,5,2005,"Team brainstorms patient symptoms",true,house-diagnosis-clip,Character Summaries
+"Dexter - Kill Room Setup",12,720,clip,Crime,showtime,1,3,2006,"Dexter prepares his kill room",true,dexter-room-clip,Character Summaries
+"The Mentalist - Patrick's Tricks",6,360,clip,Crime,cbs,1,2,2008,"Patrick Jane reads people's minds",true,mentalist-tricks-clip,Character Summaries
+"Psych - Shawn's Fake Visions",9,540,clip,Comedy,usa,1,1,2006,"Shawn pretends to be psychic",true,psych-visions-clip,Character Summaries
+"Monk - Adrian's Phobias",7,420,clip,Comedy,usa,1,2,2002,"Monk explains his many fears",true,monk-phobias-clip,Character Summaries
+"Criminal Minds - Behavioral Analysis",11,660,clip,Crime,cbs,1,1,2005,"Team profiles the unsub",true,minds-profile-clip,Character Summaries
+"Bones - Booth and Brennan Banter",5,300,clip,Crime,fox,1,1,2005,"Partnership dynamic showcased",true,bones-banter-clip,Character Summaries
+"NCIS - Gibbs and DiNozzo",8,480,clip,Crime,cbs,1,1,2003,"Head slap and movie references",true,ncis-slap-clip,Character Summaries
+"CSI - Lab Work Montage",4,240,clip,Crime,cbs,1,1,2000,"Team processes evidence in lab",true,csi-lab-clip,Character Summaries
+"Elementary - Holmes and Watson",13,780,clip,Crime,cbs,1,1,2012,"Modern Holmes in New York",true,elementary-modern-clip,Character Summaries
+"The X-Files - Mulder and Scully",15,900,clip,Mystery,fox,1,1,1993,"The truth is out there",true,xfiles-truth-clip,Character Summaries 

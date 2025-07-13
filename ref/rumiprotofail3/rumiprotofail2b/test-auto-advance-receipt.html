@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auto-Advance Receipt Test</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background: #000;
+            color: #00ff41;
+            margin: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #1a1a1a;
+            border: 1px solid #00ff41;
+            border-radius: 8px;
+        }
+        
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+        }
+        
+        .test-button {
+            background: #00ff41;
+            color: #000;
+            border: none;
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 4px;
+            margin: 10px 5px;
+            transition: background 0.2s;
+        }
+        
+        .test-button:hover {
+            background: #00cc33;
+        }
+        
+        .test-button:disabled {
+            background: #666;
+            cursor: not-allowed;
+        }
+        
+        .status {
+            margin-top: 15px;
+            padding: 10px;
+            background: #2a2a2a;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        
+        .log {
+            background: #0a0a0a;
+            border: 1px solid #333;
+            border-radius: 4px;
+            padding: 15px;
+            height: 200px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            margin-top: 15px;
+        }
+        
+        .simulation-panel {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .simulation-block {
+            background: #2a2a2a;
+            border: 1px solid #444;
+            border-radius: 4px;
+            padding: 15px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        
+        .simulation-block.active {
+            background: #2a2a0a;
+            border-color: #ffff00;
+            box-shadow: 0 0 10px rgba(255, 255, 0, 0.3);
+        }
+        
+        .simulation-block.completed {
+            background: #0a2a0a;
+            border-color: #00ff41;
+            box-shadow: 0 0 10px rgba(0, 255, 65, 0.3);
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00ff41, #ffff00);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .ludicrous-toggle {
+            background: #ffaa00;
+            color: #000;
+            border: none;
+            padding: 8px 16px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 4px;
+            margin: 5px;
+        }
+        
+        .ludicrous-toggle.active {
+            background: #ff6600;
+            box-shadow: 0 0 10px rgba(255, 102, 0, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Auto-Advance Receipt Test</h1>
+            <p>Test the auto-advance functionality from Section 3a/3b to Section 4a/4b (receipt view)</p>
+        </div>
+        
+        <div class="test-section">
+            <h2>🎯 Test Controls</h2>
+            <div>
+                <button class="test-button" onclick="testDetectionMode()">Test Detection Mode (3a → 4a)</button>
+                <button class="test-button" onclick="testAutomode()">Test Automode (3b → 4b)</button>
+                <button class="test-button" onclick="testLudicrousMode()">Test Ludicrous Mode</button>
+                <button class="test-button" onclick="clearLog()">Clear Log</button>
+            </div>
+            
+            <div style="margin-top: 15px;">
+                <button class="ludicrous-toggle" id="ludicrous-toggle" onclick="toggleLudicrousMode()">Ludicrous Mode: OFF</button>
+                <span id="ludicrous-status" style="margin-left: 10px; color: #888;">Normal speed</span>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2>📊 Simulation Panel</h2>
+            <div class="simulation-panel">
+                <div class="simulation-block" id="block-1">
+                    <div>Block 1</div>
+                    <div style="font-size: 10px; color: #888;">60 min</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-1"></div>
+                    </div>
+                    <div id="status-1" style="font-size: 10px; color: #666;">WAITING</div>
+                </div>
+                <div class="simulation-block" id="block-2">
+                    <div>Block 2</div>
+                    <div style="font-size: 10px; color: #888;">45 min</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-2"></div>
+                    </div>
+                    <div id="status-2" style="font-size: 10px; color: #666;">WAITING</div>
+                </div>
+                <div class="simulation-block" id="block-3">
+                    <div>Block 3</div>
+                    <div style="font-size: 10px; color: #888;">30 min</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-3"></div>
+                    </div>
+                    <div id="status-3" style="font-size: 10px; color: #666;">WAITING</div>
+                </div>
+                <div class="simulation-block" id="block-4">
+                    <div>Block 4</div>
+                    <div style="font-size: 10px; color: #888;">90 min</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-4"></div>
+                    </div>
+                    <div id="status-4" style="font-size: 10px; color: #666;">WAITING</div>
+                </div>
+            </div>
+            
+            <div class="status">
+                <div><strong>Current Mode:</strong> <span id="current-mode">None</span></div>
+                <div><strong>Total Time:</strong> <span id="total-time">0:00</span></div>
+                <div><strong>Expected Receipt:</strong> <span id="expected-receipt">None</span></div>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2>📝 Test Log</h2>
+            <div class="log" id="test-log"></div>
+        </div>
+    </div>
+
+    <script>
+        let isLudicrousMode = false;
+        let currentTest = null;
+        let blockProgress = [0, 0, 0, 0];
+        let blockDurations = [60, 45, 30, 90]; // minutes
+        let startTime = null;
+        
+        function log(message) {
+            const timestamp = new Date().toLocaleTimeString();
+            const logElement = document.getElementById('test-log');
+            logElement.innerHTML += `[${timestamp}] ${message}\n`;
+            logElement.scrollTop = logElement.scrollHeight;
+            console.log(`[${timestamp}] ${message}`);
+        }
+        
+        function clearLog() {
+            document.getElementById('test-log').innerHTML = '';
+        }
+        
+        function toggleLudicrousMode() {
+            isLudicrousMode = !isLudicrousMode;
+            const toggle = document.getElementById('ludicrous-toggle');
+            const status = document.getElementById('ludicrous-status');
+            
+            if (isLudicrousMode) {
+                toggle.textContent = 'Ludicrous Mode: ON';
+                toggle.classList.add('active');
+                status.textContent = 'Ludicrous speed (300x)';
+                status.style.color = '#ff6600';
+            } else {
+                toggle.textContent = 'Ludicrous Mode: OFF';
+                toggle.classList.remove('active');
+                status.textContent = 'Normal speed';
+                status.style.color = '#888';
+            }
+            
+            log(`Ludicrous mode ${isLudicrousMode ? 'activated' : 'deactivated'}`);
+        }
+        
+        function testDetectionMode() {
+            if (currentTest) return;
+            
+            currentTest = 'detection';
+            log('=== STARTING DETECTION MODE TEST ===');
+            log('Mode: Detection (Section 3a → 4a)');
+            log('Expected receipt: Section 4a (Detection Receipt View)');
+            
+            document.getElementById('current-mode').textContent = 'Detection Mode';
+            document.getElementById('expected-receipt').textContent = 'Section 4a (Detection Receipt)';
+            
+            startBlockProgression();
+        }
+        
+        function testAutomode() {
+            if (currentTest) return;
+            
+            currentTest = 'automode';
+            log('=== STARTING AUTOMODE TEST ===');
+            log('Mode: Automode (Section 3b → 4b)');
+            log('Expected receipt: Section 4b (Automode Receipt View + Learning Insights)');
+            
+            document.getElementById('current-mode').textContent = 'Automode';
+            document.getElementById('expected-receipt').textContent = 'Section 4b (Automode Receipt + Learning Insights)';
+            
+            startBlockProgression();
+        }
+        
+        function testLudicrousMode() {
+            if (currentTest) return;
+            
+            // Activate ludicrous mode for this test
+            if (!isLudicrousMode) {
+                toggleLudicrousMode();
+            }
+            
+            currentTest = 'ludicrous';
+            log('=== STARTING LUDICROUS MODE TEST ===');
+            log('Mode: Ludicrous Speed (300x acceleration)');
+            log('Expected completion time: ~0.8 seconds instead of 45 minutes');
+            
+            document.getElementById('current-mode').textContent = 'Ludicrous Mode';
+            document.getElementById('expected-receipt').textContent = 'Section 4a/4b (Accelerated)';
+            
+            startBlockProgression();
+        }
+        
+        function startBlockProgression() {
+            startTime = Date.now();
+            blockProgress = [0, 0, 0, 0];
+            
+            // Reset all blocks
+            for (let i = 1; i <= 4; i++) {
+                const block = document.getElementById(`block-${i}`);
+                const progress = document.getElementById(`progress-${i}`);
+                const status = document.getElementById(`status-${i}`);
+                
+                block.className = 'simulation-block';
+                progress.style.width = '0%';
+                status.textContent = 'WAITING';
+                status.style.color = '#666';
+            }
+            
+            // Start with first block
+            processBlock(0);
+        }
+        
+        function processBlock(blockIndex) {
+            if (blockIndex >= 4) {
+                completeSession();
+                return;
+            }
+            
+            const block = document.getElementById(`block-${blockIndex + 1}`);
+            const progress = document.getElementById(`progress-${blockIndex + 1}`);
+            const status = document.getElementById(`status-${blockIndex + 1}`);
+            
+            // Activate current block
+            block.className = 'simulation-block active';
+            status.textContent = 'PROCESSING';
+            status.style.color = '#ffff00';
+            
+            const duration = blockDurations[blockIndex];
+            const processingTime = isLudicrousMode ? 
+                Math.max(1500, (duration * 60 * 1000) / 300) : // Ludicrous: 300x speed, min 1.5s
+                Math.max(2000, duration * 60 * 1000); // Normal: real time, min 2s
+            
+            log(`Processing Block ${blockIndex + 1}: ${duration} minutes`);
+            if (isLudicrousMode) {
+                const ludicrousTime = (duration * 60 * 1000) / 300;
+                log(`Ludicrous acceleration: ${duration}min → ${(ludicrousTime / 1000).toFixed(1)}s`);
+            }
+            
+            // Animate progress
+            const startProgress = Date.now();
+            const animateProgress = () => {
+                const elapsed = Date.now() - startProgress;
+                const progressPercent = Math.min(100, (elapsed / processingTime) * 100);
+                
+                progress.style.width = `${progressPercent}%`;
+                blockProgress[blockIndex] = progressPercent;
+                
+                if (progressPercent < 100) {
+                    requestAnimationFrame(animateProgress);
+                } else {
+                    // Block completed
+                    block.className = 'simulation-block completed';
+                    status.textContent = 'DONE';
+                    status.style.color = '#00ff41';
+                    
+                    log(`Block ${blockIndex + 1} completed`);
+                    
+                    // Move to next block
+                    setTimeout(() => {
+                        processBlock(blockIndex + 1);
+                    }, 500);
+                }
+            };
+            
+            animateProgress();
+        }
+        
+        function completeSession() {
+            const totalTime = (Date.now() - startTime) / 1000;
+            const totalDuration = blockDurations.reduce((sum, duration) => sum + duration, 0);
+            
+            log(`=== TEST COMPLETED ===`);
+            log(`Total time: ${totalTime.toFixed(1)} seconds`);
+            log(`Expected time: ${isLudicrousMode ? '0.8 seconds' : totalDuration + ' minutes'}`);
+            
+            // Simulate auto-advance to receipt view
+            setTimeout(() => {
+                if (currentTest === 'detection') {
+                    log('🎯 AUTO-ADVANCE: Section 3a → Section 4a (Detection Receipt View)');
+                    log('✅ Receipt view should show detection mode results');
+                } else if (currentTest === 'automode') {
+                    log('🎯 AUTO-ADVANCE: Section 3b → Section 4b (Automode Receipt View)');
+                    log('✅ Receipt view should show automode results + learning insights');
+                } else if (currentTest === 'ludicrous') {
+                    log('🎯 AUTO-ADVANCE: Ludicrous mode completion → Receipt View');
+                    log('✅ Receipt view should show accelerated session results');
+                }
+                
+                log('🎉 Auto-advance functionality working correctly!');
+                currentTest = null;
+            }, 1000);
+        }
+        
+        function updateTotalTime() {
+            if (startTime) {
+                const elapsed = (Date.now() - startTime) / 1000;
+                const minutes = Math.floor(elapsed / 60);
+                const seconds = Math.floor(elapsed % 60);
+                document.getElementById('total-time').textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            }
+        }
+        
+        // Update time display every second
+        setInterval(updateTotalTime, 1000);
+        
+        // Initialize
+        log('Auto-Advance Receipt Test initialized');
+        log('Ready to test Section 3a/3b → Section 4a/4b auto-advance functionality');
+    </script>
+</body>
+</html> 

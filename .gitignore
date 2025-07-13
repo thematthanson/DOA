@@ -1,0 +1,41 @@
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# IDE/editor settings
+.idea/
+.vscode/
+
+# Python artifacts
+__pycache__/
+*.py[cod]
+
+# Node.js artifacts
+node_modules/
+
+# Logs
+*.log
+
+# Backup and temp files
+*~
+*.swp
+
+# Project specific – large backup or reference directories we don’t need in the repo
+ref/**/backup-*/
+ref/**/integration-backup-*/
+ref/**/force-optimized-backup-*/
+ref/**/main-backup-*/
+ref/**/backup-*/
+
+# Screenshot & demo asset folders
+ref/**/extensionscreenshots/
+sectionMain/
+well done smile Animated ASCII Art - ANIMATED ASCII ART_files/
+
+# Generated reference HTML snapshots
+reference-index-*.html
+rumi-channel-*.html
+
+# Misc artefacts
+server.log
+console.txt 

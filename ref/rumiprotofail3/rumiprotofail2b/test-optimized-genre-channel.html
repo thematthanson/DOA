@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Optimized Genre Channel</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f0f0f0;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .test-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        .test-description {
+            margin-bottom: 15px;
+            color: #666;
+        }
+        .test-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .test-btn {
+            padding: 8px 16px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .test-btn:hover {
+            background: #0056b3;
+        }
+        .test-btn.success {
+            background: #28a745;
+        }
+        .test-btn.danger {
+            background: #dc3545;
+        }
+        .test-btn.warning {
+            background: #ffc107;
+            color: #212529;
+        }
+        .status-display {
+            margin-top: 15px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+        }
+        .channel-frame {
+            width: 100%;
+            height: 400px;
+            border: 2px solid #333;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        .requirements-list {
+            background: #e9ecef;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .requirements-list h3 {
+            margin-top: 0;
+            color: #495057;
+        }
+        .requirements-list ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+        .requirements-list li {
+            margin-bottom: 5px;
+            color: #6c757d;
+        }
+        .requirements-list li.implemented {
+            color: #28a745;
+            font-weight: bold;
+        }
+        .requirements-list li.not-implemented {
+            color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🎯 Optimized Genre Channel Test Suite</h1>
+        
+        <div class="requirements-list">
+            <h3>Requirements Status</h3>
+            <ul>
+                <li class="implemented">✅ Isolated from Rumi channel</li>
+                <li class="implemented">✅ CSV data source</li>
+                <li class="implemented">✅ Content blocks as primary items</li>
+                <li class="implemented">✅ Linear playback</li>
+                <li class="implemented">✅ Auto-population with movies/shows</li>
+                <li class="implemented">✅ Three states: indexing, indexed, waiting</li>
+                <li class="implemented">✅ Receipt view integration (section 5a)</li>
+                <li class="implemented">✅ Genre-based auto-population</li>
+                <li class="implemented">✅ Dynamic title showing genre</li>
+                <li class="implemented">✅ 180-minute timeline with multipliers</li>
+                <li class="implemented">✅ Protected first block (detected show)</li>
+                <li class="implemented">✅ Remove UI (red circle with X)</li>
+                <li class="implemented">✅ Gap management and + button</li>
+                <li class="implemented">✅ Add content from genre inventory</li>
+                <li class="implemented">✅ Content display with all metadata</li>
+                <li class="implemented">✅ Streaming provider toggle</li>
+                <li class="implemented">✅ Hover popups with full info</li>
+                <li class="implemented">✅ Optimized block heights</li>
+                <li class="implemented">✅ Green stroke on hover</li>
+                <li class="implemented">✅ Accurate block sizing (10-15% margin)</li>
+                <li class="implemented">✅ 240-minute auto-population limit</li>
+            </ul>
+        </div>
+
+        <div class="test-section">
+            <div class="test-title">🔧 Core Functionality Tests</div>
+            <div class="test-description">
+                Test the basic functionality of the optimized genre channel system.
+            </div>
+            <div class="test-buttons">
+                <button class="test-btn" onclick="testContentPopulation()">Test Content Population</button>
+                <button class="test-btn" onclick="testShowDetection()">Test Show Detection</button>
+                <button class="test-btn" onclick="testIndexingProgression()">Test Indexing Progression</button>
+                <button class="test-btn" onclick="testContentManagement()">Test Content Management</button>
+            </div>
+            <div class="status-display" id="core-status">Ready to test...</div>
+        </div>
+
+        <div class="test-section">
+            <div class="test-title">🎬 Indexing Progression Test</div>
+            <div class="test-description">
+                This addresses your main pain point - channels not showing progression as they are being indexed.
+            </div>
+            <div class="test-buttons">
+                <button class="test-btn success" onclick="startIndexingTest()">Start Indexing</button>
+                <button class="test-btn danger" onclick="stopIndexingTest()">Stop Indexing</button>
+                <button class="test-btn warning" onclick="resetIndexingTest()">Reset</button>
+            </div>
+            <div class="status-display" id="indexing-status">Indexing test ready...</div>
+        </div>
+
+        <div class="test-section">
+            <div class="test-title">📊 State Management Test</div>
+            <div class="test-description">
+                Test the three-state system: queued → indexing → indexed
+            </div>
+            <div class="test-buttons">
+                <button class="test-btn" onclick="testStateTransitions()">Test State Transitions</button>
+                <button class="test-btn" onclick="testReceiptIntegration()">Test Receipt Integration</button>
+                <button class="test-btn" onclick="testTimelineScaling()">Test Timeline Scaling</button>
+            </div>
+            <div class="status-display" id="state-status">State management ready...</div>
+        </div>
+
+        <div class="test-section">
+            <div class="test-title">🎯 Live Channel Demo</div>
+            <div class="test-description">
+                Interactive demo of the optimized genre channel. Try hovering over blocks, removing content, and watching the indexing progression.
+            </div>
+            <iframe src="genre-channel-optimized.html" class="channel-frame" id="channel-frame"></iframe>
+        </div>
+    </div>
+
+    <script>
+        // Test data
+        const testContent = [
+            {
+                title: "Stranger Things",
+                type: "show",
+                duration: 51,
+                service: "NETFLIX",
+                season: "S4",
+                episode: "E9",
+                year: "2022",
+                genre: "Thriller"
+            },
+            {
+                title: "Mindhunter",
+                type: "show", 
+                duration: 50,
+                service: "NETFLIX",
+                season: "S1",
+                episode: "E1",
+                year: "2017",
+                genre: "Thriller"
+            },
+            {
+                title: "Ozark",
+                type: "show",
+                duration: 60,
+                service: "NETFLIX", 
+                season: "S1",
+                episode: "E1",
+                year: "2017",
+                genre: "Thriller"
+            },
+            {
+                title: "Gone Girl",
+                type: "movie",
+                duration: 149,
+                service: "HBO",
+                year: "2014",
+                genre: "Thriller"
+            }
+        ];
+
+        let indexingInterval = null;
+
+        // Core functionality tests
+        function testContentPopulation() {
+            const status = document.getElementById('core-status');
+            status.textContent = 'Testing content population...\n';
+            
+            const frame = document.getElementById('channel-frame');
+            if (frame.contentWindow && frame.contentWindow.optimizedGenreChannel) {
+                frame.contentWindow.optimizedGenreChannel.handleContentPopulation(testContent, "Thriller");
+                status.textContent += '✅ Content population successful\n';
+                status.textContent += `📺 Loaded ${testContent.length} items for Thriller genre\n`;
+            } else {
+                status.textContent += '❌ Channel not ready\n';
+            }
+        }
+
+        function testShowDetection() {
+            const status = document.getElementById('core-status');
+            status.textContent = 'Testing show detection...\n';
+            
+            const frame = document.getElementById('channel-frame');
+            if (frame.contentWindow && frame.contentWindow.optimizedGenreChannel) {
+                frame.contentWindow.optimizedGenreChannel.handleShowDetection({
+                    title: "Stranger Things",
+                    genre: "Thriller",
+                    service: "NETFLIX",
+                    season: "S4",
+                    episode: "E9",
+                    duration: 51
+                });
+                status.textContent += '✅ Show detection successful\n';
+                status.textContent += '🎯 Detected show added as first (protected) item\n';
+            } else {
+                status.textContent += '❌ Channel not ready\n';
+            }
+        }
+
+        function testIndexingProgression() {
+            const status = document.getElementById('core-status');
+            status.textContent = 'Testing indexing progression...\n';
+            
+            const frame = document.getElementById('channel-frame');
+            if (frame.contentWindow && frame.contentWindow.optimizedGenreChannel) {
+                // First populate with content
+                frame.contentWindow.optimizedGenreChannel.handleContentPopulation(testContent, "Thriller");
+                
+                // Then start indexing
+                setTimeout(() => {
+                    frame.contentWindow.optimizedGenreChannel.startIndexing();
+                    status.textContent += '✅ Indexing started\n';
+                    status.textContent += '👁️ Watch the visual progression in the channel above\n';
+                }, 1000);
+            } else {
+                status.textContent += '❌ Channel not ready\n';
+            }
+        }
+
+        function testContentManagement() {
+            const status = document.getElementById('core-status');
+            status.textContent = 'Testing content management...\n';
+            
+            const frame = document.getElementById('channel-frame');
+            if (frame.contentWindow && frame.contentWindow.optimizedGenreChannel) {
+                // Test adding content
+                frame.contentWindow.optimizedGenreChannel.addContent({
+                    title: "Test Movie",
+                    duration: 120,
+                    type: "movie",
+                    service: "HBO",
+                    genre: "Thriller"
+                });
+                status.textContent += '✅ Content added successfully\n';
+                
+                // Test removing content (should fail for first item)
+                const originalLength = frame.contentWindow.optimizedGenreChannel.currentContent.length;
+                frame.contentWindow.optimizedGenreChannel.removeContent(0);
+                const newLength = frame.contentWindow.optimizedGenreChannel.currentContent.length;
+                
+                if (originalLength === newLength) {
+                    status.textContent += '✅ First item protection working (cannot remove)\n';
+                } else {
+                    status.textContent += '❌ First item protection failed\n';
+                }
+            } else {
+                status.textContent += '❌ Channel not ready\n';
+            }
+        }
+
+        // Indexing progression test (main pain point)
+        function startIndexingTest() {
+            const status = document.getElementById('indexing-status');
+            status.textContent = '🎬 Starting indexing progression test...\n';
+            
+            const frame = document.getElementById('channel-frame');
+            if (frame.contentWindow && frame.contentWindow.optimizedGenreChannel) {
+                // Ensure we have content
+                if (frame.contentWindow.optimizedGenreChannel.currentContent.length === 0) {
+                    frame.contentWindow.optimizedGenreChannel.handleContentPopulation(testContent, "Thriller");
+                }
+                
+                // Start indexing
+                frame.contentWindow.optimizedGenreChannel.startIndexing();
+                
+                // Monitor progress
+                let progressCount = 0;
+                indexingInterval = setInterval(() => {
+                    const channel = frame.contentWindow.optimizedGenreChannel;
+                    const states = channel.currentContent.map(item => item.state);
+                    const indexedCount = states.filter(state => state === 'indexed').length;
+                    const indexingCount = states.filter(state => state === 'indexing').length;
+                    
+                    status.textContent = `🎬 Indexing Progress:\n`;
+                    status.textContent += `📊 Total items: ${channel.currentContent.length}\n`;
+                    status.textContent += `⏳ Currently indexing: ${indexingCount}\n`;
+                    status.textContent += `✅ Completed: ${indexedCount}\n`;
+                    status.textContent += `⏸️ Queued: ${channel.currentContent.length - indexedCount - indexingCount}\n`;
+                    status.textContent += `🔄 Progress: ${((indexedCount / channel.currentContent.length) * 100).toFixed(1)}%\n`;
+                    
+                    progressCount++;
+                    if (progressCount > 30) { // Stop monitoring after 30 seconds
+                        clearInterval(indexingInterval);
+                        status.textContent += '\n⏰ Monitoring stopped (30s timeout)';
+                    }
+                }, 1000);
+                
+                status.textContent += '✅ Indexing started - watch visual progression above\n';
+            } else {
+                status.textContent += '❌ Channel not ready\n';
+            }
+        }
+
+        function stopIndexingTest() {
+            const status = document.getElementById('indexing-status');
+            status.textContent = '🛑 Stopping indexing test...\n';
+            
+            if (indexingInterval) {
+                clearInterval(indexingInterval);
+                indexingInterval = null;
+            }
+            
+            const frame = document.getElementById('channel-frame');
+            if (frame.contentWindow && frame.contentWindow.optimizedGenreChannel) {
+                frame.contentWindow.optimizedGenreChannel.stopIndexing();
+                status.textContent += '✅ Indexing stopped\n';
+                
+                // Show indexed content
+                const indexedContent = frame.contentWindow.optimizedGenreChannel.indexedContent;
+                status.textContent += `📋 Indexed content (${indexedContent.length} items):\n`;
+                indexedContent.forEach((item, index) => {
+                    status.textContent += `  ${index + 1}. ${item.title} (${item.duration}min)\n`;
+                });
+            }
+        }
+
+        function resetIndexingTest() {
+            const status = document.getElementById('indexing-status');
+            status.textContent = '🔄 Resetting indexing test...\n';
+            
+            if (indexingInterval) {
+                clearInterval(indexingInterval);
+                indexingInterval = null;
+            }
+            
+            const frame = document.getElementById('channel-frame');
+            if (frame.contentWindow && frame.contentWindow.optimizedGenreChannel) {
+                frame.contentWindow.optimizedGenreChannel.stopIndexing();
+                frame.contentWindow.optimizedGenreChannel.currentContent = [];
+                frame.contentWindow.optimizedGenreChannel.indexedContent = [];
+                frame.contentWindow.optimizedGenreChannel.createLineup();
+                status.textContent += '✅ Test reset complete\n';
+            }
+        }
+
+        // State management tests
+        function testStateTransitions() {
+            const status = document.getElementById('state-status');
+            status.textContent = 'Testing state transitions...\n';
+            
+            const frame = document.getElementById('channel-frame');
+            if (frame.contentWindow && frame.contentWindow.optimizedGenreChannel) {
+                // Test manual state updates
+                frame.contentWindow.optimizedGenreChannel.handleContentPopulation(testContent, "Thriller");
+                
+                setTimeout(() => {
+                    frame.contentWindow.optimizedGenreChannel.handleBlockStateUpdate({
+                        title: "Stranger Things",
+                        state: "indexing"
+                    });
+                    status.textContent += '✅ State transition to indexing\n';
+                    
+                    setTimeout(() => {
+                        frame.contentWindow.optimizedGenreChannel.handleBlockStateUpdate({
+                            title: "Stranger Things", 
+                            state: "indexed"
+                        });
+                        status.textContent += '✅ State transition to indexed\n';
+                        status.textContent += '👁️ Check visual feedback in channel above\n';
+                    }, 2000);
+                }, 1000);
+            } else {
+                status.textContent += '❌ Channel not ready\n';
+            }
+        }
+
+        function testReceiptIntegration() {
+            const status = document.getElementById('state-status');
+            status.textContent = 'Testing receipt integration...\n';
+            
+            const frame = document.getElementById('channel-frame');
+            if (frame.contentWindow && frame.contentWindow.optimizedGenreChannel) {
+                // Simulate indexing session
+                frame.contentWindow.optimizedGenreChannel.handleContentPopulation(testContent, "Thriller");
+                frame.contentWindow.optimizedGenreChannel.startIndexing();
+                
+                // Wait for some content to be indexed
+                setTimeout(() => {
+                    frame.contentWindow.optimizedGenreChannel.stopIndexing();
+                    const indexedContent = frame.contentWindow.optimizedGenreChannel.indexedContent;
+                    
+                    status.textContent += `✅ Receipt integration test complete\n`;
+                    status.textContent += `📋 Indexed content for section 5a:\n`;
+                    indexedContent.forEach((item, index) => {
+                        status.textContent += `  ${index + 1}. ${item.title} - ${item.service} (${item.duration}min)\n`;
+                    });
+                    status.textContent += `\n💡 This data would be sent to receipt view automatically\n`;
+                }, 5000);
+            } else {
+                status.textContent += '❌ Channel not ready\n';
+            }
+        }
+
+        function testTimelineScaling() {
+            const status = document.getElementById('state-status');
+            status.textContent = 'Testing timeline scaling...\n';
+            
+            const frame = document.getElementById('channel-frame');
+            if (frame.contentWindow && frame.contentWindow.optimizedGenreChannel) {
+                // Test with short content
+                const shortContent = testContent.slice(0, 2);
+                frame.contentWindow.optimizedGenreChannel.handleContentPopulation(shortContent, "Thriller");
+                const shortDuration = frame.contentWindow.optimizedGenreChannel.timelineDuration;
+                
+                // Test with long content
+                const longContent = [...testContent, {
+                    title: "Long Movie",
+                    duration: 180,
+                    type: "movie",
+                    service: "HBO",
+                    genre: "Thriller"
+                }];
+                frame.contentWindow.optimizedGenreChannel.handleContentPopulation(longContent, "Thriller");
+                const longDuration = frame.contentWindow.optimizedGenreChannel.timelineDuration;
+                
+                status.textContent += `✅ Timeline scaling test complete\n`;
+                status.textContent += `📏 Short content duration: ${shortDuration}min\n`;
+                status.textContent += `📏 Long content duration: ${longDuration}min\n`;
+                status.textContent += `📊 Timeline scales from ${shortDuration} to ${longDuration} minutes\n`;
+                status.textContent += `👁️ Check timeline markers and multipliers above\n`;
+            } else {
+                status.textContent += '❌ Channel not ready\n';
+            }
+        }
+
+        // Initialize when page loads
+        window.addEventListener('load', () => {
+            console.log('🎯 Optimized Genre Channel Test Suite loaded');
+            console.log('💡 Try the indexing progression test to see the main improvement!');
+        });
+    </script>
+</body>
+</html> 

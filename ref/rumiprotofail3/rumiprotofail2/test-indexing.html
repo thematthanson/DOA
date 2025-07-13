@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Indexing Test</title>
+    <style>
+        body {
+            background: #111;
+            color: #fff;
+            font-family: 'SF Mono', monospace;
+            padding: 20px;
+        }
+        .test-section {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .test-button {
+            background: #00ff41;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .test-button:hover {
+            background: #00cc33;
+        }
+        .status {
+            font-size: 12px;
+            color: #888;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Indexing Functionality Test</h1>
+    
+    <div class="test-section">
+        <h3>Test 1: Start Indexing Session</h3>
+        <button class="test-button" onclick="testStartIndexing()">Start Indexing</button>
+        <div id="test1-status" class="status">Ready to test</div>
+    </div>
+    
+    <div class="test-section">
+        <h3>Test 2: Fast Mode</h3>
+        <button class="test-button" onclick="testFastMode()">Test Fast Mode</button>
+        <div id="test2-status" class="status">Ready to test</div>
+    </div>
+    
+    <div class="test-section">
+        <h3>Test 3: Ludicrous Mode</h3>
+        <button class="test-button" onclick="testLudicrousMode()">Test Ludicrous Mode</button>
+        <div id="test3-status" class="status">Ready to test</div>
+    </div>
+    
+    <div class="test-section">
+        <h3>Test 4: Stop Indexing</h3>
+        <button class="test-button" onclick="testStopIndexing()">Stop Indexing</button>
+        <div id="test4-status" class="status">Ready to test</div>
+    </div>
+
+    <script>
+        // Mock appState for testing
+        const appState = {
+            isIndexing: false,
+            indexingStartTime: null,
+            entryPoint: 'automode',
+            fastMode: null,
+            debugSkipCooldown: 0,
+            baseRate: 0.1,
+            currentMultiplier: 1.0,
+            indexingTimer: null
+        };
+
+        function testStartIndexing() {
+            console.log('=== Test 1: Starting Indexing Session ===');
+            
+            if (appState.isIndexing) {
+                document.getElementById('test1-status').textContent = 'Already indexing';
+                return;
+            }
+            
+            appState.isIndexing = true;
+            appState.indexingStartTime = Date.now();
+            
+            document.getElementById('test1-status').textContent = 'Indexing session started successfully';
+            console.log('Indexing session started');
+        }
+
+        function testFastMode() {
+            console.log('=== Test 2: Testing Fast Mode ===');
+            
+            if (!appState.isIndexing) {
+                document.getElementById('test2-status').textContent = 'Please start indexing first';
+                return;
+            }
+            
+            if (appState.fastMode) {
+                appState.fastMode = null;
+                document.getElementById('test2-status').textContent = 'Fast Mode deactivated';
+                console.log('Fast Mode deactivated');
+            } else {
+                appState.fastMode = {
+                    active: true,
+                    mode: 'automode',
+                    speedMultiplier: 50
+                };
+                document.getElementById('test2-status').textContent = 'Fast Mode activated (50x speed)';
+                console.log('Fast Mode activated');
+            }
+        }
+
+        function testLudicrousMode() {
+            console.log('=== Test 3: Testing Ludicrous Mode ===');
+            
+            if (!appState.isIndexing) {
+                document.getElementById('test3-status').textContent = 'Please start indexing first';
+                return;
+            }
+            
+            if (appState.fastMode) {
+                appState.fastMode = null;
+                document.getElementById('test3-status').textContent = 'Ludicrous Mode deactivated';
+                console.log('Ludicrous Mode deactivated');
+            } else {
+                appState.fastMode = {
+                    active: true,
+                    mode: 'automode',
+                    speedMultiplier: 500
+                };
+                document.getElementById('test3-status').textContent = 'Ludicrous Mode activated (500x speed)';
+                console.log('Ludicrous Mode activated');
+            }
+        }
+
+        function testStopIndexing() {
+            console.log('=== Test 4: Stopping Indexing Session ===');
+            
+            if (!appState.isIndexing) {
+                document.getElementById('test4-status').textContent = 'No indexing session to stop';
+                return;
+            }
+            
+            appState.isIndexing = false;
+            appState.fastMode = null;
+            
+            const duration = appState.indexingStartTime ? 
+                Math.round((Date.now() - appState.indexingStartTime) / 1000) : 0;
+            
+            document.getElementById('test4-status').textContent = `Indexing stopped. Duration: ${duration}s`;
+            console.log('Indexing session stopped');
+        }
+
+        // Log all tests
+        console.log('Indexing test page loaded');
+        console.log('Available tests:');
+        console.log('1. testStartIndexing()');
+        console.log('2. testFastMode()');
+        console.log('3. testLudicrousMode()');
+        console.log('4. testStopIndexing()');
+    </script>
+</body>
+</html> 

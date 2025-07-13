@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Backend Integration Verification</title>
+    <style>
+        body {
+            font-family: 'SF Mono', monospace;
+            background: #111;
+            color: #00ff41;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .test-section {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+        }
+        .test-result {
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 4px;
+        }
+        .success { background: #1a3a1a; border: 1px solid #00ff41; }
+        .error { background: #3a1a1a; border: 1px solid #ff4444; }
+        .warning { background: #3a3a1a; border: 1px solid #ffaa00; }
+        .info { background: #1a1a3a; border: 1px solid #0088ff; }
+        button {
+            background: #333;
+            color: #00ff41;
+            border: 1px solid #00ff41;
+            padding: 8px 16px;
+            margin: 5px;
+            cursor: pointer;
+            font-family: 'SF Mono', monospace;
+        }
+        button:hover {
+            background: #00ff41;
+            color: #000;
+        }
+        .console-output {
+            background: #000;
+            border: 1px solid #333;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 Backend Integration Verification</h1>
+    <p>Testing backend integration in the main environment</p>
+
+    <div class="test-section">
+        <h2>Backend Status Check</h2>
+        <div id="backend-status"></div>
+        <button onclick="checkBackendStatus()">Check Backend Status</button>
+    </div>
+
+    <div class="test-section">
+        <h2>Block State Update Test</h2>
+        <div id="block-state-test"></div>
+        <button onclick="testBlockStateUpdate()">Test Block State Update</button>
+    </div>
+
+    <div class="test-section">
+        <h2>Integration Status</h2>
+        <div id="integration-status"></div>
+        <button onclick="checkIntegrationStatus()">Check Integration Status</button>
+    </div>
+
+    <div class="test-section">
+        <h2>Console Output</h2>
+        <div id="console-output" class="console-output"></div>
+        <button onclick="clearConsole()">Clear Console</button>
+    </div>
+
+    <!-- Load backend dependencies -->
+    <script src="rumi-backend-engine.js"></script>
+    <script src="rumi-backend-integration.js"></script>
+
+    <script>
+        // Console logging function
+        function log(message, type = 'info') {
+            const console = document.getElementById('console-output');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.style.color = type === 'error' ? '#ff4444' : 
+                                  type === 'warning' ? '#ffaa00' : 
+                                  type === 'success' ? '#00ff41' : '#00aaff';
+            logEntry.textContent = `[${timestamp}] ${message}`;
+            console.appendChild(logEntry);
+            console.scrollTop = console.scrollHeight;
+        }
+
+        // Check backend status with retry logic
+        function checkBackendStatus() {
+            const results = document.getElementById('backend-status');
+            results.innerHTML = '';
+            
+            log('Checking backend status...', 'info');
+            
+            // Wait for backend to load with retry logic
+            let attempts = 0;
+            const maxAttempts = 50;
+            
+            const checkBackend = () => {
+                attempts++;
+                
+                if (!window.RumiBackend) {
+                    if (attempts < maxAttempts) {
+                        log(`Waiting for backend to load... (${attempts}/${maxAttempts})`, 'warning');
+                        setTimeout(checkBackend, 100);
+                        return;
+                    } else {
+                        addResult(results, 'error', '❌ window.RumiBackend not found after waiting');
+                        log('Backend not found after waiting', 'error');
+                        return;
+                    }
+                }
+                
+                addResult(results, 'success', '✅ window.RumiBackend found');
+                log('Backend found', 'success');
+                
+                // Check methods
+                const methods = ['updateBlockState', 'calculateSegmentedPoints', 'getCurrentMultiplier'];
+                methods.forEach(method => {
+                    if (typeof window.RumiBackend[method] === 'function') {
+                        addResult(results, 'success', `✅ ${method} method available`);
+                        log(`${method} method available`, 'success');
+                    } else {
+                        addResult(results, 'error', `❌ ${method} method not found`);
+                        log(`${method} method not found`, 'error');
+                    }
+                });
+                
+                // Check content library
+                if (window.RumiBackend.contentLibrary && window.RumiBackend.contentLibrary.length > 0) {
+                    addResult(results, 'success', `✅ Content library: ${window.RumiBackend.contentLibrary.length} items`);
+                    log(`Content library loaded: ${window.RumiBackend.contentLibrary.length} items`, 'success');
+                } else {
+                    addResult(results, 'warning', '⚠️ Content library not loaded');
+                    log('Content library not loaded', 'warning');
+                }
+            };
+            
+            checkBackend();
+        }
+
+        // Test block state update
+        function testBlockStateUpdate() {
+            const results = document.getElementById('block-state-test');
+            results.innerHTML = '';
+            
+            log('Testing block state update...', 'info');
+            
+            if (!window.RumiBackend) {
+                addResult(results, 'error', '❌ Backend not available');
+                log('Backend not available for block state test', 'error');
+                return;
+            }
+            
+            try {
+                // Test the updateBlockState method
+                window.RumiBackend.updateBlockState('Test Block', 'indexing');
+                addResult(results, 'success', '✅ Block state update successful');
+                log('Block state update successful', 'success');
+                
+                // Check if the state was recorded
+                if (window.RumiBackend.sessionData && window.RumiBackend.sessionData.blockStates) {
+                    const testState = window.RumiBackend.sessionData.blockStates['Test Block'];
+                    if (testState && testState.state === 'indexing') {
+                        addResult(results, 'success', '✅ Block state recorded in session data');
+                        log('Block state recorded in session data', 'success');
+                    } else {
+                        addResult(results, 'warning', '⚠️ Block state not recorded in session data');
+                        log('Block state not recorded in session data', 'warning');
+                    }
+                } else {
+                    addResult(results, 'warning', '⚠️ Session data not available');
+                    log('Session data not available', 'warning');
+                }
+                
+            } catch (error) {
+                addResult(results, 'error', `❌ Block state update failed: ${error.message}`);
+                log(`Block state update failed: ${error.message}`, 'error');
+            }
+        }
+
+        // Check integration status with retry logic
+        function checkIntegrationStatus() {
+            const results = document.getElementById('integration-status');
+            results.innerHTML = '';
+            
+            log('Checking integration status...', 'info');
+            
+            // Wait for integration to load with retry logic
+            let attempts = 0;
+            const maxAttempts = 50;
+            
+            const checkIntegration = () => {
+                attempts++;
+                
+                if (!window.RumiIntegration) {
+                    if (attempts < maxAttempts) {
+                        log(`Waiting for integration to load... (${attempts}/${maxAttempts})`, 'warning');
+                        setTimeout(checkIntegration, 100);
+                        return;
+                    } else {
+                        addResult(results, 'error', '❌ window.RumiIntegration not found after waiting');
+                        log('Integration not found after waiting', 'error');
+                        return;
+                    }
+                }
+                
+                addResult(results, 'success', '✅ window.RumiIntegration found');
+                log('Integration found', 'success');
+                
+                // Check integration properties
+                if (window.RumiIntegration.backendReady) {
+                    addResult(results, 'success', '✅ Backend integration ready');
+                    log('Backend integration ready', 'success');
+                } else {
+                    addResult(results, 'warning', '⚠️ Backend integration not ready');
+                    log('Backend integration not ready', 'warning');
+                }
+                
+                if (window.RumiIntegration.ludicrousMode) {
+                    addResult(results, 'success', `✅ Ludicrous mode available (${window.RumiIntegration.ludicrousMode.speedMultiplier}x)`);
+                    log(`Ludicrous mode available: ${window.RumiIntegration.ludicrousMode.speedMultiplier}x`, 'success');
+                } else {
+                    addResult(results, 'warning', '⚠️ Ludicrous mode not available');
+                    log('Ludicrous mode not available', 'warning');
+                }
+            };
+            
+            checkIntegration();
+        }
+
+        // Helper function to add test results
+        function addResult(container, type, message) {
+            const result = document.createElement('div');
+            result.className = `test-result ${type}`;
+            result.textContent = message;
+            container.appendChild(result);
+        }
+
+        // Clear console
+        function clearConsole() {
+            document.getElementById('console-output').innerHTML = '';
+        }
+
+        // Auto-run tests on load
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                log('Page loaded, starting tests...', 'info');
+                checkBackendStatus();
+                checkIntegrationStatus();
+            }, 1000);
+        });
+    </script>
+</body>
+</html> 

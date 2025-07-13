@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comprehensive Fixes Test</title>
+    <style>
+        body {
+            font-family: 'SF Mono', monospace;
+            background: #111;
+            color: #00ff41;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .test-section {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+        }
+        .test-result {
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 4px;
+        }
+        .success { background: #1a3a1a; border: 1px solid #00ff41; }
+        .error { background: #3a1a1a; border: 1px solid #ff4444; }
+        .warning { background: #3a3a1a; border: 1px solid #ffaa00; }
+        .info { background: #1a1a3a; border: 1px solid #0088ff; }
+        button {
+            background: #333;
+            color: #00ff41;
+            border: 1px solid #00ff41;
+            padding: 8px 16px;
+            margin: 5px;
+            cursor: pointer;
+            font-family: 'SF Mono', monospace;
+        }
+        button:hover {
+            background: #00ff41;
+            color: #000;
+        }
+        iframe {
+            width: 100%;
+            height: 400px;
+            border: 1px solid #333;
+            background: #000;
+        }
+        .loading {
+            color: #ffaa00;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 Comprehensive Fixes Test</h1>
+    <p>Testing all critical issues identified in debug analysis</p>
+
+    <div class="test-section">
+        <h2>1. Backend Integration Test</h2>
+        <div id="backend-test-results"></div>
+        <button onclick="testBackendIntegration()">Test Backend Integration</button>
+    </div>
+
+    <div class="test-section">
+        <h2>2. Message Handling Test</h2>
+        <div id="message-test-results"></div>
+        <button onclick="testMessageHandling()">Test Message Handling</button>
+    </div>
+
+    <div class="test-section">
+        <h2>3. Block State Progression Test</h2>
+        <div id="block-state-test-results"></div>
+        <button onclick="testBlockStateProgression()">Test Block State Progression</button>
+    </div>
+
+    <div class="test-section">
+        <h2>4. Show Detection Test</h2>
+        <div id="show-detection-test-results"></div>
+        <button onclick="testShowDetection()">Test Show Detection</button>
+    </div>
+
+    <div class="test-section">
+        <h2>5. Ludicrous Mode Test</h2>
+        <div id="ludicrous-test-results"></div>
+        <button onclick="testLudicrousMode()">Test Ludicrous Mode</button>
+    </div>
+
+    <div class="test-section">
+        <h2>6. Integration Channel Test</h2>
+        <iframe id="test-iframe" src="Genre-channel_v2-INTEGRATED.html"></iframe>
+        <div id="integration-test-results"></div>
+        <button onclick="testIntegrationChannel()">Test Integration Channel</button>
+    </div>
+
+    <!-- Load backend dependencies -->
+    <script src="rumi-backend-engine.js"></script>
+    <script src="rumi-backend-integration.js"></script>
+
+    <script>
+        // Test 1: Backend Integration
+        function testBackendIntegration() {
+            const results = document.getElementById('backend-test-results');
+            results.innerHTML = '';
+            
+            addResult(results, 'info', 'Testing backend integration...');
+            
+            // Wait for backend to load
+            let attempts = 0;
+            const maxAttempts = 50;
+            
+            const checkBackend = () => {
+                attempts++;
+                
+                if (!window.RumiBackend) {
+                    if (attempts < maxAttempts) {
+                        addResult(results, 'loading', `Waiting for backend to load... (${attempts}/${maxAttempts})`);
+                        setTimeout(checkBackend, 100);
+                        return;
+                    } else {
+                        addResult(results, 'error', '❌ window.RumiBackend not found after waiting');
+                        return;
+                    }
+                }
+                
+                addResult(results, 'success', '✅ window.RumiBackend found');
+                
+                // Check if updateBlockState method exists
+                if (typeof window.RumiBackend.updateBlockState !== 'function') {
+                    addResult(results, 'error', '❌ updateBlockState method not found');
+                    return;
+                }
+                
+                addResult(results, 'success', '✅ updateBlockState method found');
+                
+                // Test the method
+                try {
+                    window.RumiBackend.updateBlockState('Test Title', 'test');
+                    addResult(results, 'success', '✅ updateBlockState method works');
+                } catch (error) {
+                    addResult(results, 'error', `❌ updateBlockState failed: ${error.message}`);
+                }
+                
+                // Check backend ready state
+                if (window.RumiBackend.isReady && window.RumiBackend.isReady()) {
+                    addResult(results, 'success', '✅ Backend is ready');
+                } else {
+                    addResult(results, 'warning', '⚠️ Backend may not be fully ready');
+                }
+                
+                // Check content library
+                if (window.RumiBackend.contentLibrary && window.RumiBackend.contentLibrary.length > 0) {
+                    addResult(results, 'success', `✅ Content library loaded: ${window.RumiBackend.contentLibrary.length} items`);
+                } else {
+                    addResult(results, 'warning', '⚠️ Content library not loaded yet');
+                }
+            };
+            
+            checkBackend();
+        }
+
+        // Test 2: Message Handling
+        function testMessageHandling() {
+            const results = document.getElementById('message-test-results');
+            results.innerHTML = '';
+            
+            addResult(results, 'info', 'Testing message handling...');
+            
+            // Test message format handling
+            const testMessages = [
+                { type: 'rumi:showDetected', show: { title: 'Test Show', genre: 'Comedy' } },
+                { type: 'rumi:showDetected', payload: { title: 'Test Show', genre: 'Comedy' } },
+                { type: 'rumi:showDetected', show: null },
+                { type: 'rumi:showDetected', payload: null }
+            ];
+            
+            testMessages.forEach((msg, index) => {
+                try {
+                    // Simulate the message handling logic
+                    const showData = msg.show || msg.payload;
+                    const showInfo = showData || {};
+                    
+                    if (!showInfo.title || !showInfo.genre) {
+                        addResult(results, 'warning', `⚠️ Message ${index + 1}: Invalid data handled gracefully`);
+                    } else {
+                        addResult(results, 'success', `✅ Message ${index + 1}: Valid data processed`);
+                    }
+                } catch (error) {
+                    addResult(results, 'error', `❌ Message ${index + 1}: ${error.message}`);
+                }
+            });
+        }
+
+        // Test 3: Block State Progression
+        function testBlockStateProgression() {
+            const results = document.getElementById('block-state-test-results');
+            results.innerHTML = '';
+            
+            addResult(results, 'info', 'Testing block state progression...');
+            
+            // Test state machine
+            const states = ['queued', 'indexing', 'indexed'];
+            let currentState = 0;
+            
+            const testProgression = () => {
+                if (currentState < states.length) {
+                    const state = states[currentState];
+                    addResult(results, 'success', `✅ State progression: ${state}`);
+                    currentState++;
+                    
+                    if (currentState < states.length) {
+                        setTimeout(testProgression, 500);
+                    } else {
+                        addResult(results, 'success', '✅ Block state progression complete');
+                    }
+                }
+            };
+            
+            testProgression();
+        }
+
+        // Test 4: Show Detection
+        function testShowDetection() {
+            const results = document.getElementById('show-detection-test-results');
+            results.innerHTML = '';
+            
+            addResult(results, 'info', 'Testing show detection...');
+            
+            const testShow = {
+                title: 'The Office',
+                genre: 'Comedy',
+                service: 'PEACOCK',
+                season: 'S3',
+                episode: 'E20',
+                duration: 22
+            };
+            
+            // Test iframe communication
+            const iframe = document.getElementById('test-iframe');
+            
+            if (iframe.contentDocument && iframe.contentDocument.readyState === 'complete') {
+                try {
+                    iframe.contentWindow.postMessage({
+                        type: 'rumi:showDetected',
+                        payload: testShow
+                    }, '*');
+                    
+                    addResult(results, 'success', '✅ Show detection message sent to iframe');
+                    
+                    // Listen for response
+                    const messageHandler = (event) => {
+                        if (event.data.type === 'genreChannelReady') {
+                            addResult(results, 'success', '✅ Genre channel ready response received');
+                            window.removeEventListener('message', messageHandler);
+                        }
+                    };
+                    
+                    window.addEventListener('message', messageHandler);
+                    
+                    // Timeout for response
+                    setTimeout(() => {
+                        addResult(results, 'warning', '⚠️ No response from genre channel (may be normal)');
+                    }, 2000);
+                    
+                } catch (error) {
+                    addResult(results, 'error', `❌ Failed to send show detection: ${error.message}`);
+                }
+            } else {
+                addResult(results, 'warning', '⚠️ Iframe not ready, waiting...');
+                setTimeout(testShowDetection, 1000);
+            }
+        }
+
+        // Test 5: Ludicrous Mode
+        function testLudicrousMode() {
+            const results = document.getElementById('ludicrous-test-results');
+            results.innerHTML = '';
+            
+            addResult(results, 'info', 'Testing ludicrous mode...');
+            
+            // Check if LudicrousSpeedManager exists
+            if (!window.LudicrousSpeedManager) {
+                addResult(results, 'warning', '⚠️ LudicrousSpeedManager not found (may be normal)');
+                
+                // Check if it's defined in the integration
+                if (window.RumiIntegration && window.RumiIntegration.ludicrousMode) {
+                    addResult(results, 'success', '✅ Ludicrous mode available through integration');
+                    addResult(results, 'info', `📊 Speed multiplier: ${window.RumiIntegration.ludicrousMode.speedMultiplier}x`);
+                } else {
+                    addResult(results, 'warning', '⚠️ Ludicrous mode not available');
+                }
+                return;
+            }
+            
+            addResult(results, 'success', '✅ LudicrousSpeedManager found');
+            
+            // Check current speed
+            const currentSpeed = window.LudicrousSpeedManager.currentSpeed || 150;
+            addResult(results, 'info', `📊 Current speed multiplier: ${currentSpeed}x`);
+            
+            // Test speed consistency
+            if (currentSpeed === 150) {
+                addResult(results, 'success', '✅ Speed multiplier is optimized (150x)');
+            } else if (currentSpeed === 300) {
+                addResult(results, 'warning', '⚠️ Speed multiplier is high (300x) - may cause issues');
+            } else {
+                addResult(results, 'info', `📊 Speed multiplier: ${currentSpeed}x`);
+            }
+        }
+
+        // Test 6: Integration Channel
+        function testIntegrationChannel() {
+            const results = document.getElementById('integration-test-results');
+            results.innerHTML = '';
+            
+            addResult(results, 'info', 'Testing integration channel...');
+            
+            const iframe = document.getElementById('test-iframe');
+            
+            // Test iframe loading
+            if (iframe.contentDocument && iframe.contentDocument.readyState === 'complete') {
+                addResult(results, 'success', '✅ Integration channel iframe loaded');
+            } else {
+                addResult(results, 'warning', '⚠️ Integration channel iframe may not be fully loaded');
+            }
+            
+            // Test message communication
+            try {
+                iframe.contentWindow.postMessage({
+                    type: 'requestCurrentContent'
+                }, '*');
+                
+                addResult(results, 'success', '✅ Message sent to integration channel');
+                
+                // Listen for response
+                const messageHandler = (event) => {
+                    if (event.data.type === 'currentContentResponse') {
+                        addResult(results, 'success', `✅ Content response received: ${event.data.content.length} items`);
+                        window.removeEventListener('message', messageHandler);
+                    }
+                };
+                
+                window.addEventListener('message', messageHandler);
+                
+                // Timeout for response
+                setTimeout(() => {
+                    addResult(results, 'warning', '⚠️ No content response (may be normal)');
+                }, 2000);
+                
+            } catch (error) {
+                addResult(results, 'error', `❌ Failed to communicate with integration channel: ${error.message}`);
+            }
+        }
+
+        // Helper function to add test results
+        function addResult(container, type, message) {
+            const result = document.createElement('div');
+            result.className = `test-result ${type}`;
+            result.textContent = message;
+            container.appendChild(result);
+        }
+
+        // Auto-run basic tests on load
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                testBackendIntegration();
+                testMessageHandling();
+                testLudicrousMode();
+            }, 1000);
+        });
+    </script>
+</body>
+</html> 

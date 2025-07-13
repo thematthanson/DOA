@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ludicrous Block Progression Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #1a1a1a;
+            color: #fff;
+        }
+        .test-section {
+            background: #2a2a2a;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        .test-result {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .pass {
+            background: #1a4a1a;
+            border: 1px solid #4a8a4a;
+        }
+        .fail {
+            background: #4a1a1a;
+            border: 1px solid #8a4a4a;
+        }
+        .info {
+            background: #1a1a4a;
+            border: 1px solid #4a4a8a;
+        }
+        button {
+            background: #4a4a8a;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #5a5a9a;
+        }
+        .ludicrous-toggle {
+            background: #8a4a4a;
+        }
+        .ludicrous-toggle:hover {
+            background: #9a5a5a;
+        }
+        .ludicrous-toggle.active {
+            background: #4a8a4a;
+        }
+        .block-progression {
+            display: flex;
+            gap: 10px;
+            margin: 10px 0;
+            flex-wrap: wrap;
+        }
+        .block {
+            padding: 10px;
+            border-radius: 4px;
+            min-width: 120px;
+            text-align: center;
+            font-weight: bold;
+        }
+        .block-queued {
+            background: #4a4a4a;
+            border: 1px solid #6a6a6a;
+        }
+        .block-indexing {
+            background: #4a4a8a;
+            border: 1px solid #6a6a9a;
+            animation: pulse 0.5s infinite;
+            box-shadow: 0 0 10px #4a4a8a;
+            transform: scale(1.05);
+        }
+        .block-indexed {
+            background: #4a8a4a;
+            border: 1px solid #6a9a6a;
+        }
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+        .timing-display {
+            background: #333;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            margin: 10px 0;
+        }
+        .log {
+            background: #000;
+            color: #0f0;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Ludicrous Block Progression Test</h1>
+    
+    <div class="test-section">
+        <h2>Test Overview</h2>
+        <p>This test verifies that block progression timing is properly accelerated in ludicrous mode.</p>
+        
+        <div class="test-result info">
+            <strong>ℹ️ Test Setup:</strong> Simulates content blocks with different durations
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>Controls</h2>
+        <button onclick="startNormalTest()">Start Normal Mode Test</button>
+        <button onclick="startLudicrousTest()" class="ludicrous-toggle">Start Ludicrous Mode Test</button>
+        <button onclick="toggleLudicrousMode()" id="ludicrous-toggle">Toggle Ludicrous Mode</button>
+        <button onclick="resetTest()">Reset Test</button>
+    </div>
+
+    <div class="test-section">
+        <h2>Block Progression</h2>
+        <div class="block-progression" id="block-progression">
+            <div class="block block-queued">Block 1<br>60min<br>⏳ WAITING</div>
+            <div class="block block-queued">Block 2<br>45min<br>⏳ WAITING</div>
+            <div class="block block-queued">Block 3<br>30min<br>⏳ WAITING</div>
+            <div class="block block-queued">Block 4<br>90min<br>⏳ WAITING</div>
+        </div>
+        <div class="timing-display" id="current-status" style="margin-top: 10px;">
+            Status: Ready to start
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>Timing Information</h2>
+        <div class="timing-display" id="timing-display">
+            Mode: Normal | Speed: 1x | Expected Total: 225 minutes
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>Test Results</h2>
+        <div id="test-results"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Event Log</h2>
+        <div class="log" id="event-log"></div>
+    </div>
+
+    <script>
+        let testResults = [];
+        let isLudicrousMode = false;
+        let currentBlockIndex = 0;
+        let testStartTime = null;
+        let blockDurations = [60, 45, 30, 90]; // minutes
+        let totalExpectedTime = blockDurations.reduce((sum, duration) => sum + duration, 0);
+
+        function addTestResult(message, passed) {
+            const resultsDiv = document.getElementById('test-results');
+            const resultDiv = document.createElement('div');
+            resultDiv.className = `test-result ${passed ? 'pass' : 'fail'}`;
+            resultDiv.innerHTML = `<strong>${passed ? '✅' : '❌'}</strong> ${message}`;
+            resultsDiv.appendChild(resultDiv);
+            testResults.push({ message, passed });
+        }
+
+        function log(message) {
+            const logDiv = document.getElementById('event-log');
+            const timestamp = new Date().toLocaleTimeString();
+            logDiv.innerHTML += `[${timestamp}] ${message}\n`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+            console.log(message);
+        }
+
+        function updateTimingDisplay() {
+            const timingDiv = document.getElementById('timing-display');
+            const mode = isLudicrousMode ? 'Ludicrous' : 'Normal';
+            const speed = isLudicrousMode ? '300x' : '1x';
+            const expectedTime = isLudicrousMode ? (totalExpectedTime / 300) : totalExpectedTime;
+            const timeUnit = isLudicrousMode ? 'seconds' : 'minutes';
+            
+            timingDiv.innerHTML = `Mode: ${mode} | Speed: ${speed} | Expected Total: ${expectedTime.toFixed(1)} ${timeUnit}`;
+        }
+
+        function updateBlockStates() {
+            const blocks = document.querySelectorAll('.block');
+            blocks.forEach((block, index) => {
+                block.className = 'block';
+                if (index < currentBlockIndex) {
+                    block.classList.add('block-indexed');
+                    block.innerHTML = `Block ${index + 1}<br>${blockDurations[index]}min<br>✅ DONE`;
+                } else if (index === currentBlockIndex) {
+                    block.classList.add('block-indexing');
+                    block.innerHTML = `Block ${index + 1}<br>${blockDurations[index]}min<br>🔄 PROCESSING`;
+                } else {
+                    block.classList.add('block-queued');
+                    block.innerHTML = `Block ${index + 1}<br>${blockDurations[index]}min<br>⏳ WAITING`;
+                }
+            });
+        }
+
+        function toggleLudicrousMode() {
+            isLudicrousMode = !isLudicrousMode;
+            updateLudicrousModeUI();
+        }
+
+        function startNormalTest() {
+            log('=== STARTING NORMAL MODE TEST ===');
+            isLudicrousMode = false;
+            updateLudicrousModeUI();
+            startBlockProgression();
+        }
+
+        function startLudicrousTest() {
+            log('=== STARTING LUDICROUS MODE TEST ===');
+            isLudicrousMode = true;
+            updateLudicrousModeUI();
+            startBlockProgression();
+        }
+
+        function updateLudicrousModeUI() {
+            const button = document.getElementById('ludicrous-toggle');
+            button.textContent = isLudicrousMode ? 'Ludicrous Mode: ON' : 'Ludicrous Mode: OFF';
+            button.className = isLudicrousMode ? 'ludicrous-toggle active' : 'ludicrous-toggle';
+            updateTimingDisplay();
+            log(`Ludicrous mode ${isLudicrousMode ? 'activated' : 'deactivated'}`);
+        }
+
+        function startBlockProgression() {
+            currentBlockIndex = 0;
+            testStartTime = Date.now();
+            updateBlockStates();
+            updateTimingDisplay();
+            
+            log(`Starting block progression with ${blockDurations.length} blocks`);
+            log(`Total expected time: ${totalExpectedTime} minutes`);
+            if (isLudicrousMode) {
+                log(`Ludicrous acceleration: ${(totalExpectedTime / 300).toFixed(1)} seconds`);
+            }
+            
+            processNextBlock();
+        }
+
+        function processNextBlock() {
+            if (currentBlockIndex >= blockDurations.length) {
+                completeTest();
+                return;
+            }
+
+            const duration = blockDurations[currentBlockIndex];
+            const blockNumber = currentBlockIndex + 1;
+            
+            log(`Processing Block ${blockNumber}: ${duration} minutes`);
+            updateCurrentStatus(`Processing Block ${blockNumber} (${duration}min)`);
+            
+            // Calculate processing time with ludicrous acceleration
+            let processingTime = duration * 60 * 1000; // Convert to milliseconds
+            if (isLudicrousMode) {
+                processingTime = processingTime / 300; // 300x acceleration
+                log(`Ludicrous acceleration: ${duration}min → ${(processingTime/1000).toFixed(1)}s`);
+            }
+            
+            // Ensure minimum processing time for visual feedback (longer for testing)
+            processingTime = Math.max(isLudicrousMode ? 1500 : 1000, processingTime);
+            
+            // Mark as indexing
+            updateBlockStates();
+            
+            setTimeout(() => {
+                // Mark as indexed
+                log(`Block ${blockNumber} completed`);
+                currentBlockIndex++;
+                updateBlockStates();
+                updateCurrentStatus(`Block ${blockNumber} completed`);
+                
+                // Add transition delay (accelerated in ludicrous mode)
+                const transitionDelay = isLudicrousMode ? Math.max(50, 200 / 300) : 200;
+                
+                setTimeout(() => {
+                    processNextBlock();
+                }, transitionDelay);
+                
+            }, processingTime);
+        }
+
+        function updateCurrentStatus(message) {
+            const statusDiv = document.getElementById('current-status');
+            const timestamp = new Date().toLocaleTimeString();
+            statusDiv.innerHTML = `Status: ${message} (${timestamp})`;
+        }
+
+        function completeTest() {
+            const totalTime = (Date.now() - testStartTime) / 1000;
+            const expectedTime = isLudicrousMode ? (totalExpectedTime / 300) : (totalExpectedTime * 60);
+            
+            log(`=== TEST COMPLETED ===`);
+            log(`Total time: ${totalTime.toFixed(1)} seconds`);
+            log(`Expected time: ${expectedTime.toFixed(1)} seconds`);
+            
+            updateCurrentStatus(`Test completed in ${totalTime.toFixed(1)}s`);
+            
+            const timeDifference = Math.abs(totalTime - expectedTime);
+            const tolerance = isLudicrousMode ? 2 : 5; // 2s tolerance for ludicrous, 5s for normal
+            
+            if (timeDifference <= tolerance) {
+                addTestResult(`Timing accurate: ${totalTime.toFixed(1)}s vs expected ${expectedTime.toFixed(1)}s (within ${tolerance}s tolerance)`, true);
+            } else {
+                addTestResult(`Timing off: ${totalTime.toFixed(1)}s vs expected ${expectedTime.toFixed(1)}s (${timeDifference.toFixed(1)}s difference)`, false);
+            }
+            
+            if (isLudicrousMode) {
+                const accelerationRatio = (totalExpectedTime * 60) / totalTime;
+                addTestResult(`Acceleration ratio: ${accelerationRatio.toFixed(1)}x (target: 300x)`, accelerationRatio >= 200);
+            }
+        }
+
+        function resetTest() {
+            currentBlockIndex = 0;
+            testStartTime = null;
+            updateBlockStates();
+            document.getElementById('test-results').innerHTML = '';
+            document.getElementById('event-log').innerHTML = '';
+            testResults = [];
+            log('Test reset');
+        }
+
+        // Initialize
+        updateTimingDisplay();
+        updateBlockStates();
+        log('Ludicrous Block Progression Test initialized');
+    </script>
+</body>
+</html> 

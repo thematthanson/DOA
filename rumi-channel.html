@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rumi Channel</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=SF+Mono:wght@400;500;600;700&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'SF Mono', 'Monaco', 'Cascadia Code', monospace; background: #000; color: #fff; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; background: #111; border: 2px solid #333; border-radius: 8px; overflow: visible; position: relative; }
+        .channel-section { padding: 20px; }
+        .channel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+        .channel-title { font-size: 16px; font-weight: 600; color: #fff; text-transform: uppercase; letter-spacing: 1px; }
+        .timeline { display: flex; flex-direction: column; background: #1a1a1a; border-radius: 6px; padding: 8px 12px; margin-bottom: 8px; border: 1px solid #333333; }
+        .timeline-row { display: flex; justify-content: space-between; align-items: center; }
+        .timeline-marker { text-align: center; font-size: 9px; color: #666666; text-transform: uppercase; }
+        .program-track { display: flex; background: #1a1a1a; border-radius: 6px; min-height: 80px; position: relative; }
+        .program-slot { position: relative; width: 100%; padding: 12px; border: 1px solid #333333; cursor: pointer; transition: all 0.3s ease; background: #1a1a1a; }
+        .program-slot:hover { background: #222222; z-index: 10; }
+        .program-title { font-size: 11px; font-weight: 600; color: #ffffff; margin-bottom: 4px; }
+        .program-meta { font-size: 9px; color: #888888; text-transform: uppercase; margin-bottom: 2px; }
+        .program-service { font-size: 8px; color: #00ff41; text-transform: uppercase; }
+        .program-description { font-size: 8px; color: #ccc; font-style: italic; margin-top: 2px; }
+        /* Content Metadata Popup */
+        .content-metadata-popup {
+            background: #1a1a1a;
+            border: 1px solid #ffff00;
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 6px;
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            max-width: 400px;
+            max-height: 80vh;
+            overflow-y: auto;
+            z-index: 2000;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.8);
+        }
+
+        .content-metadata-popup.visible {
+            display: block;
+        }
+
+        .metadata-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #333;
+        }
+
+        .metadata-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: #ffff00;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin: 0;
+            line-height: 1.2;
+        }
+
+        .metadata-close {
+            background: none;
+            border: none;
+            color: #999;
+            font-size: 16px;
+            cursor: pointer;
+            padding: 0;
+            line-height: 1;
+        }
+
+        .metadata-close:hover {
+            color: #fff;
+        }
+
+        .metadata-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .metadata-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 4px 0;
+        }
+
+        .metadata-label {
+            font-size: 10px;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+            min-width: 80px;
+        }
+
+        .metadata-value {
+            font-size: 10px;
+            color: #fff;
+            text-align: right;
+            flex: 1;
+        }
+
+        .metadata-value.highlight {
+            color: #ffff00;
+            font-weight: 600;
+        }
+
+        .metadata-value.description {
+            font-size: 9px;
+            color: #ccc;
+            font-style: italic;
+            margin-top: 4px;
+            text-align: left;
+        }
+
+        .metadata-description {
+            grid-column: 1 / -1;
+            padding-top: 4px;
+            border-top: 1px solid #333;
+            margin-top: 4px;
+        }
+
+        .content-item-clickable {
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .content-item-clickable:hover {
+            background: #222;
+            border-color: #ffff00;
+        }
+
+        .content-item-clickable:hover .program-meta {
+            color: #ffff00;
+            font-weight: 600;
+        }
+
+        .content-item-clickable:hover .program-meta::after {
+            content: " • click for details";
+            color: #ffff00;
+            font-weight: 600;
+        }
+        .debug-cycle-btn { position: absolute; bottom: 10px; right: 10px; background: #222; color: #666; border: 1px solid #444; font-size: 9px; padding: 3px 6px; border-radius: 3px; cursor: pointer; z-index: 100; }
+        .debug-cycle-btn:hover { color: #00ff41; border-color: #00ff41; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="channel-section">
+            <div class="channel-header">
+                    <div class="channel-title">RUMI CHANNEL</div>
+                </div>
+            <div class="timeline-container">
+                <div class="timeline">
+                    <div class="timeline-row">
+                        <div class="timeline-marker">0 MINS</div>
+                        <div class="timeline-marker">120 MINS</div>
+                        <div class="timeline-marker">240 MINS</div>
+                    </div>
+                    <div class="timeline-row" style="margin-top: 4px;">
+                        <div class="timeline-marker" style="color: #00ff41; font-weight: 600;">1.0x</div>
+                        <div class="timeline-marker" style="color: #ffaa00; font-weight: 600;">1.2x</div>
+                        <div class="timeline-marker" style="color: #a985ff; font-weight: 600;">1.5x</div>
+                    </div>
+                </div>
+            </div>
+            <div class="program-track" id="program-track">
+                <!-- Program block will be injected here by script -->
+                </div>
+            </div>
+
+            <!-- Content Metadata Popup -->
+            <div class="content-metadata-popup" id="content-metadata-popup">
+                <div class="metadata-header">
+                    <h3 class="metadata-title" id="metadata-title">Content Details</h3>
+                    <button class="metadata-close" onclick="closeMetadataPopup()">×</button>
+                </div>
+                <div class="metadata-grid" id="metadata-grid">
+                    <!-- Metadata will be populated dynamically -->
+                </div>
+                </div>
+            </div>
+        <button class="debug-cycle-btn" onclick="cycleBucket()">CYCLE BUCKET</button>
+                </div>
+    <script>
+        // Rumi Channel with CSV Data Integration and Click-Popup
+        let csvContent = [];
+        let currentBucket = 'Content Intelligence';
+        let currentContentItems = [];
+        
+        // Intelligence bucket definitions with descriptions
+        const intelligenceBuckets = {
+            'Content Intelligence': {
+                displayName: 'Content Intelligence',
+                category: 'Metadata Processing',
+                description: 'Extract and categorize content metadata, tags, and classifications.',
+                basePoints: 35
+            },
+            'Scene Description Pipeline': {
+                displayName: 'Scene Description Pipeline',
+                category: 'Scene Analysis',
+                description: 'Analyze visual elements, settings, and atmospheric details in content.',
+                basePoints: 30
+            },
+            'Story Tree': {
+                displayName: 'Story Tree',
+                category: 'Narrative Structure',
+                description: 'Map narrative arcs, plot developments, and story progression patterns.',
+                basePoints: 32
+            },
+            'Character Summaries': {
+                displayName: 'Character Summaries',
+                category: 'Character Analysis',
+                description: 'Evaluate character development, relationships, and behavioral patterns.',
+                basePoints: 28
+            }
+        };
+
+        // Load CSV data from file
+        async function loadCSVData() {
+            try {
+                const response = await fetch('content-library-expanded_LUDICROUS_WORKING.csv');
+                const csvText = await response.text();
+                csvContent = parseCSV(csvText);
+                console.log('🎯 Loaded', csvContent.length, 'CSV content items');
+                filterContentByBucket();
+            } catch (error) {
+                console.error('Error loading CSV:', error);
+                // Fallback to empty array
+                csvContent = [];
+                currentContentItems = [];
+            }
+        }
+
+        // Parse CSV text into objects
+        function parseCSV(text) {
+            const lines = text.split(/\r?\n/).filter(Boolean);
+            const headers = lines[0].split(',').map(h => h.trim());
+            return lines.slice(1).map(line => {
+                const values = [];
+                let current = '';
+                let inQuotes = false;
+                for (let i = 0; i < line.length; i++) {
+                    const char = line[i];
+                    if (char === '"') inQuotes = !inQuotes;
+                    else if (char === ',' && !inQuotes) {
+                        values.push(current);
+                        current = '';
+                    } else {
+                        current += char;
+                    }
+                }
+                values.push(current);
+                const obj = {};
+                headers.forEach((h, i) => obj[h] = values[i] ? values[i].replace(/^"|"$/g, '') : '');
+                return obj;
+            });
+        }
+
+        // Filter content items by current bucket
+        function filterContentByBucket() {
+            if (!csvContent.length) {
+                currentContentItems = [];
+                return;
+            }
+            
+            // Filter by intelligence bucket and take first 10 items for display
+            currentContentItems = csvContent
+                .filter(item => item.intelligence_bucket === currentBucket)
+                .slice(0, 10);
+            
+            console.log('🎯 Filtered', currentContentItems.length, 'items for bucket:', currentBucket);
+            renderContentItems();
+        }
+
+        // Render intelligence bucket information as clickable block
+        function renderContentItems() {
+            const track = document.getElementById('program-track');
+            
+            // Get bucket information
+            const bucketInfo = intelligenceBuckets[currentBucket] || intelligenceBuckets['Content Intelligence'];
+            
+            // Calculate aggregate stats for the bucket
+            const bucketContent = currentContentItems.length > 0 ? currentContentItems : [];
+            const totalClips = bucketContent.length || 20; // Default to 20 if no content
+            const totalMinutes = bucketContent.reduce((sum, item) => {
+                const duration = item.duration || '2:30';
+                const minutes = parseFloat(duration.split(':')[0]) + parseFloat(duration.split(':')[1] || 0) / 60;
+                return sum + minutes;
+            }, 0) || 240; // Default to 240 minutes if no content
+            const totalPoints = Math.floor(totalClips * bucketInfo.basePoints * 1.2); // Calculate estimated points
+            
+            // Create intelligence bucket display
+            track.innerHTML = `
+                <div class="program-slot intelligence-bucket-clickable single-content-block" data-bucket="${currentBucket}" style="
+                    margin: 8px 0;
+                    padding: 16px;
+                    background: #1a1a1a;
+                    border: 1px solid #333;
+                    border-radius: 6px;
+                    cursor: pointer;
+                    transition: all 0.2s ease;
+                ">
+                    <div class="program-title" style="
+                        font-size: 14px;
+                        font-weight: 600;
+                        color: #ffff00;
+                        margin-bottom: 6px;
+                        line-height: 1.3;
+                    ">${bucketInfo.displayName}</div>
+                    <div class="program-meta" style="
+                        font-size: 11px;
+                        color: #ccc;
+                        margin-bottom: 8px;
+                        font-weight: 600;
+                    ">${totalPoints}PTS • ${totalClips} CLIPS • ${Math.round(totalMinutes)} MIN</div>
+                    <div class="program-service" style="
+                        font-size: 10px;
+                        color: #ffaa00;
+                        text-transform: uppercase;
+                        letter-spacing: 0.5px;
+                        margin-bottom: 6px;
+                        font-weight: 600;
+                    ">${bucketInfo.category}</div>
+                    <div class="program-description" style="
+                        font-size: 9px;
+                        color: #aaa;
+                        line-height: 1.4;
+                        padding: 8px 12px;
+                        background: #262626;
+                        border-radius: 4px;
+                        border: 1px solid #444;
+                    ">${bucketInfo.description}</div>
+                </div>
+            `;
+
+            // Add hover effect styling
+            const bucketBlock = track.querySelector('.single-content-block');
+            bucketBlock.addEventListener('mouseenter', function() {
+                this.style.background = '#2a2a1a';
+                this.style.borderColor = '#ffff00';
+                this.style.transform = 'scale(1.02)';
+            });
+            
+            bucketBlock.addEventListener('mouseleave', function() {
+                this.style.background = '#1a1a1a';
+                this.style.borderColor = '#333';
+                this.style.transform = 'scale(1)';
+            });
+
+            // Add click event listener to show bucket content popup
+            bucketBlock.addEventListener('click', function() {
+                showBucketContentPopup(currentBucket, bucketContent);
+            });
+
+            // Update channel title
+            updateChannelTitle();
+        }
+
+        // Show intelligence bucket popup with content details
+        function showBucketContentPopup(bucketName, bucketContent) {
+            const popup = document.getElementById('content-metadata-popup');
+            const title = document.getElementById('metadata-title');
+            const grid = document.getElementById('metadata-grid');
+
+            // Get bucket information
+            const bucketInfo = intelligenceBuckets[bucketName] || intelligenceBuckets['Content Intelligence'];
+
+            // Set title to bucket name
+            title.textContent = bucketInfo.displayName;
+
+            // Build metadata grid
+            grid.innerHTML = '';
+
+            // Bucket information
+            addMetadataItem(grid, 'Learning Category', bucketInfo.category, 'highlight');
+            addMetadataItem(grid, 'Description', bucketInfo.description, 'description');
+            
+            // Bucket statistics
+            const totalClips = bucketContent.length || 20;
+            const totalMinutes = bucketContent.reduce((sum, item) => {
+                const duration = item.duration || '2:30';
+                const minutes = parseFloat(duration.split(':')[0]) + parseFloat(duration.split(':')[1] || 0) / 60;
+                return sum + minutes;
+            }, 0) || 240;
+            const totalPoints = Math.floor(totalClips * bucketInfo.basePoints * 1.2);
+            
+            addMetadataItem(grid, 'Total Content', `${totalClips} clips • ${Math.round(totalMinutes)} minutes`, 'highlight');
+            addMetadataItem(grid, 'Estimated Points', `${totalPoints} points (${bucketInfo.basePoints} base rate)`, 'highlight');
+
+            // Show current multiplier
+            const multiplier = calculateMultiplier();
+            addMetadataItem(grid, 'Current Multiplier', `${multiplier}x active`, 'highlight');
+
+            // Current content information - show only the currently indexed show
+            if (bucketContent.length > 0) {
+                // Get the current content item from parent window if available
+                let currentContentTitle = null;
+                
+                try {
+                    // Try to get current content from parent window
+                    if (window.parent && window.parent.appState && window.parent.appState.automodeContentItems) {
+                        const currentIndex = window.parent.appState.currentContentIndex || 0;
+                        const currentItem = window.parent.appState.automodeContentItems[currentIndex];
+                        if (currentItem) {
+                            currentContentTitle = currentItem.title;
+                        }
+                    }
+                } catch (e) {
+                    // If we can't access parent, fall back to first item
+                    console.log('Cannot access parent window, using first item');
+                }
+                
+                // If we couldn't get current content from parent, use first item
+                if (!currentContentTitle) {
+                    currentContentTitle = bucketContent[0].title;
+                }
+                
+                // Extract show name from title
+                let showName = currentContentTitle;
+                if (currentContentTitle.includes(' - ')) {
+                    showName = currentContentTitle.split(' - ')[0];
+                }
+                
+                addMetadataItem(grid, 'Current Content', showName, 'description');
+                
+                // Show what we're learning - use first item as example
+                const firstItem = bucketContent[0];
+                let learningDescription = `${firstItem.title}`;
+                if (firstItem.description) {
+                    learningDescription += ` - ${firstItem.description}`;
+                } else {
+                    learningDescription += ` where character development and narrative structure happens`;
+                }
+                addMetadataItem(grid, 'What we are learning', learningDescription, 'description');
+            }
+
+            // Show popup
+            popup.classList.add('visible');
+        }
+
+        // Show detailed metadata popup for content item (kept for compatibility)
+        function showContentMetadataPopup(contentItem) {
+            const popup = document.getElementById('content-metadata-popup');
+            const title = document.getElementById('metadata-title');
+            const grid = document.getElementById('metadata-grid');
+
+            // Set title
+            title.textContent = contentItem.title;
+
+            // Build metadata grid
+            grid.innerHTML = '';
+
+            // Basic content information
+            addMetadataItem(grid, 'Type', contentItem.type || 'Unknown', 'highlight');
+            addMetadataItem(grid, 'Service', contentItem.service || 'Unknown');
+            addMetadataItem(grid, 'Duration', contentItem.duration || 'Unknown');
+
+            // Intelligence bucket and genre
+            addMetadataItem(grid, 'Intelligence Bucket', contentItem.intelligence_bucket || 'Unknown', 'highlight');
+            addMetadataItem(grid, 'Genre', contentItem.genre || 'Unknown');
+
+            // Technical details
+            if (contentItem.year) {
+                addMetadataItem(grid, 'Year', contentItem.year);
+            }
+
+            if (contentItem.season && contentItem.episode && contentItem.season !== 'N/A') {
+                addMetadataItem(grid, 'Season/Episode', `S${contentItem.season}E${contentItem.episode}`);
+            }
+
+            // Show estimated points and multiplier
+            const multiplier = calculateMultiplier();
+            const projectedPoints = calculateProjectedPoints(contentItem.duration, multiplier);
+            addMetadataItem(grid, 'Multiplier & Points', `${multiplier}x • ${projectedPoints} pts`, 'highlight');
+
+            // Description if available
+            if (contentItem.description) {
+                addMetadataItem(grid, 'Description', contentItem.description, 'description');
+            }
+
+            // Show popup
+            popup.classList.add('visible');
+        }
+
+        // Add metadata item to grid
+        function addMetadataItem(grid, label, value, className = '') {
+            const item = document.createElement('div');
+            item.className = 'metadata-item';
+            if (className === 'description') {
+                item.className += ' metadata-description';
+            }
+
+            const labelElement = document.createElement('div');
+            labelElement.className = 'metadata-label';
+            labelElement.textContent = label;
+
+            const valueElement = document.createElement('div');
+            valueElement.className = `metadata-value ${className}`;
+            valueElement.textContent = value;
+
+            item.appendChild(labelElement);
+            item.appendChild(valueElement);
+            grid.appendChild(item);
+        }
+
+        // Calculate multiplier (simplified for automode)
+        function calculateMultiplier() {
+            return 1.2; // Default automode multiplier
+        }
+
+        // Calculate projected points
+        function calculateProjectedPoints(duration, multiplier) {
+            let minutes = 2; // Default duration
+            if (duration && duration.includes(':')) {
+                const parts = duration.split(':');
+                minutes = parseInt(parts[0]) + (parseInt(parts[1]) / 60);
+            }
+            return Math.round(minutes * 5 * multiplier); // 5 points per minute base
+        }
+
+        // Close metadata popup
+        function closeMetadataPopup() {
+            const popup = document.getElementById('content-metadata-popup');
+            popup.classList.remove('visible');
+        }
+
+        // Update channel title
+        function updateChannelTitle() {
+            document.querySelector('.channel-title').textContent = `${currentBucket.toUpperCase()}`;
+        }
+
+        // Cycle through available buckets
+        function cycleBucket() {
+            const availableBuckets = [...new Set(csvContent.map(item => item.intelligence_bucket))].filter(Boolean);
+            const currentIndex = availableBuckets.indexOf(currentBucket);
+            const nextIndex = (currentIndex + 1) % availableBuckets.length;
+            currentBucket = availableBuckets[nextIndex] || 'Content Intelligence';
+            
+            filterContentByBucket();
+
+            // Send message to parent
+            window.parent.postMessage({
+                type: 'rumi:setBucket',
+                payload: { bucket: currentBucket }
+            }, '*');
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize the channel with CSV data
+            loadCSVData();
+            
+            // Let the parent window know that the iframe is loaded and ready
+            window.parent.postMessage({ type: 'rumiChannelReady' }, '*');
+            
+            // Listen for messages from the parent window (the extension popup)
+            window.addEventListener('message', function(event) {
+                const message = event.data;
+                
+                // Handle bucket selection from parent
+                if (message && message.type === 'rumi:setBucket') {
+                    const { bucket } = message.payload;
+                    if (bucket && bucket !== currentBucket) {
+                        currentBucket = bucket;
+                        filterContentByBucket();
+                    }
+                }
+                
+                // Handle CSV content request from main app
+                if (message && message.type === 'requestCSVContent') {
+                    console.log('Received request for CSV content');
+                    
+                    // Send CSV content back to parent for automode content generation
+                    window.parent.postMessage({
+                        type: 'csvContentResponse',
+                        content: csvContent
+                    }, '*');
+                    
+                    console.log('Sent CSV content to parent:', csvContent.length, 'items');
+                }
+                
+                // Handle current content request for automode
+                if (message && message.type === 'requestCurrentContent') {
+                    console.log('Received request for current content');
+                    
+                    // Convert current content items to format expected by main app
+                    const currentContent = currentContentItems.map((item, index) => ({
+                        title: item.title,
+                        duration: item.duration || '2:30',
+                        type: item.type || 'clip',
+                        service: item.service || 'Rumi Learning',
+                        season: item.season || 'N/A',
+                        episode: item.episode || 'N/A',
+                        startTime: index * 150, // ~2.5 minutes per item
+                        genre: item.genre || 'Learning',
+                        intelligence_bucket: item.intelligence_bucket,
+                        description: item.description
+                    }));
+                    
+                    // Send current content back to parent
+                    window.parent.postMessage({
+                        type: 'currentContentResponse',
+                        content: currentContent
+                    }, '*');
+                    
+                    console.log('Sent current content to parent:', currentContent.length, 'items');
+                }
+                
+                // Handle block progression updates
+                if (message && message.type === 'blockProgressionUpdate') {
+                    console.log('🔍 Rumi Channel: Received block progression update:', message.data);
+                    const { currentBlockIndex, totalBlocks, elapsedTime, currentMultiplier, sessionProgress } = message.data;
+                    
+                    // Update channel UI to show current block progression
+                    updateChannelProgression(currentBlockIndex, totalBlocks, elapsedTime, currentMultiplier, sessionProgress);
+                }
+            });
+        });
+
+        // Global function for closing metadata popup
+        function closeMetadataPopup() {
+            const popup = document.getElementById('content-metadata-popup');
+            popup.classList.remove('visible');
+        }
+
+        // Update channel progression display
+        function updateChannelProgression(currentBlockIndex, totalBlocks, elapsedTime, currentMultiplier, sessionProgress) {
+            console.log('🔍 Rumi Channel: Updating progression display:', {
+                currentBlockIndex,
+                totalBlocks,
+                elapsedTime,
+                currentMultiplier,
+                sessionProgress
+            });
+            
+            // Update the channel title to show current progress
+            const channelTitle = document.querySelector('.channel-title');
+            if (channelTitle) {
+                const minutes = Math.floor(elapsedTime / 60);
+                const seconds = Math.floor(elapsedTime % 60);
+                const timeStr = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                
+                channelTitle.textContent = `${currentBucket.toUpperCase()} • ${timeStr} • ${currentMultiplier.toFixed(1)}x`;
+            }
+            
+            // Update content blocks to show current progression
+            const contentBlocks = document.querySelectorAll('.program-slot');
+            contentBlocks.forEach((block, index) => {
+                block.classList.remove('current-block', 'completed-block');
+                
+                if (index === currentBlockIndex) {
+                    block.classList.add('current-block');
+                    block.style.borderColor = '#ffff00';
+                    block.style.backgroundColor = '#2a2a1a';
+                } else if (index < currentBlockIndex) {
+                    block.classList.add('completed-block');
+                    block.style.borderColor = '#00ff41';
+                    block.style.backgroundColor = '#1a2a1a';
+                } else {
+                    block.style.borderColor = '#333';
+                    block.style.backgroundColor = '#1a1a1a';
+                }
+            });
+            
+            // Update timeline markers to show progression
+            const timelineMarkers = document.querySelectorAll('.timeline-marker');
+            if (timelineMarkers.length >= 3) {
+                const progressPercent = sessionProgress * 100;
+                
+                // Update first marker with current time
+                timelineMarkers[0].textContent = Math.floor(elapsedTime / 60) + ' MINS';
+                
+                // Update multiplier markers based on current multiplier
+                if (currentMultiplier >= 1.2) {
+                    timelineMarkers[3].style.color = '#ffff00'; // Yellow when reached
+                }
+                if (currentMultiplier >= 1.5) {
+                    timelineMarkers[5].style.color = '#a985ff'; // Purple when reached
+                }
+            }
+        }
+    </script>
+</body>
+</html> 

@@ -1,0 +1,281 @@
+/* ================================
+   RUMI RESPONSIVE STYLES
+   Media queries and responsive design
+   ================================ */
+
+/* ================================
+   UTILITY CLASSES
+   ================================ */
+
+.hidden {
+    display: none !important;
+}
+
+.visible {
+    display: block !important;
+}
+
+.text-center {
+    text-align: center !important;
+}
+
+.text-left {
+    text-align: left !important;
+}
+
+.text-right {
+    text-align: right !important;
+}
+
+.mt-10 {
+    margin-top: 10px !important;
+}
+
+.mb-10 {
+    margin-bottom: 10px !important;
+}
+
+.ml-10 {
+    margin-left: 10px !important;
+}
+
+.mr-10 {
+    margin-right: 10px !important;
+}
+
+.p-10 {
+    padding: 10px !important;
+}
+
+.p-20 {
+    padding: 20px !important;
+}
+
+/* ================================
+   MOBILE STYLES (<= 480px)
+   ================================ */
+
+@media screen and (max-width: 480px) {
+    .simulation-container {
+        flex-direction: column;
+        gap: 20px;
+        padding: 10px;
+    }
+
+    .entry-point-panel {
+        width: 100%;
+        max-width: none;
+    }
+
+    .extension-popup {
+        width: 100%;
+        max-width: none;
+        border-radius: 8px;
+    }
+
+    .points-section {
+        padding: 12px;
+    }
+
+    .points-total {
+        font-size: 18px;
+    }
+
+    .points-multiplier {
+        font-size: 12px;
+    }
+
+    .activation-circle {
+        width: 100px;
+        height: 100px;
+    }
+
+    .activation-text {
+        font-size: 10px;
+    }
+
+    .receipt-container {
+        padding: 12px;
+    }
+
+    .receipt-info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .receipt-actions {
+        flex-direction: column;
+    }
+
+    .receipt-actions button {
+        width: 100%;
+    }
+}
+
+/* ================================
+   TABLET STYLES (481px - 768px)
+   ================================ */
+
+@media screen and (min-width: 481px) and (max-width: 768px) {
+    .simulation-container {
+        gap: 20px;
+        padding: 15px;
+    }
+
+    .entry-point-panel {
+        width: 180px;
+    }
+
+    .extension-popup {
+        width: 280px;
+    }
+
+    .points-section {
+        padding: 14px;
+    }
+
+    .activation-circle {
+        width: 110px;
+        height: 110px;
+    }
+
+    .activation-text {
+        font-size: 11px;
+    }
+}
+
+/* ================================
+   LAPTOP STYLES (769px - 1024px)
+   ================================ */
+
+@media screen and (min-width: 769px) and (max-width: 1024px) {
+    .simulation-container {
+        gap: 25px;
+        padding: 20px;
+    }
+
+    .entry-point-panel {
+        width: 200px;
+    }
+
+    .extension-popup {
+        width: 300px;
+    }
+}
+
+/* ================================
+   DESKTOP STYLES (> 1024px)
+   ================================ */
+
+@media screen and (min-width: 1025px) {
+    .simulation-container {
+        gap: 30px;
+        padding: 25px;
+    }
+
+    .entry-point-panel {
+        width: 220px;
+    }
+
+    .extension-popup {
+        width: 320px;
+    }
+}
+
+/* ================================
+   HIGH DPI SCREENS
+   ================================ */
+
+@media screen and (min-resolution: 192dpi) {
+    .nokia-visual {
+        border-width: 1.5px;
+    }
+
+    .primary-cta {
+        border-width: 1.5px;
+    }
+
+    .activation-circle {
+        border-width: 1.5px;
+    }
+}
+
+/* ================================
+   DARK MODE SUPPORT
+   ================================ */
+
+@media (prefers-color-scheme: dark) {
+    .extension-popup {
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
+    }
+
+    .points-section {
+        background: #1a1a1a;
+    }
+
+    .holistic-panel {
+        background: #111;
+    }
+
+    .message-area {
+        background: #1a1a1a;
+    }
+
+    .expandable-section {
+        background: #1a1a1a;
+    }
+
+    .receipt-container {
+        background: #1a1a1a;
+    }
+}
+
+/* ================================
+   REDUCED MOTION
+   ================================ */
+
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation: none !important;
+        transition: none !important;
+    }
+
+    .activation-circle:hover {
+        transform: none;
+    }
+
+    .expand-icon {
+        transition: none;
+    }
+}
+
+/* ================================
+   PRINT STYLES
+   ================================ */
+
+@media print {
+    body {
+        background: white;
+        color: black;
+    }
+
+    .extension-popup {
+        box-shadow: none;
+        border: 1px solid #ccc;
+    }
+
+    .points-total,
+    .points-multiplier {
+        color: black;
+    }
+
+    .nokia-visual,
+    .activation-circle,
+    .stream-detector {
+        display: none;
+    }
+
+    .receipt-container {
+        border: 1px solid #ccc;
+        page-break-inside: avoid;
+    }
+} 

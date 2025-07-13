@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Embedded Backend Test</title>
+    <style>
+        body {
+            font-family: 'SF Mono', monospace;
+            background: #111;
+            color: #00ff41;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .test-section {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+        }
+        .test-result {
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 4px;
+        }
+        .success { background: #1a3a1a; border: 1px solid #00ff41; }
+        .error { background: #3a1a1a; border: 1px solid #ff4444; }
+        .warning { background: #3a3a1a; border: 1px solid #ffaa00; }
+        .info { background: #1a1a3a; border: 1px solid #0088ff; }
+        button {
+            background: #333;
+            color: #00ff41;
+            border: 1px solid #00ff41;
+            padding: 8px 16px;
+            margin: 5px;
+            cursor: pointer;
+            font-family: 'SF Mono', monospace;
+        }
+        button:hover {
+            background: #00ff41;
+            color: #000;
+        }
+        .console-output {
+            background: #000;
+            border: 1px solid #333;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .status-good { background: #00ff41; }
+        .status-bad { background: #ff4444; }
+        .status-warning { background: #ffaa00; }
+        .parent-access {
+            background: #2a1a1a;
+            border: 1px solid #ffaa00;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 Embedded Backend Test</h1>
+    <p>Testing backend integration from within the main system (parent window access)</p>
+
+    <div class="parent-access">
+        <strong>⚠️ Note:</strong> This test accesses backend components from the parent window (indexD.html). 
+        Make sure this page is loaded as an iframe within the main system.
+    </div>
+
+    <div class="test-section">
+        <h2>Parent Window Access Test</h2>
+        <div id="parent-access-test"></div>
+        <button onclick="testParentAccess()">Test Parent Window Access</button>
+    </div>
+
+    <div class="test-section">
+        <h2>Backend Integration Test</h2>
+        <div id="backend-test"></div>
+        <button onclick="testBackendIntegration()">Test Backend Integration</button>
+    </div>
+
+    <div class="test-section">
+        <h2>Block State Update Test</h2>
+        <div id="block-state-test"></div>
+        <button onclick="testBlockStateUpdate()">Test Block State Update</button>
+    </div>
+
+    <div class="test-section">
+        <h2>Ludicrous Mode Test</h2>
+        <div id="ludicrous-test"></div>
+        <button onclick="testLudicrousMode()">Test Ludicrous Mode</button>
+    </div>
+
+    <div class="test-section">
+        <h2>Console Output</h2>
+        <div id="console-output" class="console-output"></div>
+        <button onclick="clearConsole()">Clear Console</button>
+    </div>
+
+    <script>
+        // Console logging function
+        function log(message, type = 'info') {
+            const console = document.getElementById('console-output');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.style.color = type === 'error' ? '#ff4444' : 
+                                  type === 'warning' ? '#ffaa00' : 
+                                  type === 'success' ? '#00ff41' : '#00aaff';
+            logEntry.textContent = `[${timestamp}] ${message}`;
+            console.appendChild(logEntry);
+            console.scrollTop = console.scrollHeight;
+        }
+
+        // Test parent window access
+        function testParentAccess() {
+            const results = document.getElementById('parent-access-test');
+            results.innerHTML = '';
+            
+            log('Testing parent window access...', 'info');
+            
+            try {
+                // Check if we can access the parent window
+                if (window.parent && window.parent !== window) {
+                    addResult(results, 'success', '✅ Parent window accessible');
+                    log('Parent window accessible', 'success');
+                    
+                    // Check if parent has the backend components
+                    const parentChecks = [
+                        { name: 'Parent RumiBackend', check: () => !!window.parent.RumiBackend },
+                        { name: 'Parent RumiIntegration', check: () => !!window.parent.RumiIntegration },
+                        { name: 'Parent LudicrousSpeedManager', check: () => !!window.parent.LudicrousSpeedManager },
+                        { name: 'Parent App State', check: () => !!window.parent.appState }
+                    ];
+                    
+                    parentChecks.forEach(check => {
+                        const status = check.check();
+                        const statusClass = status ? 'status-good' : 'status-bad';
+                        const statusText = status ? '✅' : '❌';
+                        
+                        const result = document.createElement('div');
+                        result.innerHTML = `<span class="status-indicator ${statusClass}"></span>${statusText} ${check.name}`;
+                        results.appendChild(result);
+                        
+                        log(`${check.name}: ${status ? 'OK' : 'FAILED'}`, status ? 'success' : 'error');
+                    });
+                    
+                } else {
+                    addResult(results, 'error', '❌ Not running in iframe - cannot access parent window');
+                    log('Not running in iframe - cannot access parent window', 'error');
+                }
+                
+            } catch (error) {
+                addResult(results, 'error', `❌ Parent access failed: ${error.message}`);
+                log(`Parent access failed: ${error.message}`, 'error');
+            }
+        }
+
+        // Test backend integration from parent
+        function testBackendIntegration() {
+            const results = document.getElementById('backend-test');
+            results.innerHTML = '';
+            
+            log('Testing backend integration from parent...', 'info');
+            
+            try {
+                if (!window.parent.RumiBackend) {
+                    addResult(results, 'error', '❌ Parent backend not available');
+                    log('Parent backend not available', 'error');
+                    return;
+                }
+                
+                addResult(results, 'success', '✅ Parent backend available');
+                log('Parent backend available', 'success');
+                
+                // Test key methods from parent
+                const methods = ['updateBlockState', 'calculateSegmentedPoints', 'getCurrentMultiplier'];
+                methods.forEach(method => {
+                    if (typeof window.parent.RumiBackend[method] === 'function') {
+                        addResult(results, 'success', `✅ ${method} method available in parent`);
+                        log(`${method} method available in parent`, 'success');
+                    } else {
+                        addResult(results, 'error', `❌ ${method} method not found in parent`);
+                        log(`${method} method not found in parent`, 'error');
+                    }
+                });
+                
+                // Test integration from parent
+                if (window.parent.RumiIntegration) {
+                    addResult(results, 'success', '✅ Parent integration available');
+                    log('Parent integration available', 'success');
+                    
+                    if (window.parent.RumiIntegration.backendReady) {
+                        addResult(results, 'success', '✅ Parent integration ready');
+                        log('Parent integration ready', 'success');
+                    } else {
+                        addResult(results, 'warning', '⚠️ Parent integration not ready');
+                        log('Parent integration not ready', 'warning');
+                    }
+                } else {
+                    addResult(results, 'error', '❌ Parent integration not available');
+                    log('Parent integration not available', 'error');
+                }
+                
+            } catch (error) {
+                addResult(results, 'error', `❌ Backend integration test failed: ${error.message}`);
+                log(`Backend integration test failed: ${error.message}`, 'error');
+            }
+        }
+
+        // Test block state update from parent
+        function testBlockStateUpdate() {
+            const results = document.getElementById('block-state-test');
+            results.innerHTML = '';
+            
+            log('Testing block state update from parent...', 'info');
+            
+            try {
+                if (!window.parent.RumiBackend) {
+                    addResult(results, 'error', '❌ Parent backend not available for block state test');
+                    log('Parent backend not available for block state test', 'error');
+                    return;
+                }
+                
+                // Test the updateBlockState method from parent
+                window.parent.RumiBackend.updateBlockState('Embedded Test Block', 'indexing');
+                addResult(results, 'success', '✅ Parent block state update successful');
+                log('Parent block state update successful', 'success');
+                
+                // Check if the state was recorded in parent
+                if (window.parent.RumiBackend.sessionData && window.parent.RumiBackend.sessionData.blockStates) {
+                    const testState = window.parent.RumiBackend.sessionData.blockStates['Embedded Test Block'];
+                    if (testState && testState.state === 'indexing') {
+                        addResult(results, 'success', '✅ Block state recorded in parent session data');
+                        log('Block state recorded in parent session data', 'success');
+                    } else {
+                        addResult(results, 'warning', '⚠️ Block state not recorded in parent session data');
+                        log('Block state not recorded in parent session data', 'warning');
+                    }
+                } else {
+                    addResult(results, 'warning', '⚠️ Parent session data not available');
+                    log('Parent session data not available', 'warning');
+                }
+                
+                // Test integration handler from parent
+                if (window.parent.RumiIntegration && window.parent.RumiIntegration.handleBlockStateUpdate) {
+                    try {
+                        window.parent.RumiIntegration.handleBlockStateUpdate({
+                            title: 'Parent Integration Test Block',
+                            state: 'indexed'
+                        });
+                        addResult(results, 'success', '✅ Parent integration block state handler works');
+                        log('Parent integration block state handler works', 'success');
+                    } catch (error) {
+                        addResult(results, 'error', `❌ Parent integration handler failed: ${error.message}`);
+                        log(`Parent integration handler failed: ${error.message}`, 'error');
+                    }
+                }
+                
+            } catch (error) {
+                addResult(results, 'error', `❌ Parent block state update failed: ${error.message}`);
+                log(`Parent block state update failed: ${error.message}`, 'error');
+            }
+        }
+
+        // Test ludicrous mode from parent
+        function testLudicrousMode() {
+            const results = document.getElementById('ludicrous-test');
+            results.innerHTML = '';
+            
+            log('Testing ludicrous mode from parent...', 'info');
+            
+            try {
+                // Check LudicrousSpeedManager from parent
+                if (window.parent.LudicrousSpeedManager) {
+                    addResult(results, 'success', '✅ Parent LudicrousSpeedManager available');
+                    log('Parent LudicrousSpeedManager available', 'success');
+                    
+                    const currentSpeed = window.parent.LudicrousSpeedManager.currentSpeed || 150;
+                    addResult(results, 'info', `📊 Parent current speed: ${currentSpeed}x`);
+                    log(`Parent current speed: ${currentSpeed}x`, 'info');
+                    
+                    if (currentSpeed === 150) {
+                        addResult(results, 'success', '✅ Parent speed is optimized (150x)');
+                        log('Parent speed is optimized (150x)', 'success');
+                    } else if (currentSpeed === 300) {
+                        addResult(results, 'warning', '⚠️ Parent speed is high (300x) - may cause issues');
+                        log('Parent speed is high (300x) - may cause issues', 'warning');
+                    }
+                } else {
+                    addResult(results, 'warning', '⚠️ Parent LudicrousSpeedManager not available');
+                    log('Parent LudicrousSpeedManager not available', 'warning');
+                }
+                
+                // Check integration ludicrous mode from parent
+                if (window.parent.RumiIntegration && window.parent.RumiIntegration.ludicrousMode) {
+                    addResult(results, 'success', '✅ Parent integration ludicrous mode available');
+                    log('Parent integration ludicrous mode available', 'success');
+                    
+                    const speedMultiplier = window.parent.RumiIntegration.ludicrousMode.speedMultiplier;
+                    addResult(results, 'info', `📊 Parent integration speed multiplier: ${speedMultiplier}x`);
+                    log(`Parent integration speed multiplier: ${speedMultiplier}x`, 'info');
+                } else {
+                    addResult(results, 'warning', '⚠️ Parent integration ludicrous mode not available');
+                    log('Parent integration ludicrous mode not available', 'warning');
+                }
+                
+            } catch (error) {
+                addResult(results, 'error', `❌ Parent ludicrous mode test failed: ${error.message}`);
+                log(`Parent ludicrous mode test failed: ${error.message}`, 'error');
+            }
+        }
+
+        // Helper function to add test results
+        function addResult(container, type, message) {
+            const result = document.createElement('div');
+            result.className = `test-result ${type}`;
+            result.textContent = message;
+            container.appendChild(result);
+        }
+
+        // Clear console
+        function clearConsole() {
+            document.getElementById('console-output').innerHTML = '';
+        }
+
+        // Auto-run parent access test on load
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                log('Page loaded, testing parent window access...', 'info');
+                testParentAccess();
+            }, 1000);
+        });
+    </script>
+</body>
+</html> 

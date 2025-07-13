@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ludicrous Mode Indexing UI Test</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background: #000;
+            color: #fff;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.4;
+        }
+        
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .test-header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #ffff00;
+            padding-bottom: 20px;
+        }
+        
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #333;
+            border-radius: 5px;
+        }
+        
+        .test-section h3 {
+            color: #ffff00;
+            margin-top: 0;
+        }
+        
+        .control-panel {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            background: #333;
+            color: #fff;
+            border: 1px solid #666;
+            padding: 10px 15px;
+            cursor: pointer;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        button:hover {
+            background: #555;
+        }
+        
+        button.active {
+            background: #ffff00;
+            color: #000;
+        }
+        
+        .status-display {
+            background: #111;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border-left: 4px solid #ffff00;
+        }
+        
+        .animation-panel {
+            background: #111;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border: 1px solid #333;
+        }
+        
+        .ascii-display {
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            line-height: 1.2;
+            white-space: pre;
+            text-align: center;
+            margin-bottom: 15px;
+            min-height: 100px;
+            background: #000;
+            padding: 10px;
+            border: 1px solid #333;
+        }
+        
+        .progress-section {
+            margin-bottom: 20px;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #333;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: #00ff00;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+        
+        .progress-fill.ludicrous {
+            background: #ffff00;
+            box-shadow: 0 0 10px #ffff00;
+        }
+        
+        .info-display {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .info-card {
+            background: #111;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #333;
+        }
+        
+        .info-card h4 {
+            color: #ffff00;
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+        
+        .log-section {
+            background: #111;
+            padding: 15px;
+            border-radius: 5px;
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #333;
+        }
+        
+        .log-entry {
+            margin-bottom: 5px;
+            padding: 5px;
+            border-radius: 3px;
+            font-size: 12px;
+        }
+        
+        .log-entry.info { background: #1a1a1a; }
+        .log-entry.success { background: #1a2a1a; color: #00ff00; }
+        .log-entry.warning { background: #2a2a1a; color: #ffff00; }
+        .log-entry.error { background: #2a1a1a; color: #ff0000; }
+        
+        .ludicrous-indicator {
+            display: inline-block;
+            background: #ffff00;
+            color: #000;
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        
+        .speed-display {
+            font-size: 18px;
+            font-weight: bold;
+            color: #ffff00;
+            text-align: center;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="test-header">
+            <h1>🚀 Ludicrous Mode Indexing UI Test</h1>
+            <p>Testing proper integration between ludicrous mode and indexing UI components</p>
+        </div>
+        
+        <div class="test-section">
+            <h3>🎮 Control Panel</h3>
+            <div class="control-panel">
+                <button id="toggle-ludicrous">Activate Ludicrous Mode</button>
+                <button id="start-indexing">Start Indexing</button>
+                <button id="stop-indexing">Stop Indexing</button>
+                <button id="reset-test">Reset Test</button>
+            </div>
+            
+            <div class="status-display">
+                <strong>Status:</strong> <span id="current-status">Ready</span>
+                <span id="ludicrous-status" class="ludicrous-indicator" style="display: none;">LUDICROUS MODE ACTIVE</span>
+            </div>
+            
+            <div class="speed-display" id="speed-display" style="display: none;">
+                ⚡ 300x SPEED
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h3>📊 Progress Tracking</h3>
+            <div class="progress-section">
+                <label>Session Progress:</label>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="session-progress"></div>
+                </div>
+                <div>Time: <span id="session-time">0:00</span> / <span id="total-time">10:00</span></div>
+            </div>
+            
+            <div class="progress-section">
+                <label>Content Progress:</label>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="content-progress"></div>
+                </div>
+                <div>Content: <span id="current-content">None</span></div>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h3>🎨 Animation Panel</h3>
+            <div class="animation-panel">
+                <div class="ascii-display" id="ascii-animation">
+                    Waiting for indexing to start...
+                </div>
+                <div style="text-align: center; color: #888;">
+                    <div id="animation-info">Status: IDLE</div>
+                    <div id="animation-details">No content active</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h3>📈 Information Display</h3>
+            <div class="info-display">
+                <div class="info-card">
+                    <h4>Session Stats</h4>
+                    <div>Duration: <span id="session-duration">0:00</span></div>
+                    <div>Multiplier: <span id="current-multiplier">1.0x</span></div>
+                    <div>Points: <span id="total-points">0.0</span></div>
+                </div>
+                
+                <div class="info-card">
+                    <h4>Content Info</h4>
+                    <div>Current Item: <span id="content-index">0</span></div>
+                    <div>Item Duration: <span id="item-duration">0:00</span></div>
+                    <div>Time in Item: <span id="time-in-item">0:00</span></div>
+                </div>
+                
+                <div class="info-card">
+                    <h4>Ludicrous Mode</h4>
+                    <div>Active: <span id="ludicrous-active">No</span></div>
+                    <div>Speed: <span id="ludicrous-speed">1x</span></div>
+                    <div>Acceleration: <span id="acceleration-factor">None</span></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h3>📝 Debug Log</h3>
+            <div class="log-section" id="debug-log">
+                <div class="log-entry info">Test initialized. Ready to test ludicrous mode indexing UI integration.</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Test state
+        const testState = {
+            isIndexing: false,
+            ludicrousMode: false,
+            startTime: null,
+            sessionDuration: 0,
+            totalDuration: 600, // 10 minutes
+            currentContentIndex: 0,
+            contentItems: [
+                { title: "Test Content 1", duration: 120 }, // 2 minutes
+                { title: "Test Content 2", duration: 180 }, // 3 minutes
+                { title: "Test Content 3", duration: 300 }  // 5 minutes
+            ],
+            currentMultiplier: 1.0,
+            totalPoints: 0,
+            updateInterval: null,
+            completionWarningShown: false,
+            blockCompletionWarningShown: false,
+            debugLogged: false,
+            previousElapsedTime: 0
+        };
+
+        // Mock appState for testing
+        window.appState = {
+            isIndexing: false,
+            sessionDuration: 0,
+            currentMultiplier: 1.0,
+            totalPoints: 0,
+            currentContentIndex: 0,
+            automodeContentItems: testState.contentItems,
+            entryPoint: 'automode',
+            detectedShow: null
+        };
+
+        // Mock LudicrousSpeedManager
+        window.LudicrousSpeedManager = {
+            isActive: false,
+            currentSpeed: 1,
+            speedMultiplier: 300,
+            activate: function() {
+                this.isActive = true;
+                this.currentSpeed = this.speedMultiplier;
+                testState.ludicrousMode = true;
+                updateUI();
+                addLog('Ludicrous Mode activated', 'success');
+            },
+            deactivate: function() {
+                this.isActive = false;
+                this.currentSpeed = 1;
+                testState.ludicrousMode = false;
+                updateUI();
+                addLog('Ludicrous Mode deactivated', 'warning');
+            }
+        };
+
+        // Mock updateAnimationPanel function
+        window.updateAnimationPanel = function(elapsedTime) {
+            updateAsciiAnimation(elapsedTime);
+            updateAnimationInfo(elapsedTime);
+        };
+
+        // ASCII Animation Templates
+        const asciiTemplates = {
+            automode: [
+                ["  ########################  ","    ##||||||||||||||||##    ","   ##..####....####....##   ","     ##<<<<<<>>>>>>##     ","   ##..####....####....##   ","  ########################  "],
+                ["          ########          ","        ##========##        ","    ####################    ","      ##////////////##      ","      ##~~~~~~~~~~~~##      ","          ########          "],
+                ["    ################    ","   ##WWWWWWWWWWWW##   ","  ####################  "," ################## ","########################"," ##888888888888## "]
+            ]
+        };
+
+        function updateAsciiAnimation(elapsedTime) {
+            const templateDuration = 3.0;
+            const currentTemplateIndex = Math.floor(elapsedTime / templateDuration) % asciiTemplates.automode.length;
+            const currentTemplate = asciiTemplates.automode[currentTemplateIndex];
+            
+            // Apply right-to-left movement
+            const shiftSpeed = 0.3;
+            const shiftAmount = elapsedTime * shiftSpeed;
+            const shiftedTemplate = shiftPatternRightToLeft(currentTemplate, shiftAmount);
+            
+            document.getElementById('ascii-animation').textContent = shiftedTemplate.join('\n');
+        }
+
+        function shiftPatternRightToLeft(pattern, shiftAmount) {
+            return pattern.map(row => {
+                const shift = Math.floor(shiftAmount) % row.length;
+                return row.substring(shift) + row.substring(0, shift);
+            });
+        }
+
+        function updateAnimationInfo(elapsedTime) {
+            const minutes = Math.floor(elapsedTime / 60);
+            const seconds = Math.floor(elapsedTime % 60);
+            const timeString = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            
+            document.getElementById('animation-info').textContent = `Status: INDEXING (${timeString})`;
+            
+            // Update content details
+            const currentItem = testState.contentItems[testState.currentContentIndex];
+            if (currentItem) {
+                document.getElementById('animation-details').textContent = `Content: ${currentItem.title}`;
+            }
+        }
+
+        function startIndexing() {
+            if (testState.isIndexing) return;
+            
+            testState.isIndexing = true;
+            testState.startTime = Date.now();
+            testState.sessionDuration = 0;
+            testState.currentContentIndex = 0;
+            testState.currentMultiplier = 1.0;
+            testState.totalPoints = 0;
+            testState.previousElapsedTime = 0;
+            
+            window.appState.isIndexing = true;
+            window.appState.sessionDuration = 0;
+            window.appState.currentContentIndex = 0;
+            
+            // Use faster updates for ludicrous mode to catch all block transitions
+            const updateInterval = testState.ludicrousMode ? 10 : 100;
+            testState.updateInterval = setInterval(updateIndexing, updateInterval);
+            
+            updateUI();
+            addLog('Indexing started', 'success');
+        }
+
+        function stopIndexing() {
+            if (!testState.isIndexing) return;
+            
+            testState.isIndexing = false;
+            window.appState.isIndexing = false;
+            
+            if (testState.updateInterval) {
+                clearInterval(testState.updateInterval);
+                testState.updateInterval = null;
+            }
+            
+            updateUI();
+            addLog('Indexing stopped', 'warning');
+        }
+
+        function completeSession() {
+            testState.isIndexing = false;
+            window.appState.isIndexing = false;
+            
+            if (testState.updateInterval) {
+                clearInterval(testState.updateInterval);
+                testState.updateInterval = null;
+            }
+            
+            // Set final values
+            testState.sessionDuration = testState.totalDuration;
+            window.appState.sessionDuration = testState.totalDuration / 60;
+            
+            // Update UI one final time
+            updateUI();
+            
+            // Show completion message
+            addLog('Session completed successfully!', 'success');
+            addLog(`Final stats: ${testState.totalPoints.toFixed(1)} points, ${testState.currentMultiplier.toFixed(1)}x multiplier`, 'success');
+            
+            // Update status
+            document.getElementById('current-status').textContent = 'Completed';
+            document.getElementById('animation-info').textContent = 'Status: COMPLETED';
+            document.getElementById('animation-details').textContent = 'Session finished';
+            
+            // Show completion indicator
+            const statusElement = document.getElementById('current-status');
+            statusElement.style.color = '#00ff00';
+            statusElement.style.textShadow = '0 0 10px #00ff00';
+        }
+
+        function updateIndexing() {
+            if (!testState.isIndexing) return;
+            
+            const now = Date.now();
+            const realElapsed = (now - testState.startTime) / 1000;
+            
+            // Apply ludicrous mode acceleration
+            let acceleratedElapsed = realElapsed;
+            if (testState.ludicrousMode) {
+                acceleratedElapsed = realElapsed * window.LudicrousSpeedManager.speedMultiplier;
+            }
+            
+            testState.sessionDuration = acceleratedElapsed;
+            window.appState.sessionDuration = acceleratedElapsed / 60; // Convert to minutes
+            
+            // Check for session completion
+            if (acceleratedElapsed >= testState.totalDuration) {
+                completeSession();
+                return;
+            }
+            
+            // Show warning when approaching completion (last 10%)
+            const completionThreshold = testState.totalDuration * 0.9;
+            if (acceleratedElapsed >= completionThreshold && !testState.completionWarningShown) {
+                testState.completionWarningShown = true;
+                addLog('Approaching session completion...', 'warning');
+            }
+            
+            // Robust block transition detection
+            updateContentProgression(testState.previousElapsedTime, acceleratedElapsed);
+            testState.previousElapsedTime = acceleratedElapsed;
+            
+            // Update points and multiplier
+            updatePointsAndMultiplier(acceleratedElapsed);
+            
+            // Update animation panel
+            window.updateAnimationPanel(acceleratedElapsed);
+            
+            updateUI();
+        }
+
+        function updateContentProgression(prevElapsed, currElapsed) {
+            let cumulativeTime = 0;
+            let blockCompleted = false;
+            let lastBlockIndex = testState.currentContentIndex;
+            let newBlockIndex = lastBlockIndex;
+            
+            // Loop through all blocks to detect any that were crossed
+            for (let i = 0; i < testState.contentItems.length; i++) {
+                const item = testState.contentItems[i];
+                const blockStart = cumulativeTime;
+                const blockEnd = cumulativeTime + item.duration;
+                // If the previous time was before the end, and the current time is after the end, this block was completed
+                if (prevElapsed < blockEnd && currElapsed >= blockEnd) {
+                    addLog(`Block completed: ${item.title}`, 'success');
+                    blockCompleted = true;
+                }
+                // If the current time is within this block, set as new block
+                if (currElapsed >= blockStart && currElapsed < blockEnd) {
+                    newBlockIndex = i;
+                }
+                cumulativeTime = blockEnd;
+            }
+            // If we've gone past all content, stay on the last item
+            if (currElapsed >= cumulativeTime) {
+                newBlockIndex = testState.contentItems.length - 1;
+            }
+            // If block changed, log transition
+            if (lastBlockIndex !== newBlockIndex) {
+                testState.currentContentIndex = newBlockIndex;
+                window.appState.currentContentIndex = newBlockIndex;
+                testState.blockCompletionWarningShown = false; // Reset warning flag for new block
+                addLog(`Starting new block: ${testState.contentItems[newBlockIndex].title}`, 'info');
+                addLog(`--- Block ${newBlockIndex + 1} of ${testState.contentItems.length} ---`, 'warning');
+                addLog(`Timing: ${currElapsed.toFixed(2)}s elapsed, moving to block ${newBlockIndex + 1}`, 'info');
+            }
+            // Check if current block is about to complete (last 10% of block)
+            const currentItem = testState.contentItems[newBlockIndex];
+            let blockStart = 0;
+            for (let i = 0; i < newBlockIndex; i++) blockStart += testState.contentItems[i].duration;
+            const timeInCurrentBlock = currElapsed - blockStart;
+            const blockCompletionThreshold = currentItem.duration * 0.9;
+            if (timeInCurrentBlock >= blockCompletionThreshold && !testState.blockCompletionWarningShown) {
+                testState.blockCompletionWarningShown = true;
+                addLog(`Approaching end of block: ${currentItem.title}`, 'warning');
+            }
+        }
+
+        function updatePointsAndMultiplier(elapsedTime) {
+            // Simulate multiplier progression
+            const baseMultiplier = 1.0;
+            const multiplierIncrease = elapsedTime / 60; // Increase by 1x per minute
+            testState.currentMultiplier = Math.min(baseMultiplier + multiplierIncrease, 5.0);
+            window.appState.currentMultiplier = testState.currentMultiplier;
+            
+            // Calculate points
+            const baseRate = 0.1;
+            const pointsEarned = (elapsedTime / 60) * baseRate * testState.currentMultiplier;
+            testState.totalPoints = pointsEarned;
+            window.appState.totalPoints = pointsEarned;
+        }
+
+        function updateUI() {
+            // Update status
+            const statusElement = document.getElementById('current-status');
+            const ludicrousStatus = document.getElementById('ludicrous-status');
+            const speedDisplay = document.getElementById('speed-display');
+            
+            if (testState.isIndexing) {
+                statusElement.textContent = 'Indexing...';
+            } else {
+                statusElement.textContent = 'Ready';
+            }
+            
+            if (testState.ludicrousMode) {
+                ludicrousStatus.style.display = 'inline-block';
+                speedDisplay.style.display = 'block';
+            } else {
+                ludicrousStatus.style.display = 'none';
+                speedDisplay.style.display = 'none';
+            }
+            
+            // Update progress bars
+            const sessionProgress = (testState.sessionDuration / testState.totalDuration) * 100;
+            document.getElementById('session-progress').style.width = `${Math.min(sessionProgress, 100)}%`;
+            if (testState.ludicrousMode) {
+                document.getElementById('session-progress').classList.add('ludicrous');
+            } else {
+                document.getElementById('session-progress').classList.remove('ludicrous');
+            }
+            
+            // Update content progress
+            const currentItem = testState.contentItems[testState.currentContentIndex];
+            if (currentItem) {
+                const timeInItem = testState.sessionDuration % currentItem.duration;
+                const contentProgress = (timeInItem / currentItem.duration) * 100;
+                const contentProgressBar = document.getElementById('content-progress');
+                contentProgressBar.style.width = `${contentProgress}%`;
+                
+                // Change color when block is near completion (last 10%)
+                if (contentProgress >= 90) {
+                    contentProgressBar.style.background = '#ff6600'; // Orange warning
+                    contentProgressBar.style.boxShadow = '0 0 10px #ff6600';
+                } else if (testState.ludicrousMode) {
+                    contentProgressBar.style.background = '#ffff00'; // Yellow for ludicrous
+                    contentProgressBar.style.boxShadow = '0 0 10px #ffff00';
+                } else {
+                    contentProgressBar.style.background = '#00ff00'; // Green for normal
+                    contentProgressBar.style.boxShadow = '';
+                }
+            }
+            
+            // Update time displays
+            const minutes = Math.floor(testState.sessionDuration / 60);
+            const seconds = Math.floor(testState.sessionDuration % 60);
+            const timeString = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            document.getElementById('session-time').textContent = timeString;
+            
+            const totalMinutes = Math.floor(testState.totalDuration / 60);
+            const totalSeconds = Math.floor(testState.totalDuration % 60);
+            const totalTimeString = `${totalMinutes}:${totalSeconds.toString().padStart(2, '0')}`;
+            document.getElementById('total-time').textContent = totalTimeString;
+            
+            // Update content info
+            if (currentItem) {
+                document.getElementById('current-content').textContent = currentItem.title;
+                const itemMinutes = Math.floor(currentItem.duration / 60);
+                const itemSeconds = Math.floor(currentItem.duration % 60);
+                document.getElementById('item-duration').textContent = `${itemMinutes}:${itemSeconds.toString().padStart(2, '0')}`;
+                
+                const timeInItem = testState.sessionDuration % currentItem.duration;
+                const itemTimeMinutes = Math.floor(timeInItem / 60);
+                const itemTimeSeconds = Math.floor(timeInItem % 60);
+                document.getElementById('time-in-item').textContent = `${itemTimeMinutes}:${itemTimeSeconds.toString().padStart(2, '0')}`;
+                
+                // Add block progress indicator
+                const blockProgress = `Block ${testState.currentContentIndex + 1} of ${testState.contentItems.length}`;
+                document.getElementById('content-index').textContent = `${testState.currentContentIndex} (${blockProgress})`;
+            }
+            
+            // Update info cards
+            document.getElementById('session-duration').textContent = timeString;
+            document.getElementById('current-multiplier').textContent = `${testState.currentMultiplier.toFixed(1)}x`;
+            document.getElementById('total-points').textContent = testState.totalPoints.toFixed(1);
+            document.getElementById('content-index').textContent = testState.currentContentIndex;
+            
+            // Update ludicrous mode info
+            document.getElementById('ludicrous-active').textContent = testState.ludicrousMode ? 'Yes' : 'No';
+            document.getElementById('ludicrous-speed').textContent = testState.ludicrousMode ? '300x' : '1x';
+            document.getElementById('acceleration-factor').textContent = testState.ludicrousMode ? '300x' : 'None';
+        }
+
+        function addLog(message, type = 'info') {
+            const logSection = document.getElementById('debug-log');
+            const logEntry = document.createElement('div');
+            logEntry.className = `log-entry ${type}`;
+            
+            const timestamp = new Date().toLocaleTimeString();
+            logEntry.textContent = `[${timestamp}] ${message}`;
+            
+            logSection.appendChild(logEntry);
+            logSection.scrollTop = logSection.scrollHeight;
+        }
+
+        function resetTest() {
+            stopIndexing();
+            testState.sessionDuration = 0;
+            testState.currentContentIndex = 0;
+            testState.currentMultiplier = 1.0;
+            testState.totalPoints = 0;
+            testState.ludicrousMode = false;
+            testState.completionWarningShown = false;
+            testState.blockCompletionWarningShown = false;
+            testState.debugLogged = false;
+            
+            window.appState.sessionDuration = 0;
+            window.appState.currentContentIndex = 0;
+            window.appState.currentMultiplier = 1.0;
+            window.appState.totalPoints = 0;
+            
+            if (window.LudicrousSpeedManager.isActive) {
+                window.LudicrousSpeedManager.deactivate();
+            }
+            
+            document.getElementById('ascii-animation').textContent = 'Waiting for indexing to start...';
+            document.getElementById('animation-info').textContent = 'Status: IDLE';
+            document.getElementById('animation-details').textContent = 'No content active';
+            
+            // Reset completion styling
+            const statusElement = document.getElementById('current-status');
+            statusElement.style.color = '';
+            statusElement.style.textShadow = '';
+            
+            updateUI();
+            addLog('Test reset', 'info');
+        }
+
+        // Event listeners
+        document.getElementById('toggle-ludicrous').addEventListener('click', function() {
+            if (window.LudicrousSpeedManager.isActive) {
+                window.LudicrousSpeedManager.deactivate();
+                this.textContent = 'Activate Ludicrous Mode';
+                this.classList.remove('active');
+            } else {
+                window.LudicrousSpeedManager.activate();
+                this.textContent = 'Deactivate Ludicrous Mode';
+                this.classList.add('active');
+            }
+        });
+
+        document.getElementById('start-indexing').addEventListener('click', startIndexing);
+        document.getElementById('stop-indexing').addEventListener('click', stopIndexing);
+        document.getElementById('reset-test').addEventListener('click', resetTest);
+
+        // Initialize
+        updateUI();
+        addLog('Test page loaded successfully', 'success');
+    </script>
+</body>
+</html> 

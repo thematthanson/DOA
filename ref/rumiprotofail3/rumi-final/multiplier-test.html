@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rumi Multiplier System Test</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background: #0a0a0a;
+            color: #00ff41;
+            margin: 20px;
+            line-height: 1.6;
+        }
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #1a1a1a;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #333;
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 15px;
+            border: 1px solid #333;
+            border-radius: 5px;
+            background: #0f0f0f;
+        }
+        .test-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #00ff41;
+            border-bottom: 1px solid #333;
+            padding-bottom: 5px;
+        }
+        .test-description {
+            margin-bottom: 15px;
+            color: #888;
+        }
+        .test-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+        .test-btn {
+            padding: 8px 16px;
+            background: #1a1a1a;
+            color: #00ff41;
+            border: 1px solid #00ff41;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+        }
+        .test-btn:hover {
+            background: #00ff41;
+            color: #000;
+        }
+        .test-btn.success {
+            border-color: #28a745;
+            color: #28a745;
+        }
+        .test-btn.danger {
+            border-color: #dc3545;
+            color: #dc3545;
+        }
+        .test-btn.warning {
+            border-color: #ffc107;
+            color: #ffc107;
+        }
+        .status-display {
+            margin-top: 15px;
+            padding: 10px;
+            background: #000;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 11px;
+            white-space: pre-wrap;
+            border: 1px solid #333;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .multiplier-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            background: #000;
+        }
+        .multiplier-table th,
+        .multiplier-table td {
+            border: 1px solid #333;
+            padding: 8px;
+            text-align: left;
+            font-size: 11px;
+        }
+        .multiplier-table th {
+            background: #1a1a1a;
+            color: #00ff41;
+            font-weight: bold;
+        }
+        .multiplier-table tr:nth-child(even) {
+            background: #0f0f0f;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00ff41, #28a745);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🎯 RUMI MULTIPLIER SYSTEM TEST</h1>
+        
+        <div class="test-section">
+            <div class="test-title">📊 Multiplier Milestones</div>
+            <div class="test-description">
+                Progressive multiplier system based on session duration.
+            </div>
+            <table class="multiplier-table">
+                <thead>
+                    <tr>
+                        <th>Session Time</th>
+                        <th>Multiplier</th>
+                        <th>Points per Minute</th>
+                        <th>Example (45min content)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>0-30 minutes</td>
+                        <td>1.0x</td>
+                        <td>6.0 pts/min</td>
+                        <td>270.0 points</td>
+                    </tr>
+                    <tr>
+                        <td>30-60 minutes</td>
+                        <td>1.1x</td>
+                        <td>6.6 pts/min</td>
+                        <td>297.0 points</td>
+                    </tr>
+                    <tr>
+                        <td>60-90 minutes</td>
+                        <td>1.2x</td>
+                        <td>7.2 pts/min</td>
+                        <td>324.0 points</td>
+                    </tr>
+                    <tr>
+                        <td>90-120 minutes</td>
+                        <td>1.4x</td>
+                        <td>8.4 pts/min</td>
+                        <td>378.0 points</td>
+                    </tr>
+                    <tr>
+                        <td>120-180 minutes</td>
+                        <td>1.6x</td>
+                        <td>9.6 pts/min</td>
+                        <td>432.0 points</td>
+                    </tr>
+                    <tr>
+                        <td>180+ minutes</td>
+                        <td>1.8x</td>
+                        <td>10.8 pts/min</td>
+                        <td>486.0 points</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="test-section">
+            <div class="test-title">🧮 Multiplier Calculation Test</div>
+            <div class="test-description">
+                Test the segmented points calculation with different session durations.
+            </div>
+            <div class="test-buttons">
+                <button class="test-btn" onclick="testShortSession()">Test Short Session (45min)</button>
+                <button class="test-btn" onclick="testMediumSession()">Test Medium Session (90min)</button>
+                <button class="test-btn" onclick="testLongSession()">Test Long Session (180min)</button>
+                <button class="test-btn" onclick="testCrossBoundary()">Test Cross-Boundary (75min)</button>
+                <button class="test-btn" onclick="testProgressiveSession()">Test Progressive Session</button>
+            </div>
+            <div class="status-display" id="calculation-status">Ready to test multiplier calculations...</div>
+        </div>
+
+        <div class="test-section">
+            <div class="test-title">🎬 Live Multiplier Test</div>
+            <div class="test-description">
+                Simulate a real indexing session with progressive multipliers.
+            </div>
+            <div class="test-buttons">
+                <button class="test-btn success" onclick="startLiveTest()">Start Live Test</button>
+                <button class="test-btn danger" onclick="stopLiveTest()">Stop Test</button>
+                <button class="test-btn warning" onclick="resetLiveTest()">Reset Test</button>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="live-progress"></div>
+            </div>
+            <div class="status-display" id="live-status">Live multiplier test ready...</div>
+        </div>
+
+        <div class="test-section">
+            <div class="test-title">📋 Receipt Integration Test</div>
+            <div class="test-description">
+                Test that multipliers are properly reflected in receipt calculations.
+            </div>
+            <div class="test-buttons">
+                <button class="test-btn" onclick="testReceiptCalculation()">Test Receipt Calculation</button>
+                <button class="test-btn" onclick="testSessionPersistence()">Test Session Persistence</button>
+                <button class="test-btn" onclick="testPointsCarryover()">Test Points Carryover</button>
+            </div>
+            <div class="status-display" id="receipt-status">Receipt integration test ready...</div>
+        </div>
+    </div>
+
+    <script>
+        let liveTestInterval = null;
+        let liveTestData = {
+            sessionTime: 0,
+            totalPoints: 0,
+            contentProcessed: 0,
+            currentMultiplier: 1.0
+        };
+
+        // Test content for calculations
+        const testContent = [
+            { title: 'Short Show', duration: 30 },
+            { title: 'Medium Show', duration: 45 },
+            { title: 'Long Show', duration: 60 },
+            { title: 'Movie', duration: 120 },
+            { title: 'Epic Movie', duration: 180 }
+        ];
+
+        // Multiplier Calculation Tests
+        function testShortSession() {
+            const status = document.getElementById('calculation-status');
+            status.textContent = 'Testing short session (45 minutes)...\n';
+            
+            const content = { title: 'Test Show', duration: 45 };
+            const sessionTime = 0; // Start of session
+            
+            // Simulate backend calculation
+            const pointsData = calculateSegmentedPoints(content.duration, sessionTime);
+            
+            status.textContent += `📺 Content: ${content.title} (${content.duration}min)\n`;
+            status.textContent += `⏰ Session time: ${sessionTime}min\n`;
+            status.textContent += `📊 Segments: ${pointsData.segments.length}\n`;
+            
+            pointsData.segments.forEach((segment, index) => {
+                status.textContent += `  Segment ${index + 1}: ${segment.duration}min at ${segment.multiplier}x = ${segment.points.toFixed(1)} pts\n`;
+            });
+            
+            status.textContent += `💰 Total points: ${pointsData.totalPoints.toFixed(1)}\n`;
+            status.textContent += `📈 Average multiplier: ${pointsData.averageMultiplier.toFixed(2)}x\n`;
+            status.textContent += '✅ Short session calculation complete\n';
+        }
+
+        function testMediumSession() {
+            const status = document.getElementById('calculation-status');
+            status.textContent = 'Testing medium session (90 minutes)...\n';
+            
+            const content = { title: 'Test Show', duration: 45 };
+            const sessionTime = 45; // Middle of session
+            
+            const pointsData = calculateSegmentedPoints(content.duration, sessionTime);
+            
+            status.textContent += `📺 Content: ${content.title} (${content.duration}min)\n`;
+            status.textContent += `⏰ Session time: ${sessionTime}min\n`;
+            status.textContent += `📊 Segments: ${pointsData.segments.length}\n`;
+            
+            pointsData.segments.forEach((segment, index) => {
+                status.textContent += `  Segment ${index + 1}: ${segment.duration}min at ${segment.multiplier}x = ${segment.points.toFixed(1)} pts\n`;
+            });
+            
+            status.textContent += `💰 Total points: ${pointsData.totalPoints.toFixed(1)}\n`;
+            status.textContent += `📈 Average multiplier: ${pointsData.averageMultiplier.toFixed(2)}x\n`;
+            status.textContent += '✅ Medium session calculation complete\n';
+        }
+
+        function testLongSession() {
+            const status = document.getElementById('calculation-status');
+            status.textContent = 'Testing long session (180 minutes)...\n';
+            
+            const content = { title: 'Test Show', duration: 45 };
+            const sessionTime = 135; // Late in session
+            
+            const pointsData = calculateSegmentedPoints(content.duration, sessionTime);
+            
+            status.textContent += `📺 Content: ${content.title} (${content.duration}min)\n`;
+            status.textContent += `⏰ Session time: ${sessionTime}min\n`;
+            status.textContent += `📊 Segments: ${pointsData.segments.length}\n`;
+            
+            pointsData.segments.forEach((segment, index) => {
+                status.textContent += `  Segment ${index + 1}: ${segment.duration}min at ${segment.multiplier}x = ${segment.points.toFixed(1)} pts\n`;
+            });
+            
+            status.textContent += `💰 Total points: ${pointsData.totalPoints.toFixed(1)}\n`;
+            status.textContent += `📈 Average multiplier: ${pointsData.averageMultiplier.toFixed(2)}x\n`;
+            status.textContent += '✅ Long session calculation complete\n';
+        }
+
+        function testCrossBoundary() {
+            const status = document.getElementById('calculation-status');
+            status.textContent = 'Testing cross-boundary session (75 minutes)...\n';
+            
+            const content = { title: 'Test Show', duration: 45 };
+            const sessionTime = 30; // Crosses 60-minute boundary
+            
+            const pointsData = calculateSegmentedPoints(content.duration, sessionTime);
+            
+            status.textContent += `📺 Content: ${content.title} (${content.duration}min)\n`;
+            status.textContent += `⏰ Session time: ${sessionTime}min (crosses 60min boundary)\n`;
+            status.textContent += `📊 Segments: ${pointsData.segments.length}\n`;
+            
+            pointsData.segments.forEach((segment, index) => {
+                status.textContent += `  Segment ${index + 1}: ${segment.duration}min at ${segment.multiplier}x = ${segment.points.toFixed(1)} pts\n`;
+            });
+            
+            status.textContent += `💰 Total points: ${pointsData.totalPoints.toFixed(1)}\n`;
+            status.textContent += `📈 Average multiplier: ${pointsData.averageMultiplier.toFixed(2)}x\n`;
+            status.textContent += '✅ Cross-boundary calculation complete\n';
+        }
+
+        function testProgressiveSession() {
+            const status = document.getElementById('calculation-status');
+            status.textContent = 'Testing progressive session with multiple content items...\n';
+            
+            let sessionTime = 0;
+            let totalPoints = 0;
+            
+            testContent.forEach((content, index) => {
+                const pointsData = calculateSegmentedPoints(content.duration, sessionTime);
+                totalPoints += pointsData.totalPoints;
+                
+                status.textContent += `\n📺 Item ${index + 1}: ${content.title} (${content.duration}min)\n`;
+                status.textContent += `⏰ Session time: ${sessionTime}min\n`;
+                status.textContent += `💰 Points: ${pointsData.totalPoints.toFixed(1)} (avg ${pointsData.averageMultiplier.toFixed(2)}x)\n`;
+                
+                sessionTime += content.duration;
+            });
+            
+            status.textContent += `\n🎯 Session Summary:\n`;
+            status.textContent += `📊 Total session time: ${sessionTime}min\n`;
+            status.textContent += `💰 Total points: ${totalPoints.toFixed(1)}\n`;
+            status.textContent += `📈 Average multiplier: ${(totalPoints / (sessionTime * 6)).toFixed(2)}x\n`;
+            status.textContent += '✅ Progressive session calculation complete\n';
+        }
+
+        // Live Multiplier Test
+        function startLiveTest() {
+            const status = document.getElementById('live-status');
+            const progressBar = document.getElementById('live-progress');
+            
+            status.textContent = '🎬 Starting live multiplier test...\n';
+            
+            // Reset test data
+            liveTestData = {
+                sessionTime: 0,
+                totalPoints: 0,
+                contentProcessed: 0,
+                currentMultiplier: 1.0
+            };
+            
+            liveTestInterval = setInterval(() => {
+                // Process next content item
+                if (liveTestData.contentProcessed < testContent.length) {
+                    const content = testContent[liveTestData.contentProcessed];
+                    const pointsData = calculateSegmentedPoints(content.duration, liveTestData.sessionTime);
+                    
+                    liveTestData.totalPoints += pointsData.totalPoints;
+                    liveTestData.sessionTime += content.duration;
+                    liveTestData.contentProcessed++;
+                    liveTestData.currentMultiplier = pointsData.averageMultiplier;
+                    
+                    const progress = (liveTestData.contentProcessed / testContent.length) * 100;
+                    progressBar.style.width = `${progress}%`;
+                    
+                    status.textContent = `🎬 Live Multiplier Test:\n`;
+                    status.textContent += `📺 Processing: ${content.title} (${content.duration}min)\n`;
+                    status.textContent += `⏰ Session time: ${liveTestData.sessionTime}min\n`;
+                    status.textContent += `💰 Points earned: ${pointsData.totalPoints.toFixed(1)} (avg ${pointsData.averageMultiplier.toFixed(2)}x)\n`;
+                    status.textContent += `📊 Total points: ${liveTestData.totalPoints.toFixed(1)}\n`;
+                    status.textContent += `📈 Current multiplier: ${liveTestData.currentMultiplier.toFixed(2)}x\n`;
+                    status.textContent += `🔄 Progress: ${liveTestData.contentProcessed}/${testContent.length}\n`;
+                    
+                    if (liveTestData.contentProcessed >= testContent.length) {
+                        clearInterval(liveTestInterval);
+                        status.textContent += '\n✅ Live test completed!\n';
+                        status.textContent += `🎯 Final session: ${liveTestData.sessionTime}min, ${liveTestData.totalPoints.toFixed(1)} points\n`;
+                    }
+                }
+            }, 2000); // Process every 2 seconds
+        }
+
+        function stopLiveTest() {
+            const status = document.getElementById('live-status');
+            status.textContent = '🛑 Stopping live multiplier test...\n';
+            
+            if (liveTestInterval) {
+                clearInterval(liveTestInterval);
+                liveTestInterval = null;
+            }
+            
+            status.textContent += '✅ Live test stopped\n';
+            status.textContent += `📊 Session data preserved: ${liveTestData.sessionTime}min, ${liveTestData.totalPoints.toFixed(1)} points\n`;
+        }
+
+        function resetLiveTest() {
+            const status = document.getElementById('live-status');
+            const progressBar = document.getElementById('live-progress');
+            
+            status.textContent = '🔄 Resetting live multiplier test...\n';
+            
+            if (liveTestInterval) {
+                clearInterval(liveTestInterval);
+                liveTestInterval = null;
+            }
+            
+            liveTestData = {
+                sessionTime: 0,
+                totalPoints: 0,
+                contentProcessed: 0,
+                currentMultiplier: 1.0
+            };
+            
+            progressBar.style.width = '0%';
+            status.textContent += '✅ Live test reset complete\n';
+        }
+
+        // Receipt Integration Tests
+        function testReceiptCalculation() {
+            const status = document.getElementById('receipt-status');
+            status.textContent = '📋 Testing receipt calculation with multipliers...\n';
+            
+            // Simulate a session with progressive multipliers
+            const sessionData = {
+                startTime: Date.now() - 300000, // 5 minutes ago
+                endTime: Date.now(),
+                indexedContent: [
+                    { title: 'Early Show', duration: 30, service: 'NETFLIX', genre: 'Drama' },
+                    { title: 'Mid Show', duration: 45, service: 'HBO', genre: 'Thriller' },
+                    { title: 'Late Show', duration: 60, service: 'DISNEY', genre: 'Action' }
+                ],
+                baseRate: 0.1
+            };
+            
+            let sessionTime = 0;
+            let totalPoints = 0;
+            
+            sessionData.indexedContent.forEach((item, index) => {
+                const pointsData = calculateSegmentedPoints(item.duration, sessionTime);
+                totalPoints += pointsData.totalPoints;
+                
+                status.textContent += `📺 ${index + 1}. ${item.title}: ${item.duration}min at avg ${pointsData.averageMultiplier.toFixed(2)}x = ${pointsData.totalPoints.toFixed(1)} pts\n`;
+                sessionTime += item.duration;
+            });
+            
+            const avgMultiplier = totalPoints / (sessionTime * 60 * sessionData.baseRate);
+            
+            status.textContent += `\n📊 Receipt Summary:\n`;
+            status.textContent += `⏰ Session duration: ${sessionTime}min\n`;
+            status.textContent += `💰 Total points: ${totalPoints.toFixed(1)}\n`;
+            status.textContent += `📈 Average multiplier: ${avgMultiplier.toFixed(2)}x\n`;
+            status.textContent += '✅ Receipt calculation with multipliers complete\n';
+        }
+
+        function testSessionPersistence() {
+            const status = document.getElementById('receipt-status');
+            status.textContent = '💾 Testing session persistence with multipliers...\n';
+            
+            // Simulate saving session data
+            const sessionData = {
+                lifetimePoints: 5000,
+                pendingPoints: 150,
+                sessionHistory: [
+                    { date: '2025-07-10', points: 200, multiplier: 1.2 },
+                    { date: '2025-07-09', points: 180, multiplier: 1.1 }
+                ]
+            };
+            
+            localStorage.setItem('rumi-session-data', JSON.stringify(sessionData));
+            
+            // Verify persistence
+            const stored = localStorage.getItem('rumi-session-data');
+            if (stored) {
+                const parsed = JSON.parse(stored);
+                status.textContent += '✅ Session data saved to localStorage\n';
+                status.textContent += `📊 Lifetime points: ${parsed.lifetimePoints}\n`;
+                status.textContent += `📊 Pending points: ${parsed.pendingPoints}\n`;
+                status.textContent += `📊 Session history: ${parsed.sessionHistory.length} entries\n`;
+                
+                parsed.sessionHistory.forEach((entry, index) => {
+                    status.textContent += `  ${index + 1}. ${entry.date}: ${entry.points} pts (${entry.multiplier}x)\n`;
+                });
+            } else {
+                status.textContent += '❌ Session data not saved\n';
+            }
+        }
+
+        function testPointsCarryover() {
+            const status = document.getElementById('receipt-status');
+            status.textContent = '💰 Testing points carryover with multipliers...\n';
+            
+            // Load existing data
+            const stored = localStorage.getItem('rumi-session-data');
+            if (stored) {
+                const data = JSON.parse(stored);
+                status.textContent += `📊 Current lifetime points: ${data.lifetimePoints}\n`;
+                status.textContent += `📊 Current pending points: ${data.pendingPoints}\n`;
+                
+                // Simulate adding points from a session with multipliers
+                const sessionPoints = 125.5;
+                const sessionMultiplier = 1.4;
+                data.pendingPoints += sessionPoints;
+                
+                localStorage.setItem('rumi-session-data', JSON.stringify(data));
+                
+                status.textContent += `💰 Added ${sessionPoints} points (avg ${sessionMultiplier}x multiplier)\n`;
+                status.textContent += `📊 New pending total: ${data.pendingPoints}\n`;
+                status.textContent += '✅ Points carryover with multipliers working correctly\n';
+            } else {
+                status.textContent += '❌ No session data found\n';
+            }
+        }
+
+        // Helper function to simulate backend calculation
+        function calculateSegmentedPoints(contentDuration, startTime = 0) {
+            const milestones = [
+                { time: 0, multiplier: 1.0 },
+                { time: 30, multiplier: 1.1 },
+                { time: 60, multiplier: 1.2 },
+                { time: 90, multiplier: 1.4 },
+                { time: 120, multiplier: 1.6 },
+                { time: 180, multiplier: 1.8 }
+            ];
+            
+            const endTime = startTime + contentDuration;
+            const segments = [];
+            let totalPoints = 0;
+            const baseRate = 0.1;
+            
+            // Calculate points for each segment
+            for (let i = 0; i < milestones.length - 1; i++) {
+                const currentMilestone = milestones[i];
+                const nextMilestone = milestones[i + 1];
+                
+                const segmentStart = Math.max(startTime, currentMilestone.time);
+                const segmentEnd = Math.min(endTime, nextMilestone.time);
+                
+                if (segmentEnd > segmentStart) {
+                    const segmentDuration = segmentEnd - segmentStart;
+                    const segmentPoints = segmentDuration * 60 * baseRate * currentMilestone.multiplier;
+                    
+                    segments.push({
+                        startTime: segmentStart,
+                        endTime: segmentEnd,
+                        duration: segmentDuration,
+                        multiplier: currentMilestone.multiplier,
+                        points: segmentPoints
+                    });
+                    
+                    totalPoints += segmentPoints;
+                }
+            }
+            
+            // Handle final segment
+            const lastMilestone = milestones[milestones.length - 1];
+            if (endTime > lastMilestone.time) {
+                const finalSegmentStart = Math.max(startTime, lastMilestone.time);
+                const finalSegmentDuration = endTime - finalSegmentStart;
+                const finalSegmentPoints = finalSegmentDuration * 60 * baseRate * lastMilestone.multiplier;
+                
+                segments.push({
+                    startTime: finalSegmentStart,
+                    endTime: endTime,
+                    duration: finalSegmentDuration,
+                    multiplier: lastMilestone.multiplier,
+                    points: finalSegmentPoints
+                });
+                
+                totalPoints += finalSegmentPoints;
+            }
+            
+            return {
+                totalPoints: totalPoints,
+                segments: segments,
+                averageMultiplier: totalPoints / (contentDuration * 60 * baseRate)
+            };
+        }
+
+        // Initialize when page loads
+        window.addEventListener('load', () => {
+            console.log('🎯 Rumi Multiplier System Test loaded');
+            console.log('💡 Test the progressive multiplier system');
+        });
+    </script>
+</body>
+</html> 

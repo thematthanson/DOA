@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multiplier Calculation - Micro Test</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background: #000;
+            color: #00ff41;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #111;
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #00ff41;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #00ff41;
+            padding-bottom: 20px;
+        }
+        
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            background: #1a1a1a;
+            border-radius: 5px;
+            border-left: 4px solid #00ff41;
+        }
+        
+        .calculator {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .input-panel {
+            background: #333;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #444;
+        }
+        
+        .output-panel {
+            background: #222;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #444;
+        }
+        
+        .input-group {
+            margin: 15px 0;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #ccc;
+        }
+        
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 10px;
+            background: #444;
+            border: 1px solid #666;
+            border-radius: 5px;
+            color: #00ff41;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .multiplier-display {
+            font-size: 36px;
+            font-weight: bold;
+            text-align: center;
+            color: #00ff41;
+            margin: 20px 0;
+            padding: 20px;
+            background: #333;
+            border-radius: 10px;
+            border: 2px solid #00ff41;
+        }
+        
+        .timeline {
+            background: #333;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        
+        .timeline-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 5px 0;
+            border-bottom: 1px solid #444;
+        }
+        
+        .timeline-item:last-child {
+            border-bottom: none;
+        }
+        
+        .timeline-time {
+            color: #ccc;
+        }
+        
+        .timeline-multiplier {
+            color: #00ff41;
+            font-weight: bold;
+        }
+        
+        .timeline-multiplier.active {
+            color: #ffaa00;
+            text-shadow: 0 0 10px #ffaa00;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            padding: 10px 20px;
+            background: #00ff41;
+            color: #000;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+        }
+        
+        button:hover {
+            background: #00cc33;
+        }
+        
+        .scenario-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .scenario-card {
+            background: #333;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #444;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .scenario-card:hover {
+            background: #444;
+            border-color: #00ff41;
+        }
+        
+        .scenario-card.active {
+            border-color: #00ff41;
+            background: #444;
+        }
+        
+        .points-calculation {
+            background: #2a2a2a;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        
+        .calc-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 5px 0;
+        }
+        
+        .calc-result {
+            font-size: 18px;
+            font-weight: bold;
+            color: #00ff41;
+            text-align: center;
+            margin: 10px 0;
+            padding: 10px;
+            background: #333;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 MULTIPLIER CALCULATION SYSTEM</h1>
+            <p>Micro Test - Time Scenarios & Multiplier Logic</p>
+        </div>
+        
+        <div class="test-section">
+            <h2>Test Overview</h2>
+            <p>This micro-test demonstrates the multiplier calculation system used in the Rumi Extension. Test different time scenarios and see how multipliers are calculated based on diamond milestones.</p>
+        </div>
+        
+        <div class="test-section">
+            <h2>Interactive Calculator</h2>
+            <div class="calculator">
+                <div class="input-panel">
+                    <h3>Input Parameters</h3>
+                    <div class="input-group">
+                        <label for="sessionTime">Session Time (minutes):</label>
+                        <input type="number" id="sessionTime" value="25" min="0" max="180" onchange="calculateMultiplier()">
+                    </div>
+                    <div class="input-group">
+                        <label for="baseRate">Base Rate (points/5s):</label>
+                        <input type="number" id="baseRate" value="0.1" step="0.01" onchange="calculateMultiplier()">
+                    </div>
+                    <div class="input-group">
+                        <label for="mode">Mode:</label>
+                        <select id="mode" onchange="calculateMultiplier()">
+                            <option value="detection">Detection Mode</option>
+                            <option value="automode">Automode</option>
+                        </select>
+                    </div>
+                    <div class="controls">
+                        <button onclick="calculateMultiplier()">Calculate</button>
+                        <button onclick="reset()">Reset</button>
+                    </div>
+                </div>
+                
+                <div class="output-panel">
+                    <h3>Current Multiplier</h3>
+                    <div class="multiplier-display" id="multiplierDisplay">1.0x</div>
+                    <div class="timeline" id="timeline">
+                        <!-- Timeline items will be populated here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2>Test Scenarios</h2>
+            <div class="scenario-grid">
+                <div class="scenario-card" onclick="loadScenario('short')">
+                    <h4>⚡ Short Session</h4>
+                    <p>15 minutes • 1.5x max</p>
+                    <p>Quick indexing session</p>
+                </div>
+                <div class="scenario-card" onclick="loadScenario('medium')">
+                    <h4>⏰ Medium Session</h4>
+                    <p>45 minutes • 2.5x max</p>
+                    <p>Standard viewing session</p>
+                </div>
+                <div class="scenario-card" onclick="loadScenario('long')">
+                    <h4>🎬 Long Session</h4>
+                    <p>90 minutes • 3.5x max</p>
+                    <p>Movie or binge session</p>
+                </div>
+                <div class="scenario-card" onclick="loadScenario('marathon')">
+                    <h4>🏃 Marathon</h4>
+                    <p>180 minutes • 4.0x max</p>
+                    <p>Maximum multiplier session</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2>Points Calculation</h2>
+            <div class="points-calculation">
+                <h3>💎 Current Session Calculation</h3>
+                <div class="calc-row">
+                    <span>Base Rate:</span>
+                    <span id="calcBaseRate">0.1 pts/5s</span>
+                </div>
+                <div class="calc-row">
+                    <span>Current Multiplier:</span>
+                    <span id="calcMultiplier">1.0x</span>
+                </div>
+                <div class="calc-row">
+                    <span>Effective Rate:</span>
+                    <span id="calcEffectiveRate">0.1 pts/5s</span>
+                </div>
+                <div class="calc-row">
+                    <span>Session Time:</span>
+                    <span id="calcSessionTime">25 minutes</span>
+                </div>
+                <div class="calc-result" id="calcResult">Total Points: 750</div>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2>Multiplier Timeline</h2>
+            <div class="timeline" id="fullTimeline">
+                <h3>📈 Diamond Milestones</h3>
+                <div class="timeline-item">
+                    <span class="timeline-time">0:00 - 12:00</span>
+                    <span class="timeline-multiplier">1.0x Base</span>
+                </div>
+                <div class="timeline-item">
+                    <span class="timeline-time">12:00 - 24:00</span>
+                    <span class="timeline-multiplier">1.5x Orange Diamond</span>
+                </div>
+                <div class="timeline-item">
+                    <span class="timeline-time">24:00 - 36:00</span>
+                    <span class="timeline-multiplier">2.0x Red-Orange Diamond</span>
+                </div>
+                <div class="timeline-item">
+                    <span class="timeline-time">36:00 - 48:00</span>
+                    <span class="timeline-multiplier">2.5x Purple Diamond</span>
+                </div>
+                <div class="timeline-item">
+                    <span class="timeline-time">48:00 - 60:00</span>
+                    <span class="timeline-multiplier">3.0x Cyan Diamond</span>
+                </div>
+                <div class="timeline-item">
+                    <span class="timeline-time">60:00+</span>
+                    <span class="timeline-multiplier">3.5x+ Magenta Diamond</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2>Technical Implementation</h2>
+            <div class="points-calculation">
+                <h3>🔧 Calculation Logic</h3>
+                <pre style="color: #00ff41; background: #222; padding: 10px; border-radius: 5px; overflow-x: auto;">
+function calculateMultiplier(elapsedMinutes) {
+    const milestones = [
+        { time: 0, multiplier: 1.0 },
+        { time: 12, multiplier: 1.5 },
+        { time: 24, multiplier: 2.0 },
+        { time: 36, multiplier: 2.5 },
+        { time: 48, multiplier: 3.0 },
+        { time: 60, multiplier: 3.5 }
+    ];
+    
+    for (let i = milestones.length - 1; i >= 0; i--) {
+        if (elapsedMinutes >= milestones[i].time) {
+            return milestones[i].multiplier;
+        }
+    }
+    return 1.0;
+}
+                </pre>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const milestones = [
+            { time: 0, multiplier: 1.0, color: '#00ff41' },
+            { time: 12, multiplier: 1.5, color: '#ffaa00' },
+            { time: 24, multiplier: 2.0, color: '#ff6600' },
+            { time: 36, multiplier: 2.5, color: '#a985ff' },
+            { time: 48, multiplier: 3.0, color: '#00ccff' },
+            { time: 60, multiplier: 3.5, color: '#ff00ff' }
+        ];
+        
+        function calculateMultiplier() {
+            const sessionTime = parseFloat(document.getElementById('sessionTime').value);
+            const baseRate = parseFloat(document.getElementById('baseRate').value);
+            const mode = document.getElementById('mode').value;
+            
+            // Calculate current multiplier
+            let currentMultiplier = 1.0;
+            for (let i = milestones.length - 1; i >= 0; i--) {
+                if (sessionTime >= milestones[i].time) {
+                    currentMultiplier = milestones[i].multiplier;
+                    break;
+                }
+            }
+            
+            // Update display
+            document.getElementById('multiplierDisplay').textContent = currentMultiplier.toFixed(1) + 'x';
+            
+            // Update timeline
+            updateTimeline(sessionTime);
+            
+            // Update calculation display
+            updateCalculation(sessionTime, baseRate, currentMultiplier);
+        }
+        
+        function updateTimeline(sessionTime) {
+            const timeline = document.getElementById('timeline');
+            let html = '<h4>📍 Session Progress</h4>';
+            
+            milestones.forEach((milestone, index) => {
+                const isActive = sessionTime >= milestone.time;
+                const isPassed = index < milestones.length - 1 && sessionTime >= milestones[index + 1].time;
+                
+                let statusClass = '';
+                if (isActive && !isPassed) {
+                    statusClass = 'active';
+                }
+                
+                html += `
+                    <div class="timeline-item">
+                        <span class="timeline-time">${milestone.time}:00</span>
+                        <span class="timeline-multiplier ${statusClass}">${milestone.multiplier}x</span>
+                    </div>
+                `;
+            });
+            
+            timeline.innerHTML = html;
+        }
+        
+        function updateCalculation(sessionTime, baseRate, currentMultiplier) {
+            const effectiveRate = baseRate * currentMultiplier;
+            const totalIntervals = (sessionTime * 60) / 5; // 5-second intervals
+            const totalPoints = Math.round(totalIntervals * effectiveRate);
+            
+            document.getElementById('calcBaseRate').textContent = baseRate.toFixed(2) + ' pts/5s';
+            document.getElementById('calcMultiplier').textContent = currentMultiplier.toFixed(1) + 'x';
+            document.getElementById('calcEffectiveRate').textContent = effectiveRate.toFixed(2) + ' pts/5s';
+            document.getElementById('calcSessionTime').textContent = sessionTime + ' minutes';
+            document.getElementById('calcResult').textContent = 'Total Points: ' + totalPoints;
+        }
+        
+        function loadScenario(scenario) {
+            // Clear active states
+            document.querySelectorAll('.scenario-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            
+            // Set active state
+            event.target.closest('.scenario-card').classList.add('active');
+            
+            const scenarios = {
+                short: { time: 15, rate: 0.1, mode: 'detection' },
+                medium: { time: 45, rate: 0.1, mode: 'detection' },
+                long: { time: 90, rate: 0.12, mode: 'automode' },
+                marathon: { time: 180, rate: 0.12, mode: 'automode' }
+            };
+            
+            const selected = scenarios[scenario];
+            document.getElementById('sessionTime').value = selected.time;
+            document.getElementById('baseRate').value = selected.rate;
+            document.getElementById('mode').value = selected.mode;
+            
+            calculateMultiplier();
+        }
+        
+        function reset() {
+            document.getElementById('sessionTime').value = 25;
+            document.getElementById('baseRate').value = 0.1;
+            document.getElementById('mode').value = 'detection';
+            
+            // Clear active states
+            document.querySelectorAll('.scenario-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            
+            calculateMultiplier();
+        }
+        
+        // Initialize
+        calculateMultiplier();
+    </script>
+</body>
+</html> 

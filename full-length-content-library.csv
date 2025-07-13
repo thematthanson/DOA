@@ -1,0 +1,71 @@
+show_name,episode_title,season,episode,duration_minutes,genre,service,year,description,type,content_id,intelligence_bucket
+"Breaking Bad","Pilot",1,1,47,Drama,Netflix,2008,"Walter White begins cooking meth after cancer diagnosis",episode,breaking-bad-s1e1,Content Intelligence
+"The Sopranos","The Sopranos",1,1,60,Drama,HBO,1999,"Tony Soprano begins therapy sessions with Dr. Melfi",episode,sopranos-s1e1,Content Intelligence
+"The Wire","The Target",1,1,60,Crime,HBO,2002,"Detective McNulty starts investigating the Barksdale organization",episode,wire-s1e1,Content Intelligence
+"Mad Men","Smoke Gets in Your Eyes",1,1,47,Drama,AMC,2007,"Don Draper navigates advertising in 1960s New York",episode,mad-men-s1e1,Content Intelligence
+"Game of Thrones","Winter Is Coming",1,1,56,Fantasy,HBO,2011,"Ned Stark is asked to become Hand of the King",episode,got-s1e1,Content Intelligence
+"Stranger Things","Chapter One: The Vanishing of Will Byers",1,1,51,Horror,Netflix,2016,"Will Byers disappears in the town of Hawkins",episode,stranger-things-s1e1,Content Intelligence
+"House","Pilot",1,1,44,Medical,FOX,2004,"Dr. House diagnoses a kindergarten teacher with mysterious symptoms",episode,house-s1e1,Content Intelligence
+"Sherlock","A Study in Pink",1,1,90,Mystery,BBC,2010,"Sherlock Holmes and Dr. Watson meet and solve their first case",episode,sherlock-s1e1,Content Intelligence
+"True Detective","The Long Bright Dark",1,1,55,Crime,HBO,2014,"Detectives Cohle and Hart investigate occult murders in Louisiana",episode,true-detective-s1e1,Content Intelligence
+"Westworld","The Original",1,1,68,Sci-Fi,HBO,2016,"Dolores begins to question the nature of her reality",episode,westworld-s1e1,Content Intelligence
+"The Office","Pilot",1,1,22,Comedy,Peacock,2005,"Michael Scott interviews for a documentary about his office",episode,office-s1e1,Scene Description Pipeline
+"Parks and Recreation","Pilot",1,1,22,Comedy,Peacock,2009,"Leslie Knope tries to turn a pit into a park",episode,parks-rec-s1e1,Scene Description Pipeline
+"Friends","The Pilot",1,1,22,Comedy,HBO Max,1994,"Rachel leaves her fiancé and reunites with her high school friends",episode,friends-s1e1,Scene Description Pipeline
+"Seinfeld","Good News, Bad News",1,1,22,Comedy,Netflix,1989,"Jerry's relationship concerns and a potential TV pilot",episode,seinfeld-s1e1,Scene Description Pipeline
+"Brooklyn Nine-Nine","Pilot",1,1,22,Comedy,Hulu,2013,"Detective Jake Peralta meets his new commanding officer",episode,brooklyn-99-s1e1,Scene Description Pipeline
+"Community","Pilot",1,1,22,Comedy,Netflix,2009,"Jeff Winger enrolls in community college and forms a study group",episode,community-s1e1,Scene Description Pipeline
+"30 Rock","Pilot",1,1,22,Comedy,Peacock,2006,"Liz Lemon gets a new boss and tries to save her show",episode,30-rock-s1e1,Scene Description Pipeline
+"Arrested Development","Pilot",1,1,22,Comedy,Netflix,2003,"The Bluth family loses everything and must stick together",episode,arrested-dev-s1e1,Scene Description Pipeline
+"Modern Family","Pilot",1,1,22,Comedy,Peacock,2009,"Three families with different dynamics navigate modern life",episode,modern-family-s1e1,Scene Description Pipeline
+"How I Met Your Mother","Pilot",1,1,22,Comedy,Hulu,2005,"Ted meets Robin and thinks she might be 'the one'",episode,himym-s1e1,Scene Description Pipeline
+"Lost","Pilot",1,1,43,Mystery,Hulu,2004,"Passengers survive a plane crash on a mysterious island",episode,lost-s1e1,Story Tree
+"Twin Peaks","Pilot",1,1,47,Mystery,Showtime,1990,"FBI Agent Cooper investigates Laura Palmer's murder",episode,twin-peaks-s1e1,Story Tree
+"The X-Files","Pilot",1,1,44,Sci-Fi,Hulu,1993,"Fox Mulder and Dana Scully investigate paranormal cases",episode,x-files-s1e1,Story Tree
+"Dexter","Dexter",1,1,53,Crime,Showtime,2006,"Blood spatter analyst Dexter Morgan has a dark secret",episode,dexter-s1e1,Story Tree
+"The Mentalist","Pilot",1,1,42,Crime,Amazon Prime,2008,"Patrick Jane helps the CBI solve crimes using his observation skills",episode,mentalist-s1e1,Story Tree
+"Psych","Pilot",1,1,43,Comedy,Peacock,2006,"Shawn Spencer pretends to be psychic to solve crimes",episode,psych-s1e1,Story Tree
+"Monk","Mr. Monk and the Candidate",1,1,42,Comedy,Peacock,2002,"Adrian Monk investigates an assassination attempt",episode,monk-s1e1,Story Tree
+"Criminal Minds","Extreme Aggressor",1,1,42,Crime,Hulu,2005,"The BAU profiles their first serial killer",episode,criminal-minds-s1e1,Story Tree
+"NCIS","Yankee White",1,1,43,Crime,CBS,2003,"NCIS investigates a death aboard Air Force One",episode,ncis-s1e1,Story Tree
+"CSI","Pilot",1,1,45,Crime,Hulu,2000,"Crime scene investigators solve murders in Las Vegas",episode,csi-s1e1,Story Tree
+"The Dark Knight","The Dark Knight",N/A,N/A,152,Action,HBO Max,2008,"Batman faces the Joker's chaos in Gotham City",movie,dark-knight-movie,Character Summaries
+"Pulp Fiction","Pulp Fiction",N/A,N/A,154,Crime,Netflix,1994,"Interconnected stories of crime in Los Angeles",movie,pulp-fiction-movie,Character Summaries
+"The Godfather","The Godfather",N/A,N/A,175,Drama,Paramount Plus,1972,"The aging patriarch of a crime dynasty transfers control to his son",movie,godfather-movie,Character Summaries
+"Goodfellas","Goodfellas",N/A,N/A,146,Crime,Netflix,1990,"Henry Hill's rise and fall in the mob",movie,goodfellas-movie,Character Summaries
+"The Shawshank Redemption","The Shawshank Redemption",N/A,N/A,142,Drama,Netflix,1994,"Two imprisoned men bond over years finding solace through acts of decency",movie,shawshank-movie,Character Summaries
+"Forrest Gump","Forrest Gump",N/A,N/A,142,Drama,Netflix,1994,"Forrest's extraordinary life journey through decades of American history",movie,forrest-gump-movie,Character Summaries
+"The Matrix","The Matrix",N/A,N/A,136,Sci-Fi,HBO Max,1999,"Neo discovers reality is a computer simulation",movie,matrix-movie,Character Summaries
+"Inception","Inception",N/A,N/A,148,Sci-Fi,Netflix,2010,"Dom Cobb enters dreams within dreams to plant an idea",movie,inception-movie,Character Summaries
+"Interstellar","Interstellar",N/A,N/A,169,Sci-Fi,Paramount Plus,2014,"Cooper travels through space and time to save humanity",movie,interstellar-movie,Character Summaries
+"The Avengers","The Avengers",N/A,N/A,143,Action,Disney Plus,2012,"Earth's mightiest heroes assemble to save the world",movie,avengers-movie,Character Summaries
+"Jaws","Jaws",N/A,N/A,124,Horror,Netflix,1975,"A great white shark terrorizes a beach town",movie,jaws-movie,Content Intelligence
+"The Exorcist","The Exorcist",N/A,N/A,122,Horror,HBO Max,1973,"A young girl becomes possessed by a demon",movie,exorcist-movie,Content Intelligence
+"Halloween","Halloween",N/A,N/A,91,Horror,Amazon Prime,1978,"Michael Myers stalks teenage babysitters on Halloween night",movie,halloween-movie,Content Intelligence
+"A Nightmare on Elm Street","A Nightmare on Elm Street",N/A,N/A,101,Horror,HBO Max,1984,"Freddy Krueger haunts teenagers through their dreams",movie,nightmare-elm-movie,Content Intelligence
+"The Shining","The Shining",N/A,N/A,146,Horror,HBO Max,1980,"Jack Torrance descends into madness at the Overlook Hotel",movie,shining-movie,Content Intelligence
+"Get Out","Get Out",N/A,N/A,104,Horror,Hulu,2017,"Chris discovers a sinister secret about his girlfriend's family",movie,get-out-movie,Content Intelligence
+"Hereditary","Hereditary",N/A,N/A,127,Horror,Amazon Prime,2018,"A family is haunted by ancestral evil after a grandmother's death",movie,hereditary-movie,Content Intelligence
+"The Conjuring","The Conjuring",N/A,N/A,112,Horror,HBO Max,2013,"The Warrens investigate a farmhouse haunting",movie,conjuring-movie,Content Intelligence
+"It","It",N/A,N/A,135,Horror,HBO Max,2017,"Pennywise the clown terrorizes children in Derry",movie,it-movie,Content Intelligence
+"Scream","Scream",N/A,N/A,111,Horror,Paramount Plus,1996,"A masked killer stalks high school students",movie,scream-movie,Content Intelligence
+"The Lord of the Rings: Fellowship","The Fellowship of the Ring",N/A,N/A,178,Fantasy,HBO Max,2001,"Frodo begins his quest to destroy the One Ring",movie,lotr-fellowship-movie,Story Tree
+"Harry Potter: Sorcerer's Stone","Harry Potter and the Sorcerer's Stone",N/A,N/A,152,Fantasy,HBO Max,2001,"Harry discovers he's a wizard and attends Hogwarts",movie,harry-potter-s1-movie,Story Tree
+"Star Wars: A New Hope","Star Wars: A New Hope",N/A,N/A,121,Sci-Fi,Disney Plus,1977,"Luke Skywalker joins the Rebellion against the Empire",movie,star-wars-nh-movie,Story Tree
+"Back to the Future","Back to the Future",N/A,N/A,116,Sci-Fi,Netflix,1985,"Marty McFly travels back in time to 1955",movie,back-future-movie,Story Tree
+"Blade Runner","Blade Runner",N/A,N/A,117,Sci-Fi,Netflix,1982,"Rick Deckard hunts replicants in futuristic Los Angeles",movie,blade-runner-movie,Story Tree
+"E.T. the Extra-Terrestrial","E.T. the Extra-Terrestrial",N/A,N/A,115,Sci-Fi,Netflix,1982,"A boy befriends a stranded alien",movie,et-movie,Story Tree
+"Alien","Alien",N/A,N/A,117,Horror,Hulu,1979,"The crew of a spaceship encounters a deadly alien creature",movie,alien-movie,Story Tree
+"Terminator 2","Terminator 2: Judgment Day",N/A,N/A,137,Action,Netflix,1991,"A cyborg protects John Connor from a more advanced terminator",movie,terminator-2-movie,Story Tree
+"Die Hard","Die Hard",N/A,N/A,132,Action,Hulu,1988,"John McClane fights terrorists in a Los Angeles skyscraper",movie,die-hard-movie,Story Tree
+"Raiders of the Lost Ark","Raiders of the Lost Ark",N/A,N/A,115,Adventure,Paramount Plus,1981,"Indiana Jones races to find the Ark of the Covenant",movie,raiders-movie,Story Tree
+"Spirited Away","Spirited Away",N/A,N/A,125,Animation,HBO Max,2001,"Chihiro is trapped in a magical spirit world",movie,spirited-away-movie,Scene Description Pipeline
+"Your Name","Your Name",N/A,N/A,106,Animation,Funimation,2016,"Two teenagers mysteriously swap bodies",movie,your-name-movie,Scene Description Pipeline
+"Princess Mononoke","Princess Mononoke",N/A,N/A,134,Animation,HBO Max,1997,"Ashitaka seeks to cure his curse and stop a war",movie,mononoke-movie,Scene Description Pipeline
+"Toy Story","Toy Story",N/A,N/A,81,Animation,Disney Plus,1995,"Toys come to life when humans aren't watching",movie,toy-story-movie,Scene Description Pipeline
+"Finding Nemo","Finding Nemo",N/A,N/A,100,Animation,Disney Plus,2003,"Marlin searches the ocean for his lost son Nemo",movie,finding-nemo-movie,Scene Description Pipeline
+"The Incredibles","The Incredibles",N/A,N/A,115,Animation,Disney Plus,2004,"A superhero family saves the world from a villain",movie,incredibles-movie,Scene Description Pipeline
+"WALL-E","WALL-E",N/A,N/A,98,Animation,Disney Plus,2008,"A robot finds love and hope in a post-apocalyptic world",movie,wall-e-movie,Scene Description Pipeline
+"Up","Up",N/A,N/A,96,Animation,Disney Plus,2009,"Carl's house flies with balloons on an adventure to South America",movie,up-movie,Scene Description Pipeline
+"Inside Out","Inside Out",N/A,N/A,95,Animation,Disney Plus,2015,"Emotions control a young girl's mind during a difficult move",movie,inside-out-movie,Scene Description Pipeline
+"Coco","Coco",N/A,N/A,105,Animation,Disney Plus,2017,"Miguel visits the Land of the Dead to learn about his family",movie,coco-movie,Scene Description Pipeline 

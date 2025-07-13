@@ -1,0 +1,108 @@
+error-handling.js:20 🎯 ERROR: Handler initialized
+index-integrated.html:187 INIT: waiting for RumiContent…
+index-integrated.html:187 No global RumiContent instance, creating one
+initializeApp @ index-integrated.html:187
+index-integrated.html:191 INIT: RumiContent ready
+e2e-tests.js:68 🎯 TEST: Starting E2E test suite...
+e2e-tests.js:159 🎯 TEST: Testing show detection...
+state-management.js:51 Setting state currentShow: Breaking Bad S05E16 - Felina
+e2e-tests.js:132 ✅ Show detection for Breaking Bad S05E16 - Felina passed
+state-management.js:51 Setting state currentShow: Stranger Things S04E09 - Piggyback
+e2e-tests.js:132 ✅ Show detection for Stranger Things S04E09 - Piggyback passed
+state-management.js:51 Setting state currentShow: The Office S03E20 - Product Recall
+e2e-tests.js:132 ✅ Show detection for The Office S03E20 - Product Recall passed
+e2e-tests.js:89 🎯 TEST ERROR: TypeError: Cannot set properties of null (setting 'textContent')
+    at E2ETests.updateTestResults (e2e-tests.js:141:61)
+    at E2ETests.runAllTests (e2e-tests.js:83:22)
+runAllTests @ e2e-tests.js:89
+await in runAllTests
+onclick @ index-integrated.html:131
+ui-validation.test.js:28 🎯 UI TEST: Starting UI validation suite...
+ui-validation.test.js:42 
+--- Running: Section 1: Entry Points & Activation ---
+ui-validation.test.js:126 ✅ PASS: Content detect entry point exists
+ui-validation.test.js:126 ✅ PASS: Automode button exists
+ui-validation.test.js:126 ✅ PASS: Activation circle exists
+ui-validation.test.js:58 
+--- Running: Section 2: Pre-Indexing & Channel View ---
+ui-validation.test.js:126 ✅ PASS: Channel section exists
+ui-validation.test.js:126 ✅ PASS: Show name display exists
+ui-validation.test.js:70 
+--- Running: Section 3: Active Indexing (Detected & Automode) ---
+state-management.js:51 Setting state mode: detected
+state-management.js:51 Setting state currentMode: detected
+state-management.js:236 🎯 STATE: Mode set to detected
+ui-validation.test.js:126 ✅ PASS: Detected mode class is applied
+ui-validation.test.js:126 ✅ PASS: Primary CTA exists
+state-management.js:51 Setting state mode: auto
+state-management.js:51 Setting state currentMode: auto
+state-management.js:236 🎯 STATE: Mode set to auto
+ui-validation.test.js:126 ✅ PASS: Auto mode class is applied
+ui-validation.test.js:126 ✅ PASS: Primary CTA exists after mode change
+ui-validation.test.js:103 
+--- Running: Section 4: Receipt View ---
+ui-validation.test.js:126 ✅ PASS: Receipt view exists
+ui-validation.test.js:126 ✅ PASS: Receipt details exist
+ui-validation.test.js:126 ✅ PASS: Nokia display section exists
+ui-validation.test.js:134 
+--- UI Validation Results ---
+ui-validation.test.js:135 Total: 12
+ui-validation.test.js:136 Passed: 12
+ui-validation.test.js:137 Failed: 0
+timeline-manager.js:47 🎯 TIMELINE: Set timeline - 18 blocks, 225min total
+timeline-manager.js:160 🎯 TIMELINE: Started
+state-management.js:51 Setting state currentShow: 30 Rock S05E10 - Christmas Attack Zone
+state-management.js:51 Setting state blockProgression: {type: 'normal', blocks: Array(5), delay: 1000}
+state-management.js:51 Setting state currentShow: 30 Rock S05E10 - Christmas Attack Zone
+state-management.js:51 Setting state blockProgression: {type: 'normal', blocks: Array(5), delay: 1000, currentIndex: 0}
+state-management.js:51 Setting state currentBlock: {id: '30rock-s05e10-block-1', block: 1, title: '30 Rock S05E10 - Christmas Attack Zone', startTime: 0, endTime: 5, …}
+state-management.js:51 Setting state isActive: true
+state-management.js:51 Setting state isIndexing: false
+state-management.js:51 Setting state paused: false
+state-management.js:51 Setting state mode: detected
+state-management.js:51 Setting state currentMode: detected
+state-management.js:236 🎯 STATE: Mode set to detected
+timeline-manager.js:47 🎯 TIMELINE: Set timeline - 18 blocks, 225min total
+timeline-manager.js:152 Timeline already active
+startTimeline @ timeline-manager.js:152
+startIndexingSession @ index-integrated.html:164
+await in startIndexingSession
+(anonymous) @ index-integrated.html:183
+timeline-manager.js:47 🎯 TIMELINE: Set timeline - 14 blocks, 45min total
+timeline-manager.js:152 Timeline already active
+startTimeline @ timeline-manager.js:152
+startIndexingSession @ index-integrated.html:164
+await in startIndexingSession
+onclick @ index-integrated.html:118
+ui-validation.test.js:28 🎯 UI TEST: Starting UI validation suite...
+ui-validation.test.js:42 
+--- Running: Section 1: Entry Points & Activation ---
+ui-validation.test.js:126 ✅ PASS: Content detect entry point exists
+ui-validation.test.js:126 ✅ PASS: Automode button exists
+ui-validation.test.js:126 ✅ PASS: Activation circle exists
+ui-validation.test.js:58 
+--- Running: Section 2: Pre-Indexing & Channel View ---
+ui-validation.test.js:126 ✅ PASS: Channel section exists
+ui-validation.test.js:126 ✅ PASS: Show name display exists
+ui-validation.test.js:70 
+--- Running: Section 3: Active Indexing (Detected & Automode) ---
+state-management.js:51 Setting state mode: detected
+state-management.js:51 Setting state currentMode: detected
+state-management.js:236 🎯 STATE: Mode set to detected
+ui-validation.test.js:126 ✅ PASS: Detected mode class is applied
+ui-validation.test.js:126 ✅ PASS: Primary CTA exists
+state-management.js:51 Setting state mode: auto
+state-management.js:51 Setting state currentMode: auto
+state-management.js:236 🎯 STATE: Mode set to auto
+ui-validation.test.js:126 ✅ PASS: Auto mode class is applied
+ui-validation.test.js:126 ✅ PASS: Primary CTA exists after mode change
+ui-validation.test.js:103 
+--- Running: Section 4: Receipt View ---
+ui-validation.test.js:126 ✅ PASS: Receipt view exists
+ui-validation.test.js:126 ✅ PASS: Receipt details exist
+ui-validation.test.js:126 ✅ PASS: Nokia display section exists
+ui-validation.test.js:134 
+--- UI Validation Results ---
+ui-validation.test.js:135 Total: 24
+ui-validation.test.js:136 Passed: 24
+ui-validation.test.js:137 Failed: 0

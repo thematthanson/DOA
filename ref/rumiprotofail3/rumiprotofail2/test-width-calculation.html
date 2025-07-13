@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Width Calculation Test - Genre Channel</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f5f5f5;
+        }
+        
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        .test-section h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        
+        .calculation-display {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            margin: 10px 0;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin: 10px 0;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .btn-primary { background: #007bff; color: white; }
+        .btn-success { background: #28a745; color: white; }
+        .btn-warning { background: #ffc107; color: black; }
+        
+        button:hover {
+            opacity: 0.8;
+        }
+        
+        .iframe-container {
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        
+        iframe {
+            width: 100%;
+            height: 400px;
+            border: none;
+        }
+        
+        .log-container {
+            background: #000;
+            color: #00ff00;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            height: 200px;
+            overflow-y: auto;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>📏 Width Calculation Test - Genre Channel</h1>
+        <p>Testing the fixed width calculation and positioning logic.</p>
+        
+        <div class="test-section">
+            <h3>📊 Width Calculations</h3>
+            <div class="calculation-display" id="calculationDisplay">
+                Loading calculations...
+            </div>
+            <div class="controls">
+                <button class="btn-primary" onclick="testCalculations()">📏 Test Calculations</button>
+                <button class="btn-success" onclick="loadTestContent()">📺 Load Test Content</button>
+                <button class="btn-warning" onclick="checkOverlaps()">🔍 Check Overlaps</button>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h3>📺 Genre Channel Test</h3>
+            <div class="iframe-container">
+                <iframe id="genreChannelFrame" src="Genre-channel_v2.html"></iframe>
+            </div>
+            <div class="controls">
+                <button class="btn-success" onclick="loadSequentialContent()">📺 Load Sequential Content</button>
+                <button class="btn-success" onclick="loadOverlappingContent()">📺 Load Overlapping Content</button>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h3>📝 Test Logs</h3>
+            <div class="log-container" id="logContainer">
+                <div>📏 Width Calculation Test initialized...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let frameWindow;
+        let logContainer;
+        let calculationDisplay;
+        
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            logContainer = document.getElementById('logContainer');
+            calculationDisplay = document.getElementById('calculationDisplay');
+            
+            // Wait for iframe to load
+            const iframe = document.getElementById('genreChannelFrame');
+            iframe.onload = () => {
+                frameWindow = iframe.contentWindow;
+                log('✅ Genre Channel iframe loaded');
+                testCalculations();
+            };
+            
+            log('📏 Width Calculation Test initialized');
+        });
+        
+        // Logging function
+        function log(message) {
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.textContent = `[${timestamp}] ${message}`;
+            logContainer.appendChild(logEntry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+        
+        // Test width calculations
+        function testCalculations() {
+            if (!frameWindow) {
+                log('❌ Frame not available');
+                return;
+            }
+            
+            log('📏 Testing width calculations...');
+            
+            const testCases = [
+                { duration: 60, startTime: 0, expectedWidth: 25, expectedLeft: 0 },
+                { duration: 90, startTime: 60, expectedWidth: 37.5, expectedLeft: 25 },
+                { duration: 120, startTime: 150, expectedWidth: 50, expectedLeft: 62.5 }
+            ];
+            
+            let results = '<strong>Width Calculation Results:</strong><br>';
+            
+            testCases.forEach((testCase, index) => {
+                const calculatedWidth = frameWindow.calculateWidth(testCase.duration);
+                const calculatedLeft = frameWindow.calculateLeftPosition(testCase.startTime);
+                
+                results += `<br><strong>Test ${index + 1}:</strong><br>`;
+                results += `Duration: ${testCase.duration}min, Start: ${testCase.startTime}min<br>`;
+                results += `Calculated Width: ${calculatedWidth.toFixed(2)}% (expected: ${testCase.expectedWidth}%)<br>`;
+                results += `Calculated Left: ${calculatedLeft.toFixed(2)}% (expected: ${testCase.expectedLeft}%)<br>`;
+                
+                const widthCorrect = Math.abs(calculatedWidth - testCase.expectedWidth) < 0.1;
+                const leftCorrect = Math.abs(calculatedLeft - testCase.expectedLeft) < 0.1;
+                
+                results += `Width: ${widthCorrect ? '✅' : '❌'}, Left: ${leftCorrect ? '✅' : '❌'}<br>`;
+                
+                log(`Test ${index + 1}: Width=${calculatedWidth.toFixed(2)}%, Left=${calculatedLeft.toFixed(2)}%`);
+            });
+            
+            calculationDisplay.innerHTML = results;
+        }
+        
+        // Load test content
+        function loadTestContent() {
+            if (!frameWindow) return;
+            
+            log('📺 Loading test content...');
+            
+            const testContent = [
+                { title: 'Test Content 1', duration: 60, genre: 'Comedy' },
+                { title: 'Test Content 2', duration: 90, genre: 'Drama' },
+                { title: 'Test Content 3', duration: 120, genre: 'Action' }
+            ];
+            
+            if (frameWindow.loadTestContent) {
+                frameWindow.loadTestContent(testContent);
+                log('✅ Test content loaded');
+                
+                // Check the results after a delay
+                setTimeout(() => {
+                    checkContentPositions();
+                }, 1000);
+            } else {
+                log('❌ loadTestContent function not available');
+            }
+        }
+        
+        // Load sequential content (should not overlap)
+        function loadSequentialContent() {
+            if (!frameWindow) return;
+            
+            log('📺 Loading sequential content...');
+            
+            const sequentialContent = [
+                { title: 'Sequential 1', duration: 60, genre: 'Comedy' },
+                { title: 'Sequential 2', duration: 60, genre: 'Drama' },
+                { title: 'Sequential 3', duration: 60, genre: 'Action' }
+            ];
+            
+            if (frameWindow.loadTestContent) {
+                frameWindow.loadTestContent(sequentialContent);
+                log('✅ Sequential content loaded');
+                
+                setTimeout(() => {
+                    checkContentPositions();
+                }, 1000);
+            }
+        }
+        
+        // Load overlapping content (should show overlaps)
+        function loadOverlappingContent() {
+            if (!frameWindow) return;
+            
+            log('📺 Loading overlapping content...');
+            
+            const overlappingContent = [
+                { title: 'Overlap 1', duration: 120, genre: 'Comedy' },
+                { title: 'Overlap 2', duration: 120, genre: 'Drama' },
+                { title: 'Overlap 3', duration: 120, genre: 'Action' }
+            ];
+            
+            if (frameWindow.loadTestContent) {
+                frameWindow.loadTestContent(overlappingContent);
+                log('✅ Overlapping content loaded');
+                
+                setTimeout(() => {
+                    checkContentPositions();
+                }, 1000);
+            }
+        }
+        
+        // Check content positions
+        function checkContentPositions() {
+            if (!frameWindow) return;
+            
+            log('🔍 Checking content positions...');
+            
+            const blocks = frameWindow.document.querySelectorAll('.program-slot:not(.empty)');
+            log(`📦 Found ${blocks.length} blocks`);
+            
+            blocks.forEach((block, index) => {
+                const rect = block.getBoundingClientRect();
+                const left = parseFloat(block.style.left) || 0;
+                const width = parseFloat(block.style.width) || 0;
+                const title = block.querySelector('.program-title')?.textContent || `Block ${index}`;
+                
+                log(`Block ${index + 1}: "${title}" - Left: ${left.toFixed(2)}%, Width: ${width.toFixed(2)}%`);
+            });
+        }
+        
+        // Check for overlaps
+        function checkOverlaps() {
+            if (!frameWindow) return;
+            
+            log('🔍 Checking for overlaps...');
+            
+            const blocks = frameWindow.document.querySelectorAll('.program-slot:not(.empty)');
+            let overlapCount = 0;
+            
+            for (let i = 0; i < blocks.length; i++) {
+                for (let j = i + 1; j < blocks.length; j++) {
+                    const block1 = blocks[i];
+                    const block2 = blocks[j];
+                    
+                    const left1 = parseFloat(block1.style.left) || 0;
+                    const width1 = parseFloat(block1.style.width) || 0;
+                    const right1 = left1 + width1;
+                    
+                    const left2 = parseFloat(block2.style.left) || 0;
+                    const width2 = parseFloat(block2.style.width) || 0;
+                    const right2 = left2 + width2;
+                    
+                    if (left1 < right2 && left2 < right1) {
+                        overlapCount++;
+                        const title1 = block1.querySelector('.program-title')?.textContent || `Block ${i}`;
+                        const title2 = block2.querySelector('.program-title')?.textContent || `Block ${j}`;
+                        log(`❌ Overlap detected: "${title1}" and "${title2}"`);
+                    }
+                }
+            }
+            
+            if (overlapCount === 0) {
+                log('✅ No overlaps detected');
+            } else {
+                log(`❌ Found ${overlapCount} overlap(s)`);
+            }
+        }
+    </script>
+</body>
+</html> 
