@@ -2125,6 +2125,7 @@
                     <button class="debug-button warning" onclick="debugSkipTime(1)">Skip 1 min</button>
                     
                     <!-- Other Debug Functions -->
+                    <button class="debug-button info" id="debug-skip-tomorrow-btn" onclick="debugSkipToTomorrow()">Skip to Tomorrow</button>
                     <button class="debug-button info" id="debug-content-tracking-btn" onclick="debugContentTracking()">Debug Content Tracking</button>
                     <button class="debug-button warning" onclick="testEndOfContentReceipt()">Test End-of-Content Receipt</button>
                     <button class="debug-button warning" onclick="debugShowDetectionState()">Debug Show Detection</button>
@@ -3527,6 +3528,38 @@
             appState.contentTransitionProgress = 0;
             console.log('Show detection state reset');
             console.log('=== END RESET ===');
+        }
+
+        // NEW: Debug function to skip to tomorrow (move pending points to lifetime)
+        function debugSkipToTomorrow() {
+            // Check cooldown
+            if (appState.debugTomorrowCooldown > 0) {
+                console.log('Debug skip to tomorrow: Still in cooldown');
+                return;
+            }
+
+            console.log('Debug skip to tomorrow: Executing...');
+
+            // Set 10-second cooldown
+            appState.debugTomorrowCooldown = 10;
+            updateDebugButtonStates();
+
+            // Move pending points to lifetime points
+            const pendingPoints = appState.totalPendingPoints;
+            appState.pointsEarned += pendingPoints;
+            appState.totalPendingPoints = 0;
+
+            // Update points display
+            updatePointsDisplay();
+
+            console.log(`Debug skip to tomorrow: Moved ${pendingPoints.toFixed(2)} points to lifetime`);
+            Tracker.logRumiAction('DEBUG_SKIP_TO_TOMORROW', { 
+                pointsMoved: pendingPoints,
+                newLifetimePoints: appState.pointsEarned
+            });
+
+            // Start cooldown countdown
+            startDebugCooldown('tomorrow');
         }
 
         // NEW: Function to clear session duration cache
@@ -11193,6 +11226,20 @@ function recordActualIndexedContentBeforeReceipt() {
 
         // NEW: Function to update debug button states based on cooldowns and error states
         function updateDebugButtonStates() {
+            const skipTomorrowBtn = document.getElementById('debug-skip-tomorrow-btn');
+
+            if (skipTomorrowBtn) {
+                if (appState.debugTomorrowCooldown > 0) {
+                    skipTomorrowBtn.disabled = true;
+                    skipTomorrowBtn.classList.add('cooldown');
+                    skipTomorrowBtn.textContent = `Skip to Tomorrow (${appState.debugTomorrowCooldown}s)`;
+                } else {
+                    skipTomorrowBtn.disabled = false;
+                    skipTomorrowBtn.classList.remove('cooldown');
+                    skipTomorrowBtn.textContent = 'Skip to Tomorrow';
+                }
+            }
+
             // No specific button state management needed for time skip buttons
             // They work based on indexing state which is checked in the function itself
             console.log('Debug button states updated');
