@@ -2126,6 +2126,7 @@
                     
                     <!-- Other Debug Functions -->
                     <button class="debug-button info" id="debug-content-tracking-btn" onclick="debugContentTracking()">Debug Content Tracking</button>
+                    <button class="debug-button info" id="debug-skip-tomorrow-btn" onclick="debugSkipToTomorrow()">Skip to Tomorrow</button>
                     <button class="debug-button warning" onclick="testEndOfContentReceipt()">Test End-of-Content Receipt</button>
                     <button class="debug-button warning" onclick="debugShowDetectionState()">Debug Show Detection</button>
                     <button class="debug-button warning" onclick="debugChannelContent()">Debug Channel Content</button>
@@ -10896,6 +10897,95 @@ function recordActualIndexedContentBeforeReceipt() {
                 newMultiplier: appState.currentMultiplier,
                 blocksAdvanced: appState.entryPoint === 'detection' ? Math.floor(skipSeconds / 30) : 0
             });
+        }
+
+        // NEW: Debug function to skip to tomorrow (move pending points to lifetime)
+        function debugSkipToTomorrow() {
+            // Check cooldown
+            if (appState.debugTomorrowCooldown > 0) {
+                console.log('Debug skip to tomorrow: Still in cooldown');
+                return;
+            }
+            
+            console.log('Debug skip to tomorrow: Executing...');
+            
+            // Get current pending points
+            const pendingPoints = appState.pendingPoints || 0;
+            
+            if (pendingPoints <= 0) {
+                console.log('Debug skip to tomorrow: No pending points to move');
+                return;
+            }
+            
+            // Move pending points to lifetime
+            appState.lifetimePoints = (appState.lifetimePoints || 0) + pendingPoints;
+            appState.pendingPoints = 0;
+            
+            // Update leaderboard position
+            updateLeaderboardPosition();
+            
+            console.log(`Debug skip to tomorrow: Moved ${pendingPoints.toFixed(2)} points to lifetime`);
+            Tracker.logRumiAction('DEBUG_SKIP_TO_TOMORROW', {
+                pendingPointsMoved: pendingPoints,
+                newLifetimePoints: appState.lifetimePoints,
+                timestamp: Date.now()
+            });
+            
+            // Update displays
+            updatePointsDisplay();
+            
+            // Set cooldown (30 seconds)
+            appState.debugTomorrowCooldown = 30;
+            
+            // Update button state
+            const skipTomorrowBtn = document.getElementById('debug-skip-tomorrow-btn');
+            if (skipTomorrowBtn) {
+                skipTomorrowBtn.disabled = true;
+                skipTomorrowBtn.classList.add('cooldown');
+                skipTomorrowBtn.textContent = `Skip to Tomorrow (${appState.debugTomorrowCooldown}s)`;
+                
+                // Start cooldown timer
+                const cooldownTimer = setInterval(() => {
+                    appState.debugTomorrowCooldown--;
+                    if (skipTomorrowBtn) {
+                        if (appState.debugTomorrowCooldown > 0) {
+                            skipTomorrowBtn.textContent = `Skip to Tomorrow (${appState.debugTomorrowCooldown}s)`;
+                        } else {
+                            skipTomorrowBtn.disabled = false;
+                            skipTomorrowBtn.classList.remove('cooldown');
+                            skipTomorrowBtn.textContent = 'Skip to Tomorrow';
+                            clearInterval(cooldownTimer);
+                        }
+                    }
+                }, 1000);
+            }
+        }
+
+        // NEW: Update leaderboard position based on lifetime points
+        function updateLeaderboardPosition() {
+            const lifetimePoints = appState.lifetimePoints || 0;
+            
+            // Calculate position based on points (simplified algorithm)
+            let position = 23; // Default position
+            
+            if (lifetimePoints >= 15000) position = 1;
+            else if (lifetimePoints >= 12000) position = 2;
+            else if (lifetimePoints >= 10000) position = 3;
+            else if (lifetimePoints >= 8000) position = 5;
+            else if (lifetimePoints >= 6000) position = 8;
+            else if (lifetimePoints >= 5000) position = 12;
+            else if (lifetimePoints >= 4000) position = 15;
+            else if (lifetimePoints >= 3000) position = 18;
+            else if (lifetimePoints >= 2000) position = 20;
+            else if (lifetimePoints >= 1000) position = 22;
+            
+            // Update leaderboard display
+            const leaderboardRank = document.querySelector('.user-rank');
+            if (leaderboardRank) {
+                leaderboardRank.textContent = `🔥 YOU: #${position}`;
+            }
+            
+            console.log(`Leaderboard position updated: #${position} with ${lifetimePoints} points`);
         }
 
         // NEW: Auto mode fast mode - 500x speed playback
