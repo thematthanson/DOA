@@ -1391,49 +1391,6 @@
                 const multiplier = this.calculateMultiplier(contentItem.startTime || 0);
                 this.addMetadataItem(grid, 'Current Multiplier', `${multiplier}x active`, 'highlight');
 
-                // Current content information - show only the currently indexed show
-                if (bucketContent.length > 0) {
-                    // Get the current content item from parent window if available
-                    let currentContentTitle = null;
-                    
-                    try {
-                        // Try to get current content from parent window
-                        if (window.parent && window.parent.appState && window.parent.appState.automodeContentItems) {
-                            const currentIndex = window.parent.appState.currentContentIndex || 0;
-                            const currentItem = window.parent.appState.automodeContentItems[currentIndex];
-                            if (currentItem) {
-                                currentContentTitle = currentItem.title;
-                            }
-                        }
-                    } catch (e) {
-                        // If we can't access parent, fall back to first item
-                        console.log('Cannot access parent window, using first item');
-                    }
-                    
-                    // If we couldn't get current content from parent, use first item
-                    if (!currentContentTitle) {
-                        currentContentTitle = bucketContent[0].title;
-                    }
-                    
-                    // Extract show name from title
-                    let showName = currentContentTitle;
-                    if (currentContentTitle.includes(' - ')) {
-                        showName = currentContentTitle.split(' - ')[0];
-                    }
-                    
-                    this.addMetadataItem(grid, 'Current Content', showName, 'description');
-                    
-                    // Show what we're learning - use first item as example
-                    const firstItem = bucketContent[0];
-                    let learningDescription = `${firstItem.title}`;
-                    if (firstItem.description) {
-                        learningDescription += ` - ${firstItem.description}`;
-                    } else {
-                        learningDescription += ` where character development and narrative structure happens`;
-                    }
-                    this.addMetadataItem(grid, 'What we are learning', learningDescription, 'description');
-                }
-
                 // Show popup and hide timeline
                 popup.classList.add('visible');
                 document.getElementById('timeline').style.display = 'none';

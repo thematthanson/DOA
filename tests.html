@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rumi Tests</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a0a;
+            color: #fff;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            color: #00ff88;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+        
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .test-card {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .test-card:hover {
+            border-color: #00ff88;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 255, 136, 0.2);
+        }
+        
+        .test-title {
+            color: #00ff88;
+            font-size: 1.2em;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .test-description {
+            color: #ccc;
+            font-size: 0.9em;
+            margin-bottom: 15px;
+        }
+        
+        .test-button {
+            background: linear-gradient(135deg, #00ff88, #00cc6a);
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        
+        .test-button:hover {
+            background: linear-gradient(135deg, #00cc6a, #00ff88);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0, 255, 136, 0.3);
+        }
+        
+        .back-button {
+            background: #333;
+            color: #fff;
+            border: 1px solid #555;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+        
+        .back-button:hover {
+            background: #444;
+            border-color: #00ff88;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .subtitle {
+            color: #888;
+            font-size: 1.1em;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧪 Rumi Tests</h1>
+            <div class="subtitle">Microtest Suite for Rumi Extension</div>
+        </div>
+        
+        <button class="back-button" onclick="window.location.href='reference-index.html'">← Back to Main</button>
+        
+        <div class="test-grid">
+            <div class="test-card">
+                <div class="test-title">Iframe Communication</div>
+                <div class="test-description">Test communication between iframes and parent window</div>
+                <button class="test-button" onclick="window.open('microtests/iframe-communication-standalone.html', '_blank')">Launch Test</button>
+            </div>
+            
+            <div class="test-card">
+                <div class="test-title">CSV Processing</div>
+                <div class="test-description">Test CSV data loading and processing functionality</div>
+                <button class="test-button" onclick="window.open('microtests/csv-processing-standalone.html', '_blank')">Launch Test</button>
+            </div>
+            
+            <div class="test-card">
+                <div class="test-title">Intelligence Buckets</div>
+                <div class="test-description">Test intelligence bucket categorization system</div>
+                <button class="test-button" onclick="window.open('microtests/intelligence-buckets-standalone.html', '_blank')">Launch Test</button>
+            </div>
+            
+            <div class="test-card">
+                <div class="test-title">Multiplier Calculator</div>
+                <div class="test-description">Test points multiplier calculation logic</div>
+                <button class="test-button" onclick="window.open('microtests/multiplier-calc-standalone.html', '_blank')">Launch Test</button>
+            </div>
+            
+            <div class="test-card">
+                <div class="test-title">Points Calculation</div>
+                <div class="test-description">Test points calculation and scoring system</div>
+                <button class="test-button" onclick="window.open('microtests/points-calculation-standalone.html', '_blank')">Launch Test</button>
+            </div>
+            
+            <div class="test-card">
+                <div class="test-title">Popup System</div>
+                <div class="test-description">Test popup display and interaction system</div>
+                <button class="test-button" onclick="window.open('microtests/popup-system-standalone.html', '_blank')">Launch Test</button>
+            </div>
+            
+            <div class="test-card">
+                <div class="test-title">Progress Diamonds</div>
+                <div class="test-description">Test progress diamond visualization</div>
+                <button class="test-button" onclick="window.open('microtests/progress-diamonds-standalone.html', '_blank')">Launch Test</button>
+            </div>
+            
+            <div class="test-card">
+                <div class="test-title">Section Transitions</div>
+                <div class="test-description">Test section transition animations and logic</div>
+                <button class="test-button" onclick="window.open('microtests/section-transitions-standalone.html', '_blank')">Launch Test</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 
