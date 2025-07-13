@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rumi Puzzle System</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=SF+Mono:wght@400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'SF Mono', 'Monaco', 'Cascadia Code', monospace;
+            background: #000000;
+            color: #ffffff;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #111111;
+            border: 2px solid #333333;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .header {
+            background: #000000;
+            padding: 20px;
+            border-bottom: 1px solid #333333;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #00ff41;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            font-size: 12px;
+            color: #888888;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .back-link {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 12px;
+            color: #00ff41;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover {
+            color: #00cc33;
+        }
+
+        .content {
+            padding: 20px;
+        }
+
+        .puzzle-container {
+            background: #1a1a1a;
+            border: 1px solid #333333;
+            border-radius: 6px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .puzzle-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #333333;
+        }
+
+        .round-info {
+            font-size: 14px;
+            color: #00ff41;
+            font-weight: 600;
+        }
+
+        .speed-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .speed-button {
+            background: #000000;
+            color: #ffff00;
+            border: 1px solid #ffff00;
+            padding: 8px 12px;
+            font-size: 10px;
+            font-family: 'SF Mono', monospace;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.2s;
+        }
+
+        .speed-button:hover {
+            background: #ffff00;
+            color: #000000;
+        }
+
+        .speed-button.active {
+            background: #ffff00;
+            color: #000000;
+        }
+
+        .puzzle-question {
+            font-size: 16px;
+            color: #ffffff;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .puzzle-options {
+            display: grid;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .puzzle-option {
+            background: #222222;
+            border: 1px solid #444444;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-radius: 4px;
+        }
+
+        .puzzle-option:hover {
+            border-color: #00ff41;
+            background: #2a2a2a;
+        }
+
+        .puzzle-option.selected {
+            border-color: #00ff41;
+            background: #1a2a1a;
+        }
+
+        .puzzle-option.correct {
+            border-color: #00ff41;
+            background: #1a2a1a;
+            color: #00ff41;
+        }
+
+        .puzzle-option.incorrect {
+            border-color: #ff4444;
+            background: #2a1a1a;
+            color: #ff4444;
+        }
+
+        .puzzle-feedback {
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .puzzle-feedback.correct {
+            background: #1a2a1a;
+            border: 1px solid #00ff41;
+            color: #00ff41;
+        }
+
+        .puzzle-feedback.incorrect {
+            background: #2a1a1a;
+            border: 1px solid #ff4444;
+            color: #ff4444;
+        }
+
+        .puzzle-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .puzzle-button {
+            background: #000000;
+            color: #00ff41;
+            border: 1px solid #00ff41;
+            padding: 10px 20px;
+            font-size: 12px;
+            font-family: 'SF Mono', monospace;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.2s;
+        }
+
+        .puzzle-button:hover {
+            background: #00ff41;
+            color: #000000;
+        }
+
+        .puzzle-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .stats-panel {
+            background: #1a1a1a;
+            border: 1px solid #333333;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #00ff41;
+        }
+
+        .stat-label {
+            font-size: 10px;
+            color: #888888;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 5px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #333333;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00ff41, #00cc33);
+            transition: width 0.3s ease;
+        }
+
+        .timer {
+            font-size: 18px;
+            font-weight: 700;
+            color: #ffff00;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .speed-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-left: 8px;
+            background: #ffff00;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .footer {
+            margin-top: 30px;
+            padding: 15px;
+            background: #1a1a1a;
+            border: 1px solid #333333;
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        .footer p {
+            font-size: 10px;
+            color: #888888;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        @media (max-width: 600px) {
+            .puzzle-header {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .speed-controls {
+                justify-content: center;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="reference-index.html" class="back-link">← Back to Main</a>
+            <h1>Rumi Puzzle System</h1>
+            <p>Interactive Learning Challenges</p>
+        </div>
+
+        <div class="content">
+            <div class="stats-panel">
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-value" id="current-round">1</div>
+                        <div class="stat-label">Current Round</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="score">0</div>
+                        <div class="stat-label">Score</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="streak">0</div>
+                        <div class="stat-label">Streak</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="accuracy">0%</div>
+                        <div class="stat-label">Accuracy</div>
+                    </div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <div class="puzzle-container">
+                <div class="puzzle-header">
+                    <div class="round-info">
+                        Round <span id="round-number">1</span> of <span id="total-rounds">10</span>
+                        <span class="speed-indicator" id="speed-indicator" style="display: none;"></span>
+                    </div>
+                    <div class="speed-controls">
+                        <button class="speed-button" id="normal-speed" onclick="setSpeed('normal')">Normal</button>
+                        <button class="speed-button" id="fast-speed" onclick="setSpeed('fast')">Fast</button>
+                        <button class="speed-button" id="turbo-speed" onclick="setSpeed('turbo')">Turbo</button>
+                    </div>
+                </div>
+
+                <div class="timer" id="timer">30</div>
+
+                <div class="puzzle-question" id="puzzle-question">
+                    Loading puzzle...
+                </div>
+
+                <div class="puzzle-options" id="puzzle-options">
+                    <!-- Options will be populated by JavaScript -->
+                </div>
+
+                <div class="puzzle-feedback" id="puzzle-feedback">
+                    <!-- Feedback will be shown here -->
+                </div>
+
+                <div class="puzzle-actions">
+                    <button class="puzzle-button" id="submit-answer" onclick="submitAnswer()" disabled>Submit Answer</button>
+                    <button class="puzzle-button" id="next-round" onclick="nextRound()" style="display: none;">Next Round</button>
+                </div>
+            </div>
+
+            <div class="footer">
+                <p>Test your knowledge and advance through rounds with increasing difficulty</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Puzzle System State
+        const puzzleState = {
+            currentRound: 1,
+            totalRounds: 10,
+            score: 0,
+            streak: 0,
+            correctAnswers: 0,
+            currentPuzzle: null,
+            selectedAnswer: null,
+            speedMode: 'normal',
+            timer: null,
+            timeLeft: 30,
+            isAnswered: false
+        };
+
+        // Puzzle Database - Content Intelligence Questions
+        const puzzleDatabase = [
+            {
+                question: "What type of content analysis focuses on character development and emotional arcs?",
+                options: [
+                    "Scene Analysis",
+                    "Character Intelligence", 
+                    "Story Intelligence",
+                    "Visual Intelligence"
+                ],
+                correct: 1,
+                explanation: "Character Intelligence focuses on analyzing character development, emotional arcs, and character-driven storytelling."
+            },
+            {
+                question: "Which intelligence bucket analyzes narrative structure and plot progression?",
+                options: [
+                    "Visual Intelligence",
+                    "Character Intelligence",
+                    "Story Intelligence", 
+                    "Scene Analysis"
+                ],
+                correct: 2,
+                explanation: "Story Intelligence examines narrative structure, plot progression, and storytelling techniques."
+            },
+            {
+                question: "What does Scene Analysis primarily focus on?",
+                options: [
+                    "Character development",
+                    "Visual composition and cinematography",
+                    "Plot structure",
+                    "Dialogue analysis"
+                ],
+                correct: 1,
+                explanation: "Scene Analysis focuses on visual composition, cinematography, and the technical aspects of individual scenes."
+            },
+            {
+                question: "Which content type would be best analyzed using Visual Intelligence?",
+                options: [
+                    "Character-driven drama",
+                    "Action sequence with complex choreography",
+                    "Dialogue-heavy scene",
+                    "Narrative exposition"
+                ],
+                correct: 1,
+                explanation: "Action sequences with complex choreography benefit from Visual Intelligence analysis of movement, composition, and visual impact."
+            },
+            {
+                question: "What is the primary goal of content intelligence analysis?",
+                options: [
+                    "To categorize content by genre",
+                    "To understand why content is effective and engaging",
+                    "To rate content quality",
+                    "To identify target audiences"
+                ],
+                correct: 1,
+                explanation: "Content intelligence analysis aims to understand why content is effective and engaging, not just categorize it."
+            },
+            {
+                question: "Which intelligence bucket would analyze the emotional impact of a plot twist?",
+                options: [
+                    "Visual Intelligence",
+                    "Character Intelligence",
+                    "Story Intelligence",
+                    "Scene Analysis"
+                ],
+                correct: 2,
+                explanation: "Story Intelligence would analyze how plot twists create emotional impact and narrative tension."
+            },
+            {
+                question: "What aspect does Character Intelligence NOT typically analyze?",
+                options: [
+                    "Character development arcs",
+                    "Emotional motivations",
+                    "Visual composition",
+                    "Character relationships"
+                ],
+                correct: 2,
+                explanation: "Visual composition is analyzed by Visual Intelligence, not Character Intelligence."
+            },
+            {
+                question: "Which content would be best suited for Scene Analysis?",
+                options: [
+                    "A monologue about character backstory",
+                    "A complex action sequence",
+                    "A dialogue between two characters",
+                    "A narrative voiceover"
+                ],
+                correct: 1,
+                explanation: "Complex action sequences benefit from Scene Analysis to understand visual composition and movement."
+            },
+            {
+                question: "What is the relationship between Story Intelligence and Character Intelligence?",
+                options: [
+                    "They are completely separate",
+                    "Story Intelligence includes Character Intelligence",
+                    "They work together to analyze narrative and character elements",
+                    "Character Intelligence is a subset of Visual Intelligence"
+                ],
+                correct: 2,
+                explanation: "Story Intelligence and Character Intelligence work together to provide comprehensive analysis of narrative and character elements."
+            },
+            {
+                question: "Which intelligence bucket would be most useful for analyzing a documentary?",
+                options: [
+                    "Character Intelligence",
+                    "Story Intelligence",
+                    "Visual Intelligence",
+                    "All of the above"
+                ],
+                correct: 3,
+                explanation: "Documentaries can benefit from all intelligence buckets: Visual Intelligence for cinematography, Story Intelligence for narrative structure, and Character Intelligence for subject portrayal."
+            }
+        ];
+
+        // Speed mode configurations
+        const speedModes = {
+            normal: { timeLimit: 30, autoAdvance: false },
+            fast: { timeLimit: 20, autoAdvance: true },
+            turbo: { timeLimit: 10, autoAdvance: true }
+        };
+
+        // Initialize the puzzle system
+        function initializePuzzleSystem() {
+            updateStats();
+            loadPuzzle();
+            startTimer();
+        }
+
+        // Load a new puzzle
+        function loadPuzzle() {
+            if (puzzleState.currentRound > puzzleState.totalRounds) {
+                endGame();
+                return;
+            }
+
+            // Select puzzle based on round (cycle through database)
+            const puzzleIndex = (puzzleState.currentRound - 1) % puzzleDatabase.length;
+            puzzleState.currentPuzzle = puzzleDatabase[puzzleIndex];
+            
+            // Reset state for new puzzle
+            puzzleState.selectedAnswer = null;
+            puzzleState.isAnswered = false;
+            puzzleState.timeLeft = speedModes[puzzleState.speedMode].timeLimit;
+            
+            // Update UI
+            document.getElementById('puzzle-question').textContent = puzzleState.currentPuzzle.question;
+            document.getElementById('round-number').textContent = puzzleState.currentRound;
+            document.getElementById('total-rounds').textContent = puzzleState.totalRounds;
+            
+            // Populate options
+            const optionsContainer = document.getElementById('puzzle-options');
+            optionsContainer.innerHTML = '';
+            
+            puzzleState.currentPuzzle.options.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.className = 'puzzle-option';
+                optionElement.textContent = option;
+                optionElement.onclick = () => selectAnswer(index);
+                optionsContainer.appendChild(optionElement);
+            });
+            
+            // Reset buttons
+            document.getElementById('submit-answer').disabled = true;
+            document.getElementById('next-round').style.display = 'none';
+            document.getElementById('puzzle-feedback').style.display = 'none';
+            
+            // Clear any previous selections
+            document.querySelectorAll('.puzzle-option').forEach(option => {
+                option.classList.remove('selected', 'correct', 'incorrect');
+            });
+        }
+
+        // Select an answer
+        function selectAnswer(index) {
+            if (puzzleState.isAnswered) return;
+            
+            // Clear previous selection
+            document.querySelectorAll('.puzzle-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            
+            // Select new answer
+            document.querySelectorAll('.puzzle-option')[index].classList.add('selected');
+            puzzleState.selectedAnswer = index;
+            document.getElementById('submit-answer').disabled = false;
+        }
+
+        // Submit answer
+        function submitAnswer() {
+            if (puzzleState.isAnswered || puzzleState.selectedAnswer === null) return;
+            
+            puzzleState.isAnswered = true;
+            clearInterval(puzzleState.timer);
+            
+            const isCorrect = puzzleState.selectedAnswer === puzzleState.currentPuzzle.correct;
+            const feedbackElement = document.getElementById('puzzle-feedback');
+            
+            if (isCorrect) {
+                // Correct answer
+                puzzleState.score += 10;
+                puzzleState.streak++;
+                puzzleState.correctAnswers++;
+                
+                feedbackElement.textContent = `✅ Correct! ${puzzleState.currentPuzzle.explanation}`;
+                feedbackElement.className = 'puzzle-feedback correct';
+                
+                // Mark correct answer
+                document.querySelectorAll('.puzzle-option')[puzzleState.currentPuzzle.correct].classList.add('correct');
+            } else {
+                // Incorrect answer
+                puzzleState.streak = 0;
+                
+                feedbackElement.textContent = `❌ Incorrect. ${puzzleState.currentPuzzle.explanation}`;
+                feedbackElement.className = 'puzzle-feedback incorrect';
+                
+                // Mark correct and incorrect answers
+                document.querySelectorAll('.puzzle-option')[puzzleState.selectedAnswer].classList.add('incorrect');
+                document.querySelectorAll('.puzzle-option')[puzzleState.currentPuzzle.correct].classList.add('correct');
+            }
+            
+            feedbackElement.style.display = 'block';
+            document.getElementById('submit-answer').style.display = 'none';
+            document.getElementById('next-round').style.display = 'inline-block';
+            
+            updateStats();
+            
+            // Auto-advance in fast/turbo modes
+            if (speedModes[puzzleState.speedMode].autoAdvance) {
+                setTimeout(nextRound, 2000);
+            }
+        }
+
+        // Next round
+        function nextRound() {
+            puzzleState.currentRound++;
+            loadPuzzle();
+            startTimer();
+        }
+
+        // Set speed mode
+        function setSpeed(mode) {
+            puzzleState.speedMode = mode;
+            
+            // Update button states
+            document.querySelectorAll('.speed-button').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`${mode}-speed`).classList.add('active');
+            
+            // Update speed indicator
+            const indicator = document.getElementById('speed-indicator');
+            if (mode === 'normal') {
+                indicator.style.display = 'none';
+            } else {
+                indicator.style.display = 'inline-block';
+            }
+            
+            // Update timer if puzzle is active
+            if (!puzzleState.isAnswered) {
+                puzzleState.timeLeft = speedModes[mode].timeLimit;
+                updateTimer();
+            }
+        }
+
+        // Start timer
+        function startTimer() {
+            puzzleState.timeLeft = speedModes[puzzleState.speedMode].timeLimit;
+            updateTimer();
+            
+            puzzleState.timer = setInterval(() => {
+                puzzleState.timeLeft--;
+                updateTimer();
+                
+                if (puzzleState.timeLeft <= 0) {
+                    clearInterval(puzzleState.timer);
+                    if (!puzzleState.isAnswered) {
+                        // Time's up - auto-submit wrong answer
+                        puzzleState.selectedAnswer = -1;
+                        submitAnswer();
+                    }
+                }
+            }, 1000);
+        }
+
+        // Update timer display
+        function updateTimer() {
+            document.getElementById('timer').textContent = puzzleState.timeLeft;
+        }
+
+        // Update statistics
+        function updateStats() {
+            document.getElementById('current-round').textContent = puzzleState.currentRound;
+            document.getElementById('score').textContent = puzzleState.score;
+            document.getElementById('streak').textContent = puzzleState.streak;
+            
+            const accuracy = puzzleState.currentRound > 1 ? 
+                Math.round((puzzleState.correctAnswers / (puzzleState.currentRound - 1)) * 100) : 0;
+            document.getElementById('accuracy').textContent = `${accuracy}%`;
+            
+            const progress = (puzzleState.currentRound / puzzleState.totalRounds) * 100;
+            document.getElementById('progress-fill').style.width = `${progress}%`;
+        }
+
+        // End game
+        function endGame() {
+            clearInterval(puzzleState.timer);
+            
+            const container = document.querySelector('.puzzle-container');
+            container.innerHTML = `
+                <div style="text-align: center; padding: 40px;">
+                    <h2 style="color: #00ff41; margin-bottom: 20px;">Game Complete!</h2>
+                    <div style="font-size: 18px; margin-bottom: 20px;">
+                        Final Score: ${puzzleState.score}<br>
+                        Accuracy: ${Math.round((puzzleState.correctAnswers / puzzleState.totalRounds) * 100)}%<br>
+                        Best Streak: ${puzzleState.streak}
+                    </div>
+                    <button class="puzzle-button" onclick="restartGame()">Play Again</button>
+                </div>
+            `;
+        }
+
+        // Restart game
+        function restartGame() {
+            puzzleState.currentRound = 1;
+            puzzleState.score = 0;
+            puzzleState.streak = 0;
+            puzzleState.correctAnswers = 0;
+            puzzleState.selectedAnswer = null;
+            puzzleState.isAnswered = false;
+            
+            updateStats();
+            loadPuzzle();
+            startTimer();
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            initializePuzzleSystem();
+            setSpeed('normal'); // Start with normal speed
+        });
+    </script>
+</body>
+</html> 
