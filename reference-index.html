@@ -2514,6 +2514,21 @@
                                     </div>
                         </div>
                         
+                        <!-- Automode Channel Section (Section 3b) -->
+                        <div id="automode-channel-section-indexing" style="margin-top: 12px; display: none;">
+                            <div id="expand-channel-header-automode" onclick="toggleChannelExpansionAutomode()" style="display: flex; align-items: center; justify-content: center; background: #222; color: #bbb; border-radius: 6px; padding: 12px 16px; font-size: 13px; font-weight: 600; cursor: pointer; margin-bottom: 8px; user-select: none; transition: background 0.2s; text-align: center;">
+                                <span id="expand-channel-text-automode" style="flex: none;">WHAT ARE WE LEARNING</span>
+                                <span id="expand-channel-icon-automode" style="font-size: 16px; margin-left: 10px; flex: none;">▼</span>
+                            </div>
+                            <!-- Channel Container (initially hidden) -->
+                            <div id="channel-expanded-container-automode" style="display: none; margin-top: 4px;">
+                                <div id="channel-iframe-container-automode" style="background: transparent; border: 1px solid #333; border-radius: 8px; overflow: hidden; position: relative;">
+                                    <div id="channel-loading-automode" style="padding: 20px; text-align: center; color: #00ff41; font-size: 12px; z-index: 1; display: none;">Loading Channel...</div>
+                                    <iframe id="channel-frame-automode" src="rumi-channel.html" style="width: 100%; border: none; background: transparent; display: block; visibility: hidden; height: 320px;" onload="console.log('Automode channel frame loaded:', this.src); resizeIframeAutomode(this); initializeChannelTitleAutomode();" onerror="showChannelErrorAutomode()"></iframe>
+                                </div>
+                            </div>
+                        </div>
+                        
                         <!-- Learning Progress Dashboard Section (Section 3b) -->
                         <div id="learning-progress-dashboard" style="margin-top: 12px; display: none;">
                             <div class="insights-banner collapsed" onclick="toggleProgressDashboard()">
@@ -9297,6 +9312,54 @@ function recordActualIndexedContentBeforeReceipt() {
             Tracker.logRumiAction('Indexing channel expansion toggled', { expanded: appState.channelExpanded });
         }
 
+        // --- Expandable Channel Section Logic for Automode View ---
+        function toggleChannelExpansionAutomode() {
+            const expandedContainer = document.getElementById('channel-expanded-container-automode');
+            const expandHeader = document.getElementById('expand-channel-header-automode');
+            const expandText = document.getElementById('expand-channel-text-automode');
+            const expandIcon = document.getElementById('expand-channel-icon-automode');
+            
+            if (!expandedContainer || !expandHeader || !expandText || !expandIcon) {
+                console.error('Automode channel expansion elements not found');
+                return;
+            }
+            
+            // Use the same state as the main channel expansion
+            // Mark this as a user-initiated change
+            appState.userInitiatedChannelChange = true;
+            appState.channelExpanded = !appState.channelExpanded;
+            expandedContainer.style.display = appState.channelExpanded ? 'block' : 'none';
+            
+            // Set contextual button text based on state
+            if (appState.channelExpanded) {
+                expandText.textContent = 'HIDE CHANNEL';
+                expandIcon.textContent = '▲';
+                // Set iframe to fixed height for consistent display
+                const channelFrame = document.getElementById('channel-frame-automode');
+                if (channelFrame) {
+                    channelFrame.style.visibility = 'visible';
+                    channelFrame.style.height = '320px';
+                }
+            } else {
+                expandText.textContent = 'WHAT ARE WE LEARNING';
+                expandIcon.textContent = '▼';
+            }
+            
+            // Reduce the simulation-container height when channel is expanded
+            const simContainer = document.querySelector('.simulation-container');
+            if (simContainer) {
+                if (appState.channelExpanded) {
+                    simContainer.style.height = 'auto';
+                    simContainer.style.minHeight = '500px'; // Reduced from 600px
+                } else {
+                    simContainer.style.height = 'auto';
+                    simContainer.style.minHeight = '600px';
+                }
+            }
+            
+            Tracker.logRumiAction('Automode channel expansion toggled', { expanded: appState.channelExpanded });
+        }
+
         // Debug function to check channel state
         function debugChannelState() {
             const expandableSection = document.getElementById('expandable-channel-section');
@@ -9402,25 +9465,35 @@ function recordActualIndexedContentBeforeReceipt() {
                     console.log('Channel frame already pointing to genre-channel-optimized_LUDICROUS_WORKING.html');
                 }
             } else if (appState.entryPoint === 'automode') {
-                expandableSection.style.display = 'block';
-                if (expandableSectionIndexing) expandableSectionIndexing.style.display = 'block';
+                // For automode, show the specific automode channel section
+                const automodeChannelSection = document.getElementById('automode-channel-section-indexing');
+                const automodeExpandText = document.getElementById('expand-channel-text-automode');
+                const automodeChannelFrame = document.getElementById('channel-frame-automode');
                 
-                // Set contextual button text for both views
-                if (!appState.channelExpanded) {
-                    expandText.textContent = 'WHAT ARE WE LEARNING';
-                    if (expandTextIndexing) expandTextIndexing.textContent = 'WHAT ARE WE LEARNING';
-                } else {
-                    expandText.textContent = 'HIDE CHANNEL';
-                    if (expandTextIndexing) expandTextIndexing.textContent = 'HIDE CHANNEL';
+                if (automodeChannelSection) {
+                    automodeChannelSection.style.display = 'block';
+                    console.log('Automode channel section shown for indexing');
+                }
+                
+                // Hide the regular channel sections for automode
+                expandableSection.style.display = 'none';
+                if (expandableSectionIndexing) expandableSectionIndexing.style.display = 'none';
+                
+                // Set contextual button text for automode view
+                if (automodeExpandText) {
+                    if (!appState.channelExpanded) {
+                        automodeExpandText.textContent = 'WHAT ARE WE LEARNING';
+                    } else {
+                        automodeExpandText.textContent = 'HIDE CHANNEL';
+                    }
                 }
                 
                 // MODAL FIX: Apply same protection for automode
-                const currentSrc = channelFrame.src ? channelFrame.src.split('/').pop() : '';
+                const currentSrc = automodeChannelFrame ? (automodeChannelFrame.src ? automodeChannelFrame.src.split('/').pop() : '') : '';
                 const shouldAvoidReset = appState.isIndexing && !appState.userInitiatedChannelChange;
                 
-                if (currentSrc !== 'rumi-channel.html' && !shouldAvoidReset) {
-                    channelFrame.src = 'rumi-channel.html';
-                    if (channelFrameIndexing) channelFrameIndexing.src = 'rumi-channel.html';
+                if (automodeChannelFrame && currentSrc !== 'rumi-channel.html' && !shouldAvoidReset) {
+                    automodeChannelFrame.src = 'rumi-channel.html';
                     console.log('Automode: Set channel to rumi-channel.html');
                 } else if (shouldAvoidReset) {
                     console.log('🚫 Preventing iframe reset during active session (modal protection - automode)');
