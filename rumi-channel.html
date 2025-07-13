@@ -381,16 +381,7 @@
 
             // Bucket information
             addMetadataItem(grid, 'Learning Category', bucketInfo.category, 'highlight');
-            
-            // Show real description from CSV if available, otherwise use bucket description
-            let descriptionText = bucketInfo.description;
-            if (bucketContent && bucketContent.length > 0) {
-                const firstItem = bucketContent[0];
-                if (firstItem && firstItem.description) {
-                    descriptionText = firstItem.description;
-                }
-            }
-            addMetadataItem(grid, 'Description', descriptionText, 'description');
+            addMetadataItem(grid, 'Description', bucketInfo.description, 'description');
             
             // Bucket statistics
             const totalClips = bucketContent.length || 20;
@@ -438,17 +429,8 @@
                     showName = currentContentTitle.split(' - ')[0];
                 }
                 
-                addMetadataItem(grid, 'Current Content', showName, 'description');
-                
-                // Show what we're learning - use first item as example
-                const firstItem = bucketContent[0];
-                let learningDescription = `${firstItem.title}`;
-                if (firstItem.description) {
-                    learningDescription += ` - ${firstItem.description}`;
-                } else {
-                    learningDescription += ` where character development and narrative structure happens`;
-                }
-                addMetadataItem(grid, 'What we are learning', learningDescription, 'description');
+                // Note: Removed redundant 'Current Content' and 'What we are learning' lines
+                // The description field above already shows the important information
             }
 
             // Show popup
