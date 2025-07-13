@@ -2181,6 +2181,10 @@
                 <button id="start-learning-button" class="primary-cta automode" onclick="startAutomodeIndexing()" style="width: 100%; margin-top: 8px; background: #ffff00; color: #000; border: 2px solid #ffff00; padding: 10px; border-radius: 4px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; display: none;">
                     START LEARNING CONTENT INTELLIGENCE
                 </button>
+                <div id="automode-description" style="display: none; margin-top: 8px; padding: 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; font-size: 10px; color: #ccc; line-height: 1.3;">
+                    <div style="font-weight: 600; color: #ffff00; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px;">LEARNING FOCUS</div>
+                    <div id="automode-description-text">Select a bucket to see what you'll be learning...</div>
+                </div>
             </div>
             <button id="user-changes-content-btn" class="secondary-button" onclick="simulateShowChange()" style="display: none; margin-top: 10px;">
                 User Changes Content
@@ -8284,6 +8288,9 @@ function recordActualIndexedContentBeforeReceipt() {
             appState.currentBucket = selectedBucket;
             console.log('[RUMI] Launching automode with bucket:', selectedBucket);
             
+            // Show the description for the selected bucket
+            showAutomodeDescription(selectedBucket);
+            
             const popup = document.querySelector('.extension-popup');
             const activationCircle = document.getElementById('activation-circle');
             
@@ -8313,6 +8320,30 @@ function recordActualIndexedContentBeforeReceipt() {
             
             // Don't update UI yet - wait for activation
             // updateUI();
+        }
+
+        // Show automode description for selected bucket
+        function showAutomodeDescription(selectedBucket) {
+            const descriptionDiv = document.getElementById('automode-description');
+            const descriptionText = document.getElementById('automode-description-text');
+            
+            if (!descriptionDiv || !descriptionText) {
+                console.log('[RUMI] Description elements not found');
+                return;
+            }
+            
+            // Get the first content item for this bucket to show as example
+            const contentItems = getAutomodeContent(selectedBucket, 3600, 0.1, 1.0);
+            if (contentItems && contentItems.length > 0) {
+                const firstItem = contentItems[0];
+                const description = firstItem.description || 'Learning content intelligence patterns';
+                descriptionText.textContent = description;
+                descriptionDiv.style.display = 'block';
+                console.log('[RUMI] Showing automode description:', description);
+            } else {
+                descriptionText.textContent = 'Learning content intelligence patterns';
+                descriptionDiv.style.display = 'block';
+            }
         }
 
         // Section 2b: Start Automode Indexing Function
@@ -8432,6 +8463,9 @@ function recordActualIndexedContentBeforeReceipt() {
                         startLearningButton.style.display = 'block';
                         startLearningButton.textContent = `START LEARNING ${appState.currentBucket}`;
                     }
+                    
+                    // Show the description for the selected bucket
+                    showAutomodeDescription(appState.currentBucket);
                     
                     // Update UI after state is set
                     updateUI();
