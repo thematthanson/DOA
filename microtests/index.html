@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rumi Microtests - Testing Suite</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=SF+Mono:wght@400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'SF Mono', 'Monaco', 'Cascadia Code', monospace;
+            background: #000000;
+            color: #ffffff;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #111111;
+            border: 2px solid #333333;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .header {
+            background: #000000;
+            padding: 20px;
+            border-bottom: 1px solid #333333;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #00ff41;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            font-size: 12px;
+            color: #888888;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .back-link {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 12px;
+            color: #00ff41;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover {
+            color: #00cc33;
+        }
+
+        .content {
+            padding: 20px;
+        }
+
+        .intro {
+            margin-bottom: 30px;
+            padding: 15px;
+            background: #1a1a1a;
+            border: 1px solid #333333;
+            border-radius: 6px;
+        }
+
+        .intro h2 {
+            font-size: 16px;
+            color: #00ff41;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .intro p {
+            font-size: 12px;
+            color: #cccccc;
+            margin-bottom: 8px;
+        }
+
+        .microtests-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .microtest-card {
+            background: #1a1a1a;
+            border: 1px solid #333333;
+            border-radius: 6px;
+            padding: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .microtest-card:hover {
+            border-color: #00ff41;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 255, 65, 0.2);
+        }
+
+        .microtest-card h3 {
+            font-size: 14px;
+            color: #00ff41;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .microtest-card p {
+            font-size: 11px;
+            color: #cccccc;
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+
+        .microtest-link {
+            display: inline-block;
+            background: #000000;
+            color: #00ff41;
+            border: 1px solid #00ff41;
+            padding: 8px 12px;
+            font-size: 10px;
+            font-family: 'SF Mono', monospace;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.2s;
+        }
+
+        .microtest-link:hover {
+            background: #00ff41;
+            color: #000000;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 8px;
+            background: #00ff41;
+        }
+
+        .category-tag {
+            display: inline-block;
+            background: #333333;
+            color: #ffffff;
+            padding: 2px 6px;
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-radius: 3px;
+            margin-right: 6px;
+        }
+
+        .footer {
+            margin-top: 30px;
+            padding: 15px;
+            background: #1a1a1a;
+            border: 1px solid #333333;
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        .footer p {
+            font-size: 10px;
+            color: #888888;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        @media (max-width: 600px) {
+            .microtests-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 20px;
+            }
+            
+            .content {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="../reference-index.html" class="back-link">← Back to Main</a>
+            <h1>Rumi Microtests</h1>
+            <p>Comprehensive Testing Suite</p>
+        </div>
+
+        <div class="content">
+            <div class="intro">
+                <h2>Testing Overview</h2>
+                <p>This page contains all standalone microtests for the Rumi system. Each test focuses on specific functionality and can be run independently to verify system components.</p>
+                <p>All tests are designed to work in isolation and provide detailed feedback on their respective systems.</p>
+            </div>
+
+            <div class="microtests-grid">
+                <div class="microtest-card">
+                    <h3><span class="status-indicator"></span>ASCII Shapes Test</h3>
+                    <p>Tests the ASCII art generation system with various shapes and patterns. Verifies animation rendering, pattern switching, and visual output consistency.</p>
+                    <div style="margin-bottom: 10px;">
+                        <span class="category-tag">Visual</span>
+                        <span class="category-tag">Animation</span>
+                        <span class="category-tag">ASCII</span>
+                    </div>
+                    <a href="ascii-shapes-standalone.html" class="microtest-link">Run Test</a>
+                </div>
+
+                <div class="microtest-card">
+                    <h3><span class="status-indicator"></span>CSV Processing Test</h3>
+                    <p>Tests CSV file loading, parsing, and content management. Verifies data extraction, filtering, and content item generation from CSV sources.</p>
+                    <div style="margin-bottom: 10px;">
+                        <span class="category-tag">Data</span>
+                        <span class="category-tag">CSV</span>
+                        <span class="category-tag">Content</span>
+                    </div>
+                    <a href="csv-processing-standalone.html" class="microtest-link">Run Test</a>
+                </div>
+
+                <div class="microtest-card">
+                    <h3><span class="status-indicator"></span>Iframe Communication Test</h3>
+                    <p>Tests communication between iframe elements and parent windows. Verifies message passing, event handling, and cross-frame data synchronization.</p>
+                    <div style="margin-bottom: 10px;">
+                        <span class="category-tag">Communication</span>
+                        <span class="category-tag">Iframe</span>
+                        <span class="category-tag">Events</span>
+                    </div>
+                    <a href="iframe-communication-standalone.html" class="microtest-link">Run Test</a>
+                </div>
+
+                <div class="microtest-card">
+                    <h3><span class="status-indicator"></span>Intelligence Buckets Test</h3>
+                    <p>Tests the intelligence bucket classification system. Verifies content categorization, bucket assignment, and learning category management.</p>
+                    <div style="margin-bottom: 10px;">
+                        <span class="category-tag">AI</span>
+                        <span class="category-tag">Classification</span>
+                        <span class="category-tag">Learning</span>
+                    </div>
+                    <a href="intelligence-buckets-standalone.html" class="microtest-link">Run Test</a>
+                </div>
+
+                <div class="microtest-card">
+                    <h3><span class="status-indicator"></span>Multiplier Calculation Test</h3>
+                    <p>Tests the points multiplier system and calculation logic. Verifies multiplier progression, milestone tracking, and earnings calculations.</p>
+                    <div style="margin-bottom: 10px;">
+                        <span class="category-tag">Points</span>
+                        <span class="category-tag">Multiplier</span>
+                        <span class="category-tag">Math</span>
+                    </div>
+                    <a href="multiplier-calc-standalone.html" class="microtest-link">Run Test</a>
+                </div>
+
+                <div class="microtest-card">
+                    <h3><span class="status-indicator"></span>Points Calculation Test</h3>
+                    <p>Tests the comprehensive points calculation system. Verifies earnings tracking, session management, and points display functionality.</p>
+                    <div style="margin-bottom: 10px;">
+                        <span class="category-tag">Points</span>
+                        <span class="category-tag">Earnings</span>
+                        <span class="category-tag">Session</span>
+                    </div>
+                    <a href="points-calculation-standalone.html" class="microtest-link">Run Test</a>
+                </div>
+
+                <div class="microtest-card">
+                    <h3><span class="status-indicator"></span>Popup System Test</h3>
+                    <p>Tests the content popup system and metadata display. Verifies popup creation, content formatting, and user interaction handling.</p>
+                    <div style="margin-bottom: 10px;">
+                        <span class="category-tag">UI</span>
+                        <span class="category-tag">Popup</span>
+                        <span class="category-tag">Metadata</span>
+                    </div>
+                    <a href="popup-system-standalone.html" class="microtest-link">Run Test</a>
+                </div>
+
+                <div class="microtest-card">
+                    <h3><span class="status-indicator"></span>Progress Diamonds Test</h3>
+                    <p>Tests the progress diamond visualization system. Verifies milestone tracking, visual feedback, and progress indicator functionality.</p>
+                    <div style="margin-bottom: 10px;">
+                        <span class="category-tag">Visual</span>
+                        <span class="category-tag">Progress</span>
+                        <span class="category-tag">Milestones</span>
+                    </div>
+                    <a href="progress-diamonds-standalone.html" class="microtest-link">Run Test</a>
+                </div>
+
+                <div class="microtest-card">
+                    <h3><span class="status-indicator"></span>Section Transitions Test</h3>
+                    <p>Tests the section transition system and UI state management. Verifies smooth transitions between different application sections and states.</p>
+                    <div style="margin-bottom: 10px;">
+                        <span class="category-tag">UI</span>
+                        <span class="category-tag">Transitions</span>
+                        <span class="category-tag">State</span>
+                    </div>
+                    <a href="section-transitions-standalone.html" class="microtest-link">Run Test</a>
+                </div>
+            </div>
+
+            <div class="footer">
+                <p>All microtests are designed to run independently and provide comprehensive feedback on system functionality.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Add some interactive functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add click tracking for analytics
+            const links = document.querySelectorAll('.microtest-link');
+            links.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    console.log('Microtest accessed:', this.href);
+                });
+            });
+
+            // Add hover effects for cards
+            const cards = document.querySelectorAll('.microtest-card');
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-2px)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                });
+            });
+        });
+    </script>
+</body>
+</html> 
