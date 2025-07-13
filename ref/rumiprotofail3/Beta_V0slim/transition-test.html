@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Show Transition Test</title>
+    <style>
+        body {
+            font-family: 'SF Mono', monospace;
+            background: #000;
+            color: #00ff41;
+            margin: 0;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #111;
+            border: 2px solid #00ff41;
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .test-header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 20px;
+        }
+
+        .test-section {
+            margin-bottom: 30px;
+            padding: 15px;
+            background: #1a1a1a;
+            border-radius: 6px;
+            border: 1px solid #333;
+        }
+
+        .test-button {
+            background: #00ff41;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'SF Mono', monospace;
+            font-weight: bold;
+            margin: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .test-button:hover {
+            background: #00cc33;
+            transform: translateY(-2px);
+        }
+
+        .test-button:disabled {
+            background: #333;
+            color: #666;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .content-block {
+            background: #222;
+            border: 1px solid #444;
+            border-radius: 4px;
+            padding: 10px;
+            margin: 10px 0;
+            transition: all 0.5s ease;
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        .content-block.transitioning {
+            transform: translateX(-100%);
+            opacity: 0;
+        }
+
+        .content-block.new {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+
+        .content-block.new.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        .ascii-animation {
+            background: #000;
+            border: 1px solid #00ff41;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            line-height: 1.2;
+            white-space: pre;
+            margin: 15px 0;
+        }
+
+        .timeline {
+            display: flex;
+            gap: 2px;
+            margin: 15px 0;
+            background: #1a1a1a;
+            border: 2px solid #333;
+            border-radius: 4px;
+            padding: 4px;
+            position: relative;
+            min-height: 60px;
+            overflow: visible;
+        }
+
+        .timeline-item {
+            background: #333;
+            padding: 8px 12px;
+            border-radius: 4px;
+            border: 1px solid #555;
+            transition: all 0.3s ease;
+            position: relative;
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            color: #ccc;
+            box-shadow: inset 0 0 2px rgba(255, 255, 255, 0.1);
+        }
+
+        /* Duration-based sizing - will be set via JavaScript */
+        .timeline-item[data-duration="164"] { flex: 164; }
+        .timeline-item[data-duration="155"] { flex: 155; }
+        .timeline-item[data-duration="116"] { flex: 116; }
+
+        .timeline-item.active {
+            background: #1a1a1a; /* Dark grey background */
+            color: #00ff41; /* Green text */
+            border-color: #00ff41; /* Green border */
+            box-shadow: 0 0 10px rgba(0, 255, 65, 0.3);
+        }
+
+        .timeline-item.active::after {
+            content: '▶ ACTIVE';
+            position: absolute;
+            right: -60px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 10px;
+            color: #00ff41; /* Green label */
+            font-weight: bold;
+        }
+
+        /* Multiplier effects */
+        .timeline-item.multiplier-1-2 {
+            border-width: 2px;
+            box-shadow: 0 0 5px rgba(0, 255, 65, 0.2);
+        }
+
+        .timeline-item.multiplier-1-5 {
+            border-width: 3px;
+            box-shadow: 0 0 8px rgba(0, 255, 65, 0.3);
+        }
+
+        .timeline-item.multiplier-2-0 {
+            border-width: 4px;
+            box-shadow: 0 0 12px rgba(0, 255, 65, 0.4);
+        }
+
+        .multiplier {
+            background: #333;
+            padding: 8px 12px;
+            border-radius: 4px;
+            border: 1px solid #555;
+            margin-left: auto;
+            transition: all 0.3s ease;
+        }
+
+        .multiplier.active {
+            background: #00ff41;
+            color: #000;
+            border-color: #00ff41;
+        }
+
+        .status-panel {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            margin: 5px 0;
+            padding: 5px 0;
+            border-bottom: 1px solid #333;
+        }
+
+        .status-item:last-child {
+            border-bottom: none;
+        }
+
+        .choice-prompt {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .choice-content {
+            background: #1a1a1a;
+            border: 2px solid #00ff41;
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        .choice-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .choice-button {
+            flex: 1;
+            background: #00ff41;
+            color: #000;
+            border: none;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'SF Mono', monospace;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+
+        .choice-button.secondary {
+            background: #222;
+            color: #00ff41;
+            border: 2px solid #00ff41;
+        }
+
+        .log-panel {
+            background: #000;
+            border: 1px solid #333;
+            padding: 10px;
+            height: 200px;
+            overflow-y: auto;
+            font-size: 11px;
+            margin-top: 20px;
+        }
+
+        .log-entry {
+            margin: 2px 0;
+            padding: 2px 0;
+        }
+
+        .log-entry.info { color: #00ff41; }
+        .log-entry.warn { color: #ffaa00; }
+        .log-entry.error { color: #ff4444; }
+
+        .timeline-item.completed {
+            background: #1a1a1a; /* Same as inactive, not red */
+            border-color: #555; /* Normal border, not red */
+            color: #888; /* Dimmed text, not red */
+            opacity: 0.7;
+        }
+
+        .timeline-item.completed::after {
+            content: '✓ COMPLETED';
+            position: absolute;
+            right: -60px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 10px;
+            color: #888; /* Dimmed color, not red */
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="test-header">
+            <h1>SHOW TRANSITION TEST</h1>
+            <p>Testing coordinated UI updates for smooth show transitions</p>
+        </div>
+
+        <!-- Test Controls -->
+        <div class="test-section">
+            <h3>Test Controls</h3>
+            <div class="test-controls">
+                <button class="test-button" onclick="startTest()">Start Complete Test</button>
+                <button class="test-button" onclick="testShowChange()">Test Show Change</button>
+                <button class="test-button" onclick="testSkipToEnd()">Test Skip to End</button>
+                <button class="test-button" onclick="markCurrentAsCompleted()">Mark Current Completed</button>
+                <button class="test-button" onclick="startNewSession()">Start New Session</button>
+                <button class="test-button" onclick="testTimelineEffects()">Test Timeline Effects</button>
+                <button class="test-button" onclick="testTimelineDuration()">Test Timeline Duration</button>
+                <button class="test-button" onclick="simulateIndexingProgress(15)">Index 15 Min</button>
+                <button class="test-button" onclick="clearLog()">Clear Log</button>
+                <button class="test-button" onclick="showReceipt()">Show Receipt</button>
+            </div>
+        </div>
+
+        <!-- Current State Display -->
+        <div class="test-section">
+            <h3>Current State</h3>
+            <div class="status-panel">
+                <div class="status-item">
+                    <span>Current Show:</span>
+                    <span id="current-show">Blade Runner 2049</span>
+                </div>
+                <div class="status-item">
+                    <span>Session Duration:</span>
+                    <span id="session-duration">164 minutes</span>
+                </div>
+                <div class="status-item">
+                    <span>Indexing Status:</span>
+                    <span id="indexing-status">Active</span>
+                </div>
+                <div class="status-item">
+                    <span>Transition State:</span>
+                    <span id="transition-state">Ready</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ASCII Animation Panel -->
+        <div class="test-section">
+            <h3>ASCII Animation Panel</h3>
+            <div class="ascii-animation" id="ascii-panel">
+    ╔══════════════════════════════════════════════════════════════════════════════╗
+    ║                                                                              ║
+    ║                           BLADE RUNNER 2049                                 ║
+    ║                                                                              ║
+    ║                           FILM | Multiplier: 1.0x                           ║
+    ║                                                                              ║
+    ║                              INDEXING...                                    ║
+    ║                                                                              ║
+    ╚══════════════════════════════════════════════════════════════════════════════╝
+            </div>
+        </div>
+
+        <!-- Content Blocks (Timeline) -->
+        <div class="test-section">
+            <h3>Content Timeline</h3>
+            <div class="timeline" id="content-timeline">
+                <div class="timeline-item active" id="block-1" data-duration="164">
+                    <strong>Blade Runner 2049</strong><br>
+                    <small>164 min | Sci-Fi</small>
+                </div>
+                <div class="timeline-item" id="block-2" data-duration="155">
+                    <strong>Dune</strong><br>
+                    <small>155 min | Sci-Fi</small>
+                </div>
+                <div class="timeline-item" id="block-3" data-duration="116">
+                    <strong>Arrival</strong><br>
+                    <small>116 min | Sci-Fi</small>
+                </div>
+            </div>
+            <div class="multiplier" id="multiplier">
+                Multiplier: 1.0x
+            </div>
+        </div>
+
+        <!-- CTA Button -->
+        <div class="test-section">
+            <h3>CTA Button</h3>
+            <button class="test-button" id="cta-button" style="width: 100%; font-size: 14px;">
+                STOP WATCHING BLADE RUNNER 2049
+            </button>
+        </div>
+
+        <!-- Test Log -->
+        <div class="test-section">
+            <h3>Test Log</h3>
+            <div class="log-panel" id="log-panel">
+                <div class="log-entry info">Test initialized. Ready to simulate transitions.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Choice Prompt Overlay -->
+    <div class="choice-prompt" id="choice-prompt">
+        <div class="choice-content">
+            <h2>Choose Your Next Content</h2>
+            <p><strong>Continue with Rumi:</strong> Go to the Genre Channel where Rumi curates content based on your interests and session goals.</p>
+            <p><strong>Let Streamer Choose:</strong> Give control back to the streamer to select the next piece of content.</p>
+            <div class="choice-buttons">
+                <button class="choice-button" onclick="chooseRumi()">Continue with Rumi</button>
+                <button class="choice-button secondary" onclick="chooseStreamer()">Let Streamer Choose</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Test state management
+        let testState = {
+            currentShow: { title: 'Blade Runner 2049', genre: 'Sci-Fi', duration: 164 },
+            isIndexing: true,
+            isTransitioning: false,
+            multiplier: 1.0,
+            sessionTime: 0, // Track session time for multiplier progression
+            totalSessionLength: 164, // Total duration of all content in session (minutes)
+            timeIndexed: 0, // Time already indexed in current session (minutes)
+            multiplierThresholds: [
+                { time: 60, multiplier: 1.2 },   // 1 hour = 1.2x
+                { time: 120, multiplier: 1.5 },  // 2 hours = 1.5x
+                { time: 180, multiplier: 2.0 }   // 3 hours = 2.0x
+            ],
+            completedContent: new Set(), // Track completed content
+            sessionId: Date.now(), // Unique session identifier
+            // NEW: Track played content for receipt
+            playedContent: [], // Array of {title, timeIndexed, points, multiplier}
+            baseRate: 0.1 // Points per minute
+        };
+
+        // Test shows
+        const testShows = [
+            { title: 'Blade Runner 2049', genre: 'Sci-Fi', duration: 164, id: 'blade-runner-2049' },
+            { title: 'Dune', genre: 'Sci-Fi', duration: 155, id: 'dune' },
+            { title: 'Arrival', genre: 'Sci-Fi', duration: 116, id: 'arrival' }
+        ];
+
+        function calculateMultiplier(sessionTime) {
+            let multiplier = 1.0;
+            for (const threshold of testState.multiplierThresholds) {
+                if (sessionTime >= threshold.time) {
+                    multiplier = threshold.multiplier;
+                }
+            }
+            return multiplier;
+        }
+
+        function formatTime(seconds) {
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${hours}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        // Logging function
+        function log(message, type = 'info') {
+            const logPanel = document.getElementById('log-panel');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.className = `log-entry ${type}`;
+            logEntry.textContent = `[${timestamp}] ${message}`;
+            logPanel.appendChild(logEntry);
+            logPanel.scrollTop = logPanel.scrollHeight;
+        }
+
+        // Clear log
+        function clearLog() {
+            document.getElementById('log-panel').innerHTML = '';
+            log('Log cleared.');
+        }
+
+        // Update UI elements
+        function updateUI() {
+            document.getElementById('current-show').textContent = testState.currentShow.title;
+            document.getElementById('session-duration').textContent = `${testState.currentShow.duration} minutes`;
+            document.getElementById('indexing-status').textContent = testState.isIndexing ? 'Active' : 'Inactive';
+            document.getElementById('transition-state').textContent = testState.isTransitioning ? 'Transitioning' : 'Ready';
+            document.getElementById('multiplier').textContent = `Multiplier: ${testState.multiplier.toFixed(1)}x`;
+            document.getElementById('cta-button').textContent = `STOP WATCHING ${testState.currentShow.title}`;
+        }
+
+        // Update ASCII animation
+        function updateASCIIAnimation(show) {
+            const asciiPanel = document.getElementById('ascii-panel');
+            const title = show.title.toUpperCase();
+            const details = `FILM | Multiplier: ${testState.multiplier.toFixed(1)}x`;
+            const sessionTime = formatTime(testState.sessionTime);
+            
+            // Calculate progress based on time indexed vs total session length remaining
+            const totalTimeRemaining = testState.totalSessionLength - testState.timeIndexed;
+            const progressPercent = totalTimeRemaining > 0 ? 
+                Math.min((testState.timeIndexed / testState.totalSessionLength) * 100, 100) : 100;
+            const progressBarLength = 50; // 50 characters wide
+            const filledLength = Math.floor((progressPercent / 100) * progressBarLength);
+            const emptyLength = progressBarLength - filledLength;
+            
+            const progressBar = '█'.repeat(filledLength) + '░'.repeat(emptyLength);
+            const progressText = `${progressPercent.toFixed(1)}%`;
+
+            asciiPanel.innerHTML = `
+    ╔══════════════════════════════════════════════════════════════════════════════╗
+    ║                                                                              ║
+    ║                           ${title.padEnd(40)}                                 ║
+    ║                                                                              ║
+    ║                           ${details.padEnd(40)}                                 ║
+    ║                                                                              ║
+    ║                              INDEXING...                                    ║
+    ║                                                                              ║
+    ║                           Session: ${sessionTime.padEnd(20)}                    ║
+    ║                           Total: ${testState.totalSessionLength}min | Indexed: ${testState.timeIndexed}min ║
+    ║                           Progress: ${progressText.padStart(6)}                                    ║
+    ║                           [${progressBar}]                                    ║
+    ╚══════════════════════════════════════════════════════════════════════════════╝
+            `;
+        }
+
+        // Update content blocks
+        function updateContentBlocks() {
+            const timeline = document.getElementById('content-timeline');
+            const blocks = timeline.querySelectorAll('.timeline-item');
+            
+            blocks.forEach(block => {
+                block.classList.remove('active', 'completed', 'multiplier-1-2', 'multiplier-1-5', 'multiplier-2-0');
+                
+                // Find the show for this block
+                const showTitle = block.querySelector('strong').textContent;
+                const show = testShows.find(s => s.title === showTitle);
+                
+                if (show) {
+                    // Compare titles instead of IDs
+                    if (show.title === testState.currentShow.title) {
+                        block.classList.add('active');
+                        
+                        // Apply multiplier effects to active item
+                        if (testState.multiplier >= 2.0) {
+                            block.classList.add('multiplier-2-0');
+                        } else if (testState.multiplier >= 1.5) {
+                            block.classList.add('multiplier-1-5');
+                        } else if (testState.multiplier >= 1.2) {
+                            block.classList.add('multiplier-1-2');
+                        }
+                    }
+                    
+                    if (isContentCompleted(show.id)) {
+                        block.classList.add('completed');
+                    }
+                }
+            });
+        }
+
+        function updateMultiplierDisplay() {
+            const multiplierElement = document.getElementById('multiplier');
+            if (multiplierElement) {
+                multiplierElement.textContent = `Multiplier: ${testState.multiplier.toFixed(1)}x`;
+                
+                // Add visual feedback for multiplier changes
+                if (testState.multiplier > 1.0) {
+                    multiplierElement.style.background = '#00ff41';
+                    multiplierElement.style.color = '#000';
+                    multiplierElement.style.borderColor = '#00ff41';
+                } else {
+                    multiplierElement.style.background = '#333';
+                    multiplierElement.style.color = '#ccc';
+                    multiplierElement.style.borderColor = '#555';
+                }
+            }
+        }
+
+        // Coordinated UI update (simulating the main system)
+        function updateAllUIElements(newShow = null) {
+            log('=== COORDINATED UI UPDATE STARTED ===', 'info');
+            
+            const currentShow = newShow || testState.currentShow;
+            
+            // Phase 1: Update state-dependent UI elements
+            requestAnimationFrame(() => {
+                updateUI();
+                updateASCIIAnimation(currentShow);
+                updateMultiplierDisplay();
+                log('Phase 1: State-dependent UI elements updated', 'info');
+            });
+            
+            // Phase 2: Update content transitions
+            requestAnimationFrame(() => {
+                updateContentBlocks();
+                log('Phase 2: Content transitions updated', 'info');
+            });
+            
+            // Phase 3: Final consistency check
+            requestAnimationFrame(() => {
+                log('Phase 3: UI consistency ensured', 'info');
+                log('=== COORDINATED UI UPDATE COMPLETED ===', 'info');
+            });
+        }
+
+        // Smooth show transition
+        function smoothShowTransition(fromShow, toShow) {
+            log('=== SMOOTH SHOW TRANSITION STARTED ===', 'info');
+            log(`From: ${fromShow.title}`, 'info');
+            log(`To: ${toShow.title}`, 'info');
+            
+            testState.isTransitioning = true;
+            updateUI();
+            
+            // Simulate the transition
+            setTimeout(() => {
+                // Record the played content for receipt
+                if (testState.timeIndexed > 0) {
+                    const points = testState.timeIndexed * testState.baseRate * testState.multiplier;
+                    testState.playedContent.push({
+                        title: fromShow.title,
+                        timeIndexed: testState.timeIndexed,
+                        points: points,
+                        multiplier: testState.multiplier,
+                        duration: fromShow.duration
+                    });
+                    log(`Recorded played content: ${fromShow.title} - ${testState.timeIndexed}min indexed, ${points.toFixed(2)} points`, 'info');
+                }
+                
+                // Mark the previous show as completed
+                markContentAsCompleted(fromShow.id);
+                
+                // Update current show
+                testState.currentShow = toShow;
+                
+                // Add the new show's duration to total session length
+                testState.totalSessionLength += toShow.duration;
+                
+                // Reset time indexed for the new show (progress resets)
+                testState.timeIndexed = 0;
+                
+                log(`Total session length increased to ${testState.totalSessionLength} minutes`, 'info');
+                log(`Progress reset for new show: ${toShow.title}`, 'info');
+                
+                testState.isTransitioning = false;
+                updateAllUIElements(toShow);
+                log('=== SMOOTH SHOW TRANSITION COMPLETED ===', 'info');
+            }, 1000);
+        }
+
+        function simulateIndexingProgress(minutes) {
+            testState.timeIndexed += minutes;
+            log(`Indexed ${minutes} minutes. Total indexed: ${testState.timeIndexed}/${testState.totalSessionLength}`, 'info');
+            updateASCIIAnimation(testState.currentShow);
+        }
+
+        function simulateSessionProgression() {
+            log('Simulating session time progression...', 'info');
+            
+            // Simulate 90 minutes of session time (enough to hit 1.2x multiplier)
+            testState.sessionTime = 90 * 60; // Convert to seconds
+            testState.multiplier = calculateMultiplier(testState.sessionTime);
+            
+            // Simulate indexing 45 minutes of the current show
+            testState.timeIndexed = 45;
+            
+            log(`Session time: ${testState.sessionTime / 60} minutes`, 'info');
+            log(`Multiplier: ${testState.multiplier.toFixed(1)}x`, 'info');
+            log(`Time indexed: ${testState.timeIndexed}/${testState.totalSessionLength} minutes`, 'info');
+            
+            updateMultiplierDisplay();
+            updateASCIIAnimation(testState.currentShow);
+        }
+
+        // Test functions
+        function startTest() {
+            log('Starting complete test sequence...', 'info');
+            log('1. Simulating Blade Runner session (164 min movie)...', 'info');
+            
+            // Simulate session time progression and multiplier changes
+            simulateSessionProgression();
+            
+            // Simulate indexing progress
+            setTimeout(() => {
+                log('2. Simulating indexing progress...', 'info');
+                simulateIndexingProgress(30); // Index 30 more minutes
+                
+                setTimeout(() => {
+                    log('3. Simulating "Skip to End" action...', 'info');
+                    log('4. Marking Blade Runner as completed...', 'info');
+                    markCurrentAsCompleted();
+                    
+                    setTimeout(() => {
+                        log('5. Showing user choice prompt...', 'info');
+                        
+                        setTimeout(() => {
+                            log('6. User chose: Let Streamer Choose', 'info');
+                            log('7. Simulating show change to Dune...', 'info');
+                            
+                            const currentShow = testState.currentShow;
+                            const newShow = testShows.find(s => s.title !== currentShow.title) || testShows[1];
+                            
+                            smoothShowTransition(currentShow, newShow);
+                            
+                            setTimeout(() => {
+                                log('8. Note: Blade Runner is now completed and cannot be removed', 'warn');
+                                log('9. Total session length increased to 319 minutes (164 + 155)', 'info');
+                                log('10. Progress reset for Dune (0/319 minutes indexed)', 'info');
+                                
+                                // Continue to third show
+                                setTimeout(() => {
+                                    log('11. Simulating indexing progress on Dune...', 'info');
+                                    simulateIndexingProgress(45); // Index 45 minutes of Dune
+                                    
+                                    setTimeout(() => {
+                                        log('12. Transitioning to third show (Arrival)...', 'info');
+                                        testShowChange(); // This will now properly cycle to Arrival
+                                        
+                                        setTimeout(() => {
+                                            log('13. Simulating indexing progress on Arrival...', 'info');
+                                            simulateIndexingProgress(30); // Index 30 minutes of Arrival
+                                            
+                                            setTimeout(() => {
+                                                log('14. Showing final receipt...', 'info');
+                                                showReceipt();
+                                            }, 1000);
+                                        }, 2000);
+                                    }, 1000);
+                                }, 2000);
+                            }, 2000);
+                        }, 2000);
+                    }, 1000);
+                }, 1000);
+            }, 2000);
+        }
+
+        function testSkipToEnd() {
+            log('Simulating debug skip to end...', 'info');
+            
+            // Simulate the skip action
+            setTimeout(() => {
+                log('Skip completed. Showing user choice prompt...', 'info');
+                showChoicePrompt();
+            }, 1000);
+        }
+
+        function showChoicePrompt() {
+            log('Displaying user choice prompt...', 'info');
+            document.getElementById('choice-prompt').style.display = 'flex';
+        }
+
+        function chooseStreamer() {
+            log('User chose: Let Streamer Choose', 'info');
+            document.getElementById('choice-prompt').style.display = 'none';
+            
+            setTimeout(() => {
+                log('Simulating show change to Dune...', 'info');
+                testShowChange();
+            }, 500);
+        }
+
+        function chooseRumi() {
+            log('User chose: Continue with Rumi', 'info');
+            document.getElementById('choice-prompt').style.display = 'none';
+            log('Would navigate to genre channel...', 'info');
+        }
+
+        function testShowChange() {
+            log('Simulating show change...', 'info');
+            
+            const currentShow = testState.currentShow;
+            
+            // Find the next show in the sequence (cycle through them)
+            const currentIndex = testShows.findIndex(s => s.title === currentShow.title);
+            const nextIndex = (currentIndex + 1) % testShows.length;
+            const newShow = testShows[nextIndex];
+            
+            log(`Transitioning from ${currentShow.title} to ${newShow.title}`, 'info');
+            
+            // Simulate content block transition
+            const timeline = document.getElementById('content-timeline');
+            const blocks = timeline.querySelectorAll('.timeline-item');
+            
+            // Animate current block out
+            blocks.forEach(block => {
+                if (block.textContent.includes(currentShow.title)) {
+                    block.classList.add('transitioning');
+                }
+            });
+            
+            setTimeout(() => {
+                // Update show and animate new block in
+                smoothShowTransition(currentShow, newShow);
+                
+                // Reset block animations
+                blocks.forEach(block => {
+                    block.classList.remove('transitioning');
+                });
+            }, 500);
+        }
+
+        function completeCurrentShow() {
+            if (testState.timeIndexed > 0) {
+                const points = testState.timeIndexed * testState.baseRate * testState.multiplier;
+                testState.playedContent.push({
+                    title: testState.currentShow.title,
+                    timeIndexed: testState.timeIndexed,
+                    points: points,
+                    multiplier: testState.multiplier,
+                    duration: testState.currentShow.duration
+                });
+                log(`Completed current show: ${testState.currentShow.title} - ${testState.timeIndexed}min indexed, ${points.toFixed(2)} points`, 'info');
+                
+                // Mark as completed
+                const currentShow = testShows.find(s => s.title === testState.currentShow.title);
+                if (currentShow) {
+                    markContentAsCompleted(currentShow.id);
+                }
+            }
+        }
+
+        function showReceipt() {
+            log('=== SHOWING RECEIPT ===', 'info');
+            
+            // Complete current show if there's indexed time
+            completeCurrentShow();
+            
+            const totalPoints = testState.playedContent.reduce((sum, item) => sum + item.points, 0);
+            const totalTimeIndexed = testState.playedContent.reduce((sum, item) => sum + item.timeIndexed, 0);
+            
+            log(`Total session points: ${totalPoints.toFixed(2)}`, 'info');
+            log(`Total time indexed: ${totalTimeIndexed} minutes`, 'info');
+            log(`Number of shows played: ${testState.playedContent.length}`, 'info');
+            
+            // Show detailed breakdown
+            testState.playedContent.forEach((item, index) => {
+                log(`${index + 1}. ${item.title}: ${item.timeIndexed}min indexed, ${item.points.toFixed(2)} points (${item.multiplier.toFixed(1)}x multiplier)`, 'info');
+            });
+            
+            log('=== END RECEIPT ===', 'info');
+        }
+
+        function resetTest() {
+            log('Resetting test state...', 'info');
+            testState = {
+                currentShow: { title: 'Blade Runner 2049', genre: 'Sci-Fi', duration: 164 },
+                isIndexing: true,
+                isTransitioning: false,
+                multiplier: 1.0,
+                sessionTime: 0,
+                totalSessionLength: 164,
+                timeIndexed: 0,
+                multiplierThresholds: [
+                    { time: 60, multiplier: 1.2 },   // 1 hour = 1.2x
+                    { time: 120, multiplier: 1.5 },  // 2 hours = 1.5x
+                    { time: 180, multiplier: 2.0 }   // 3 hours = 2.0x
+                ],
+                completedContent: new Set(),
+                sessionId: Date.now(),
+                playedContent: [],
+                baseRate: 0.1
+            };
+            
+            updateAllUIElements();
+            document.getElementById('choice-prompt').style.display = 'none';
+            
+            log('Test reset complete.', 'info');
+        }
+
+        function markContentAsCompleted(showId) {
+            testState.completedContent.add(showId);
+            log(`Content marked as completed: ${showId}`, 'info');
+            updateContentBlocks(); // Refresh UI to show completed state
+        }
+
+        function isContentCompleted(showId) {
+            return testState.completedContent.has(showId);
+        }
+
+        function canRemoveContent(showId) {
+            return !isContentCompleted(showId);
+        }
+
+        function startNewSession() {
+            log('Starting new session...', 'info');
+            testState.completedContent.clear();
+            testState.sessionTime = 0;
+            testState.multiplier = 1.0;
+            updateContentBlocks();
+            updateMultiplierDisplay();
+            log('New session started - all content can be removed again', 'info');
+        }
+
+        function markCurrentAsCompleted() {
+            const currentShow = testShows.find(s => s.title === testState.currentShow.title);
+            if (currentShow) {
+                markContentAsCompleted(currentShow.id);
+                log(`Marked "${currentShow.title}" as completed - cannot be removed until next session`, 'warn');
+            }
+        }
+
+        function testTimelineEffects() {
+            log('=== TESTING TIMELINE EFFECTS ===', 'info');
+            log('1. Testing duration-based sizing...', 'info');
+            log('   - Blade Runner: 164 min (largest block)', 'info');
+            log('   - Dune: 155 min (medium block)', 'info');
+            log('   - Arrival: 116 min (smallest block)', 'info');
+            
+            setTimeout(() => {
+                log('2. Testing multiplier effects...', 'info');
+                log('   - Setting multiplier to 1.2x...', 'info');
+                testState.multiplier = 1.2;
+                updateContentBlocks();
+                updateMultiplierDisplay();
+                
+                setTimeout(() => {
+                    log('   - Setting multiplier to 1.5x...', 'info');
+                    testState.multiplier = 1.5;
+                    updateContentBlocks();
+                    updateMultiplierDisplay();
+                    
+                    setTimeout(() => {
+                        log('   - Setting multiplier to 2.0x...', 'info');
+                        testState.multiplier = 2.0;
+                        updateContentBlocks();
+                        updateMultiplierDisplay();
+                        
+                        setTimeout(() => {
+                            log('   - Resetting to 1.0x...', 'info');
+                            testState.multiplier = 1.0;
+                            updateContentBlocks();
+                            updateMultiplierDisplay();
+                            log('=== TIMELINE EFFECTS TEST COMPLETED ===', 'info');
+                        }, 1000);
+                    }, 1000);
+                }, 1000);
+            }, 1000);
+        }
+
+        function testTimelineDuration() {
+            log('=== TESTING TIMELINE DURATION AND MULTIPLIER EFFECTS ===', 'info');
+            
+            // Test different session times to show multiplier progression
+            const testTimes = [30, 60, 90, 120, 180]; // minutes
+            
+            testTimes.forEach((time, index) => {
+                setTimeout(() => {
+                    testState.sessionTime = time * 60; // Convert to seconds
+                    testState.multiplier = calculateMultiplier(testState.sessionTime);
+                    
+                    log(`Session time: ${time} minutes, Multiplier: ${testState.multiplier.toFixed(1)}x`, 'warn');
+                    
+                    // Update all UI elements
+                    updateAllUIElements();
+                    
+                    // Show timeline effects
+                    updateContentBlocks();
+                    updateMultiplierDisplay();
+                    
+                    if (index === testTimes.length - 1) {
+                        log('Timeline duration and multiplier test completed', 'info');
+                    }
+                }, index * 1000);
+            });
+        }
+
+        // Add test button for timeline duration
+        function addTimelineTestButton() {
+            const buttonContainer = document.querySelector('.test-controls');
+            if (buttonContainer) {
+                const timelineButton = document.createElement('button');
+                timelineButton.className = 'test-button';
+                timelineButton.textContent = 'Test Timeline Duration';
+                timelineButton.onclick = testTimelineDuration;
+                buttonContainer.appendChild(timelineButton);
+            }
+        }
+
+        // Initialize test
+        document.addEventListener('DOMContentLoaded', function() {
+            updateUI();
+            updateASCIIAnimation(testState.currentShow);
+            updateContentBlocks();
+            updateMultiplierDisplay();
+            addTimelineTestButton();
+            log('Test environment initialized. Ready to simulate transitions.', 'info');
+        });
+    </script>
+</body>
+</html> 

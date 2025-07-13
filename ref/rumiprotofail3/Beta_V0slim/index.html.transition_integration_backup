@@ -1,0 +1,4327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rumi Extension - Beta V0</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=SF+Mono:wght@400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background-color: #111;
+            color: #fff;
+            font-family: 'SF Mono', 'Menlo', 'Courier New', monospace;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding-top: 50px;
+            min-height: 100vh;
+        }
+
+        .simulation-container {
+            display: flex;
+            gap: 30px;
+            align-items: flex-start;
+        }
+
+        .entry-point-panel {
+            width: 220px;
+            padding: 20px;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .entry-point-header {
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #888;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .stream-detector {
+            background: #222;
+            border: 1px solid #444;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .stream-detector:hover {
+            border-color: #00ff41;
+            background: #2a2a2a;
+        }
+
+        .stream-detector .status {
+            font-size: 14px;
+            color: #00ff41;
+            font-weight: bold;
+        }
+
+        .stream-detector .subtext {
+            font-size: 11px;
+            color: #888;
+            margin-top: 5px;
+        }
+
+        .automode-button {
+            background: linear-gradient(135deg, #a985ff, #8e6ee6);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 15px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .automode-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(169, 133, 255, 0.3);
+        }
+
+        .holistic-panel {
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 6px;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .holistic-section {
+            width: 100%;
+        }
+
+        #holistic-show-info {
+            font-size: 11px;
+            color: #ccc;
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+
+        #holistic-animation pre {
+            margin: 0;
+            padding: 0;
+            color: #00ff41;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            font-weight: bold;
+            line-height: 1.4;
+            white-space: pre-wrap;
+            text-align: center;
+        }
+
+        #holistic-animation pre.automode {
+            color: #ffff00 !important;
+        }
+
+        #holistic-progress {
+            font-size: 11px;
+            color: #888;
+            margin-top: 8px;
+        }
+
+        .settings-button {
+            background: #222;
+            border: 1px solid #555;
+            color: #ccc;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-family: 'SF Mono', monospace;
+            font-size: 10px;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+
+        .message-button {
+            background: #222;
+            border: 1px solid #555;
+            color: #ccc;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-family: 'SF Mono', monospace;
+            font-size: 10px;
+            cursor: pointer;
+            text-transform: uppercase;
+            margin-left: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .message-button:hover {
+            background: #333;
+            border-color: #666;
+            color: #fff;
+        }
+
+        .message-button.primary {
+            background: #00ff41;
+            border-color: #00ff41;
+            color: #000;
+        }
+
+        .message-button.primary:hover {
+            background: #00cc33;
+            border-color: #00cc33;
+        }
+
+        .inline-resume-button {
+            background: #2a2a2a;
+            border: 1px solid #00ff41;
+            color: #00ff41;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-family: 'SF Mono', monospace;
+            font-size: 10px;
+            cursor: pointer;
+            text-transform: uppercase;
+            margin-left: 12px;
+            transition: all 0.2s ease;
+            vertical-align: middle;
+        }
+
+        .inline-resume-button:hover {
+            background: #333;
+            border-color: #00cc33;
+            color: #00cc33;
+        }
+
+        .inline-end-session-button {
+            background: #2a2a2a;
+            border: 1px solid #ff4444;
+            color: #ff4444;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-family: 'SF Mono', monospace;
+            font-size: 10px;
+            cursor: pointer;
+            text-transform: uppercase;
+            margin-left: 12px;
+            transition: all 0.2s ease;
+            vertical-align: middle;
+        }
+
+        .inline-end-session-button:hover {
+            background: #333;
+            border-color: #ff6666;
+            color: #ff6666;
+        }
+
+        .channel-switcher {
+            background: #222;
+            border: 1px solid #555;
+            color: #ccc;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-family: 'SF Mono', monospace;
+            font-size: 10px;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: all 0.2s;
+        }
+
+        .channel-switcher:hover {
+            border-color: #00ff41;
+            color: #00ff41;
+        }
+
+        .channel-switcher.active {
+            background: #00ff41;
+            color: #000;
+            border-color: #00ff41;
+        }
+
+        .popup-balance {
+            font-size: 11px;
+            color: #666;
+        }
+
+        /* Message Area */
+        .message-area {
+            background: #2a2a2a; /* Darker grey background */
+            color: #cccccc; /* Light grey text */
+            padding: 10px 18px;
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: stretch;
+            max-height: 46px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border-radius: 8px; /* Rounded corners to match extension */
+        }
+
+        .message-area.error {
+            background: #2a2a2a; /* Same darker grey as default */
+            color: #ff0000; /* Red text for terminal errors */
+        }
+
+        .message-area.warning {
+            background: #2a2a2a; /* Same darker grey as default */
+            color: #ff6600; /* Orange text for non-terminal warnings */
+        }
+
+        .message-area.info {
+            background: #2a2a2a; /* Same darker grey as default */
+            color: #8b5cf6; /* Purple text for settings */
+        }
+
+        .message-area.collapsed {
+            padding: 6px 18px;
+            font-size: 12px;
+        }
+
+        .message-area.expanded {
+            max-height: none;
+            padding: 14px 18px;
+            font-size: 14px;
+        }
+
+        .collapse-icon {
+            font-size: 12px;
+            transition: transform 0.2s;
+        }
+
+        .collapsed .collapse-icon {
+            transform: rotate(180deg);
+        }
+
+        /* Popup Body */
+        .popup-body {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Points Section */
+        .points-section {
+            background: #1a1a1a;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 20px;
+            border: none;
+        }
+
+        .points-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .points-total {
+            font-size: 20px;
+            font-weight: 700;
+            color: #00ff41;
+        }
+
+        .points-pending {
+            font-size: 11px;
+            color: #ffaa00;
+        }
+
+        /* Nokia Visual */
+        .nokia-visual {
+            width: 100%;
+            height: 45px;
+            background: linear-gradient(45deg, #001100, #003300);
+            border: 1px solid #00ff41;
+            border-radius: 4px;
+            margin: 0 auto 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: monospace;
+            font-size: 6px;
+            color: #00ff41;
+            overflow: hidden;
+        }
+
+        /* Buttons */
+        .primary-cta {
+            width: 100%;
+            padding: 12px 20px;
+            background: #222;
+            color: #00ff41;
+            border: 2px solid #00ff41;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: 'SF Mono', monospace;
+            transition: all 0.3s ease;
+        }
+
+        .primary-cta:hover {
+            background: #00ff41;
+            color: #000;
+        }
+
+        .primary-cta:disabled {
+            background: #333;
+            color: #666;
+            border-color: #666;
+            cursor: not-allowed;
+        }
+
+        .primary-cta:disabled:hover {
+            background: #333;
+            color: #666;
+        }
+
+        .secondary-button {
+            width: 100%;
+            padding: 12px 16px;
+            background: #222;
+            color: #00ff41;
+            border: 2px solid #00ff41;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: 'SF Mono', monospace;
+        }
+
+        .cta-subtitle {
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        /* Queue Section */
+        .queue-section {
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 6px;
+            margin-bottom: 16px;
+        }
+
+        .queue-header {
+            padding: 8px 12px;
+            background: #1a1a1a;
+            border-bottom: 1px solid #333;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .queue-item {
+            padding: 6px 12px;
+            border-bottom: 1px solid #333;
+            font-size: 10px;
+        }
+
+        .queue-item:last-child {
+            border-bottom: none;
+        }
+
+        .queue-item.next {
+            background: #1a1000;
+            border-left: 3px solid #ffaa00;
+        }
+
+        /* Responsive Breakpoints */
+        @media (max-height: 600px) {
+            .extension-popup {
+                height: 450px;
+            }
+        }
+
+        @media (max-height: 450px) {
+            .extension-popup {
+                height: 350px;
+            }
+        }
+
+        @media (max-height: 350px) {
+            .extension-popup {
+                height: 250px;
+            }
+        }
+
+        /* Debug Panel */
+        .debug-panel {
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            background: rgba(0,0,0,0.9);
+            border: 1px solid #00ff41;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 10px;
+            z-index: 10000;
+            min-width: 200px;
+            display: none; /* Hidden by default */
+        }
+
+        .debug-panel.visible {
+            display: block;
+        }
+
+        .debug-trigger {
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            background: rgba(0,0,0,0.6);
+            border: 1px solid #333;
+            color: #666;
+            padding: 3px 6px;
+            border-radius: 3px;
+            font-size: 8px;
+            cursor: pointer;
+            z-index: 9999;
+            font-family: 'SF Mono', monospace;
+            text-transform: uppercase;
+            transition: all 0.2s;
+            opacity: 0.7;
+        }
+
+        .debug-trigger:hover {
+            border-color: #00ff41;
+            color: #00ff41;
+            opacity: 1;
+        }
+
+        .debug-panel-header {
+            color: #00ff41;
+            font-weight: bold;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .debug-panel-toggle {
+            background: none;
+            border: none;
+            color: #00ff41;
+            cursor: pointer;
+            font-size: 12px;
+            padding: 0;
+            transition: transform 0.2s;
+        }
+
+        .debug-panel-toggle.collapsed {
+            transform: rotate(-90deg);
+        }
+
+        .debug-section {
+            margin-bottom: 8px;
+            border-top: 1px solid #333;
+            padding-top: 8px;
+        }
+
+        .debug-section:first-child {
+            border-top: none;
+            padding-top: 0;
+        }
+
+        .debug-section-header {
+            color: #888;
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .debug-section-toggle {
+            background: none;
+            border: none;
+            color: #888;
+            cursor: pointer;
+            font-size: 10px;
+            padding: 0;
+            transition: transform 0.2s;
+        }
+
+        .debug-section-toggle.collapsed {
+            transform: rotate(-90deg);
+        }
+
+        .debug-section-content {
+            max-height: 200px;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .debug-section-content.collapsed {
+            max-height: 0;
+        }
+
+        .debug-button {
+            background: #00ff41;
+            color: #000;
+            border: none;
+            padding: 4px 8px;
+            margin: 2px;
+            border-radius: 2px;
+            font-size: 9px;
+            cursor: pointer;
+            font-family: 'SF Mono', monospace;
+        }
+
+        .debug-button.error {
+            background: #ff4444;
+            color: #fff;
+        }
+
+        .debug-button.warning {
+            background: #ffaa00;
+            color: #000;
+        }
+
+        .debug-button.info {
+            background: #a985ff;
+            color: #000;
+        }
+
+        .debug-button.blue {
+            background: #0088ff;
+            color: #fff;
+        }
+
+        .debug-button:disabled {
+            background: #333;
+            color: #666;
+            cursor: not-allowed;
+        }
+
+        .debug-button.cooldown {
+            background: #333;
+            color: #666;
+            cursor: not-allowed;
+        }
+
+        /* Progress Bars */
+        .progress-bars {
+            display: flex;
+            gap: 2px;
+            height: 28px;
+            margin: 8px 0;
+            position: relative;
+        }
+
+        .progress-bar {
+            border-radius: 2px;
+        }
+
+        /* Stop Button Styles */
+        .primary-cta.stop {
+            background: #000000;
+            color: #00ff41;
+            border: 2px solid #00ff41;
+        }
+
+        .primary-cta.stop:hover {
+            background: #00ff41;
+            color: #000000;
+        }
+
+        /* Leaderboard Section */
+        .leaderboard-section {
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 6px;
+            margin-bottom: 12px;
+            padding: 10px 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .leaderboard-section:hover {
+            border-color: #555;
+        }
+
+        .leaderboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 9px;
+        }
+
+        .leaderboard-header .title {
+            color: #00ff41;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .leaderboard-header .user-rank {
+            color: #00ff41;
+        }
+
+        .leaderboard-expand-icon {
+            transition: transform 0.3s ease;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .leaderboard-section.is-expanded .leaderboard-expand-icon {
+            transform: rotate(180deg);
+        }
+
+        .leaderboard-full-list {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out, padding-top 0.4s ease-out;
+            padding-top: 0;
+            margin-top: 0;
+            border-top: none;
+            font-size: 9px;
+        }
+
+        .leaderboard-section.is-expanded .leaderboard-full-list {
+            max-height: 200px; /* Adjust as needed */
+            padding-top: 8px;
+            margin-top: 8px;
+            border-top: 1px solid #333;
+        }
+
+        /* Error States */
+        .error-state {
+            display: none;
+        }
+
+        .error-content {
+            padding: 12px;
+        }
+
+        .status-indicator-terminal {
+            text-align: center;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 12px;
+            margin: 15px 0;
+            border: 2px solid;
+            background: #111111;
+            font-family: 'SF Mono', monospace;
+            font-size: 11px;
+        }
+
+        .status-indicator-terminal.warning {
+            border-color: #ffaa00;
+            color: #ffaa00;
+            background: #1a1000;
+        }
+
+        .status-indicator-terminal.error {
+            border-color: #ff4444;
+            color: #ff4444;
+            background: #1a0000;
+        }
+
+        /* Pulse animation for loading */
+        @keyframes pulse {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 1; }
+        }
+
+        .pulse { 
+            animation: pulse 1.5s infinite; 
+        }
+
+        /* Indexing Details Section */
+        .indexing-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #aaa;
+            margin-bottom: 15px;
+            padding: 0 5px;
+        }
+
+        .indexing-progress-bar-container {
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            height: 80px;
+            margin-bottom: 15px;
+            gap: 2px;
+        }
+
+        .progress-bar-segment {
+            background-color: #4CAF50;
+            width: 12px;
+            border-radius: 4px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .progress-bar-segment.grey {
+            background-color: #444;
+        }
+
+        .progress-bar-divider {
+            width: 1px;
+            height: 60%;
+            background: #555;
+            margin: 0 5px;
+        }
+
+        .progress-bar-annotation {
+            color: #fff;
+            font-size: 8px;
+            text-align: center;
+            line-height: 1.1;
+        }
+        
+        .progress-bar-segment.special-segment {
+            width: 30px;
+            height: 90%;
+            background-color: #333;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 5px 0;
+        }
+
+        .progress-bar-annotation.top-annotation {
+            color: #fff;
+        }
+
+        .progress-bar-annotation.bottom-annotation {
+            color: #888;
+        }
+
+        .indexing-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #333;
+            border-radius: 8px;
+            background: #111;
+        }
+
+        .now-playing-info .card-header {
+            font-size: 11px;
+            color: #aaa;
+            margin-bottom: 4px;
+        }
+
+        .now-playing-info .card-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .stats-info {
+            text-align: right;
+        }
+
+        .stats-info .reward-info {
+            font-size: 12px;
+            font-weight: 500;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+
+        .stats-info .progress-time {
+            font-family: 'SF Mono', monospace;
+            font-size: 12px;
+            color: #888;
+        }
+        
+        /* Remove old separated layout styles */
+        .now-next-container, .now-playing-card, .next-up-card, .reward-info, .progress-time {
+            all: unset; /* Reset properties from old layout */
+        }
+        
+        .card-header span:nth-child(2) {
+            margin: 0 4px;
+        }
+
+        .card-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        /* New Indexing UI */
+        .indexing-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            text-align: center;
+        }
+
+        .indexing-content .nokia-visual {
+            width: 100%;
+            height: 45px;
+            background: linear-gradient(45deg, #001100, #003300);
+            border: 1px solid #00ff41;
+            border-radius: 4px;
+            margin: 0 auto 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: monospace;
+            font-size: 6px;
+            color: #00ff41;
+            overflow: hidden;
+        }
+
+        .indexing-content .indexing-info {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            border: 1px solid #333;
+            border-radius: 8px;
+            background: #111;
+            margin-bottom: 10px;
+        }
+
+        .indexing-content .indexing-info .card-header {
+            font-size: 11px;
+            color: #aaa;
+            margin-bottom: 4px;
+        }
+
+        .indexing-content .indexing-info .card-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .indexing-content .stats-info {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        .indexing-content .stats-info .reward-info {
+            font-size: 12px;
+            font-weight: 500;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+
+        .indexing-content .stats-info .progress-time {
+            font-family: 'SF Mono', monospace;
+            font-size: 12px;
+            color: #888;
+        }
+
+        /* New Horizontal Progress Bar */
+        .horizontal-progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #333;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .horizontal-progress-bar-fill {
+            height: 100%;
+            background: #00ff41;
+            transition: width 0.5s ease;
+        }
+
+        /* New Flippable Card */
+        .card-flipper {
+            perspective: 1000px;
+            width: 100%;
+            height: 100px;
+            position: relative;
+        }
+
+        .card-flipper .card {
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            position: absolute;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+
+        .card-flipper .card.front {
+            transform: rotateY(0deg);
+        }
+
+        .card-flipper .card.back {
+            transform: rotateY(180deg);
+        }
+
+        .card-flipper.is-flipped .card.front {
+            transform: rotateY(-180deg);
+        }
+
+        .card-flipper.is-flipped .card.back {
+            transform: rotateY(0deg);
+        }
+
+        .card-flipper .card-content {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            border: 1px solid #333;
+            border-radius: 8px;
+            background: #111;
+        }
+
+        .card-flipper .card-content .card-header {
+            font-size: 11px;
+            color: #aaa;
+            margin-bottom: 4px;
+        }
+
+        .card-flipper .card-content .card-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .card-flipper .card-content .flip-button {
+            background: transparent;
+            border: none;
+            color: #00ff41;
+            cursor: pointer;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+
+        /* Indexing Details Section */
+        .nokia-section {
+            background: #080808;
+            border-radius: 8px;
+            padding: 15px;
+        }
+
+        .indexing-window, .session-stats-panel {
+            background: #111;
+            border: 1px solid #333;
+            color: #00ff41;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            text-shadow: 0 0 2px #00ff41;
+        }
+        
+        .indexing-window pre, .session-stats-panel pre {
+            margin: 0;
+            line-height: 1.4;
+            white-space: pre-wrap;
+            text-align: center;
+            color: #00ff41;
+            font-weight: bold;
+        }
+        
+        .bonus-glint {
+            color: #a985ff;
+            font-weight: 700;
+        }
+        
+        .now-playing-section {
+            background: #1c1c1c;
+            border: 1px solid #444;
+            border-radius: 8px;
+            padding: 12px;
+        }
+
+        .now-playing-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .card-header {
+            font-size: 11px;
+            color: #aaa;
+            margin-bottom: 4px;
+        }
+
+        .card-title {
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .show-queue-button {
+            width: 100%;
+            background: #2a2a2a;
+            color: #a985ff;
+            border: 1px solid #444;
+            border-radius: 6px;
+            padding: 8px;
+            font-size: 11px;
+            cursor: pointer;
+            font-family: 'SF Mono', monospace;
+            text-transform: uppercase;
+            margin-top: 12px;
+            text-align: center;
+        }
+        
+        .queue-details {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out, padding-top 0.4s ease-out;
+            padding-top: 0;
+            border-top: 1px solid #333;
+        }
+
+        .queue-details.is-expanded {
+            max-height: 200px;
+            padding-top: 10px;
+            margin-top: 10px;
+        }
+
+        .queue-item {
+            font-size: 12px;
+            color: #ccc;
+            padding: 4px 0;
+        }
+
+        /* Settings View */
+        .settings-section {
+            background: #1c1c1c;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .settings-section-header {
+            font-size: 12px;
+            color: #aaa;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 8px;
+        }
+
+        .settings-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            font-size: 14px;
+        }
+
+        .settings-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .settings-label {
+            color: #ccc;
+        }
+
+        .settings-value {
+            color: #00ff41;
+            font-weight: 600;
+        }
+
+        .settings-logout-button {
+            width: 100%;
+            background: #4d0000;
+            color: #ff4444;
+            border: 1px solid #ff4444;
+            border-radius: 6px;
+            padding: 8px;
+            font-size: 11px;
+            cursor: pointer;
+            font-family: 'SF Mono', monospace;
+            text-transform: uppercase;
+            margin-top: 12px;
+        }
+
+        /* Toggle Switch CSS */
+        .switch {
+          position: relative;
+          display: inline-block;
+          width: 34px;
+          height: 20px;
+        }
+
+        .switch input { 
+          opacity: 0;
+          width: 0;
+          height: 0;
+        }
+
+        .slider {
+          position: absolute;
+          cursor: pointer;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background-color: #333;
+          transition: .4s;
+        }
+
+        .slider:before {
+          position: absolute;
+          content: "";
+          height: 14px;
+          width: 14px;
+          left: 3px;
+          bottom: 3px;
+          background-color: white;
+          transition: .4s;
+        }
+
+        input:checked + .slider {
+          background-color: #00ff41;
+        }
+
+        input:focus + .slider {
+          box-shadow: 0 0 1px #00ff41;
+        }
+
+        input:checked + .slider:before {
+          transform: translateX(14px);
+        }
+
+        .slider.round {
+          border-radius: 20px;
+        }
+
+        .slider.round:before {
+          border-radius: 50%;
+        }
+
+        /* Remove ALL old layout styles */
+        .points-and-progress, .nokia-visualizer, .horizontal-progress-bar-container, .horizontal-progress-bar,
+        .indexing-info, .now-playing-info, .stats-info, .card-flipper, .card-front, .card-back, .card-footer, .now-next-container,
+        .now-playing-card, .next-up-card, .reward-info, .progress-time, .top-stats, .bottom-stats {
+            all: unset;
+        }
+
+        /* Bonus Glint Animation */
+        .bonus-glint {
+            color: #ffaa00;
+            animation: glint 2s ease-in-out infinite;
+        }
+
+        @keyframes glint {
+            0%, 100% { 
+                opacity: 0.3; 
+                color: #ffaa00;
+            }
+            50% { 
+                opacity: 1; 
+                color: #ffdd00;
+                text-shadow: 0 0 4px #ffaa00;
+            }
+        }
+
+        /* Smooth animation transitions */
+        .indexing-window pre {
+            transition: all 0.1s ease-out;
+        }
+
+        .session-stats-panel pre {
+            transition: all 0.2s ease-out;
+        }
+
+        /* NEW: Styles for channel view to be flexible */
+        #channels-view .popup-body {
+            height: 100%;
+        }
+
+        .extension-popup {
+            width: 700px;
+            margin: 0 auto;
+            background-color: #0d0d0d;
+            border: none;
+            border-radius: 12px;
+            overflow: hidden;
+            display: none;
+            flex-direction: column;
+            align-items: stretch;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            position: relative;
+        }
+
+        .popup-header {
+            background: #1a1a1a;
+            border-bottom: 1px solid #333;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            box-sizing: border-box;
+            position: relative;
+            z-index: 1100;
+        }
+
+        .popup-body {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .points-section {
+            background: #1a1a1a;
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin-bottom: 20px;
+            /* border: 2px solid #00ff41; */
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .points-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .points-total {
+            font-size: 20px;
+            font-weight: 700;
+            color: #00ff41;
+        }
+
+        .points-pending {
+            font-size: 11px;
+            color: #ffaa00;
+        }
+
+        /* Nokia Visual */
+        .nokia-visual {
+            width: 100%;
+            height: 45px;
+            background: linear-gradient(45deg, #001100, #003300);
+            border: 1px solid #00ff41;
+            border-radius: 4px;
+            margin: 0 auto 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: monospace;
+            font-size: 6px;
+            color: #00ff41;
+            overflow: hidden;
+        }
+
+        /* Buttons */
+        .primary-cta {
+            width: 100%;
+            padding: 12px 20px;
+            background: #222;
+            color: #00ff41;
+            border: 2px solid #00ff41;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: 'SF Mono', monospace;
+            transition: all 0.3s ease;
+        }
+
+        .primary-cta:hover {
+            background: #00ff41;
+            color: #000;
+        }
+
+        .primary-cta:disabled {
+            background: #333;
+            color: #666;
+            border-color: #666;
+            cursor: not-allowed;
+        }
+
+        .primary-cta:disabled:hover {
+            background: #333;
+            color: #666;
+        }
+
+        .secondary-button {
+            width: 100%;
+            padding: 12px 16px;
+            background: #222;
+            color: #00ff41;
+            border: 2px solid #00ff41;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: 'SF Mono', monospace;
+        }
+
+        /* Expandable Sections */
+        .expandable-section {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-in-out;
+            background: #111111;
+            border: 1px solid #333333;
+            margin: 8px 0;
+        }
+
+        .expandable-section.expanded {
+            max-height: 800px; /* Increased to accommodate comprehensive settings content */
+        }
+
+        .expandable-content {
+            padding: 12px;
+            font-size: 10px;
+            line-height: 1.4;
+        }
+
+        .expandable-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: #00ff41;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Paused State Styles */
+        .paused .points-total,
+        .paused .points-pending,
+        .paused .holistic-progress,
+        .paused .animation-panel-content,
+        .paused .nokia-visual,
+        .paused .progress-bar-segment,
+        .paused .horizontal-progress-bar-fill,
+        .paused .holistic-show-info,
+        .paused .holistic-section,
+        .paused .holistic-panel,
+        .paused #animation-panel-content,
+        .paused #holistic-show-info,
+        .paused #holistic-progress,
+        .paused #points-primary-display,
+        .paused #points-secondary-display,
+        .paused .primary-cta,
+        .paused .secondary-button,
+        .paused .channel-switcher,
+        .paused .expandable-section,
+        .paused .expandable-content,
+        .paused .leaderboard-section,
+        .paused .leaderboard-header,
+        .paused .queue-item,
+        .paused .settings-section,
+        .paused .settings-item,
+        .paused .settings-label,
+        .paused .settings-value,
+        .paused .popup-header,
+        .paused .popup-body,
+        .paused .points-section,
+        .paused .points-header,
+        .paused .nokia-section,
+        .paused .holistic-panel,
+        .paused .holistic-section,
+        .paused .holistic-show-info,
+        .paused .holistic-animation,
+        .paused .holistic-progress,
+        .paused .detected-show-ui-indexing,
+        .paused .expandable-channel-section-indexing,
+        .paused .expand-channel-header-indexing,
+        .paused .channel-iframe-container-indexing {
+            color: #888 !important;
+            opacity: 0.6;
+        }
+
+        /* Paused state for buttons - change border colors too */
+        .paused .primary-cta,
+        .paused .secondary-button {
+            border-color: #666 !important;
+            color: #888 !important;
+            opacity: 0.6;
+        }
+
+        /* Stronger specificity for points display */
+        .paused #points-primary-display,
+        .paused #points-secondary-display,
+        .paused .points-total,
+        .paused .points-pending {
+            color: #888 !important;
+            opacity: 0.6 !important;
+        }
+
+        .paused .progress-bar-segment {
+            background-color: #666 !important;
+        }
+
+        .paused .horizontal-progress-bar-fill {
+            background: #666 !important;
+        }
+
+        .paused .nokia-visual {
+            border-color: #666 !important;
+            color: #666 !important;
+        }
+
+        .paused .animation-panel-content {
+            animation-play-state: paused !important;
+        }
+
+        /* Pause indicator */
+        .pause-indicator {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: #ffaa00;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            z-index: 10;
+            display: none;
+        }
+
+        .paused .pause-indicator {
+            display: block;
+        }
+
+        /* Activation step styles */
+        .extension-popup.deactivated {
+            opacity: 0.3;
+            filter: grayscale(100%);
+            pointer-events: none;
+        }
+
+        .activation-circle {
+            position: fixed;
+            top: calc(50% - 350px); /* higher above the popup */
+            left: 50%;
+            transform: translate(-50%, 0);
+            width: 56px;
+            height: 56px;
+            border: 4px solid #0066ff;
+            border-radius: 50%;
+            background: #fff; /* white background for contrast */
+            cursor: pointer;
+            z-index: 99999;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.25), 0 0 0 4px rgba(0,102,255,0.08);
+            transition: all 0.3s ease;
+            display: none; /* Temporarily hidden for testing */
+        }
+
+        .activation-circle:hover {
+            border-color: #0099ff;
+            box-shadow: 0 0 15px rgba(0, 102, 255, 0.5);
+        }
+
+        .activation-circle.activated {
+            background: #0066ff;
+            border-color: #0066ff;
+            box-shadow: 0 0 20px rgba(0, 102, 255, 0.8);
+        }
+
+        .activation-circle.activated::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <!-- Activation Circle (completely outside the popup) -->
+    <div class="activation-circle" id="activation-circle" onclick="activateExtension()"></div>
+
+    <!-- Debug Trigger -->
+    <div class="debug-trigger" onclick="toggleDebugPanel()" title="Debug Panel (Ctrl+Shift+D)">
+        Debug
+    </div>
+
+    <!-- Debug Panel -->
+    <div class="debug-panel" id="debug-panel">
+        <div class="debug-panel-header" onclick="toggleDebugPanel()">
+            <span>Rumi Debug</span>
+            <button class="debug-panel-toggle" id="debug-panel-toggle">▼</button>
+        </div>
+        
+        <div class="debug-panel-content" id="debug-panel-content">
+            <!-- Basic Testing Section -->
+            <div class="debug-section">
+                <div class="debug-section-header" onclick="toggleDebugSection('basic-testing')">
+                    <span>Basic Testing</span>
+                    <button class="debug-section-toggle" id="basic-testing-toggle">▼</button>
+                </div>
+                <div class="debug-section-content" id="basic-testing-content">
+        <button class="debug-button" onclick="Tracker.showDebugOverlay()">Show Tracker</button>
+        <!-- <button class="debug-button" onclick="testHomeScreen()">Test Home</button> -->
+        <!-- <button class="debug-button" onclick="testChannels()">Test Channels</button> -->
+        <!-- <button class="debug-button" onclick="testReceipt()">Test Receipt</button> -->
+        <button class="debug-button" onclick="showState()">Show State</button>
+        <!-- <button class="debug-button info" onclick="testShowDetection()">Test Show Detection</button> -->
+        <!-- <button class="debug-button info" onclick="debugChannelState()">Debug Channel State</button> -->
+        <!-- <button class="debug-button info" onclick="checkGenreChannelContent()">Check Genre Channel Content</button> -->
+        <!-- <button class="debug-button info" onclick="testPlanetEarthDetection()">Test Planet Earth II</button> -->
+        <!-- <button class="debug-button info" onclick="testMessagePassing()">Test Message Passing</button> -->
+        <!-- <button class="debug-button info" onclick="checkGenreChannelLoaded()">Check Channel Loaded</button> -->
+                </div>
+            </div>
+
+            <!-- Error Testing Section -->
+            <div class="debug-section">
+                <div class="debug-section-header" onclick="toggleDebugSection('error-testing')">
+                    <span>Error Testing</span>
+                    <button class="debug-section-toggle" id="error-testing-toggle">▼</button>
+                </div>
+                <div class="debug-section-content" id="error-testing-content">
+                    <button class="debug-button warning" onclick="testVolumeError()">Volume Error</button>
+                    <button class="debug-button warning" onclick="testSpeedError()">Speed Error</button>
+                    <button class="debug-button warning" onclick="testLanguageError()">Language Error</button>
+                    <button class="debug-button error" onclick="testSystemError()">System Error</button>
+                    <button class="debug-button error" onclick="testNetworkError()">Network Error</button>
+                    <button class="debug-button error" onclick="testBrowserError()">Browser Error</button>
+                    <button class="debug-button blue" onclick="testShowInterrupt()">Show Interrupt</button>
+                </div>
+            </div>
+
+            <!-- Session Management Section -->
+            <div class="debug-section">
+                <div class="debug-section-header" onclick="toggleDebugSection('session-management')">
+                    <span>Session Management</span>
+                    <button class="debug-section-toggle" id="session-management-toggle">▼</button>
+                </div>
+                <div class="debug-section-content" id="session-management-content">
+                    <button class="debug-button info" id="debug-skip-end-btn" onclick="debugSkipToEnd()">Skip to End (5s)</button>
+                    <button class="debug-button info" id="debug-skip-tomorrow-btn" onclick="debugSkipToTomorrow()">Skip to Tomorrow</button>
+                    <button class="debug-button info" id="debug-content-tracking-btn" onclick="debugContentTracking()">Debug Content Tracking</button>
+                    <button class="debug-button warning" onclick="debugShowDetectionState()">Debug Show Detection</button>
+                    <button class="debug-button warning" onclick="debugChannelContent()">Debug Channel Content</button>
+                    <button class="debug-button danger" onclick="debugResetShowDetection()">Reset Show Detection</button>
+                    <button class="debug-button info" onclick="testGenreChannelAutopopulation()">Test Genre Channel Autopop</button>
+                    <button class="debug-button success" onclick="testReceiptAccuracy()">Test Receipt Accuracy</button>
+                    <button class="debug-button info" onclick="testEnhancedContentTracking()">Test Enhanced Content Tracking</button>
+                    <button class="debug-button warning" onclick="resetEnhancedContentTracking()">Reset Enhanced Content Tracking</button>
+                    <button class="debug-button info" onclick="window.runChannelTransitionPrototype()">Test Channel Transition Prototype</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="simulation-container">
+        <div class="entry-point-panel">
+            <div class="entry-point-header">SIMULATED ENTRY POINTS</div>
+            <div id="stream-detector-entry" class="stream-detector">
+                <!-- Content will be populated by JS -->
+            </div>
+            <button class="automode-button" onclick="launchWithAutomode()">
+                Automode Campaign
+            </button>
+            <button id="user-changes-content-btn" class="secondary-button" onclick="simulateShowChange()" style="display: none; margin-top: 10px;">
+                User Changes Content
+            </button>
+            <button id="cache-control-btn" class="secondary-button" onclick="toggleCacheControl()" style="margin-top: 10px; background: #1a1a1a; border-color: #666; color: #ccc;">
+                🗂️ Disable Cache
+            </button>
+            
+            <!-- Developer Options -->
+            <div style="margin-top: 20px; padding: 12px; background: #1a1a1a; border: 1px solid #333; border-radius: 6px;">
+                <div style="font-size: 11px; color: #00ff41; font-weight: 600; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px;">DEVELOPER OPTIONS</div>
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                    <input type="checkbox" id="cache-control-toggle" style="width: 14px; height: 14px;">
+                    <label for="cache-control-toggle" style="font-size: 11px; color: #ccc; cursor: pointer;">Disable Browser Cache</label>
+                </div>
+                <div style="font-size: 9px; color: #888; line-height: 1.3;">
+                    Forces browser to reload all files on each request. Useful for development and testing.
+                </div>
+            </div>
+    </div>
+
+        <!-- Extension Popup (centered, always one header at top) -->
+    <div class="extension-popup" style="display: none;">
+        <div class="popup-header">
+            <div class="popup-logo">RUMI</div>
+            <div class="header-controls">
+                <button class="settings-button" onclick="testSettings()">⚙ SETTINGS</button>
+            </div>
+        </div>
+        <!-- Receipt View (Initially Hidden) -->
+        <div id="receipt-view" style="display: none;">
+            <div class="popup-body">
+                <div style="background: #0d0d0d; border: 1px solid #333; border-radius: 12px; padding: 20px; max-width: 520px; margin: 0 auto; box-sizing: border-box; width: 100%;">
+                    <div style="text-align: center; margin-bottom: 12px;">
+                        <div style="font-size: 14px; color: #888; font-weight: 600; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; display: flex; justify-content: center; align-items: center; gap: 8px;">
+                            <span>SESSION COMPLETED for</span>
+                            <span style="font-size: 24px; font-weight: 700; color: #00ff41;" id="receipt-total-points">+0.00</span>
+                            <span>POINTS</span>
+                        </div>
+                        <div style="font-size: 12px; color: #888; text-transform: uppercase; letter-spacing: 1px; display: flex; justify-content: center; align-items: center; gap: 8px;">
+                            <span id="receipt-total-pending" style="font-size: 13px; color: #ffaa00; font-weight: 600;"></span>
+                            <span>PENDING FROM TODAY</span>
+            </div>
+        </div>
+
+                        <!-- Session Details -->
+                        <div style="background: #111; border: 1px solid #333; border-radius: 6px; padding: 12px; margin-bottom: 16px;">
+                            <div style="font-size: 12px; color: #00ff41; font-weight: 600; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px;">SESSION DETAILS</div>
+                            
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 11px;">
+                                <span style="color: #888;">Duration:</span>
+                                <span style="color: #fff;" id="receipt-duration">0:00</span>
+                            </div>
+                            
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 11px;">
+                                <span style="color: #888;">Multiplier:</span>
+                                <span style="color: #fff;" id="receipt-multiplier">1.0x</span>
+                            </div>
+                            
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 11px;">
+                                <span style="color: #888;">Base Rate:</span>
+                                <span style="color: #fff;">0.5 pts/5s</span>
+                            </div>
+                            
+                            <div style="display: flex; justify-content: space-between; font-size: 11px;">
+                                <span style="color: #888;">Bonus Applied:</span>
+                                <span style="color: #ffaa00;" id="receipt-bonus">None</span>
+                            </div>
+                        </div>
+
+                        <!-- Indexed Content Summary -->
+                        <div style="background: #111; border: 1px solid #333; border-radius: 6px; padding: 12px; margin-bottom: 16px;">
+                            <div style="font-size: 12px; color: #00ff41; font-weight: 600; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px;">INDEXED CONTENT</div>
+                            
+                            <div style="font-size: 11px; color: #888; margin-bottom: 8px;">Content detected and processed during this session:</div>
+                            
+                            <div id="receipt-content-list" style="font-size: 10px; max-height: 120px; overflow-y: auto;">
+                                <!-- --- Indexed Content View: Show actual indexed content with 3 visible lines and auto-scroll (ping-pong) ---
+                                if (appState.indexedContent && appState.indexedContent.length > 0) {
+                                    const indexed = appState.indexedContent;
+                                    // Generate HTML for all items
+                                    const contentHTML = indexed.map(item => `
+                                        <div class="indexed-content-item" style="display: flex; justify-content: space-between; margin-bottom: 4px; padding: 4px; background: #1a1a1a; border-radius: 3px; height: 24px; align-items: center;">
+                                            <span style="color: #fff;">${item.title}</span>
+                                            <span style="color: #888;">${item.duration}m</span>
+                                </div>
+                                    `).join('');
+                                    contentList.innerHTML = `<div id="indexed-content-scroll" style="overflow: hidden; height: 76px; position: relative;">${contentHTML}</div>`;
+                                    // Animate auto-scroll if more than 3 items
+                                    if (indexed.length > 3) {
+                                        setTimeout(() => {
+                                            const scrollDiv = document.getElementById('indexed-content-scroll');
+                                            let scrollPos = 0;
+                                            let direction = 1;
+                                            const itemHeight = 28; // px (24px + 4px margin)
+                                            const maxScroll = (indexed.length * itemHeight) - (3 * itemHeight);
+                                            function scrollStep() {
+                                                scrollPos += direction;
+                                                if (scrollPos >= maxScroll) {
+                                                    scrollPos = maxScroll;
+                                                    direction = -1;
+                                                } else if (scrollPos <= 0) {
+                                                    scrollPos = 0;
+                                                    direction = 1;
+                                                }
+                                                scrollDiv.scrollTop = scrollPos;
+                                                requestAnimationFrame(scrollStep);
+                                            }
+                                            scrollStep();
+                                        }, 500);
+                                    }
+                                    // Return early so the rest of the function doesn't overwrite this view
+                                    return;
+                                } -->
+                            </div>
+                        </div>
+
+                        <!-- Next Steps -->
+                        <div style="background: #1a1000; border: 1px solid #ffaa00; border-radius: 6px; padding: 12px; margin-bottom: 20px;">
+                            <div style="font-size: 12px; color: #ffaa00; font-weight: 600; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 1px;">NEXT STEPS</div>
+                            <div style="font-size: 11px; color: #ccc; line-height: 1.4;">
+                                Your points are now pending validation. They will be added to your total balance within 24 hours. Continue indexing to earn more points!
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div style="display: flex; gap: 8px; margin-top: 16px;">
+                            <button class="primary-cta" onclick="returnToEntryPoint()" style="flex: 1; background: #222; color: #00ff41; border: 2px solid #00ff41;">
+                                DONE
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main View -->
+        <div id="main-view">
+            <!-- Message Area -->
+            <div class="message-area collapsed">
+                    <span id="message-summary-text">System operational - Daily bonus in 2h 34m</span>
+                    <div id="error-details"></div>
+                    <!-- Expandable Error Details Section -->
+                    <div class="expandable-section" id="error-details-section">
+                        <div class="expandable-content">
+                            <div class="expandable-title">ERROR DETAILS</div>
+                            <div id="error-details-content">
+                                <!-- Error details will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Expandable Warning Details Section -->
+                    <div class="expandable-section" id="warning-details-section">
+                        <div class="expandable-content" id="warning-details-content">
+                            <!-- Warning details will be populated here -->
+                        </div>
+                    </div>
+                    <!-- Expandable Settings Panel Section -->
+                    <div class="expandable-section" id="settings-panel-section">
+                        <div class="expandable-content">
+                            <div class="expandable-title">SETTINGS CONFIGURATION</div>
+                            <div id="settings-panel-content">
+                                <!-- Settings content will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+            </div>
+
+            <!-- Points Section -->
+            <div class="points-section">
+                <div style="text-align: center; margin-bottom: 12px;">
+                        <div id="points-primary-display" class="points-total">4349 LIFETIME POINTS</div>
+                        <div id="points-secondary-display" class="points-pending">+200 pending from today</div>
+                </div>
+                
+                <!-- Dynamic Content: Changes based on indexing state -->
+                <div id="dynamic-content">
+                        <!-- NEW HOME CONTENT (replaces channel iframe) -->
+                        <div id="home-content">
+                            <!-- Compact, Expandable Leaderboard -->
+                            <div id="leaderboard-section" class="leaderboard-section" onclick="toggleLeaderboard()">
+                                <div class="leaderboard-header">
+                                    <div>
+                                        <span class="title">WEEKLY LEADERS</span>
+                                        <span class="user-rank">🔥 YOU: #23</span>
+                        </div>
+                                    <span class="leaderboard-expand-icon">▼</span>
+                                </div>
+                                <div class="leaderboard-full-list">
+                                    <!-- Full leaderboard content from before -->
+                                <div style="font-size: 9px;">
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
+                                        <span style="color: #ffaa00;">🥇 CRYPTO_MAVEN</span>
+                                        <span style="color: #ffaa00;">12,847</span>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
+                                        <span style="color: #888;">🥈 BINGE_LORD</span>
+                                        <span style="color: #888;">11,203 (proj.)</span>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                                        <span style="color: #888;">🥉 STORY_HUNTER</span>
+                                        <span style="color: #888;">9,876</span>
+                                    </div>
+                                    <div style="border-top: 1px solid #333; padding-top: 3px;">
+                                        <div style="display: flex; justify-content: space-between; background: rgba(0,255,65,0.1); padding: 2px 4px; border: 1px solid #00ff41;">
+                                            <span style="color: #00ff41; font-weight: 600;">🔥 YOU (#23)</span>
+                                            <span style="color: #00ff41;">4,349 (4,549 proj.)</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                            <!-- Detected Show UI -->
+                            <div id="detected-show-ui" style="display: none; margin-top: 12px; background: linear-gradient(135deg, #00ff41, #00cc33); color: #000; padding: 12px; border-radius: 6px; border: 1px solid #00ff41;">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <div style="flex: 1;">
+                                        <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px;">🎯 SHOW DETECTED</div>
+                                        <div id="detected-show-title" style="font-size: 11px; font-weight: 600;">Loading...</div>
+                                        <div id="detected-show-meta" style="font-size: 9px; opacity: 0.8; text-transform: uppercase; letter-spacing: 0.5px;">Processing...</div>
+                                </div>
+                                    <button onclick="dismissDetectedShow()" style="background: none; border: none; color: #000; font-size: 16px; cursor: pointer; padding: 4px; opacity: 0.7; transition: opacity 0.2s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'">×</button>
+                                        </div>
+                                        </div>
+
+                            <!-- CTA Button positioned above channel -->
+                            <div style="margin-top: 12px;">
+                                <button id="cta-button" class="primary-cta" onclick="toggleIndexing()">
+                                    START WATCHING
+                                </button>
+                                    
+                                    <!-- Expandable Channel Section -->
+                                    <div id="expandable-channel-section" style="margin-top: 12px; display: none;">
+                                        <div id="expand-channel-header" onclick="toggleChannelExpansion()" style="display: flex; align-items: center; justify-content: center; background: #222; color: #bbb; border-radius: 6px; padding: 12px 16px; font-size: 13px; font-weight: 600; cursor: pointer; margin-bottom: 8px; user-select: none; transition: background 0.2s; text-align: center;">
+                                            <span id="expand-channel-text" style="flex: none;">WATCH YOUR NEXT SHOW WITH US</span>
+                                            <span id="expand-channel-icon" style="font-size: 16px; margin-left: 10px; flex: none;">▼</span>
+                                        </div>
+                                        <!-- Channel Container (initially hidden) -->
+                                        <div id="channel-expanded-container" style="display: none; margin-top: 4px;">
+                                            <div id="channel-iframe-container" style="background: transparent; border: 1px solid #333; border-radius: 8px; overflow: hidden; position: relative;">
+                                                <div id="channel-loading" style="padding: 20px; text-align: center; color: #00ff41; font-size: 12px; z-index: 1; display: none;">Loading Channel...</div>
+                                <iframe id="channel-frame" src="rumi-channel.html" style="width: 100%; border: none; background: transparent; display: block; visibility: hidden; height: 320px;" onerror="showChannelError()"></iframe>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                    </div>
+
+                    <!-- Top Section: Points and Progress (shown when indexing) -->
+                    <div id="nokia-content" class="nokia-section" style="display: none; position: relative;">
+                        <!-- Pause indicator -->
+                        <div class="pause-indicator">⏸️ INDEXING PAUSED</div>
+                        
+                        <!-- NEW: Holistic Indexing Panel -->
+                        <div id="holistic-indexing-panel" class="holistic-panel">
+                            <div id="holistic-show-info" class="holistic-section"></div>
+                            <div id="holistic-animation" class="holistic-section">
+                            <pre id="animation-panel-content"></pre>
+                        </div>
+                            <div id="holistic-progress" class="holistic-section"></div>
+                        </div>
+
+                        <!-- STOP INDEXING Button positioned between holistic panel and channel -->
+                        <div style="margin-top: 16px;">
+                            <button id="stop-indexing-button" class="primary-cta" onclick="toggleIndexing()">
+                                START INDEXING
+                            </button>
+                            <!-- Subtitle removed -->
+                        </div>
+
+                        <!-- Channel Section (replaces now-playing) -->
+                        <div style="margin-top: 16px;">
+                            <!-- Detected Show UI for Indexing View -->
+                            <div id="detected-show-ui-indexing" style="display: none; margin-bottom: 12px; background: linear-gradient(135deg, #00ff41, #00cc33); color: #000; padding: 12px; border-radius: 6px; border: 1px solid #00ff41;">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <div style="flex: 1;">
+                                        <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px;">🎯 SHOW DETECTED</div>
+                                        <div id="detected-show-title-indexing" style="font-size: 11px; font-weight: 600;">Loading...</div>
+                                        <div id="detected-show-meta-indexing" style="font-size: 9px; opacity: 0.8; text-transform: uppercase; letter-spacing: 0.5px;">Processing...</div>
+                                    </div>
+                                    <button onclick="dismissDetectedShowIndexing()" style="background: none; border: none; color: #000; font-size: 16px; cursor: pointer; padding: 4px; opacity: 0.7; transition: opacity 0.2s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'">×</button>
+                                </div>
+                            </div>
+                                
+                                <!-- Expandable Channel Section for Indexing View -->
+                                <div id="expandable-channel-section-indexing" style="margin-top: 12px; display: none;">
+                                    <div id="expand-channel-header-indexing" onclick="toggleChannelExpansionIndexing()" style="display: flex; align-items: center; justify-content: center; background: #222; color: #bbb; border-radius: 6px; padding: 12px 16px; font-size: 13px; font-weight: 600; cursor: pointer; margin-bottom: 8px; user-select: none; transition: background 0.2s; text-align: center;">
+                                        <span id="expand-channel-text-indexing" style="flex: none;">WATCH YOUR NEXT SHOW WITH US</span>
+                                        <span id="expand-channel-icon-indexing" style="font-size: 16px; margin-left: 10px; flex: none;">▼</span>
+                                    </div>
+                                    <!-- Channel Container (initially hidden) -->
+                                    <div id="channel-expanded-container-indexing" style="display: none; margin-top: 4px;">
+                                        <div id="channel-iframe-container-indexing" style="background: transparent; border: 1px solid #333; border-radius: 8px; overflow: hidden; position: relative;">
+                                            <div id="channel-loading-indexing" style="padding: 20px; text-align: center; color: #00ff41; font-size: 12px; z-index: 1; display: none;">Loading Channel...</div>
+                                            <iframe id="channel-frame-indexing" src="rumi-channel.html" style="width: 100%; border: none; background: transparent; display: block; visibility: hidden; height: 320px;" onerror="showChannelErrorIndexing()"></iframe>
+                                        </div>
+                                    </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+
+        <!-- Settings View (Initially Hidden) -->
+        <div id="settings-view" style="display: none;">
+            <div class="popup-body">
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <h2 style="font-size: 16px;">SETTINGS</h2>
+                </div>
+                
+                <!-- Account Section -->
+                <div class="settings-section">
+                    <h3 class="settings-section-header">Account</h3>
+                    <div class="settings-item">
+                        <span class="settings-label">Username</span>
+                        <span class="settings-value">CRYPTO_MAVEN</span>
+                    </div>
+                    <div class="settings-item">
+                        <span class="settings-label">Member Since</span>
+                        <span class="settings-value">Dec 2023</span>
+                    </div>
+                    <button class="settings-logout-button">LOGOUT</button>
+                </div>
+
+                <!-- Preferences Section -->
+                <div class="settings-section">
+                    <h3 class="settings-section-header">Preferences</h3>
+                    <div class="settings-item">
+                        <span class="settings-label">Desktop Notifications</span>
+                        <label class="switch">
+                            <input type="checkbox" checked>
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                    <div class="settings-item">
+                        <span class="settings-label">Auto-start Indexing</span>
+                        <label class="switch">
+                            <input type="checkbox">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Error State Views -->
+        <!-- (Removed: error-state panels are now handled in the message area) -->
+    </div>
+
+
+    <!-- Scripts -->
+    <script src="tracker.js"></script>
+    <script src="transition-system.js"></script>
+    <script>
+        // Debug: Check if tracker loaded
+        console.log('Tracker loaded:', typeof Tracker !== 'undefined');
+        console.log('RUMI_PROJECT loaded:', typeof RUMI_PROJECT !== 'undefined');
+
+        // App State
+        const appState = {
+            pendingShowForGenreChannel: null, // Corrected syntax
+            pendingEntryPoint: null, // NEW: Store pending entry point for activation
+            pendingDetectedShow: null, // NEW: Store pending detected show for activation
+            view: 'home',
+            pointsEarned: 4349,
+            totalPendingPoints: 200,
+            sessionEarnings: 0,
+            currentMultiplier: 1.0,
+            currentContent: null,
+            isIndexing: false,
+            indexingStartTime: null,
+            sortMode: 'points', // 'points' or 'channel'
+            currentBucket: 'Rumi Internal Audiences', // NEW: To store the selected bucket
+            // Error States
+            errorState: null, // null, 'volume', 'connection', 'loading', 'offline'
+            volumeLevel: 100,
+            connectionStatus: 'connected', // 'connected', 'lost', 'offline'
+            isLoading: false,
+            // NEW: Automode content tracking
+            automodeContentItems: [], // Array of content items for current session
+            currentContentIndex: 0, // Index of current content item
+            contentItemStartTime: 0, // When current content item started
+            contentItemDuration: 0, // Duration of current content item in seconds
+            contentTransitionProgress: 0, // Smooth transition between content items
+            channelExpanded: false, // Add to appState
+            simResolved: false, // Prevents error re-trigger after SIM RESOLVE
+            // NEW: Pause state tracking
+            isPaused: false, // Whether indexing is currently paused
+            pauseStartTime: null, // When the pause started
+            pauseDuration: 0, // Total time paused in this session
+            sessionEndReason: null, // 'normal', 'fatal_error', 'user_stop'
+            // NEW: Debug button cooldowns
+            debugSkipCooldown: 0, // Cooldown timer for skip to end button
+            debugTomorrowCooldown: 0, // Cooldown timer for skip to tomorrow button
+            // NEW: Session management
+            userChoice: null, // 'rumi' or 'streamer' - user's choice for content control
+            showChoicePrompt: false, // Whether to show the choice prompt
+            sessionCompleted: false, // Whether the current session has been completed
+            indexedContent: [], // Array to track actual content indexed during this session
+            // NEW: Content tracking to prevent duplicates
+            playedContent: new Set(), // Set of content IDs that have been played
+            channelContent: new Map(), // Map of channel name -> Set of content IDs in that channel
+            globalContentQueue: [], // Global queue across all channels
+            contentHistory: [], // Array of recently played content for recommendations
+            cachedSessionDuration: null, // Cache for session duration
+            cachedSessionDurationTimestamp: null, // Timestamp for cache expiration
+            showInterruptTimestamp: null, // Timestamp when show interrupt occurred
+            // NEW: Transition-test.html inspired content tracking
+            totalSessionLength: 0, // Total duration of all content in session (minutes)
+            timeIndexed: 0, // Time indexed in current content item (minutes)
+            completedContent: new Set(), // Track completed content IDs (cannot be removed)
+            playedContentForReceipt: [], // Array of {title, timeIndexed, points, multiplier, duration} for receipt
+            isTransitioning: false, // Whether a content transition is in progress
+            currentContentItem: null, // Current content item being indexed
+            contentItemStartTime: null, // When current content item started
+            contentItemDuration: 0, // Duration of current content item in seconds
+        };
+
+        // NEW: Content tracking utility functions
+        function generateContentId(content) {
+            // Generate a unique ID for content based on title, type, and episode info
+            let id = content.title || content.name || '';
+            
+            // Add episode information if available
+            if (content.season && content.episode) {
+                id += `-S${content.season}E${content.episode}`;
+            } else if (content.episode) {
+                id += `-E${content.episode}`;
+            }
+            
+            // Add type if available
+            if (content.type) {
+                id += `-${content.type}`;
+            }
+            
+            // Add service if available
+            if (content.service) {
+                id += `-${content.service}`;
+            }
+            
+            return id.toLowerCase().replace(/[^a-z0-9-]/g, '-');
+        }
+
+        function isContentPlayed(contentId) {
+            return appState.playedContent.has(contentId);
+        }
+
+        function markContentAsPlayed(content) {
+            const contentId = generateContentId(content);
+            appState.playedContent.add(contentId);
+            
+            // Add to content history (keep last 50 items)
+            appState.contentHistory.unshift({
+                id: contentId,
+                content: content,
+                playedAt: Date.now()
+            });
+            if (appState.contentHistory.length > 50) {
+                appState.contentHistory.pop();
+            }
+            
+            Tracker.logRumiAction('Content marked as played', { contentId, title: content.title });
+        }
+
+        function isContentInChannel(contentId, channelName) {
+            if (!appState.channelContent.has(channelName)) {
+                appState.channelContent.set(channelName, new Set());
+            }
+            return appState.channelContent.get(channelName).has(contentId);
+        }
+
+        function addContentToChannel(content, channelName) {
+            const contentId = generateContentId(content);
+            
+            if (!appState.channelContent.has(channelName)) {
+                appState.channelContent.set(channelName, new Set());
+            }
+            
+            appState.channelContent.get(channelName).add(contentId);
+            Tracker.logRumiAction('Content added to channel', { contentId, channelName, title: content.title });
+        }
+
+        function removeContentFromChannel(contentId, channelName) {
+            if (appState.channelContent.has(channelName)) {
+                appState.channelContent.get(channelName).delete(contentId);
+                Tracker.logRumiAction('Content removed from channel', { contentId, channelName });
+            }
+        }
+
+        function addToGlobalQueue(content, channelName) {
+            const contentId = generateContentId(content);
+            
+            // Check if content is already in global queue
+            const existingIndex = appState.globalContentQueue.findIndex(item => generateContentId(item.content) === contentId);
+            if (existingIndex !== -1) {
+                return false; // Already in queue
+            }
+            
+            appState.globalContentQueue.push({
+                content: content,
+                channelName: channelName,
+                addedAt: Date.now(),
+                contentId: contentId
+            });
+            
+            Tracker.logRumiAction('Content added to global queue', { contentId, channelName, title: content.title });
+            return true;
+        }
+
+        function removeFromGlobalQueue(contentId) {
+            const index = appState.globalContentQueue.findIndex(item => item.contentId === contentId);
+            if (index !== -1) {
+                const removed = appState.globalContentQueue.splice(index, 1)[0];
+                Tracker.logRumiAction('Content removed from global queue', { contentId, channelName: removed.channelName });
+                return removed;
+            }
+            return null;
+        }
+
+        function getFilteredContentForChannel(contentList, channelName, excludeContentIds = new Set()) {
+            // Filter out content that's already been played, is in the channel, or is in excludeContentIds
+            return contentList.filter(content => {
+                const contentId = generateContentId(content);
+                return !isContentPlayed(contentId) && !isContentInChannel(contentId, channelName) && !excludeContentIds.has(contentId);
+            });
+        }
+
+        function getContentRecommendations(excludePlayed = true, limit = 10) {
+            // Get content recommendations based on history
+            const recommendations = [];
+            const seenIds = new Set();
+            
+            // Add recent content from history as recommendations
+            appState.contentHistory.forEach(historyItem => {
+                if (recommendations.length >= limit) return;
+                
+                const contentId = historyItem.id;
+                if (!seenIds.has(contentId) && (!excludePlayed || !isContentPlayed(contentId))) {
+                    recommendations.push(historyItem.content);
+                    seenIds.add(contentId);
+                }
+            });
+            
+            return recommendations;
+        }
+
+        function clearContentTracking() {
+            // Clear all content tracking (useful for testing or reset)
+            appState.playedContent.clear();
+            appState.channelContent.clear();
+            appState.globalContentQueue = [];
+            appState.contentHistory = [];
+            Tracker.logRumiAction('Content tracking cleared');
+        }
+
+        // NEW: Debug function to test content tracking
+        function debugContentTracking() {
+            console.log('=== CONTENT TRACKING DEBUG ===');
+            console.log('Played Content Count:', appState.playedContent.size);
+            console.log('Played Content IDs:', Array.from(appState.playedContent));
+            
+            console.log('Channel Content:');
+            appState.channelContent.forEach((contentSet, channelName) => {
+                console.log(`  ${channelName}: ${contentSet.size} items`);
+                console.log(`    IDs:`, Array.from(contentSet));
+            });
+            
+            console.log('Global Queue Count:', appState.globalContentQueue.length);
+            console.log('Global Queue Items:', appState.globalContentQueue.map(item => ({
+                title: item.content.title,
+                channelName: item.channelName,
+                contentId: item.contentId
+            })));
+            
+            console.log('Content History Count:', appState.contentHistory.length);
+            console.log('Recent History:', appState.contentHistory.slice(0, 5).map(item => ({
+                title: item.content.title,
+                playedAt: new Date(item.playedAt).toLocaleTimeString()
+            })));
+            
+            // Test content ID generation
+            const testContent = {
+                title: 'Test Show',
+                season: 'S1',
+                episode: 'E1',
+                type: 'show',
+                service: 'netflix'
+            };
+            console.log('Test Content ID:', generateContentId(testContent));
+            
+            // Test filtering
+            const testContentList = [
+                { title: 'Show 1', type: 'show' },
+                { title: 'Show 2', type: 'movie' },
+                { title: 'Show 3', type: 'show' }
+            ];
+            const filtered = getFilteredContentForChannel(testContentList, 'test-channel');
+            console.log('Filtered Content for test-channel:', filtered.length, 'items');
+            
+            console.log('=== END CONTENT TRACKING DEBUG ===');
+        }
+
+        // NEW: Debug function to inspect show detection state
+        function debugShowDetectionState() {
+            console.log('=== SHOW DETECTION DEBUG STATE ===');
+            console.log('Entry Point:', appState.entryPoint);
+            console.log('Is Indexing:', appState.isIndexing);
+            console.log('Indexing Start Time:', appState.indexingStartTime);
+            console.log('Detected Show:', appState.detectedShow);
+            
+            if (appState.isIndexing && appState.indexingStartTime) {
+                const elapsedTime = (Date.now() - appState.indexingStartTime) / 1000;
+                console.log('Elapsed Time:', elapsedTime.toFixed(2) + 's');
+            }
+            
+            console.log('Content Items Count:', appState.automodeContentItems ? appState.automodeContentItems.length : 0);
+            console.log('Current Content Index:', appState.currentContentIndex);
+            console.log('Content Item Start Time:', appState.contentItemStartTime);
+            console.log('Content Item Duration:', appState.contentItemDuration);
+            
+            if (appState.automodeContentItems && appState.automodeContentItems.length > 0) {
+                console.log('Current Content Item:', appState.automodeContentItems[appState.currentContentIndex]);
+                if (appState.currentContentIndex < appState.automodeContentItems.length - 1) {
+                    console.log('Next Content Item:', appState.automodeContentItems[appState.currentContentIndex + 1]);
+                }
+            }
+            
+            // Show session duration info without causing overflow
+            console.log('Cached Session Duration:', appState.cachedSessionDuration);
+            console.log('Cache Timestamp:', appState.cachedSessionDurationTimestamp);
+            if (appState.cachedSessionDurationTimestamp) {
+                const cacheAge = Date.now() - appState.cachedSessionDurationTimestamp;
+                console.log('Cache Age:', (cacheAge / 1000).toFixed(1) + 's');
+            }
+            console.log('Chained Session Duration:', appState.chainedSessionDuration);
+            if (appState.detectedShow && appState.detectedShow.duration) {
+                console.log('Detected Show Duration:', appState.detectedShow.duration + ' minutes');
+            }
+            console.log('Base Rate:', appState.baseRate);
+            console.log('Current Multiplier:', appState.currentMultiplier);
+            console.log('=== END SHOW DETECTION DEBUG ===');
+        }
+
+        // NEW: Debug function to inspect channel content
+        function debugChannelContent() {
+            console.log('=== CHANNEL CONTENT DEBUG ===');
+            const channelFrame = document.getElementById('channel-frame-indexing');
+            if (channelFrame && channelFrame.contentWindow) {
+                console.log('Channel frame found, requesting content...');
+                try {
+                    channelFrame.contentWindow.postMessage({ 
+                        type: 'requestCurrentContent' 
+                    }, '*');
+                } catch (e) {
+                    console.log('Error requesting channel content:', e.message);
+                }
+            } else {
+                console.log('Channel frame not found or not accessible');
+            }
+            console.log('=== END CHANNEL CONTENT DEBUG ===');
+        }
+
+        // NEW: Debug function to reset show detection state
+        function debugResetShowDetection() {
+            console.log('=== RESETTING SHOW DETECTION STATE ===');
+            appState.automodeContentItems = [];
+            appState.currentContentIndex = 0;
+            appState.contentItemStartTime = 0;
+            appState.contentItemDuration = 0;
+            appState.contentTransitionProgress = 0;
+            console.log('Show detection state reset');
+            console.log('=== END RESET ===');
+        }
+
+        // NEW: Function to clear session duration cache
+        function clearSessionDurationCache() {
+            appState.cachedSessionDuration = null;
+            appState.cachedSessionDurationTimestamp = null;
+            console.log('Session duration cache cleared');
+        }
+
+        // NEW: Channel integration functions
+        function integrateContentTrackingWithChannels() {
+            // Send content tracking data to all loaded channels
+            const channelFrames = [
+                document.getElementById('channel-frame'),
+                document.getElementById('channel-frame-indexing')
+            ];
+            
+            channelFrames.forEach(frame => {
+                if (frame && frame.contentWindow) {
+                    try {
+                        // Send played content data to channel
+                        frame.contentWindow.postMessage({
+                            type: 'contentTracking',
+                            playedContent: Array.from(appState.playedContent),
+                            channelContent: Object.fromEntries(appState.channelContent),
+                            globalQueue: appState.globalContentQueue
+                        }, '*');
+                    } catch (e) {
+                        console.log('Could not send content tracking to channel:', e.message);
+                    }
+                }
+            });
+        }
+
+        function handleChannelContentAdded(content, channelName) {
+            // Called when content is added to a channel
+            addContentToChannel(content, channelName);
+            
+            // Also add to global queue if not already there
+            addToGlobalQueue(content, channelName);
+            
+            Tracker.logRumiAction('Content added to channel from tracking', { 
+                contentId: generateContentId(content), 
+                channelName, 
+                title: content.title 
+            });
+        }
+
+        function handleChannelContentPlayed(content, channelName) {
+            // Called when content is played from a channel
+            markContentAsPlayed(content);
+            
+            // Remove from channel content (since it's now played)
+            const contentId = generateContentId(content);
+            removeContentFromChannel(contentId, channelName);
+            
+            // Remove from global queue
+            removeFromGlobalQueue(contentId);
+            
+            Tracker.logRumiAction('Content played from channel', { 
+                contentId, 
+                channelName, 
+                title: content.title 
+            });
+        }
+
+        // NEW: Function to get filtered content for channels
+        function getChannelContentRecommendations(channelName, limit = 10) {
+            // Get content recommendations that haven't been played and aren't in this channel
+            const recommendations = [];
+            const seenIds = new Set();
+            
+            // Add recent content from history as recommendations
+            appState.contentHistory.forEach(historyItem => {
+                if (recommendations.length >= limit) return;
+                
+                const contentId = historyItem.id;
+                if (!seenIds.has(contentId) && 
+                    !isContentPlayed(contentId) && 
+                    !isContentInChannel(contentId, channelName)) {
+                    recommendations.push(historyItem.content);
+                    seenIds.add(contentId);
+                }
+            });
+            
+            return recommendations;
+        }
+
+        // NEW: Function to export content tracking data
+        function exportContentTrackingData() {
+            return {
+                playedContent: Array.from(appState.playedContent),
+                channelContent: Object.fromEntries(appState.channelContent),
+                globalQueue: appState.globalContentQueue,
+                contentHistory: appState.contentHistory.map(item => ({
+                    id: item.id,
+                    title: item.content.title,
+                    playedAt: item.playedAt
+                }))
+            };
+        }
+
+        // NEW: Function to import content tracking data
+        function importContentTrackingData(data) {
+            if (data.playedContent) {
+                appState.playedContent = new Set(data.playedContent);
+            }
+            if (data.channelContent) {
+                appState.channelContent = new Map(Object.entries(data.channelContent).map(([key, value]) => [key, new Set(value)]));
+            }
+            if (data.globalQueue) {
+                appState.globalContentQueue = data.globalQueue;
+            }
+            if (data.contentHistory) {
+                appState.contentHistory = data.contentHistory;
+            }
+            
+            Tracker.logRumiAction('Content tracking data imported', { 
+                playedCount: appState.playedContent.size,
+                channelCount: appState.channelContent.size,
+                queueCount: appState.globalContentQueue.length
+            });
+        }
+
+        // Initialize app
+        function initApp() {
+            console.log('Initializing app...');
+            
+            if (typeof Tracker === 'undefined') {
+                console.error('Tracker not loaded!');
+                return;
+            }
+
+            Tracker.startFlow(RUMI_PROJECT.flows.HOME_SCREEN);
+            Tracker.logRumiAction('App initialized');
+            Tracker.logRumiState(appState);
+            
+            // Initialize UI based on current state
+            updateUI();
+            updatePointsDisplay();
+            
+            // Initialize stream detector (for testing only)
+            initStreamDetector();
+            
+            // Test home screen checkpoints
+            Tracker.assertRumi(RUMI_PROJECT.checkpoints.HOME_LOADED, true, 'Home screen loaded');
+            Tracker.assertRumi(RUMI_PROJECT.checkpoints.POINTS_DISPLAYED, true, 'Points displayed correctly');
+            Tracker.assertRumi(RUMI_PROJECT.checkpoints.CTA_POSITIONED, true, 'CTA positioned correctly');
+            
+            Tracker.endFlow();
+            console.log('App initialized successfully');
+
+            // Start error monitoring
+            monitorVolume();
+            // monitorConnection(); // Disabled - was causing false connection errors during indexing
+        }
+
+        // Toggle indexing state
+        function toggleIndexing() {
+            if (appState.isIndexing) {
+                stopIndexing();
+            } else {
+                startIndexing();
+            }
+        }
+
+        // Start indexing
+       function startIndexing() {
+            // If session is already running, do nothing.
+            if (appState.indexingStartTime) return;
+
+            // Ensure state and view are correct, even if called directly.
+            if (!appState.isIndexing) {
+                appState.isIndexing = true;
+                updateUI();
+            }
+
+            // Reset session state
+            appState.sessionEndReason = null;
+            appState.isPaused = false;
+            appState.pauseStartTime = null;
+            appState.pauseDuration = 0;
+            appState.sessionCompleted = false; // Reset session completion flag
+            appState.showInterruptTimestamp = null; // Reset interrupt timestamp for new session
+
+            // Set base rate for this session (default to 0.1 if no entry point)
+            appState.baseRate = 0.1;
+            appState.indexingStartTime = Date.now();
+            appState.sessionEarnings = 0;
+
+            // Initialize content tracking based on entry point (if any)
+            if (appState.entryPoint === 'automode') {
+                // Automode: Generate content items for the session (30 minutes = 1800 seconds)
+                appState.baseRate = 0.25;
+                appState.automodeContentItems = getAutomodeContent(appState.currentBucket || 'Rumi Internal Audiences', 1800, appState.baseRate, appState.currentMultiplier);
+                appState.currentContentIndex = 0;
+                appState.contentItemStartTime = 0;
+                appState.contentItemDuration = 0;
+                appState.contentTransitionProgress = 0;
+                
+                // Calculate duration for first content item
+                if (appState.automodeContentItems.length > 0) {
+                    const firstItem = appState.automodeContentItems[0];
+                    console.log(`Automode setup - First item: ${firstItem.title}, duration string: "${firstItem.duration}"`);
+                    const durationParts = firstItem.duration.split(':');
+                    appState.contentItemDuration = parseInt(durationParts[0]) * 60 + parseInt(durationParts[1]);
+                    console.log(`Automode setup - Parsed duration: ${appState.contentItemDuration} seconds`);
+                }
+            } else if (appState.entryPoint === 'detection' && appState.detectedShow) {
+                // Show detection mode: Use detected show
+                const sessionDuration = calculateSessionDuration();
+                appState.automodeContentItems = getShowDetectionContent(appState.detectedShow, sessionDuration);
+                appState.currentContentIndex = 0;
+                appState.contentItemStartTime = 0; // Start at 0 elapsed time
+                appState.contentItemDuration = 0;
+                appState.contentTransitionProgress = 0;
+                
+                // Calculate duration for first content item if we have content
+                if (appState.automodeContentItems.length > 0) {
+                    const firstItem = appState.automodeContentItems[0];
+                    console.log(`Show detection setup - First item: ${firstItem.title}, duration: ${firstItem.duration}`);
+                    
+                    // Handle both duration strings and numeric durations
+                    if (typeof firstItem.duration === 'string' && firstItem.duration.includes(':')) {
+                        // Parse duration string (e.g., "0:45") to seconds
+                        const durationParts = firstItem.duration.split(':');
+                        appState.contentItemDuration = parseInt(durationParts[0]) * 60 + parseInt(durationParts[1]);
+                        console.log(`Show detection setup - Parsed duration: ${appState.contentItemDuration} seconds`);
+                    } else {
+                        // Use duration as-is (already in seconds)
+                        appState.contentItemDuration = firstItem.duration;
+                        console.log(`Show detection setup - Using duration as-is: ${appState.contentItemDuration} seconds`);
+                    }
+                } else {
+                    // No content yet - will be populated when channel responds
+                    console.log('Show detection setup - No content items yet, waiting for channel response');
+                    // Set a default duration until content arrives
+                    appState.contentItemDuration = 45 * 60; // 45 minutes default
+                }
+            }
+
+            // Start animation loop
+            if (animationFrameId) cancelAnimationFrame(animationFrameId);
+            animateSessionStats();
+            
+            Tracker.logRumiAction('Indexing session activated');
+            updatePointsDisplay(); // Switch to session view in points panel
+            appState.simResolved = false;
+            updateDebugButtonStates(); // Update debug button states when indexing starts
+        }
+// Helper to record actual indexed content before showing receipt
+function recordActualIndexedContentBeforeReceipt() {
+    try {
+        // If already populated, do nothing
+        if (appState.indexedContent && appState.indexedContent.length > 0) return;
+
+        // Only proceed if in detection mode and a show is detected
+        if (appState.entryPoint !== 'detection') return;
+        if (!appState.detectedShow || !appState.detectedShow.title) {
+            console.warn('No detectedShow available for indexed content recording.');
+            return;
+        }
+        const sessionDuration = calculateSessionDuration();
+        const sessionDurationMinutes = Math.floor(sessionDuration / 60);
+        const totalElapsedTime = Math.floor((Date.now() - appState.indexingStartTime) / 60000);
+        const actualDuration = Math.min(sessionDurationMinutes, totalElapsedTime);
+
+        if (appState.originalShow && appState.interruptNewShow) {
+            // If there was a show transition, split time using interrupt timestamp if available
+            let originalShowTime, chainedShowTime;
+            if (appState.showInterruptTimestamp) {
+                const interruptTimeMinutes = Math.floor((appState.showInterruptTimestamp - appState.indexingStartTime) / 60000);
+                originalShowTime = Math.min(interruptTimeMinutes, actualDuration);
+                chainedShowTime = Math.max(0, actualDuration - originalShowTime);
+            } else {
+                const interruptTime = Math.floor(actualDuration * 0.75);
+                originalShowTime = interruptTime;
+                chainedShowTime = actualDuration - interruptTime;
+            }
+            // Record original show
+            const originalShowItem = {
+                title: `${appState.originalShow.title} ${appState.originalShow.season !== 'N/A' ? `S${appState.originalShow.season} E${appState.originalShow.episode}` : '(Film)'}`,
+                duration: originalShowTime,
+                type: 'detected_show',
+                points: Math.round((originalShowTime * 60 * (appState.baseRate || 0.1) * (appState.currentMultiplier || 1.0)) * 100) / 100
+            };
+            appState.indexedContent.push(originalShowItem);
+            // Record chained show
+            const chainedShowItem = {
+                title: `${appState.interruptNewShow.title} ${appState.interruptNewShow.season !== 'N/A' ? `S${appState.interruptNewShow.season} E${appState.interruptNewShow.episode}` : '(Film)'} (Chained)`,
+                duration: chainedShowTime,
+                type: 'chained_show',
+                points: Math.round((chainedShowTime * 60 * (appState.baseRate || 0.1) * (appState.currentMultiplier || 1.0)) * 100) / 100
+            };
+            appState.indexedContent.push(chainedShowItem);
+            markContentAsPlayed(originalShowItem);
+            markContentAsPlayed(chainedShowItem);
+            console.log('Indexed content recorded (transition):', appState.indexedContent);
+        } else {
+            // No show transition - just record the current show
+            const indexedContentItem = {
+                title: `${appState.detectedShow.title} ${appState.detectedShow.season !== 'N/A' ? `S${appState.detectedShow.season} E${appState.detectedShow.episode}` : '(Film)'}`,
+                duration: actualDuration,
+                type: 'detected_show',
+                points: Math.round((actualDuration * 60 * (appState.baseRate || 0.1) * (appState.currentMultiplier || 1.0)) * 100) / 100
+            };
+            appState.indexedContent.push(indexedContentItem);
+            markContentAsPlayed(indexedContentItem);
+            console.log('Indexed content recorded:', appState.indexedContent);
+        }
+    } catch (e) {
+        console.error('Error in recordActualIndexedContentBeforeReceipt:', e);
+    }
+}
+        function stopIndexing() {
+            if (!appState.isIndexing) {
+                return;
+            }
+            // Only record indexed content for detection mode
+            if (appState.entryPoint === 'detection') {
+                recordActualIndexedContentBeforeReceipt();
+            }
+            // Record automode indexed content
+            if (appState.entryPoint === 'automode') {
+                // Only include items that were actually shown (up to currentContentIndex)
+                if (appState.automodeContentItems && appState.automodeContentItems.length > 0) {
+                    appState.indexedContent = appState.automodeContentItems
+                        .slice(0, appState.currentContentIndex + 1)
+                        .map(item => ({
+                            title: item.title,
+                            duration: 1, // Each item represents ~1 minute of content
+                            points: (appState.baseRate || 0.25) * (appState.currentMultiplier || 1.0) * 60, // 1 minute worth of points
+                            type: 'automode'
+                        }));
+                }
+            }
+            appState.isIndexing = false;
+            appState.totalPendingPoints += appState.sessionEarnings;
+            
+            // Set session end reason
+            appState.sessionEndReason = 'user_stop';
+            
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+                animationFrameId = null;
+            }
+            
+            // Calculate any remaining real-time points before showing the receipt
+            const elapsedTime = (Date.now() - appState.indexingStartTime) / 1000;
+            appState.sessionEarnings = (appState.baseRate || 0.1) * appState.currentMultiplier * elapsedTime;
+            
+            // NEW: Complete current show before showing receipt (ensures last content is logged)
+            if (typeof completeCurrentShow === "function") {
+                completeCurrentShow();
+            }
+            // Calculate session data and show receipt
+            const sessionDuration = Math.floor(elapsedTime);
+            const finalMultiplier = appState.currentMultiplier;
+            showReceiptView(appState.sessionEarnings, sessionDuration, finalMultiplier);
+
+            // Reset session state
+            appState.indexingStartTime = null;
+            appState.showInterruptTimestamp = null; // Reset interrupt timestamp for next session
+            
+            Tracker.logRumiAction('Indexing stopped');
+            updatePointsDisplay();
+            updateDebugButtonStates(); // Update debug button states when indexing stops
+        }
+
+        // Show receipt view with session results
+        function showReceiptView(sessionEarnings, sessionDuration, finalMultiplier) {
+            Tracker.logRumiAction('Receipt view shown', { 
+                sessionEarnings, 
+                sessionDuration, 
+                finalMultiplier,
+                mode: appState.entryPoint,
+                sessionEndReason: appState.sessionEndReason
+            });
+            
+            // Keep header consistent - no need to change it
+            // const headerControls = document.querySelector('.header-controls');
+            // if (headerControls) {
+            //     headerControls.innerHTML = '<button class="settings-button" onclick="hideReceiptView()">← BACK</button>';
+            // }
+            
+            // Hide main view and show receipt view
+            document.getElementById('main-view').style.display = 'none';
+            document.getElementById('receipt-view').style.display = 'block';
+            document.getElementById('settings-view').style.display = 'none';
+            
+            // Populate receipt data
+            document.getElementById('receipt-total-points').textContent = `+${sessionEarnings.toFixed(2)}`;
+            document.getElementById('receipt-total-pending').textContent = `+${(appState.totalPendingPoints + sessionEarnings).toFixed(2)}`;
+            document.getElementById('receipt-duration').textContent = formatTime(sessionDuration);
+            document.getElementById('receipt-multiplier').textContent = `${finalMultiplier.toFixed(1)}x`;
+            
+            // Set bonus text based on multiplier
+            const bonusElement = document.getElementById('receipt-bonus');
+            if (appState.interruptNewShow && finalMultiplier >= 1.1) {
+                bonusElement.textContent = 'Chained Content Bonus';
+                bonusElement.style.color = '#ffaa00';
+            } else if (finalMultiplier >= 1.2) {
+                bonusElement.textContent = '10min Streak Bonus';
+                bonusElement.style.color = '#ffaa00';
+            } else {
+                bonusElement.textContent = 'None';
+                bonusElement.style.color = '#888';
+            }
+            
+            // Set the correct base rate in the receipt
+            const baseRateValue = appState.entryPoint === 'automode' ? '0.25 pts/s' : '0.1 pts/s';
+            const baseRateSpans = document.querySelectorAll('#receipt-view span[style*="color: #fff"]');
+            baseRateSpans.forEach(span => {
+                if (span.textContent.includes('pts/')) {
+                    span.textContent = baseRateValue;
+                }
+            });
+            
+            // Generate mode-specific content list with session end reason
+            generateReceiptContentList(sessionDuration, appState.entryPoint, appState.sessionEndReason);
+            
+            appState.view = 'receipt';
+            Tracker.assertRumi('Receipt view displayed', true, 'Receipt should show session results');
+        }
+
+        // Generate content list for receipt based on session duration and mode
+        function generateReceiptContentList(sessionDuration, mode, sessionEndReason) {
+            const contentList = document.getElementById('receipt-content-list');
+            const contentItems = [];
+            
+            // Calculate base rate and multiplier for points calculation
+            const baseRate = appState.entryPoint === 'automode' ? 0.25 : 0.1; // points per second
+            const finalMultiplier = appState.currentMultiplier || 1.0;
+            
+            // Add session end reason if it was a fatal error
+            if (sessionEndReason === 'fatal_error') {
+                contentItems.push({
+                    title: 'Session ended by terminal error',
+                    duration: '--',
+                    points: '--',
+                    isError: true
+                });
+            }
+            
+            // Use actual indexed content if available
+            if (appState.indexedContent && appState.indexedContent.length > 0) {
+                appState.indexedContent.forEach(content => {
+                    contentItems.push({
+                        title: content.title,
+                        duration: `${content.duration} min`,
+                        points: content.points.toFixed(1),
+                        isChained: content.type === 'chained' || content.title.includes('(Chained)')
+                    });
+                });
+            } else if (mode === 'detection' || mode === 'showDetection') {
+                // Fallback: Show detection mode: show the detected show and related content
+                if (appState.detectedShow) {
+                    // Use original show if available (for chained content), otherwise use current detected show
+                    const show = appState.originalShow || appState.detectedShow;
+                    
+                    // Use dynamic session duration instead of hardcoded 45 minutes
+                    const sessionDurationMinutes = Math.floor(calculateSessionDuration() / 60);
+                    const showTime = Math.min(sessionDuration, sessionDurationMinutes); // Use calculated duration
+                    const showTimeSeconds = showTime * 60; // Convert to seconds
+                    const showPoints = Math.round((showTimeSeconds * baseRate * finalMultiplier) * 100) / 100;
+                    
+                    contentItems.push({
+                        title: `${show.title} ${show.season !== 'N/A' ? `S${show.season} E${show.episode}` : '(Film)'}`,
+                        duration: formatTime(showTime),
+                        points: showPoints.toFixed(1)
+                    });
+                    
+                    // Add related content based on genre
+                    const remainingTime = sessionDuration - showTime;
+                    if (remainingTime > 0) {
+                        // Check if there was a show interrupt and add the chained content
+                        if (appState.interruptNewShow) {
+                            const chainedShow = appState.interruptNewShow;
+                            const chainedTime = Math.min(remainingTime, 30); // Assume 30 min for chained content
+                            if (chainedTime > 0) {
+                                const chainedTimeSeconds = chainedTime * 60;
+                                const chainedPoints = Math.round((chainedTimeSeconds * baseRate * finalMultiplier) * 100) / 100;
+                                
+                                contentItems.push({
+                                    title: `${chainedShow.title} ${chainedShow.season !== 'N/A' ? `S${chainedShow.season} E${chainedShow.episode}` : '(Film)'} (Chained)`,
+                                    duration: formatTime(chainedTime),
+                                    points: chainedPoints.toFixed(1),
+                                    isChained: true
+                                });
+                                
+                                // Add related content for the chained show if there's remaining time
+                                const finalRemainingTime = remainingTime - chainedTime;
+                                if (finalRemainingTime > 0) {
+                                    const relatedContent = getRelatedContentWithPoints(chainedShow.genre, finalRemainingTime, baseRate, finalMultiplier);
+                                    contentItems.push(...relatedContent);
+                                }
+                            }
+                        } else {
+                            const relatedContent = getRelatedContentWithPoints(show.genre, remainingTime, baseRate, finalMultiplier);
+                            contentItems.push(...relatedContent);
+                        }
+                    }
+                }
+            } else if (mode === 'automode') {
+                // Automode: show content from the current bucket
+                const bucketContent = getAutomodeContentWithPoints(appState.currentBucket, sessionDuration, baseRate, finalMultiplier);
+                contentItems.push(...bucketContent);
+            } else {
+                // Fallback: generic content
+                const genericContent = getGenericContentWithPoints(sessionDuration, baseRate, finalMultiplier);
+                contentItems.push(...genericContent);
+            }
+            
+            // Generate HTML for content items with points
+            const contentHTML = contentItems.map(item => `
+                <div style="display: flex; justify-content: space-between; margin-bottom: 4px; padding: 4px; background: ${item.isError ? '#1a0000' : item.isChained ? '#1a1a00' : '#1a1a1a'}; border-radius: 3px; border: ${item.isError ? '1px solid #ff4444' : item.isChained ? '1px solid #ffaa00' : 'none'};">
+                    <span style="color: ${item.isError ? '#ff4444' : item.isChained ? '#ffaa00' : '#fff'};">${item.title}</span>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span style="color: #888;">${item.duration}</span>
+                        <span style="color: ${item.isError ? '#ff4444' : item.isChained ? '#ffaa00' : '#fff'}; font-weight: 600; font-size: 11px;">+${item.points} pts</span>
+                    </div>
+                </div>
+            `).join('');
+            
+            contentList.innerHTML = contentHTML;
+            
+            // Handle display based on number of items
+            if (contentItems.length <= 4) {
+                // For 4 or fewer items: expand the section to fit all items
+                contentList.style.maxHeight = 'none';
+                contentList.style.overflowY = 'visible';
+            } else {
+                // For more than 4 items: maintain 4-line layout with auto-scroll
+                contentList.style.maxHeight = '120px'; // Height for approximately 4 items
+                contentList.style.overflowY = 'auto';
+                
+                // Add scroll indicator
+                const scrollIndicator = document.createElement('div');
+                scrollIndicator.style.cssText = `
+                    font-size: 9px; 
+                    color: #666; 
+                    text-align: center; 
+                    padding: 4px; 
+                    font-style: italic;
+                    border-top: 1px solid #333;
+                    margin-top: 4px;
+                `;
+                scrollIndicator.textContent = `Scroll to see ${contentItems.length - 4} more items`;
+                contentList.appendChild(scrollIndicator);
+                
+                // Auto-scroll to bottom after a short delay
+                setTimeout(() => {
+                    contentList.scrollTop = contentList.scrollHeight;
+                }, 500);
+            }
+        }
+
+        // Show main view (from settings only now)
+        function showMainView() {
+            Tracker.logRumiAction('Main view shown');
+            
+            // Hide settings view and show main view
+            document.getElementById('main-view').style.display = 'block';
+            document.getElementById('receipt-view').style.display = 'none';
+            document.getElementById('settings-view').style.display = 'none';
+            
+            // Update UI based on current state
+            updateUI();
+            updatePointsDisplay();
+        }
+
+        // ============================================================================
+        // TRANSITION SYSTEM INTEGRATION
+        // ============================================================================
+
+        // Global transition system instance
+        let transitionSystem = null;
+
+        // Initialize transition system
+        function initializeTransitionSystem() {
+            console.log('Initializing transition system...');
+            
+            if (typeof window.TransitionSystem === 'undefined') {
+                console.error('TransitionSystem not loaded. Make sure transition-system.js is included.');
+                return false;
+            }
+
+            // Create transition system instance
+            transitionSystem = new window.TransitionSystem();
+            
+            // Set up UI callbacks
+            const uiCallbacks = {
+                onStateChange: (state) => {
+                    console.log('Transition system state changed:', state);
+                    updateTransitionSystemUI(state);
+                },
+                onShowChange: (show, state) => {
+                    console.log('Transition system show changed:', show.title);
+                    updateShowDisplay(show);
+                },
+                onMultiplierChange: (multiplier, state) => {
+                    console.log('Transition system multiplier changed:', multiplier);
+                    updateMultiplierDisplay(multiplier);
+                },
+                onProgressUpdate: (timeIndexed, totalLength, state) => {
+                    console.log('Transition system progress updated:', timeIndexed, totalLength);
+                    updateProgressDisplay(timeIndexed, totalLength);
+                }
+            };
+
+            // Initialize with a default show if available
+            const defaultShow = appState.detectedShow || {
+                title: 'Default Show',
+                duration: 120,
+                id: 'default-show'
+            };
+
+            transitionSystem.initialize(defaultShow, { uiCallbacks });
+            
+            console.log('Transition system initialized successfully');
+            return true;
+        }
+
+        // Update UI based on transition system state
+        function updateTransitionSystemUI(state) {
+            // Update multiplier display
+            if (state.multiplier !== appState.currentMultiplier) {
+                appState.currentMultiplier = state.multiplier;
+                updateMultiplierDisplay(state.multiplier);
+            }
+
+            // Update indexing state
+            if (state.isIndexing !== appState.isIndexing) {
+                appState.isIndexing = state.isIndexing;
+                updateIndexingState();
+            }
+
+            // Update transition state
+            if (state.isTransitioning !== appState.isTransitioning) {
+                appState.isTransitioning = state.isTransitioning;
+                updateTransitionState();
+            }
+
+            // Log state changes
+            Tracker.logRumiAction('Transition system state updated', {
+                multiplier: state.multiplier,
+                isIndexing: state.isIndexing,
+                isTransitioning: state.isTransitioning,
+                timeIndexed: state.timeIndexed,
+                totalSessionLength: state.totalSessionLength
+            });
+        }
+
+        // Update show display
+        function updateShowDisplay(show) {
+            if (show && show.title) {
+                // Update the holistic show info
+                const holisticShowInfo = document.getElementById('holistic-show-info');
+                if (holisticShowInfo) {
+                    holisticShowInfo.textContent = `${show.title} (${show.duration || 0}min)`;
+                }
+
+                // Update app state
+                appState.detectedShow = show;
+                
+                Tracker.logRumiAction('Show display updated', { 
+                    title: show.title, 
+                    duration: show.duration 
+                });
+            }
+        }
+
+        // Update multiplier display
+        function updateMultiplierDisplay(multiplier) {
+            // Update the multiplier display in the UI
+            const multiplierElements = document.querySelectorAll('.multiplier-display');
+            multiplierElements.forEach(element => {
+                element.textContent = `${multiplier.toFixed(1)}x`;
+            });
+
+            // Update app state
+            appState.currentMultiplier = multiplier;
+        }
+
+        // Update progress display
+        function updateProgressDisplay(timeIndexed, totalLength) {
+            // Update progress in the UI
+            const progressElements = document.querySelectorAll('.progress-display');
+            progressElements.forEach(element => {
+                element.textContent = `${timeIndexed}/${totalLength} minutes`;
+            });
+
+            // Update app state
+            appState.timeIndexed = timeIndexed;
+            appState.totalSessionLength = totalLength;
+        }
+
+        // Update indexing state
+        function updateIndexingState() {
+            // Update indexing state in the UI
+            const indexingElements = document.querySelectorAll('.indexing-status');
+            indexingElements.forEach(element => {
+                element.textContent = appState.isIndexing ? 'Indexing' : 'Stopped';
+                element.className = `indexing-status ${appState.isIndexing ? 'active' : 'inactive'}`;
+            });
+        }
+
+        // Update transition state
+        function updateTransitionState() {
+            // Update transition state in the UI
+            const transitionElements = document.querySelectorAll('.transition-status');
+            transitionElements.forEach(element => {
+                element.textContent = appState.isTransitioning ? 'Transitioning...' : 'Ready';
+                element.className = `transition-status ${appState.isTransitioning ? 'active' : 'inactive'}`;
+            });
+        }
+
+        // Integrate transition system with existing session management
+        function integrateTransitionSystemWithSession() {
+            if (!transitionSystem) {
+                console.error('Transition system not initialized');
+                return;
+            }
+
+            // Update session time when indexing
+            if (appState.isIndexing && appState.indexingStartTime) {
+                const sessionTime = (Date.now() - appState.indexingStartTime) / 1000;
+                transitionSystem.updateSessionTime(sessionTime);
+            }
+
+            // Update indexing progress
+            if (appState.timeIndexed > 0) {
+                transitionSystem.updateIndexingProgress(appState.timeIndexed);
+            }
+        }
+
+        // Handle show transitions using transition system
+        async function handleShowTransition(newShow) {
+            if (!transitionSystem) {
+                console.error('Transition system not available for show transition');
+                return false;
+            }
+
+            try {
+                console.log('Handling show transition with transition system:', newShow.title);
+                
+                // Perform the transition
+                await transitionSystem.transitionToShow(newShow);
+                
+                // Update app state
+                appState.detectedShow = newShow;
+                appState.timeIndexed = 0;
+                
+                // Log the transition
+                Tracker.logRumiAction('Show transition completed', {
+                    from: appState.detectedShow?.title,
+                    to: newShow.title,
+                    sessionTime: transitionSystem.getCurrentState().sessionTime
+                });
+
+                return true;
+            } catch (error) {
+                console.error('Show transition failed:', error);
+                return false;
+            }
+        }
+
+        // Get session receipt using transition system
+        function getSessionReceipt() {
+            if (!transitionSystem) {
+                console.error('Transition system not available for receipt generation');
+                return null;
+            }
+
+            return transitionSystem.getSessionReceipt();
+        }
+
+        // Start new session using transition system
+        function startNewSession() {
+            if (!transitionSystem) {
+                console.error('Transition system not available for session management');
+                return false;
+            }
+
+            transitionSystem.startNewSession();
+            
+            // Reset app state
+            appState.isIndexing = false;
+            appState.indexingStartTime = null;
+            appState.timeIndexed = 0;
+            appState.currentMultiplier = 1.0;
+            
+            console.log('New session started');
+            return true;
+        }
+
+        // Debug function for transition system
+        function debugTransitionSystem() {
+            console.log('=== TRANSITION SYSTEM DEBUG ===');
+            
+            if (!transitionSystem) {
+                console.log('Transition system not initialized');
+                return;
+            }
+
+            const state = transitionSystem.getCurrentState();
+            console.log('Current State:', state);
+            
+            console.log('Log Entries:', transitionSystem.getLog());
+            
+            console.log('Session Receipt:', transitionSystem.getSessionReceipt());
+            
+            console.log('=== END TRANSITION SYSTEM DEBUG ===');
+        }
+
+        // Initialize transition system when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Wait a bit for all scripts to load
+            setTimeout(() => {
+                if (initializeTransitionSystem()) {
+                    console.log('Transition system integration complete');
+                    
+                    // Set up periodic integration
+                    setInterval(integrateTransitionSystemWithSession, 1000);
+                } else {
+                    console.error('Failed to initialize transition system');
+                }
+            }, 100);
+        });
+
+        // ============================================================================
+        // ENTRY POINT FUNCTIONS
+        // ============================================================================
+
+        // Launch with automode entry point
+        function launchWithAutomode() {
+            const popup = document.querySelector('.extension-popup');
+            const activationCircle = document.getElementById('activation-circle');
+            
+            // Show the extension in deactivated state
+            popup.style.display = 'flex';
+            popup.classList.add('deactivated');
+            activationCircle.style.display = 'block';
+
+            // Hide entry points and show user changes content button
+            const entryPointPanel = document.querySelector('.entry-point-panel');
+            const streamDetector = document.getElementById('stream-detector-entry');
+            const automodeButton = document.querySelector('.automode-button');
+            const userChangesBtn = document.getElementById('user-changes-content-btn');
+            
+            if (entryPointPanel) {
+                entryPointPanel.style.display = 'none';
+            }
+            if (userChangesBtn) {
+                userChangesBtn.style.display = 'block';
+            }
+
+            // Store the entry point info for when activation happens
+            appState.pendingEntryPoint = 'automode';
+            
+            // Don't set the main entry point yet - wait for activation
+            // appState.isIndexing = false;
+            // appState.entryPoint = 'automode';
+            // detectedShow = null;
+            
+            // Don't update UI yet - wait for activation
+            // updateUI();
+        }
+
+        // Activate extension (called when activation circle is clicked)
+        function activateExtension() {
+            const popup = document.querySelector('.extension-popup');
+            const activationCircle = document.getElementById('activation-circle');
+            
+            // Activate the circle with visual feedback
+            activationCircle.classList.add('activated');
+            
+            // After a brief delay, remove the deactivated state and proceed
+            setTimeout(() => {
+                // Remove deactivated state
+                popup.classList.remove('deactivated');
+                activationCircle.style.display = 'none';
+                activationCircle.classList.remove('activated');
+                
+                // Now proceed with the normal flow based on pending entry point
+                if (appState.pendingEntryPoint === 'detection') {
+                    // Set the state to show indexing screen but NOT start indexing yet
+                    appState.isIndexing = false;
+                    appState.entryPoint = 'detection';
+                    appState.detectedShow = appState.pendingDetectedShow;
+                    
+                    // Reset channel expansion state for new entry point
+                    appState.channelExpanded = false;
+
+                    // Update UI after state is set
+                    updateUI();
+
+                    // Update the UI elements within the indexing view
+                    showDetectedShowUI(appState.pendingDetectedShow.title);
+                    
+                } else if (appState.pendingEntryPoint === 'automode') {
+                    // Set the state to show indexing screen but NOT start indexing yet
+                    appState.isIndexing = false;
+                    appState.entryPoint = 'automode';
+                    appState.detectedShow = null; // Clear detectedShow for automode
+                    appState.currentBucket = 'Rumi Internal Audiences';
+                    
+                    // Reset channel expansion state for new entry point
+                    appState.channelExpanded = false;
+                    
+                    // Update UI after state is set
+                    updateUI();
+                }
+                
+                // Clear pending entry point
+                appState.pendingEntryPoint = null;
+                appState.pendingDetectedShow = null;
+                
+            }, 500); // 500ms delay for visual feedback
+        }
+
+        // Simulate show change (for testing)
+        function simulateShowChange() {
+            // Pick a new random show
+            const availableShows = [
+                { title: 'Breaking Bad', season: '1', episode: '1', duration: 45, genre: 'Drama', service: 'Netflix' },
+                { title: 'Planet Earth II', season: '1', episode: '1', duration: 60, genre: 'Documentary', service: 'Netflix' },
+                { title: 'The Crown', season: '1', episode: '1', duration: 50, genre: 'Drama', service: 'Netflix' },
+                { title: 'Stranger Things', season: '1', episode: '1', duration: 55, genre: 'Sci-Fi', service: 'Netflix' }
+            ];
+            
+            const newShow = availableShows.find(s => s.title !== (appState.detectedShow?.title || '')) || availableShows[1];
+            
+            // Stop current indexing if active
+            if (appState.isIndexing) {
+                stopIndexing();
+            }
+            
+            // Update the detected show
+            appState.detectedShow = newShow;
+            appState.pendingDetectedShow = newShow;
+            
+            // Update the entry point UI
+            updateEntryPointForNextStep();
+        }
+
+        // Update entry point for next step
+        function updateEntryPointForNextStep() {
+            const detectorUI = document.getElementById('stream-detector-entry');
+            if (detectorUI && appState.detectedShow) {
+                detectorUI.innerHTML = `
+                    <div class="status">Indexing in Progress...</div>
+                    <div class="subtext" style="margin-top: 10px; margin-bottom: 10px;">
+                        Current Show: <strong>${appState.detectedShow.title}</strong>
+                    </div>
+                    <button class="secondary-button" style="width:100%; padding: 10px 12px; font-size: 12px; border-color: #ffaa00; color: #ffaa00;" onclick="simulateShowChange()">
+                        Simulate User Changing Show
+                    </button>
+                `;
+            }
+        }
+
+        // Show detected show UI
+        function showDetectedShowUI(showTitle) {
+            // Update detected show UI elements
+            const detectedShowUI = document.getElementById('detected-show-ui');
+            const detectedShowTitle = document.getElementById('detected-show-title');
+            const detectedShowMeta = document.getElementById('detected-show-meta');
+            
+            if (detectedShowUI && detectedShowTitle && detectedShowMeta) {
+                detectedShowTitle.textContent = showTitle;
+                detectedShowMeta.textContent = 'Drama • Netflix';
+                detectedShowUI.style.display = 'block';
+            }
+            
+            // Also update indexing view if available
+            const detectedShowUIIndexing = document.getElementById('detected-show-ui-indexing');
+            const detectedShowTitleIndexing = document.getElementById('detected-show-title-indexing');
+            const detectedShowMetaIndexing = document.getElementById('detected-show-meta-indexing');
+            
+            if (detectedShowUIIndexing && detectedShowTitleIndexing && detectedShowMetaIndexing) {
+                detectedShowTitleIndexing.textContent = showTitle;
+                detectedShowMetaIndexing.textContent = 'Drama • Netflix';
+                detectedShowUIIndexing.style.display = 'block';
+            }
+        }
+
+        // Dismiss detected show
+        function dismissDetectedShow() {
+            const detectedShowUI = document.getElementById('detected-show-ui');
+            if (detectedShowUI) {
+                detectedShowUI.style.display = 'none';
+            }
+            
+            // Clear detected show
+            appState.detectedShow = null;
+            appState.entryPoint = null;
+            
+            Tracker.logRumiAction('Detected show dismissed');
+        }
+
+        // Dismiss detected show (indexing view)
+        function dismissDetectedShowIndexing() {
+            const detectedShowUIIndexing = document.getElementById('detected-show-ui-indexing');
+            if (detectedShowUIIndexing) {
+                detectedShowUIIndexing.style.display = 'none';
+            }
+            
+            // Clear detected show
+            appState.detectedShow = null;
+            appState.entryPoint = null;
+            
+            Tracker.logRumiAction('Detected show dismissed (indexing view)');
+        }
+
+        // Return to entry point (from receipt view)
+        function returnToEntryPoint() {
+            console.log('Returning to main view...');
+            
+            // Hide receipt view and show main view
+            document.getElementById('receipt-view').style.display = 'none';
+            document.getElementById('main-view').style.display = 'block';
+            
+            // Update UI
+            updateUI();
+            updatePointsDisplay();
+            
+            // Log the action
+            Tracker.logRumiAction('Returned to main view');
+            
+            console.log('Returned to main view');
+        }
+
+        // Toggle cache control
+        function toggleCacheControl() {
+            const cacheToggle = document.getElementById('cache-control-toggle');
+            if (cacheToggle) {
+                cacheToggle.checked = !cacheToggle.checked;
+                
+                if (cacheToggle.checked) {
+                    console.log('Cache disabled for development');
+                    // Add cache-busting headers or other cache control logic here
+                } else {
+                    console.log('Cache enabled');
+                }
+            }
+        }
+
+        // Update UI based on current state
+        function updateUI() {
+            const popup = document.querySelector('.extension-popup');
+            const homeContent = document.getElementById('home-content');
+            const nokiaContent = document.getElementById('nokia-content');
+            const ctaButton = document.getElementById('cta-button');
+            const stopButton = document.getElementById('stop-indexing-button');
+            
+            if (!popup) return;
+            
+            if (appState.isIndexing) {
+                // Show indexing view
+                if (homeContent) homeContent.style.display = 'none';
+                if (nokiaContent) nokiaContent.style.display = 'block';
+                if (ctaButton) ctaButton.style.display = 'none';
+                if (stopButton) {
+                    stopButton.textContent = 'STOP INDEXING';
+                    stopButton.style.display = 'block';
+                }
+            } else {
+                // Show home view
+                if (homeContent) homeContent.style.display = 'block';
+                if (nokiaContent) nokiaContent.style.display = 'none';
+                if (ctaButton) {
+                    ctaButton.textContent = 'START WATCHING';
+                    ctaButton.style.display = 'block';
+                }
+                if (stopButton) stopButton.style.display = 'none';
+            }
+            
+            // Update detected show UI if we have a detected show
+            if (appState.detectedShow && appState.entryPoint === 'detection') {
+                showDetectedShow(appState.detectedShow);
+            }
+        }
+
+        // Update points display
+        function updatePointsDisplay() {
+            const primaryDisplay = document.getElementById('points-primary-display');
+            const secondaryDisplay = document.getElementById('points-secondary-display');
+            
+            if (primaryDisplay) {
+                primaryDisplay.textContent = `${appState.pointsEarned} LIFETIME POINTS`;
+            }
+            
+            if (secondaryDisplay) {
+                secondaryDisplay.textContent = `+${appState.totalPendingPoints} pending from today`;
+            }
+        }
+
+        // Initialize stream detector
+        function initStreamDetector() {
+            const streamDetector = document.getElementById('stream-detector-entry');
+            if (streamDetector) {
+                streamDetector.innerHTML = `
+                    <div class="status">STREAM DETECTED</div>
+                    <div class="subtext">Click to activate</div>
+                `;
+                
+                streamDetector.onclick = function() {
+                    console.log('Stream detector clicked...');
+                    
+                    // Simulate show detection
+                    const mockShow = {
+                        title: 'Breaking Bad',
+                        season: '1',
+                        episode: '1',
+                        duration: 45,
+                        genre: 'Drama',
+                        service: 'Netflix'
+                    };
+                    
+                    appState.pendingDetectedShow = mockShow;
+                    appState.pendingEntryPoint = 'detection';
+                    
+                    // Show the extension popup in deactivated state
+                    const popup = document.querySelector('.extension-popup');
+                    const activationCircle = document.getElementById('activation-circle');
+                    
+                    popup.style.display = 'flex';
+                    popup.classList.add('deactivated');
+                    activationCircle.style.display = 'block';
+                    
+                    // Hide entry points and show user changes content button
+                    const entryPointPanel = document.querySelector('.entry-point-panel');
+                    const userChangesBtn = document.getElementById('user-changes-content-btn');
+                    
+                    if (entryPointPanel) {
+                        entryPointPanel.style.display = 'none';
+                    }
+                    if (userChangesBtn) {
+                        userChangesBtn.style.display = 'block';
+                    }
+                    
+                    console.log('Stream detector activated:', mockShow.title);
+                };
+            }
+        }
+
+        // ============================================================================
+        // HELPER FUNCTIONS
+        // ============================================================================
+
+        // Calculate session duration
+        function calculateSessionDuration() {
+            // Use cached duration if available and recent
+            if (appState.cachedSessionDuration && appState.cachedSessionDurationTimestamp) {
+                const cacheAge = Date.now() - appState.cachedSessionDurationTimestamp;
+                if (cacheAge < 30000) { // 30 second cache
+                    return appState.cachedSessionDuration;
+                }
+            }
+            
+            // Calculate new duration
+            let duration = 45 * 60; // Default 45 minutes in seconds
+            
+            if (appState.detectedShow && appState.detectedShow.duration) {
+                duration = appState.detectedShow.duration * 60; // Convert minutes to seconds
+            }
+            
+            // Cache the result
+            appState.cachedSessionDuration = duration;
+            appState.cachedSessionDurationTimestamp = Date.now();
+            
+            return duration;
+        }
+
+        // Get automode content
+        function getAutomodeContent(bucket, sessionDuration, baseRate, multiplier) {
+            const contentItems = [];
+            const bucketContent = getBucketContent(bucket);
+            
+            // Generate content items for the session duration
+            let remainingTime = sessionDuration;
+            let itemIndex = 0;
+            
+            while (remainingTime > 0 && itemIndex < bucketContent.length) {
+                const item = bucketContent[itemIndex];
+                const itemDuration = Math.min(remainingTime, 60); // Each item is 1 minute
+                
+                contentItems.push({
+                    title: item.title,
+                    duration: formatTime(itemDuration),
+                    genre: item.genre,
+                    service: item.service,
+                    points: (itemDuration * baseRate * multiplier)
+                });
+                
+                remainingTime -= itemDuration;
+                itemIndex++;
+            }
+            
+            return contentItems;
+        }
+
+        // Get show detection content
+        function getShowDetectionContent(show, sessionDuration) {
+            const contentItems = [];
+            
+            // Add the detected show
+            contentItems.push({
+                title: show.title,
+                duration: formatTime(sessionDuration),
+                genre: show.genre,
+                service: show.service,
+                points: (sessionDuration * 0.1 * 1.0) // Base rate for detection mode
+            });
+            
+            return contentItems;
+        }
+
+        // Get bucket content
+        function getBucketContent(bucket) {
+            const bucketContent = {
+                'Rumi Internal Audiences': [
+                    { title: 'The Crown', genre: 'Drama', service: 'Netflix' },
+                    { title: 'Stranger Things', genre: 'Sci-Fi', service: 'Netflix' },
+                    { title: 'The Witcher', genre: 'Fantasy', service: 'Netflix' },
+                    { title: 'Ozark', genre: 'Drama', service: 'Netflix' },
+                    { title: 'The Queen\'s Gambit', genre: 'Drama', service: 'Netflix' },
+                    { title: 'Bridgerton', genre: 'Romance', service: 'Netflix' },
+                    { title: 'Money Heist', genre: 'Crime', service: 'Netflix' },
+                    { title: 'Dark', genre: 'Thriller', service: 'Netflix' },
+                    { title: 'The Mandalorian', genre: 'Sci-Fi', service: 'Disney+' },
+                    { title: 'WandaVision', genre: 'Superhero', service: 'Disney+' }
+                ]
+            };
+            
+            return bucketContent[bucket] || bucketContent['Rumi Internal Audiences'];
+        }
+
+        // Get automode content with points
+        function getAutomodeContentWithPoints(bucket, sessionDuration, baseRate, multiplier) {
+            const contentItems = [];
+            const bucketContent = getBucketContent(bucket);
+            
+            // Generate content items for the session duration
+            let remainingTime = sessionDuration;
+            let itemIndex = 0;
+            
+            while (remainingTime > 0 && itemIndex < bucketContent.length) {
+                const item = bucketContent[itemIndex];
+                const itemDuration = Math.min(remainingTime, 60); // Each item is 1 minute
+                
+                contentItems.push({
+                    title: item.title,
+                    duration: formatTime(itemDuration),
+                    points: (itemDuration * baseRate * multiplier).toFixed(1)
+                });
+                
+                remainingTime -= itemDuration;
+                itemIndex++;
+            }
+            
+            return contentItems;
+        }
+
+        // Get related content with points
+        function getRelatedContentWithPoints(genre, remainingTime, baseRate, multiplier) {
+            const contentItems = [];
+            const relatedContent = getRelatedContent(genre);
+            
+            let timeUsed = 0;
+            let itemIndex = 0;
+            
+            while (timeUsed < remainingTime && itemIndex < relatedContent.length) {
+                const item = relatedContent[itemIndex];
+                const itemDuration = Math.min(remainingTime - timeUsed, 15); // 15 minutes per item
+                
+                contentItems.push({
+                    title: item.title,
+                    duration: formatTime(itemDuration),
+                    points: (itemDuration * baseRate * multiplier).toFixed(1)
+                });
+                
+                timeUsed += itemDuration;
+                itemIndex++;
+            }
+            
+            return contentItems;
+        }
+
+        // Get related content
+        function getRelatedContent(genre) {
+            const relatedContent = {
+                'Drama': [
+                    { title: 'Better Call Saul', service: 'Netflix' },
+                    { title: 'The Good Place', service: 'Netflix' },
+                    { title: 'Fleabag', service: 'Prime' }
+                ],
+                'Documentary': [
+                    { title: 'Our Planet', service: 'Netflix' },
+                    { title: 'Blue Planet II', service: 'Netflix' },
+                    { title: 'Cosmos', service: 'Disney+' }
+                ],
+                'Comedy': [
+                    { title: 'The Office', service: 'Netflix' },
+                    { title: 'Parks and Recreation', service: 'Netflix' },
+                    { title: 'Brooklyn Nine-Nine', service: 'Netflix' }
+                ]
+            };
+            
+            return relatedContent[genre] || relatedContent['Drama'];
+        }
+
+        // Get generic content with points
+        function getGenericContentWithPoints(sessionDuration, baseRate, multiplier) {
+            const contentItems = [];
+            const genericContent = [
+                { title: 'Popular Show 1', duration: 30 },
+                { title: 'Popular Show 2', duration: 30 },
+                { title: 'Popular Show 3', duration: 30 }
+            ];
+            
+            let remainingTime = sessionDuration;
+            let itemIndex = 0;
+            
+            while (remainingTime > 0 && itemIndex < genericContent.length) {
+                const item = genericContent[itemIndex];
+                const itemDuration = Math.min(remainingTime, item.duration * 60);
+                
+                contentItems.push({
+                    title: item.title,
+                    duration: formatTime(itemDuration),
+                    points: (itemDuration * baseRate * multiplier).toFixed(1)
+                });
+                
+                remainingTime -= itemDuration;
+                itemIndex++;
+            }
+            
+            return contentItems;
+        }
+
+        // Format time
+        function formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = seconds % 60;
+            return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+        }
+
+        // ============================================================================
+        // ANIMATION AND SESSION MANAGEMENT
+        // ============================================================================
+
+        // Global animation frame ID
+        let animationFrameId = null;
+
+        // Animate session stats
+        function animateSessionStats() {
+            if (!appState.isIndexing || !appState.indexingStartTime) {
+                return;
+            }
+
+            const elapsedTime = (Date.now() - appState.indexingStartTime) / 1000;
+            const sessionDuration = calculateSessionDuration();
+            
+            // Update session earnings
+            appState.sessionEarnings = (appState.baseRate || 0.1) * appState.currentMultiplier * elapsedTime;
+            
+            // Update multiplier based on time
+            updateMultiplier(elapsedTime);
+            
+            // Update content progress
+            updateContentProgress(elapsedTime);
+            
+            // Update UI
+            updateSessionUI(elapsedTime, sessionDuration);
+            
+            // Continue animation
+            animationFrameId = requestAnimationFrame(animateSessionStats);
+        }
+
+        // Update multiplier based on elapsed time
+        function updateMultiplier(elapsedTime) {
+            let newMultiplier = 1.0;
+            
+            // 10-minute streak bonus
+            if (elapsedTime >= 600) { // 10 minutes
+                newMultiplier = 1.2;
+            } else if (elapsedTime >= 300) { // 5 minutes
+                newMultiplier = 1.1;
+            }
+            
+            // Chained content bonus
+            if (appState.interruptNewShow) {
+                newMultiplier += 0.1;
+            }
+            
+            appState.currentMultiplier = newMultiplier;
+        }
+
+        // Update content progress
+        function updateContentProgress(elapsedTime) {
+            if (!appState.automodeContentItems || appState.automodeContentItems.length === 0) {
+                return;
+            }
+            
+            // Calculate which content item we're currently on
+            let accumulatedTime = 0;
+            let currentIndex = 0;
+            
+            for (let i = 0; i < appState.automodeContentItems.length; i++) {
+                const item = appState.automodeContentItems[i];
+                const itemDuration = parseDurationToSeconds(item.duration);
+                
+                if (elapsedTime < accumulatedTime + itemDuration) {
+                    currentIndex = i;
+                    break;
+                }
+                
+                accumulatedTime += itemDuration;
+            }
+            
+            appState.currentContentIndex = currentIndex;
+            appState.contentItemStartTime = accumulatedTime;
+            appState.contentItemDuration = parseDurationToSeconds(appState.automodeContentItems[currentIndex]?.duration || '1:00');
+        }
+
+        // Parse duration string to seconds
+        function parseDurationToSeconds(duration) {
+            if (typeof duration === 'number') {
+                return duration;
+            }
+            
+            if (typeof duration === 'string' && duration.includes(':')) {
+                const parts = duration.split(':');
+                return parseInt(parts[0]) * 60 + parseInt(parts[1]);
+            }
+            
+            return 60; // Default 1 minute
+        }
+
+        // Update session UI
+        function updateSessionUI(elapsedTime, sessionDuration) {
+            // Update holistic animation
+            const animationContent = document.getElementById('animation-panel-content');
+            if (animationContent) {
+                const progress = Math.min((elapsedTime / sessionDuration) * 100, 100);
+                const animation = generateSessionAnimation(progress, appState.currentMultiplier);
+                animationContent.textContent = animation;
+            }
+            
+            // Update holistic progress
+            const progressElement = document.getElementById('holistic-progress');
+            if (progressElement) {
+                const progressText = `${formatTime(elapsedTime)} / ${formatTime(sessionDuration)}`;
+                progressElement.textContent = progressText;
+            }
+            
+            // Update holistic show info
+            const showInfoElement = document.getElementById('holistic-show-info');
+            if (showInfoElement && appState.automodeContentItems && appState.automodeContentItems.length > 0) {
+                const currentItem = appState.automodeContentItems[appState.currentContentIndex];
+                if (currentItem) {
+                    showInfoElement.textContent = `${currentItem.title} (${currentItem.duration})`;
+                }
+            }
+        }
+
+        // Generate session animation
+        function generateSessionAnimation(progress, multiplier) {
+            const frames = [
+                '⠋⠋⠋⠋⠋⠋⠋⠋⠋⠋',
+                '⠙⠋⠋⠋⠋⠋⠋⠋⠋⠋⠋',
+                '⠹⠙⠋⠋⠋⠋⠋⠋⠋⠋⠋⠋',
+                '⠸⠹⠙⠋⠋⠋⠋⠋⠋⠋⠋⠋⠋',
+                '⠼⠸⠹⠙⠋⠋⠋⠋⠋⠋⠋⠋⠋⠋',
+                '⠴⠼⠸⠹⠙⠋⠋⠋⠋⠋⠋⠋⠋⠋⠋',
+                '⠦⠴⠼⠸⠹⠙⠋⠋⠋⠋⠋⠋⠋⠋⠋⠋',
+                '⠧⠦⠴⠼⠸⠹⠙⠋⠋⠋⠋⠋⠋⠋⠋⠋⠋',
+                '⠇⠧⠦⠴⠼⠸⠹⠙⠋⠋⠋⠋⠋⠋⠋⠋⠋⠋',
+                '⠏⠇⠧⠦⠴⠼⠸⠹⠙⠋⠋⠋⠋⠋⠋⠋⠋⠋⠋'
+            ];
+            
+            const frameIndex = Math.floor((Date.now() / 100) % frames.length);
+            const frame = frames[frameIndex];
+            
+            const progressBar = '█'.repeat(Math.floor(progress / 10)) + '░'.repeat(10 - Math.floor(progress / 10));
+            const multiplierText = multiplier > 1.0 ? ` ${multiplier.toFixed(1)}x` : '';
+            
+            return `${frame} ${progressBar} ${Math.floor(progress)}%${multiplierText}`;
+        }
+
+        // Complete current show
+        function completeCurrentShow() {
+            if (!appState.automodeContentItems || appState.automodeContentItems.length === 0) {
+                return;
+            }
+            
+            const currentItem = appState.automodeContentItems[appState.currentContentIndex];
+            if (currentItem) {
+                // Mark content as played
+                markContentAsPlayed(currentItem);
+                
+                // Add to indexed content
+                appState.indexedContent.push({
+                    title: currentItem.title,
+                    duration: 1, // 1 minute per item
+                    points: (appState.baseRate || 0.1) * appState.currentMultiplier * 60,
+                    type: 'automode'
+                });
+                
+                Tracker.logRumiAction('Content item completed', {
+                    title: currentItem.title,
+                    index: appState.currentContentIndex,
+                    points: (appState.baseRate || 0.1) * appState.currentMultiplier * 60
+                });
+            }
+        }
+
+        // ============================================================================
+        // DEBUG AND UTILITY FUNCTIONS
+        // ============================================================================
+
+        // Test settings
+        function testSettings() {
+            console.log('Opening settings...');
+            
+            // Hide main view and show settings view
+            document.getElementById('main-view').style.display = 'none';
+            document.getElementById('receipt-view').style.display = 'none';
+            document.getElementById('settings-view').style.display = 'block';
+            
+            appState.view = 'settings';
+            
+            Tracker.logRumiAction('Settings opened');
+        }
+
+        // Monitor volume
+        function monitorVolume() {
+            // Simulate volume monitoring
+            setInterval(() => {
+                if (appState.isIndexing && Math.random() < 0.01) { // 1% chance of volume error
+                    console.warn('Volume error detected');
+                    // Handle volume error
+                }
+            }, 5000);
+        }
+
+        // Update debug button states
+        function updateDebugButtonStates() {
+            const skipEndBtn = document.getElementById('debug-skip-end-btn');
+            const skipTomorrowBtn = document.getElementById('debug-skip-tomorrow-btn');
+            const contentTrackingBtn = document.getElementById('debug-content-tracking-btn');
+            
+            if (skipEndBtn) {
+                skipEndBtn.disabled = appState.debugSkipCooldown > 0;
+                skipEndBtn.textContent = appState.debugSkipCooldown > 0 ? 
+                    `Skip to End (${appState.debugSkipCooldown}s)` : 'Skip to End (5s)';
+            }
+            
+            if (skipTomorrowBtn) {
+                skipTomorrowBtn.disabled = appState.debugTomorrowCooldown > 0;
+                skipTomorrowBtn.textContent = appState.debugTomorrowCooldown > 0 ? 
+                    `Skip to Tomorrow (${appState.debugTomorrowCooldown}s)` : 'Skip to Tomorrow';
+            }
+            
+            if (contentTrackingBtn) {
+                contentTrackingBtn.disabled = !appState.isIndexing;
+            }
+        }
+
+        // Debug skip to end
+        function debugSkipToEnd() {
+            if (appState.debugSkipCooldown > 0) return;
+            
+            console.log('Debug: Skipping to end...');
+            
+            // Set cooldown
+            appState.debugSkipCooldown = 30;
+            updateDebugButtonStates();
+            
+            // Simulate session end
+            if (appState.isIndexing) {
+                stopIndexing();
+            }
+            
+            // Clear cooldown after 30 seconds
+            setTimeout(() => {
+                appState.debugSkipCooldown = 0;
+                updateDebugButtonStates();
+            }, 30000);
+        }
+
+        // Debug skip to tomorrow
+        function debugSkipToTomorrow() {
+            if (appState.debugTomorrowCooldown > 0) return;
+            
+            console.log('Debug: Skipping to tomorrow...');
+            
+            // Set cooldown
+            appState.debugTomorrowCooldown = 60;
+            updateDebugButtonStates();
+            
+            // Simulate time passing
+            appState.totalPendingPoints += appState.sessionEarnings;
+            appState.sessionEarnings = 0;
+            updatePointsDisplay();
+            
+            // Clear cooldown after 60 seconds
+            setTimeout(() => {
+                appState.debugTomorrowCooldown = 0;
+                updateDebugButtonStates();
+            }, 60000);
+        }
+
+        // Debug content tracking
+        function debugContentTracking() {
+            if (!appState.isIndexing) return;
+            
+            console.log('Debug: Content tracking...');
+            debugContentTracking();
+        }
+
+        // Reset enhanced content tracking
+        function resetEnhancedContentTracking() {
+            console.log('Debug: Resetting enhanced content tracking...');
+            clearContentTracking();
+            Tracker.logRumiAction('Enhanced content tracking reset');
+        }
+
+        // Test genre channel autopopulation
+        function testGenreChannelAutopopulation() {
+            console.log('Debug: Testing genre channel autopopulation...');
+            
+            // Simulate genre channel content
+            const mockContent = [
+                { title: 'Test Show 1', genre: 'Drama', service: 'Netflix' },
+                { title: 'Test Show 2', genre: 'Comedy', service: 'Hulu' },
+                { title: 'Test Show 3', genre: 'Documentary', service: 'Prime' }
+            ];
+            
+            mockContent.forEach(content => {
+                addToGlobalQueue(content, 'Test Channel');
+            });
+            
+            Tracker.logRumiAction('Genre channel autopopulation tested', {
+                contentCount: mockContent.length
+            });
+        }
+
+        // Test receipt accuracy
+        function testReceiptAccuracy() {
+            console.log('Debug: Testing receipt accuracy...');
+            
+            // Simulate a session
+            const mockSessionEarnings = 15.75;
+            const mockSessionDuration = 1800; // 30 minutes
+            const mockMultiplier = 1.2;
+            
+            showReceiptView(mockSessionEarnings, mockSessionDuration, mockMultiplier);
+            
+            Tracker.logRumiAction('Receipt accuracy tested', {
+                earnings: mockSessionEarnings,
+                duration: mockSessionDuration,
+                multiplier: mockMultiplier
+            });
+        }
+
+        // Test enhanced content tracking
+        function testEnhancedContentTracking() {
+            console.log('Debug: Testing enhanced content tracking...');
+            
+            // Add some test content
+            const testContent = [
+                { title: 'Test Movie 1', type: 'movie', service: 'Netflix' },
+                { title: 'Test Show S1E1', season: '1', episode: '1', type: 'show', service: 'Hulu' },
+                { title: 'Test Documentary', type: 'documentary', service: 'Prime' }
+            ];
+            
+            testContent.forEach(content => {
+                markContentAsPlayed(content);
+                addToGlobalQueue(content, 'Test Channel');
+            });
+            
+            // Test content ID generation
+            testContent.forEach(content => {
+                const contentId = generateContentId(content);
+                console.log(`Content ID for "${content.title}": ${contentId}`);
+            });
+            
+            Tracker.logRumiAction('Enhanced content tracking tested', {
+                contentCount: testContent.length
+            });
+        }
+
+        // Initialize transition system when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Wait a bit for all scripts to load
+            setTimeout(() => {
+                if (initializeTransitionSystem()) {
+                    console.log('Transition system integration complete');
+                    
+                    // Set up periodic integration
+                    setInterval(integrateTransitionSystemWithSession, 1000);
+                } else {
+                    console.error('Failed to initialize transition system');
+                }
+            }, 100);
+        });
+
+        // ============================================================================
+        // DEBUG PANEL FUNCTIONS
+        // ============================================================================
+
+        // Toggle debug panel
+        function toggleDebugPanel() {
+            const debugPanel = document.getElementById('debug-panel');
+            const debugTrigger = document.querySelector('.debug-trigger');
+            const debugPanelToggle = document.getElementById('debug-panel-toggle');
+            
+            if (debugPanel && debugTrigger && debugPanelToggle) {
+                const isVisible = debugPanel.classList.contains('visible');
+                
+                if (isVisible) {
+                    debugPanel.classList.remove('visible');
+                    debugTrigger.style.display = 'block';
+                    debugPanelToggle.textContent = '▼';
+                } else {
+                    debugPanel.classList.add('visible');
+                    debugTrigger.style.display = 'none';
+                    debugPanelToggle.textContent = '▲';
+                }
+            }
+        }
+
+        // Toggle debug section
+        function toggleDebugSection(sectionId) {
+            const sectionContent = document.getElementById(`${sectionId}-content`);
+            const sectionToggle = document.getElementById(`${sectionId}-toggle`);
+            
+            if (sectionContent && sectionToggle) {
+                const isCollapsed = sectionContent.classList.contains('collapsed');
+                
+                if (isCollapsed) {
+                    sectionContent.classList.remove('collapsed');
+                    sectionToggle.textContent = '▼';
+                } else {
+                    sectionContent.classList.add('collapsed');
+                    sectionToggle.textContent = '▲';
+                }
+            }
+        }
+
+        // Show state
+        function showState() {
+            console.log('=== APP STATE ===');
+            console.log('Entry Point:', appState.entryPoint);
+            console.log('Is Indexing:', appState.isIndexing);
+            console.log('Current Multiplier:', appState.currentMultiplier);
+            console.log('Session Earnings:', appState.sessionEarnings);
+            console.log('Total Pending Points:', appState.totalPendingPoints);
+            console.log('Detected Show:', appState.detectedShow);
+            console.log('Content Items Count:', appState.automodeContentItems ? appState.automodeContentItems.length : 0);
+            console.log('Current Content Index:', appState.currentContentIndex);
+            console.log('Indexed Content Count:', appState.indexedContent ? appState.indexedContent.length : 0);
+            console.log('Played Content Count:', appState.playedContent ? appState.playedContent.size : 0);
+            console.log('Channel Content Count:', appState.channelContent ? appState.channelContent.size : 0);
+            console.log('Global Queue Count:', appState.globalContentQueue ? appState.globalContentQueue.length : 0);
+            console.log('=== END APP STATE ===');
+        }
+
+        // Test error functions
+        function testVolumeError() {
+            console.log('Debug: Testing volume error...');
+            // Simulate volume error
+            Tracker.logRumiAction('Volume error simulated');
+        }
+
+        function testSpeedError() {
+            console.log('Debug: Testing speed error...');
+            // Simulate speed error
+            Tracker.logRumiAction('Speed error simulated');
+        }
+
+        function testLanguageError() {
+            console.log('Debug: Testing language error...');
+            // Simulate language error
+            Tracker.logRumiAction('Language error simulated');
+        }
+
+        function testSystemError() {
+            console.log('Debug: Testing system error...');
+            // Simulate system error
+            Tracker.logRumiAction('System error simulated');
+        }
+
+        function testNetworkError() {
+            console.log('Debug: Testing network error...');
+            // Simulate network error
+            Tracker.logRumiAction('Network error simulated');
+        }
+
+        function testBrowserError() {
+            console.log('Debug: Testing browser error...');
+            // Simulate browser error
+            Tracker.logRumiAction('Browser error simulated');
+        }
+
+        function testShowInterrupt() {
+            console.log('Debug: Testing show interrupt...');
+            // Simulate show interrupt
+            appState.showInterruptTimestamp = Date.now();
+            appState.interruptNewShow = {
+                title: 'Interrupted Show',
+                season: '2',
+                episode: '1',
+                duration: 45,
+                genre: 'Drama',
+                service: 'Netflix'
+            };
+            Tracker.logRumiAction('Show interrupt simulated', {
+                timestamp: appState.showInterruptTimestamp,
+                newShow: appState.interruptNewShow.title
+            });
+        }
+
+        // ============================================================================
+        // CHANNEL AND UI FUNCTIONS
+        // ============================================================================
+
+        // Toggle leaderboard
+        function toggleLeaderboard() {
+            const leaderboardSection = document.getElementById('leaderboard-section');
+            if (leaderboardSection) {
+                leaderboardSection.classList.toggle('is-expanded');
+            }
+        }
+
+        // Toggle channel expansion
+        function toggleChannelExpansion() {
+            const channelContainer = document.getElementById('channel-expanded-container');
+            const channelIcon = document.getElementById('expand-channel-icon');
+            const channelText = document.getElementById('expand-channel-text');
+            
+            if (channelContainer && channelIcon && channelText) {
+                const isExpanded = channelContainer.style.display === 'block';
+                
+                if (isExpanded) {
+                    channelContainer.style.display = 'none';
+                    channelIcon.textContent = '▼';
+                    channelText.textContent = 'WATCH YOUR NEXT SHOW WITH US';
+                    appState.channelExpanded = false;
+                } else {
+                    channelContainer.style.display = 'block';
+                    channelIcon.textContent = '▲';
+                    channelText.textContent = 'HIDE CHANNEL';
+                    appState.channelExpanded = true;
+                    
+                    // Load channel if not already loaded
+                    loadChannel();
+                }
+            }
+        }
+
+        // Toggle channel expansion (indexing view)
+        function toggleChannelExpansionIndexing() {
+            const channelContainer = document.getElementById('channel-expanded-container-indexing');
+            const channelIcon = document.getElementById('expand-channel-icon-indexing');
+            const channelText = document.getElementById('expand-channel-text-indexing');
+            
+            if (channelContainer && channelIcon && channelText) {
+                const isExpanded = channelContainer.style.display === 'block';
+                
+                if (isExpanded) {
+                    channelContainer.style.display = 'none';
+                    channelIcon.textContent = '▼';
+                    channelText.textContent = 'WATCH YOUR NEXT SHOW WITH US';
+                    appState.channelExpanded = false;
+                } else {
+                    channelContainer.style.display = 'block';
+                    channelIcon.textContent = '▲';
+                    channelText.textContent = 'HIDE CHANNEL';
+                    appState.channelExpanded = true;
+                    
+                    // Load channel if not already loaded
+                    loadChannelIndexing();
+                }
+            }
+        }
+
+        // Load channel
+        function loadChannel() {
+            const channelFrame = document.getElementById('channel-frame');
+            const channelLoading = document.getElementById('channel-loading');
+            
+            if (channelFrame && channelLoading) {
+                channelLoading.style.display = 'block';
+                channelFrame.style.visibility = 'hidden';
+                
+                // Simulate loading delay
+                setTimeout(() => {
+                    channelLoading.style.display = 'none';
+                    channelFrame.style.visibility = 'visible';
+                    
+                    // Send content tracking data to channel
+                    try {
+                        channelFrame.contentWindow.postMessage({
+                            type: 'contentTracking',
+                            playedContent: Array.from(appState.playedContent),
+                            channelContent: Object.fromEntries(appState.channelContent),
+                            globalQueue: appState.globalContentQueue
+                        }, '*');
+                    } catch (e) {
+                        console.log('Could not send content tracking to channel:', e.message);
+                    }
+                }, 1000);
+            }
+        }
+
+        // Load channel (indexing view)
+        function loadChannelIndexing() {
+            const channelFrame = document.getElementById('channel-frame-indexing');
+            const channelLoading = document.getElementById('channel-loading-indexing');
+            
+            if (channelFrame && channelLoading) {
+                channelLoading.style.display = 'block';
+                channelFrame.style.visibility = 'hidden';
+                
+                // Simulate loading delay
+                setTimeout(() => {
+                    channelLoading.style.display = 'none';
+                    channelFrame.style.visibility = 'visible';
+                    
+                    // Send content tracking data to channel
+                    try {
+                        channelFrame.contentWindow.postMessage({
+                            type: 'contentTracking',
+                            playedContent: Array.from(appState.playedContent),
+                            channelContent: Object.fromEntries(appState.channelContent),
+                            globalQueue: appState.globalContentQueue
+                        }, '*');
+                    } catch (e) {
+                        console.log('Could not send content tracking to channel:', e.message);
+                    }
+                }, 1000);
+            }
+        }
+
+        // Show channel error
+        function showChannelError() {
+            console.error('Channel failed to load');
+            const channelFrame = document.getElementById('channel-frame');
+            if (channelFrame) {
+                channelFrame.style.display = 'none';
+            }
+            
+            // Show error message
+            const channelContainer = document.getElementById('channel-iframe-container');
+            if (channelContainer) {
+                channelContainer.innerHTML = `
+                    <div style="padding: 20px; text-align: center; color: #ff4444; font-size: 12px;">
+                        Channel failed to load. Please try again.
+                    </div>
+                `;
+            }
+        }
+
+        // Show channel error (indexing view)
+        function showChannelErrorIndexing() {
+            console.error('Channel failed to load (indexing view)');
+            const channelFrame = document.getElementById('channel-frame-indexing');
+            if (channelFrame) {
+                channelFrame.style.display = 'none';
+            }
+            
+            // Show error message
+            const channelContainer = document.getElementById('channel-iframe-container-indexing');
+            if (channelContainer) {
+                channelContainer.innerHTML = `
+                    <div style="padding: 20px; text-align: center; color: #ff4444; font-size: 12px;">
+                        Channel failed to load. Please try again.
+                    </div>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>

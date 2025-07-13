@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transition System Test</title>
+    <style>
+        body {
+            font-family: 'SF Mono', monospace;
+            background: #000;
+            color: #00ff41;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #111;
+            border: 2px solid #00ff41;
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .test-button {
+            background: #00ff41;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'SF Mono', monospace;
+            font-weight: bold;
+            margin: 5px;
+        }
+
+        .status-panel {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .log-panel {
+            background: #000;
+            border: 1px solid #333;
+            padding: 10px;
+            height: 300px;
+            overflow-y: auto;
+            font-size: 11px;
+        }
+
+        .log-entry {
+            margin: 2px 0;
+            padding: 2px 0;
+        }
+
+        .log-entry.info { color: #00ff41; }
+        .log-entry.warn { color: #ffaa00; }
+        .log-entry.error { color: #ff4444; }
+        .log-entry.test { color: #00aaff; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Transition System Test</h1>
+        <p>Testing the transition system implementation</p>
+
+        <!-- Test Controls -->
+        <div>
+            <button class="test-button" onclick="runTests()">Run All Tests</button>
+            <button class="test-button" onclick="testBasicFunctionality()">Test Basic Functionality</button>
+            <button class="test-button" onclick="testMultiplier()">Test Multiplier</button>
+            <button class="test-button" onclick="testTransitions()">Test Transitions</button>
+            <button class="test-button" onclick="clearLog()">Clear Log</button>
+        </div>
+
+        <!-- Status Display -->
+        <div class="status-panel">
+            <h3>Current State</h3>
+            <div id="status-display">
+                <p>Current Show: <span id="current-show">None</span></p>
+                <p>Multiplier: <span id="multiplier">1.0x</span></p>
+                <p>Time Indexed: <span id="time-indexed">0/0 minutes</span></p>
+                <p>Session Time: <span id="session-time">0:00:00</span></p>
+            </div>
+        </div>
+
+        <!-- Test Log -->
+        <div class="status-panel">
+            <h3>Test Log</h3>
+            <div class="log-panel" id="log-panel">
+                <div class="log-entry info">Test environment ready. Click "Run All Tests" to start.</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simple Transition System Implementation
+        class TransitionSystem {
+            constructor() {
+                this.state = {
+                    currentShow: null,
+                    isIndexing: false,
+                    isTransitioning: false,
+                    multiplier: 1.0,
+                    sessionTime: 0,
+                    totalSessionLength: 0,
+                    timeIndexed: 0,
+                    multiplierThresholds: [
+                        { time: 60, multiplier: 1.2 },
+                        { time: 120, multiplier: 1.5 },
+                        { time: 180, multiplier: 2.0 }
+                    ],
+                    completedContent: new Set(),
+                    playedContent: [],
+                    baseRate: 0.1,
+                    sessionId: Date.now(),
+                    uiCallbacks: {
+                        onStateChange: null,
+                        onShowChange: null,
+                        onMultiplierChange: null,
+                        onProgressUpdate: null
+                    }
+                };
+            }
+
+            initialize(show, options = {}) {
+                log('Initializing transition system', 'info');
+                
+                this.state.currentShow = show;
+                this.state.isIndexing = true;
+                this.state.totalSessionLength = show.duration || 0;
+                this.state.timeIndexed = 0;
+                this.state.sessionTime = 0;
+                this.state.multiplier = 1.0;
+                
+                if (options.uiCallbacks) {
+                    this.state.uiCallbacks = { ...this.state.uiCallbacks, ...options.uiCallbacks };
+                }
+                
+                log(`Initialized with: ${show.title} (${show.duration}min)`, 'info');
+                this.triggerUIUpdate('state');
+            }
+
+            updateSessionTime(seconds) {
+                const oldMultiplier = this.state.multiplier;
+                this.state.sessionTime = seconds;
+                this.state.multiplier = this.calculateMultiplier(seconds);
+                
+                if (this.state.multiplier !== oldMultiplier) {
+                    log(`Multiplier changed: ${oldMultiplier.toFixed(1)}x → ${this.state.multiplier.toFixed(1)}x`, 'info');
+                    this.triggerUIUpdate('multiplier');
+                }
+            }
+
+            updateIndexingProgress(minutes) {
+                this.state.timeIndexed += minutes;
+                log(`Indexed ${minutes} minutes. Total: ${this.state.timeIndexed}/${this.state.totalSessionLength}`, 'info');
+                this.triggerUIUpdate('progress');
+            }
+
+            calculateMultiplier(sessionTime) {
+                let multiplier = 1.0;
+                for (const threshold of this.state.multiplierThresholds) {
+                    if (sessionTime >= threshold.time * 60) {
+                        multiplier = threshold.multiplier;
+                    }
+                }
+                return multiplier;
+            }
+
+            async transitionToShow(newShow) {
+                if (!this.state.currentShow) {
+                    throw new Error('No current show to transition from');
+                }
+
+                log('=== SHOW TRANSITION STARTED ===', 'info');
+                log(`From: ${this.state.currentShow.title}`, 'info');
+                log(`To: ${newShow.title}`, 'info');
+
+                this.state.isTransitioning = true;
+                this.triggerUIUpdate('state');
+
+                if (this.state.timeIndexed > 0) {
+                    const points = this.state.timeIndexed * this.state.baseRate * this.state.multiplier;
+                    this.state.playedContent.push({
+                        title: this.state.currentShow.title,
+                        timeIndexed: this.state.timeIndexed,
+                        points: points,
+                        multiplier: this.state.multiplier,
+                        duration: this.state.currentShow.duration
+                    });
+                    log(`Recorded: ${this.state.currentShow.title} - ${this.state.timeIndexed}min, ${points.toFixed(2)} points`, 'info');
+                }
+
+                this.state.currentShow = newShow;
+                this.state.totalSessionLength += newShow.duration || 0;
+                this.state.timeIndexed = 0;
+
+                await this.delay(1000);
+
+                this.state.isTransitioning = false;
+                this.triggerUIUpdate('show');
+                log('=== SHOW TRANSITION COMPLETED ===', 'info');
+            }
+
+            getCurrentState() {
+                return {
+                    currentShow: this.state.currentShow,
+                    isIndexing: this.state.isIndexing,
+                    isTransitioning: this.state.isTransitioning,
+                    multiplier: this.state.multiplier,
+                    sessionTime: this.state.sessionTime,
+                    totalSessionLength: this.state.totalSessionLength,
+                    timeIndexed: this.state.timeIndexed,
+                    completedContent: Array.from(this.state.completedContent),
+                    playedContent: [...this.state.playedContent]
+                };
+            }
+
+            triggerUIUpdate(type) {
+                const callbacks = this.state.uiCallbacks;
+                
+                switch (type) {
+                    case 'state':
+                        if (callbacks.onStateChange) {
+                            callbacks.onStateChange(this.getCurrentState());
+                        }
+                        break;
+                    case 'show':
+                        if (callbacks.onShowChange) {
+                            callbacks.onShowChange(this.state.currentShow, this.getCurrentState());
+                        }
+                        break;
+                    case 'multiplier':
+                        if (callbacks.onMultiplierChange) {
+                            callbacks.onMultiplierChange(this.state.multiplier, this.getCurrentState());
+                        }
+                        break;
+                    case 'progress':
+                        if (callbacks.onProgressUpdate) {
+                            callbacks.onProgressUpdate(this.state.timeIndexed, this.state.totalSessionLength, this.getCurrentState());
+                        }
+                        break;
+                }
+            }
+
+            delay(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
+            }
+
+            getSessionReceipt() {
+                const totalPoints = this.state.playedContent.reduce((sum, item) => sum + item.points, 0);
+                const totalTimeIndexed = this.state.playedContent.reduce((sum, item) => sum + item.timeIndexed, 0);
+
+                return {
+                    sessionId: this.state.sessionId,
+                    totalPoints: totalPoints,
+                    totalTimeIndexed: totalTimeIndexed,
+                    numberOfShows: this.state.playedContent.length,
+                    finalMultiplier: this.state.multiplier,
+                    sessionDuration: this.state.sessionTime,
+                    playedContent: [...this.state.playedContent],
+                    timestamp: Date.now()
+                };
+            }
+        }
+
+        // Global variables
+        let transitionSystem = null;
+
+        // Logging function
+        function log(message, type = 'info') {
+            const logPanel = document.getElementById('log-panel');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.className = `log-entry ${type}`;
+            logEntry.textContent = `[${timestamp}] ${message}`;
+            logPanel.appendChild(logEntry);
+            logPanel.scrollTop = logPanel.scrollHeight;
+        }
+
+        // Clear log
+        function clearLog() {
+            document.getElementById('log-panel').innerHTML = '';
+            log('Log cleared.');
+        }
+
+        // Update UI state display
+        function updateStateDisplay() {
+            if (!transitionSystem) return;
+            
+            const state = transitionSystem.getCurrentState();
+            
+            document.getElementById('current-show').textContent = state.currentShow ? state.currentShow.title : 'None';
+            document.getElementById('multiplier').textContent = `${state.multiplier.toFixed(1)}x`;
+            document.getElementById('time-indexed').textContent = `${state.timeIndexed}/${state.totalSessionLength} minutes`;
+            document.getElementById('session-time').textContent = formatTime(state.sessionTime);
+        }
+
+        // Format time
+        function formatTime(seconds) {
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${hours}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        // UI Callbacks
+        const uiCallbacks = {
+            onStateChange: (state) => {
+                log('UI Callback: State changed', 'test');
+                updateStateDisplay();
+            },
+            onShowChange: (show, state) => {
+                log(`UI Callback: Show changed to ${show.title}`, 'test');
+                updateStateDisplay();
+            },
+            onMultiplierChange: (multiplier, state) => {
+                log(`UI Callback: Multiplier changed to ${multiplier.toFixed(1)}x`, 'test');
+                updateStateDisplay();
+            },
+            onProgressUpdate: (timeIndexed, totalLength, state) => {
+                log(`UI Callback: Progress updated - ${timeIndexed}/${totalLength} minutes`, 'test');
+                updateStateDisplay();
+            }
+        };
+
+        // Test functions
+        function runTests() {
+            log('=== RUNNING ALL TESTS ===', 'test');
+            
+            testBasicFunctionality();
+            setTimeout(() => testMultiplier(), 1000);
+            setTimeout(() => testTransitions(), 2000);
+        }
+
+        function testBasicFunctionality() {
+            log('=== TESTING BASIC FUNCTIONALITY ===', 'test');
+            
+            try {
+                transitionSystem = new TransitionSystem();
+                const testShow = { title: 'Test Show', duration: 120, id: 'test-show' };
+                transitionSystem.initialize(testShow, { uiCallbacks });
+                
+                const state = transitionSystem.getCurrentState();
+                
+                if (state.currentShow.title !== 'Test Show') throw new Error('Show title mismatch');
+                if (state.totalSessionLength !== 120) throw new Error('Session length mismatch');
+                if (state.multiplier !== 1.0) throw new Error('Initial multiplier mismatch');
+                
+                log('✓ Basic functionality test passed', 'test');
+            } catch (error) {
+                log(`✗ Basic functionality test failed: ${error.message}`, 'error');
+            }
+        }
+
+        function testMultiplier() {
+            log('=== TESTING MULTIPLIER PROGRESSION ===', 'test');
+            
+            try {
+                if (!transitionSystem) {
+                    transitionSystem = new TransitionSystem();
+                    transitionSystem.initialize({ title: 'Test Show', duration: 120, id: 'test-show' }, { uiCallbacks });
+                }
+                
+                transitionSystem.updateSessionTime(90 * 60); // 90 minutes
+                if (transitionSystem.state.multiplier !== 1.2) throw new Error('Multiplier progression failed');
+                
+                transitionSystem.updateSessionTime(150 * 60); // 150 minutes
+                if (transitionSystem.state.multiplier !== 1.5) throw new Error('Multiplier progression failed');
+                
+                log('✓ Multiplier progression test passed', 'test');
+            } catch (error) {
+                log(`✗ Multiplier test failed: ${error.message}`, 'error');
+            }
+        }
+
+        async function testTransitions() {
+            log('=== TESTING SHOW TRANSITIONS ===', 'test');
+            
+            try {
+                if (!transitionSystem) {
+                    transitionSystem = new TransitionSystem();
+                    transitionSystem.initialize({ title: 'Show 1', duration: 120, id: 'show-1' }, { uiCallbacks });
+                }
+                
+                transitionSystem.updateIndexingProgress(60); // Index 60 minutes
+                
+                const newShow = { title: 'Show 2', duration: 90, id: 'show-2' };
+                await transitionSystem.transitionToShow(newShow);
+                
+                const state = transitionSystem.getCurrentState();
+                if (state.currentShow.title !== 'Show 2') throw new Error('Show transition failed');
+                if (state.timeIndexed !== 0) throw new Error('Time indexed not reset');
+                if (state.totalSessionLength !== 210) throw new Error('Total session length not updated');
+                
+                log('✓ Show transition test passed', 'test');
+                
+                // Test receipt generation
+                const receipt = transitionSystem.getSessionReceipt();
+                log(`✓ Receipt generated: ${receipt.numberOfShows} shows, ${receipt.totalPoints.toFixed(2)} points`, 'test');
+                
+            } catch (error) {
+                log(`✗ Transition test failed: ${error.message}`, 'error');
+            }
+        }
+
+        // Initialize test environment
+        document.addEventListener('DOMContentLoaded', function() {
+            log('Transition system test environment initialized', 'info');
+            log('Ready to test transition system functionality', 'info');
+        });
+    </script>
+</body>
+</html> 

@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transition System Integration Demo</title>
+    <style>
+        body {
+            font-family: 'SF Mono', monospace;
+            background: #000;
+            color: #00ff41;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: #111;
+            border: 2px solid #00ff41;
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .demo-section {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .demo-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #00ff41;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .demo-button {
+            background: #00ff41;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'SF Mono', monospace;
+            font-size: 12px;
+            margin: 5px;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        .demo-button:hover {
+            background: #00cc33;
+        }
+
+        .demo-button.secondary {
+            background: #333;
+            color: #00ff41;
+            border: 1px solid #00ff41;
+        }
+
+        .demo-button.secondary:hover {
+            background: #444;
+        }
+
+        .status-display {
+            background: #222;
+            border: 1px solid #444;
+            border-radius: 4px;
+            padding: 10px;
+            margin: 10px 0;
+            font-family: monospace;
+            font-size: 11px;
+            white-space: pre-wrap;
+        }
+
+        .log-output {
+            background: #000;
+            border: 1px solid #333;
+            border-radius: 4px;
+            padding: 10px;
+            margin: 10px 0;
+            font-family: monospace;
+            font-size: 10px;
+            color: #ccc;
+            max-height: 200px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+
+        .show-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 4px;
+            padding: 10px;
+            margin: 10px 0;
+        }
+
+        .show-title {
+            font-weight: bold;
+            color: #00ff41;
+        }
+
+        .show-duration {
+            color: #888;
+            font-size: 12px;
+        }
+
+        .multiplier-display {
+            color: #ffaa00;
+            font-weight: bold;
+        }
+
+        .progress-display {
+            color: #0088ff;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎬 Transition System Integration Demo</h1>
+        
+        <div class="demo-section">
+            <div class="demo-title">System Status</div>
+            <div class="status-display" id="system-status">
+                Initializing...
+            </div>
+        </div>
+
+        <div class="demo-section">
+            <div class="demo-title">Current Show</div>
+            <div class="show-info" id="current-show">
+                <span class="show-title">No show selected</span>
+                <span class="show-duration">0 min</span>
+            </div>
+        </div>
+
+        <div class="demo-section">
+            <div class="demo-title">Session Progress</div>
+            <div class="show-info">
+                <span class="multiplier-display" id="multiplier">1.0x</span>
+                <span class="progress-display" id="progress">0/0 minutes</span>
+            </div>
+        </div>
+
+        <div class="demo-section">
+            <div class="demo-title">Test Controls</div>
+            <button class="demo-button" onclick="testShowTransition()">Test Show Transition</button>
+            <button class="demo-button" onclick="testMultiplierProgression()">Test Multiplier</button>
+            <button class="demo-button" onclick="testSessionReceipt()">Test Receipt</button>
+            <button class="demo-button secondary" onclick="debugTransitionSystem()">Debug System</button>
+            <button class="demo-button secondary" onclick="clearLog()">Clear Log</button>
+        </div>
+
+        <div class="demo-section">
+            <div class="demo-title">System Log</div>
+            <div class="log-output" id="log-output"></div>
+        </div>
+    </div>
+
+    <script src="transition-system.js"></script>
+    <script>
+        // Demo state
+        let transitionSystem = null;
+        let currentShowIndex = 0;
+        let logEntries = [];
+
+        // Test shows
+        const testShows = [
+            { title: 'Breaking Bad', duration: 47, id: 'breaking-bad' },
+            { title: 'Stranger Things', duration: 51, id: 'stranger-things' },
+            { title: 'The Crown', duration: 58, id: 'the-crown' },
+            { title: 'Black Mirror', duration: 45, id: 'black-mirror' }
+        ];
+
+        // Initialize the demo
+        function initializeDemo() {
+            log('Initializing transition system demo...');
+            
+            if (typeof window.TransitionSystem === 'undefined') {
+                log('ERROR: TransitionSystem not loaded');
+                updateStatus('ERROR: TransitionSystem not loaded');
+                return;
+            }
+
+            // Create transition system instance
+            transitionSystem = new window.TransitionSystem();
+            
+            // Set up UI callbacks
+            const uiCallbacks = {
+                onStateChange: (state) => {
+                    log(`State changed: ${JSON.stringify(state, null, 2)}`);
+                    updateStatus(`Active: ${state.isIndexing ? 'Yes' : 'No'} | Transitioning: ${state.isTransitioning ? 'Yes' : 'No'}`);
+                },
+                onShowChange: (show, state) => {
+                    log(`Show changed to: ${show.title}`);
+                    updateCurrentShow(show);
+                },
+                onMultiplierChange: (multiplier, state) => {
+                    log(`Multiplier changed to: ${multiplier}x`);
+                    updateMultiplier(multiplier);
+                },
+                onProgressUpdate: (timeIndexed, totalLength, state) => {
+                    log(`Progress: ${timeIndexed}/${totalLength} minutes`);
+                    updateProgress(timeIndexed, totalLength);
+                }
+            };
+
+            // Initialize with first show
+            const initialShow = testShows[0];
+            transitionSystem.initialize(initialShow, { uiCallbacks });
+            
+            updateCurrentShow(initialShow);
+            updateStatus('Ready');
+            log('Demo initialized successfully');
+        }
+
+        // Test show transition
+        async function testShowTransition() {
+            if (!transitionSystem) {
+                log('ERROR: Transition system not initialized');
+                return;
+            }
+
+            currentShowIndex = (currentShowIndex + 1) % testShows.length;
+            const newShow = testShows[currentShowIndex];
+            
+            log(`Transitioning to: ${newShow.title}`);
+            
+            try {
+                await transitionSystem.transitionToShow(newShow);
+                log(`Successfully transitioned to ${newShow.title}`);
+            } catch (error) {
+                log(`Transition failed: ${error.message}`);
+            }
+        }
+
+        // Test multiplier progression
+        function testMultiplierProgression() {
+            if (!transitionSystem) {
+                log('ERROR: Transition system not initialized');
+                return;
+            }
+
+            log('Testing multiplier progression...');
+            
+            // Simulate time passing to trigger multiplier increases
+            const state = transitionSystem.getCurrentState();
+            const newSessionTime = state.sessionTime + 300; // Add 5 minutes
+            
+            transitionSystem.updateSessionTime(newSessionTime);
+            log(`Updated session time to ${newSessionTime}s`);
+        }
+
+        // Test session receipt
+        function testSessionReceipt() {
+            if (!transitionSystem) {
+                log('ERROR: Transition system not initialized');
+                return;
+            }
+
+            log('Generating session receipt...');
+            const receipt = transitionSystem.getSessionReceipt();
+            
+            if (receipt) {
+                log('Session Receipt:');
+                log(JSON.stringify(receipt, null, 2));
+            } else {
+                log('No receipt available');
+            }
+        }
+
+        // Debug transition system
+        function debugTransitionSystem() {
+            if (!transitionSystem) {
+                log('ERROR: Transition system not initialized');
+                return;
+            }
+
+            log('=== TRANSITION SYSTEM DEBUG ===');
+            
+            const state = transitionSystem.getCurrentState();
+            log('Current State:');
+            log(JSON.stringify(state, null, 2));
+            
+            const logEntries = transitionSystem.getLog();
+            log('Log Entries:');
+            log(JSON.stringify(logEntries, null, 2));
+            
+            log('=== END DEBUG ===');
+        }
+
+        // Update functions
+        function updateStatus(status) {
+            document.getElementById('system-status').textContent = status;
+        }
+
+        function updateCurrentShow(show) {
+            const showElement = document.getElementById('current-show');
+            showElement.innerHTML = `
+                <span class="show-title">${show.title}</span>
+                <span class="show-duration">${show.duration} min</span>
+            `;
+        }
+
+        function updateMultiplier(multiplier) {
+            document.getElementById('multiplier').textContent = `${multiplier.toFixed(1)}x`;
+        }
+
+        function updateProgress(timeIndexed, totalLength) {
+            document.getElementById('progress').textContent = `${timeIndexed}/${totalLength} minutes`;
+        }
+
+        // Logging
+        function log(message) {
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = `[${timestamp}] ${message}`;
+            logEntries.push(logEntry);
+            
+            const logOutput = document.getElementById('log-output');
+            logOutput.textContent = logEntries.join('\n');
+            logOutput.scrollTop = logOutput.scrollHeight;
+            
+            console.log(logEntry);
+        }
+
+        function clearLog() {
+            logEntries = [];
+            document.getElementById('log-output').textContent = '';
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(initializeDemo, 100);
+        });
+    </script>
+</body>
+</html> 

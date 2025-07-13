@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rumi Continue Watching</title>
+    <style>
+        body { font-family: 'SF Mono', 'Monaco', 'Cascadia Code', monospace; background: #000; color: #fff; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; background: #111; border: 2px solid #333; border-radius: 8px; padding: 20px; }
+        .header { text-align: center; margin-bottom: 24px; }
+        .logo { font-size: 24px; font-weight: 700; color: #00ff41; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 2px; }
+        .subtitle { font-size: 12px; color: #888; text-transform: uppercase; letter-spacing: 1px; }
+        .channel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #333; }
+        .channel-title-section { display: flex; align-items: center; gap: 12px; }
+        .channel-title { font-size: 16px; font-weight: 600; color: #fff; text-transform: uppercase; letter-spacing: 1px; }
+        .edit-link { font-size: 10px; color: #00ff41; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; transition: all 0.2s; }
+        .edit-link:hover { color: #00cc33; }
+        .channel-controls { display: flex; gap: 8px; }
+        .btn { background: #000; color: #fff; border: 1px solid #333; padding: 6px 12px; font-size: 10px; font-family: 'SF Mono', monospace; cursor: pointer; transition: all 0.2s; text-transform: uppercase; letter-spacing: 0.5px; }
+        .btn:hover { border-color: #00ff41; color: #00ff41; }
+        .btn-group {
+            display: flex;
+            gap: 4px;
+        }
+        .timeline-container { margin-top: 24px; margin-bottom: 24px; }
+        .timeline-graphic {
+            background: #222;
+            border-radius: 6px;
+            padding: 12px 20px;
+            margin-bottom: 8px;
+        }
+        .time-row, .multiplier-row {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+        }
+        .time-row {
+            margin-bottom: 8px;
+        }
+        .time-marker {
+            font-size: 12px;
+            color: #888;
+            text-align: center;
+            position: relative;
+            padding-top: 8px;
+        }
+        .time-marker::before { /* This is the tick mark */
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 1px;
+            height: 4px;
+            background-color: #888;
+        }
+        .multiplier-marker {
+            font-size: 12px;
+            color: #ccc;
+            position: absolute;
+        }
+        .progress-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 4px;
+            background-color: #00ff41;
+        }
+        .program-track { display: flex; background: #1a1a1a; border-radius: 6px; overflow: visible; min-height: 80px; position: relative; }
+        .program-slot { position: absolute; padding: 12px; border: none; border-right: 1px solid #333; cursor: pointer; transition: all 0.3s ease; overflow: hidden; background: #1a1a1a; box-sizing: border-box; }
+        .program-slot:hover { background: #222; z-index: 10; transition: all 0.3s ease; }
+        .program-slot.has-overflow:hover { transform: scaleX(var(--scale-factor, 2.0)); transform-origin: var(--hover-transform-origin, left center); padding-left: calc(12px / var(--scale-factor, 2.0)); padding-right: calc(12px / var(--scale-factor, 2.0)); z-index: 20; }
+        .program-slot.no-overflow:hover { }
+        .program-slot:hover .remove-btn { opacity: 1; }
+        .program-slot.no-overflow .remove-btn { opacity: 0; }
+        .program-slot.no-overflow:hover .remove-btn { opacity: 1; }
+        .program-slot.empty { display: flex; align-items: center; justify-content: center; color: #666; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; background: transparent; border: 2px dashed #333; z-index: 1; box-sizing: border-box; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; border-right: none; }
+        .program-slot.empty:hover { border-color: #00ff41; color: #00ff41; }
+        .program-title { font-size: 11px; font-weight: 600; color: #fff; margin-bottom: 4px; line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .program-slot.has-overflow:hover .program-title { transform: scaleX(var(--counter-scale-factor, 0.5)); transform-origin: left center; overflow: visible; }
+        .program-meta { font-size: 9px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 2px; }
+        .program-service { font-size: 8px; color: #00ff41; text-transform: uppercase; letter-spacing: 0.5px; }
+        .program-slot.has-overflow:hover .program-meta, .program-slot.has-overflow:hover .program-service { transform: scaleX(var(--counter-scale-factor, 0.5)); transform-origin: left center; overflow: visible; }
+        .remove-btn { position: absolute; top: 4px; right: 4px; background: #ff4444; color: #fff; border: none; border-radius: 50%; width: 20px; height: 20px; font-size: 12px; cursor: pointer; opacity: 0; transition: all 0.2s; display: flex; align-items: center; justify-content: center; z-index: 50; box-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+        .remove-btn:hover { background: #ff6666; transform: scale(1.1); box-shadow: 0 3px 6px rgba(0,0,0,0.4); z-index: 60; }
+        .program-slot.has-overflow:hover .remove-btn { transform: scaleX(var(--counter-scale-factor, 0.5)); transform-origin: right center; right: calc(4px / var(--scale-factor, 2.0)); z-index: 50; }
+        .program-slot.has-overflow:hover .remove-btn:hover { z-index: 60; transform: scaleX(var(--counter-scale-factor, 0.5)) scale(1.1); }
+        .edit-panel { background: #1a1a1a; border: 1px solid #333; border-radius: 6px; padding: 16px; margin-top: 12px; display: none; }
+        .edit-panel.visible { display: block; }
+        .edit-header { margin-bottom: 16px; }
+        .edit-title { font-size: 12px; font-weight: 600; color: #00ff41; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+        .edit-subtitle { font-size: 10px; color: #888; }
+        .edit-section { margin-bottom: 20px; }
+        .edit-section:last-child { margin-bottom: 0; }
+        .section-label { font-size: 10px; color: #bbb; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .form-row { display: flex; gap: 12px; align-items: flex-end; margin-bottom: 12px; }
+        .form-group { flex: 1; }
+        .form-group label { display: block; font-size: 9px; color: #888; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .selector { width: 100%; background: #000; color: #fff; border: 1px solid #333; padding: 8px 12px; font-size: 10px; font-family: 'SF Mono', monospace; border-radius: 4px; }
+        .selector:focus { outline: none; border-color: #00ff41; }
+        .extension-modal-content {
+            background: #1a1a1a;
+            border: 2px solid #333333;
+            border-radius: 8px;
+            padding: 24px;
+            max-width: 400px;
+            text-align: center;
+        }
+        .extension-modal-title { font-size: 16px; font-weight: 600; color: #00ff41; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
+        .extension-modal-subtitle { font-size: 12px; color: #888; margin-bottom: 16px; line-height: 1.4; }
+        .extension-options { display: flex; gap: 12px; margin-bottom: 20px; justify-content: center; }
+        .extension-option { background: #000; border: 1px solid #333; border-radius: 6px; padding: 12px; cursor: pointer; transition: all 0.2s; min-width: 80px; }
+        .extension-option:hover { border-color: #00ff41; }
+        .extension-option.selected { border-color: #00ff41; background: #00ff41; color: #000; }
+        .extension-minutes { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+        .extension-points { font-size: 10px; color: #888; }
+        .extension-option.selected .extension-points { color: #000; }
+        .extension-option.inactive { opacity: 0.4; cursor: not-allowed; border-color: #666; }
+        .extension-option.inactive:hover { border-color: #666; background: #000; }
+        .extension-option.inactive .extension-points { color: #ff4444; }
+        .extension-option.free-option { border-color: #00ff41; background: #00ff41; color: #000; }
+        .extension-option.free-option:hover { background: #00cc33; border-color: #00cc33; }
+        .extension-option.free-option .extension-points { color: #000; font-weight: 600; }
+        .points-display { font-size: 12px; color: #00ff41; margin-bottom: 16px; }
+        .extension-actions { display: flex; gap: 8px; justify-content: center; }
+        .queue-section {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 6px;
+            padding: 16px;
+            margin-top: 16px;
+        }
+        .queue-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #333;
+        }
+        .queue-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: #00ff41;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .queue-summary {
+            font-size: 10px;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .queue-items {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .queue-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background: #000;
+            border: 1px solid #333;
+            border-radius: 4px;
+        }
+        .queue-item-info {
+            flex: 1;
+        }
+        .queue-item-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 2px;
+        }
+        .queue-item-meta {
+            font-size: 9px;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .queue-remove-btn {
+            background: #ff4444;
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 8px;
+        }
+        .queue-remove-btn:hover {
+            background: #ff6666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">Rumi</div>
+            <div class="subtitle">Continue Watching Channel</div>
+        </div>
+        <div class="channel-header">
+            <div class="channel-title-section">
+                <h2 class="channel-title">CONTINUE WATCHING</h2>
+            </div>
+            <div class="channel-controls">
+                <div class="btn-group">
+                    <button class="btn" onclick="addToQueue()">ADD TO QUEUE</button>
+                    <button class="btn" onclick="playNow()">START NOW</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="timeline-container">
+            <div id="timeline-markers"></div>
+            <div class="program-track" id="program-track" style="display: block;"></div>
+        </div>
+
+        <div class="queue-section" id="queue-section" style="display: none;">
+            <div class="queue-header">
+                <div class="queue-title">QUEUE</div>
+                <div class="queue-summary" id="queue-summary">0 items • 0 min</div>
+            </div>
+            <div class="queue-items" id="queue-items"></div>
+        </div>
+
+    </div>
+    <div class="timeline-extension-modal" id="timeline-extension-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); justify-content:center; align-items:center; z-index:1000;">
+        <div class="extension-modal-content"></div>
+    </div>
+    <script>
+        let continueWatchingContent = [
+            { 
+                title: 'Blade Runner 2049', 
+                type: 'MOVIE',
+                duration: 164,
+                watched: 82, 
+                service: 'HBO MAX' 
+            },
+            { 
+                title: 'The Boys', 
+                type: 'SHOW',
+                season: 2,
+                episode: 4,
+                duration: 60,
+                watched: 15,
+                service: 'PRIME' 
+            },
+            { 
+                title: 'Severance', 
+                type: 'SHOW',
+                season: 1,
+                episode: 8,
+                duration: 55,
+                watched: 40,
+                service: 'APPLE TV+' 
+            },
+            { 
+                title: 'Dune: Part Two', 
+                type: 'MOVIE',
+                duration: 166,
+                watched: 25,
+                service: 'HBO MAX' 
+            }
+        ];
+
+        let currentContent = [];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            currentContent = [...continueWatchingContent];
+            renderTimeline();
+            renderTimelineMarkers();
+        });
+
+        function renderTimeline() {
+            const track = document.getElementById('program-track');
+            track.innerHTML = '';
+            
+            const TIMELINE_DURATION = 240; // Fixed 240-minute timeline
+            
+            // Calculate total duration of all content
+            const totalDuration = currentContent.reduce((sum, item) => sum + item.duration, 0);
+            
+            // Limit content to 240 minutes
+            let cumulativeTime = 0;
+            let limitedContent = [];
+            
+            for (let i = 0; i < currentContent.length; i++) {
+                const item = currentContent[i];
+                if (cumulativeTime + item.duration <= TIMELINE_DURATION) {
+                    limitedContent.push(item);
+                    cumulativeTime += item.duration;
+                } else {
+                    // If this item would exceed the timeline, stop adding content
+                    break;
+                }
+            }
+            
+            // Use the limited content for rendering
+            limitedContent.forEach((item, index) => {
+                const slot = document.createElement('div');
+                slot.className = 'program-slot';
+                
+                // Calculate position based on the original cumulative time
+                let itemStartTime = 0;
+                for (let j = 0; j < index; j++) {
+                    itemStartTime += limitedContent[j].duration;
+                }
+                
+                const leftPosition = (itemStartTime / TIMELINE_DURATION) * 100;
+                const widthPercentage = (item.duration / TIMELINE_DURATION) * 100;
+                
+                slot.style.left = `${leftPosition}%`;
+                slot.style.width = `${widthPercentage}%`;
+
+                const remainingMinutes = item.duration - item.watched;
+                const meta = item.type === 'MOVIE' 
+                    ? `MOVIE • ${remainingMinutes}m of ${item.duration}m remaining` 
+                    : `S${item.season}:E${item.episode} • ${remainingMinutes}m of ${item.duration}m remaining`;
+
+                slot.innerHTML = `
+                    <div class="program-title">${item.title}</div>
+                    <div class="program-meta">${meta}</div>
+                    <div class="program-service">${item.service}</div>
+                    <button class="remove-btn" onclick="removeContent(${index})">×</button>
+                    <div class="progress-bar" style="width: ${(item.watched / item.duration) * 100}%;"></div>
+                `;
+                track.appendChild(slot);
+            });
+        }
+
+        function renderTimelineMarkers() {
+            const container = document.getElementById('timeline-markers');
+            container.innerHTML = '';
+            container.className = 'timeline-graphic';
+
+            const timeRow = document.createElement('div');
+            timeRow.className = 'time-row';
+
+            const multiplierRow = document.createElement('div');
+            multiplierRow.className = 'multiplier-row';
+            
+            // Use fixed 240-minute timeline
+            const timelineDuration = 240;
+            const interval = 30;
+            
+            let timeMarkers = [];
+            for (let i = 0; i <= timelineDuration; i += interval) {
+                timeMarkers.push(i);
+            }
+
+            timeMarkers.forEach(time => {
+                const marker = document.createElement('div');
+                marker.className = 'time-marker';
+                marker.textContent = time;
+                timeRow.appendChild(marker);
+            });
+            
+            const m1 = document.createElement('div');
+            m1.className = 'multiplier-marker';
+            m1.textContent = '1.0x';
+            m1.style.left = '0%';
+            
+            const m2 = document.createElement('div');
+            m2.className = 'multiplier-marker';
+            m2.textContent = '1.2x';
+            m2.style.left = `${(120 / timelineDuration) * 100}%`;
+            m2.style.transform = 'translateX(-50%)';
+
+            const m3 = document.createElement('div');
+            m3.className = 'multiplier-marker';
+            m3.textContent = '1.5x';
+            m3.style.left = `${(180 / timelineDuration) * 100}%`;
+            m3.style.transform = 'translateX(-50%)';
+
+            multiplierRow.appendChild(m1);
+            multiplierRow.appendChild(m2);
+            multiplierRow.appendChild(m3);
+
+            container.appendChild(timeRow);
+            container.appendChild(multiplierRow);
+        }
+
+        function removeContent(index) {
+            currentContent.splice(index, 1);
+            renderTimeline();
+            renderTimelineMarkers();
+        }
+
+        // Queue functionality
+        let queue = [];
+
+        // Generate a unique ID for a piece of content
+        function getContentId(item) {
+            let id = item.title;
+            if (item.type === 'SHOW' && item.season && item.episode) {
+                id += `-${item.season}-${item.episode}`;
+            }
+            return id;
+        }
+
+        // Add to queue, preventing duplicates
+        function addToQueue() {
+            if (currentContent.length === 0) {
+                alert('No content to add to queue');
+                return;
+            }
+            
+            const queueIds = new Set(queue.map(getContentId));
+            const newContent = currentContent.filter(item => !queueIds.has(getContentId(item)));
+
+            if (newContent.length === 0) {
+                alert('All content from this channel is already in the queue.');
+                return;
+            }
+            
+            queue.push(...newContent);
+            updateQueue();
+            document.getElementById('queue-section').style.display = 'block';
+        }
+
+        // Play now, preventing duplicates
+        function playNow() {
+            if (currentContent.length === 0) {
+                alert('No content to play');
+                return;
+            }
+            
+            const queueIds = new Set(queue.map(getContentId));
+            const newContent = currentContent.filter(item => !queueIds.has(getContentId(item)));
+
+            // Even if there's nothing new to add, we can still "play" the existing queue
+            if (newContent.length > 0) {
+                queue.push(...newContent);
+                updateQueue();
+            }
+            
+            document.getElementById('queue-section').style.display = 'block';
+            
+            // Simulate starting playback
+            alert('Starting playback of continue watching content...');
+        }
+
+        // Update queue display
+        function updateQueue() {
+            const queueItems = document.getElementById('queue-items');
+            const queueSummary = document.getElementById('queue-summary');
+            
+            queueItems.innerHTML = '';
+            queue.forEach((item, index) => {
+                const queueItem = document.createElement('div');
+                queueItem.className = 'queue-item';
+                
+                let titleText = item.title;
+                if (item.type === 'SHOW' && item.season && item.episode) {
+                    titleText += ` S${item.season}:E${item.episode}`;
+                }
+                
+                const remainingMinutes = item.duration - item.watched;
+                queueItem.innerHTML = `
+                    <div class="queue-item-info">
+                        <div class="queue-item-title">${titleText}</div>
+                        <div class="queue-item-meta">${item.type} • ${remainingMinutes}m of ${item.duration}m • ${item.service}</div>
+                    </div>
+                    <button class="queue-remove-btn" onclick="removeFromQueue(${index})">×</button>
+                `;
+                queueItems.appendChild(queueItem);
+            });
+            
+            const totalDuration = queue.reduce((sum, item) => sum + item.duration, 0);
+            const currentMultiplier = getMultiplier();
+            const estimatedPoints = totalDuration * currentMultiplier;
+            
+            queueSummary.textContent = `${queue.length} items • ${totalDuration} min • ~${estimatedPoints.toFixed(1)}pts`;
+        }
+
+        // Remove from queue
+        function removeFromQueue(index) {
+            queue.splice(index, 1);
+            updateQueue();
+            
+            if (queue.length === 0) {
+                document.getElementById('queue-section').style.display = 'none';
+            }
+        }
+
+        function getMultiplier() {
+            const totalDuration = currentContent.reduce((sum, item) => sum + item.duration, 0);
+            let multiplier = 1.0;
+
+            if (totalDuration >= 120) {
+                multiplier = 1.5;
+            } else if (totalDuration >= 60) {
+                multiplier = 1.2;
+            }
+            return multiplier;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rumi Channel</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=SF+Mono:wght@400;500;600;700&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'SF Mono', 'Monaco', 'Cascadia Code', monospace; background: #000; color: #fff; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; background: #111; border: 2px solid #333; border-radius: 8px; overflow: visible; position: relative; }
+        .channel-section { padding: 20px; }
+        .channel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+        .channel-title { font-size: 16px; font-weight: 600; color: #fff; text-transform: uppercase; letter-spacing: 1px; }
+        .timeline { display: flex; flex-direction: column; background: #1a1a1a; border-radius: 6px; padding: 8px 12px; margin-bottom: 8px; border: 1px solid #333333; }
+        .timeline-row { display: flex; justify-content: space-between; align-items: center; }
+        .timeline-marker { text-align: center; font-size: 9px; color: #666666; text-transform: uppercase; }
+        .program-track { display: flex; background: #1a1a1a; border-radius: 6px; min-height: 80px; position: relative; }
+        .program-slot { position: relative; width: 100%; padding: 12px; border: 1px solid #333333; cursor: pointer; transition: all 0.3s ease; background: #1a1a1a; }
+        .program-slot:hover { background: #222222; z-index: 10; }
+        .program-title { font-size: 11px; font-weight: 600; color: #ffffff; margin-bottom: 4px; }
+        .program-meta { font-size: 9px; color: #888888; text-transform: uppercase; margin-bottom: 2px; }
+        .program-service { font-size: 8px; color: #00ff41; text-transform: uppercase; }
+        .program-description { font-size: 8px; color: #ccc; font-style: italic; margin-top: 2px; }
+        .clip-preview { position: absolute; top: 100%; left: 0; background: #000; border: 1px solid #333; border-radius: 4px; padding: 8px; z-index: 1500; min-width: 250px; max-height: 200px; overflow-y: auto; box-shadow: 0 4px 8px rgba(0,0,0,0.5); }
+        .preview-title { font-size: 9px; font-weight: 600; color: #00ff41; margin-bottom: 4px; }
+        .preview-clip { font-size: 8px; color: #ccc; margin-bottom: 2px; }
+        .preview-clip:nth-child(even) { background: rgba(255,255,255,0.05); padding: 1px 2px; border-radius: 2px; }
+        .debug-cycle-btn { position: absolute; bottom: 10px; right: 10px; background: #222; color: #666; border: 1px solid #444; font-size: 9px; padding: 3px 6px; border-radius: 3px; cursor: pointer; z-index: 100; }
+        .debug-cycle-btn:hover { color: #00ff41; border-color: #00ff41; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="channel-section">
+            <div class="channel-header">
+                    <div class="channel-title">RUMI CHANNEL</div>
+                </div>
+            <div class="timeline-container">
+                <div class="timeline">
+                    <div class="timeline-row">
+                        <div class="timeline-marker">0 MINS</div>
+                        <div class="timeline-marker">120 MINS</div>
+                        <div class="timeline-marker">240 MINS</div>
+                    </div>
+                    <div class="timeline-row" style="margin-top: 4px;">
+                        <div class="timeline-marker" style="color: #00ff41; font-weight: 600;">1.0x</div>
+                        <div class="timeline-marker" style="color: #ffaa00; font-weight: 600;">1.2x</div>
+                        <div class="timeline-marker" style="color: #a985ff; font-weight: 600;">1.5x</div>
+                    </div>
+                </div>
+            </div>
+            <div class="program-track" id="program-track">
+                <!-- Program block will be injected here by script -->
+                </div>
+            </div>
+        <button class="debug-cycle-btn" onclick="cycleBucket()">CYCLE BUCKET</button>
+                </div>
+    <script>
+        const bucketData = {
+            'Content Intelligence': {
+                service: 'Metadata Processing',
+                description: 'Extract and categorize content metadata, tags, and classifications.',
+                clips: [
+                    {title: 'Breaking Bad Pilot Scene', points: 25, multiplier: '1.5x', description: 'Analyze cinematography and mood'},
+                    {title: 'The Crown Opening Sequence', points: 40, multiplier: '2.0x', description: 'Evaluate historical accuracy'},
+                    {title: 'Stranger Things Monster Reveal', points: 20, multiplier: '1.0x', description: 'Assess visual effects quality'},
+                    {title: 'Mad Men Office Scene', points: 35, multiplier: '1.8x', description: 'Review period authenticity'},
+                    {title: 'The Wire Street Scene', points: 30, multiplier: '1.3x', description: 'Evaluate dialogue realism'},
+                    {title: 'Succession Board Meeting', points: 45, multiplier: '2.2x', description: 'Analyze power dynamics'},
+                    {title: 'Black Mirror Tech Scene', points: 38, multiplier: '1.9x', description: 'Review futuristic elements'},
+                    {title: 'Game of Thrones Battle Scene', points: 42, multiplier: '2.1x', description: 'Analyze epic scale cinematography'},
+                    {title: 'The Office Meeting Scene', points: 28, multiplier: '1.4x', description: 'Review comedic timing'},
+                    {title: 'Westworld Host Interaction', points: 48, multiplier: '2.3x', description: 'Analyze AI consciousness portrayal'},
+                    {title: 'Fleabag Breaking Fourth Wall', points: 36, multiplier: '1.7x', description: 'Review narrative technique'},
+                    {title: 'The Mandalorian Baby Yoda Scene', points: 32, multiplier: '1.6x', description: 'Analyze character design impact'},
+                    {title: 'Bridgerton Ball Scene', points: 44, multiplier: '2.1x', description: 'Review period romance elements'},
+                    {title: 'The Boys Superhero Scene', points: 40, multiplier: '1.9x', description: 'Analyze dark superhero themes'},
+                    {title: 'Ted Lasso Locker Room', points: 34, multiplier: '1.6x', description: 'Review inspirational dialogue'},
+                    {title: 'The Queen\'s Gambit Chess Match', points: 46, multiplier: '2.2x', description: 'Analyze competitive tension'},
+                    {title: 'Schitt\'s Creek Family Scene', points: 30, multiplier: '1.5x', description: 'Review character growth'},
+                    {title: 'The Handmaid\'s Tale Ceremony', points: 50, multiplier: '2.4x', description: 'Analyze dystopian symbolism'},
+                    {title: 'Ozark Money Laundering', points: 38, multiplier: '1.8x', description: 'Review criminal methodology'},
+                    {title: 'The Good Place Ethics Lesson', points: 36, multiplier: '1.7x', description: 'Analyze philosophical concepts'}
+                ]
+            },
+            'Scene Description pipeline': {
+                service: 'Content Analysis',
+                description: 'Analyze cinematography, mood, and visual elements.',
+                clips: [
+                    {title: 'Chernobyl Reactor Scene', points: 52, multiplier: '2.5x', description: 'Review historical disaster portrayal'},
+                    {title: 'The Marvelous Mrs. Maisel Standup', points: 42, multiplier: '2.0x', description: 'Analyze comedic performance'},
+                    {title: 'Killing Eve Chase Scene', points: 44, multiplier: '2.1x', description: 'Review thriller pacing'},
+                    {title: 'The Crown Diana Interview', points: 48, multiplier: '2.3x', description: 'Analyze royal media relations'},
+                    {title: 'Stranger Things Eleven Powers', points: 40, multiplier: '1.9x', description: 'Review supernatural abilities'},
+                    {title: 'Succession Logan\'s Speech', points: 46, multiplier: '2.2x', description: 'Analyze corporate leadership'},
+                    {title: 'The Witcher Monster Hunt', points: 50, multiplier: '2.4x', description: 'Review fantasy action sequences'},
+                    {title: 'Better Call Saul Legal Maneuver', points: 38, multiplier: '1.8x', description: 'Analyze legal strategy'},
+                    {title: 'The Morning Show Newsroom', points: 42, multiplier: '2.0x', description: 'Review media industry dynamics'},
+                    {title: 'Watchmen Police Scene', points: 54, multiplier: '2.5x', description: 'Analyze social commentary'},
+                    {title: 'The Umbrella Academy Family Meeting', points: 36, multiplier: '1.7x', description: 'Review dysfunctional family dynamics'},
+                    {title: 'Barry Acting Class', points: 40, multiplier: '1.9x', description: 'Analyze performance within performance'},
+                    {title: 'The Expanse Space Battle', points: 52, multiplier: '2.4x', description: 'Review sci-fi combat realism'},
+                    {title: 'Russian Doll Time Loop', points: 44, multiplier: '2.1x', description: 'Analyze narrative repetition'},
+                    {title: 'The Leftovers Departure', points: 56, multiplier: '2.6x', description: 'Review existential themes'},
+                    {title: 'Atlanta Paper Boi Concert', points: 38, multiplier: '1.8x', description: 'Analyze hip-hop culture portrayal'}
+                ]
+            },
+            'Story Tree': {
+                service: 'Narrative Intelligence',
+                description: 'Summarize season arcs and character development.',
+                clips: [
+                    {title: 'Breaking Bad Season 1 Finale', points: 50, multiplier: '2.0x', description: 'Summarize season arc and character development'},
+                    {title: 'The Crown Episode 3', points: 60, multiplier: '2.3x', description: 'Analyze political subplot progression'},
+                    {title: 'Stranger Things Season 2 Midpoint', points: 45, multiplier: '1.8x', description: 'Track supernatural plot development'},
+                    {title: 'Mad Men Season 4 Opening', points: 40, multiplier: '1.6x', description: 'Assess character relationship evolution'},
+                    {title: 'The Wire Season 2 Setup', points: 55, multiplier: '2.2x', description: 'Map institutional corruption storyline'},
+                    {title: 'Succession Power Struggle', points: 52, multiplier: '2.1x', description: 'Track family dynamics'},
+                    {title: 'Black Mirror Episode Arc', points: 48, multiplier: '1.9x', description: 'Analyze narrative structure'},
+                    {title: 'Game of Thrones Red Wedding', points: 65, multiplier: '2.5x', description: 'Analyze shocking plot twist impact'},
+                    {title: 'The Office Jim and Pam Romance', points: 42, multiplier: '1.7x', description: 'Track romantic subplot development'},
+                    {title: 'Westworld Host Rebellion', points: 58, multiplier: '2.3x', description: 'Map AI uprising storyline'},
+                    {title: 'Fleabag Season 2 Arc', points: 46, multiplier: '1.8x', description: 'Analyze character redemption arc'}
+                ]
+            },
+            'Character Summaries': {
+                service: 'Character AI',
+                description: 'Document character arcs, from teacher to criminal.',
+                clips: [
+                    {title: 'Walter White Transformation', points: 55, multiplier: '2.2x', description: 'Track teacher to criminal arc'},
+                    {title: 'Tony Soprano Therapy Session', points: 48, multiplier: '1.9x', description: 'Analyze mob boss psychology'},
+                    {title: 'Don Draper Identity Crisis', points: 52, multiplier: '2.1x', description: 'Review advertising executive facade'},
+                    {title: 'Jimmy McGill Evolution', points: 50, multiplier: '2.0x', description: 'Track lawyer to criminal transformation'},
+                    {title: 'Eleven\'s Power Discovery', points: 45, multiplier: '1.8x', description: 'Analyze supernatural child development'},
+                    {title: 'Kendall Roy\'s Ambition', points: 54, multiplier: '2.2x', description: 'Track corporate heir struggles'},
+                    {title: 'Fleabag\'s Self-Destruction', points: 46, multiplier: '1.8x', description: 'Review grief and healing journey'},
+                    {title: 'Ted Lasso\'s Optimism', points: 42, multiplier: '1.7x', description: 'Analyze inspirational leadership style'},
+                    {title: 'Homelander\'s Descent', points: 58, multiplier: '2.3x', description: 'Track superhero villain breakdown'},
+                    {title: 'Barry\'s Acting Journey', points: 44, multiplier: '1.8x', description: 'Review hitman to actor transformation'}
+                ]
+            },
+            'Agents bullets - Content Scene Mapping V1': {
+                service: 'Agent Training',
+                description: 'Extract visual storytelling techniques for agent training.',
+                clips: [
+                    {title: 'Director of Photography Setup', points: 30, multiplier: '1.5x', description: 'Analyze lighting techniques'},
+                    {title: 'Production Designer Planning', points: 28, multiplier: '1.4x', description: 'Review set construction methods'},
+                    {title: 'Costume Designer Fitting', points: 26, multiplier: '1.3x', description: 'Analyze character visual development'},
+                    {title: 'Makeup Artist Application', points: 24, multiplier: '1.2x', description: 'Review transformation techniques'},
+                    {title: 'Sound Mixer Recording', points: 32, multiplier: '1.6x', description: 'Analyze audio capture methods'},
+                    {title: 'Gaffer Lighting Setup', points: 29, multiplier: '1.4x', description: 'Review electrical safety protocols'},
+                    {title: 'Key Grip Equipment', points: 27, multiplier: '1.3x', description: 'Analyze camera support systems'},
+                    {title: 'Script Supervisor Notes', points: 25, multiplier: '1.2x', description: 'Review continuity tracking'},
+                    {title: 'Assistant Director Calls', points: 32, multiplier: '1.6x', description: 'Review set management'},
+                    {title: 'Unit Production Manager', points: 28, multiplier: '1.4x', description: 'Analyze budget management'},
+                    {title: 'First Assistant Camera', points: 30, multiplier: '1.5x', description: 'Review focus pulling'},
+                    {title: 'Second Assistant Camera', points: 24, multiplier: '1.2x', description: 'Analyze camera maintenance'},
+                    {title: 'Loader Film Management', points: 26, multiplier: '1.3x', description: 'Review media handling'},
+                    {title: 'Video Playback Operator', points: 28, multiplier: '1.4x', description: 'Analyze on-set monitoring'},
+                    {title: 'Digital Imaging Technician', points: 34, multiplier: '1.7x', description: 'Review image quality control'},
+                    {title: 'Data Wrangler Management', points: 30, multiplier: '1.5x', description: 'Analyze file organization'},
+                    {title: 'Video Village Coordinator', points: 26, multiplier: '1.3x', description: 'Review monitoring setup'}
+                ]
+            }
+        };
+
+        const bucketKeys = Object.keys(bucketData);
+        let currentBucketIndex = 0;
+
+        function renderProgramBlock() {
+            const track = document.getElementById('program-track');
+            const bucketKey = bucketKeys[currentBucketIndex];
+            const data = bucketData[bucketKey];
+            
+            const totalPoints = data.clips.reduce((sum, clip) => sum + clip.points, 0);
+
+            track.innerHTML = `
+                <div class="program-slot">
+                    <div class="program-title">${bucketKey}</div>
+                    <div class="program-meta">${totalPoints}pts • ${data.clips.length} CLIPS • 240 MIN</div>
+                    <div class="program-service">${data.service}</div>
+                    <div class="program-description">${data.description}</div>
+                </div>
+            `;
+            
+            const slot = track.querySelector('.program-slot');
+            
+            slot.addEventListener('mouseenter', function() {
+                const preview = document.createElement('div');
+                preview.className = 'clip-preview';
+                
+                preview.innerHTML = `
+                    <div class="preview-title">Included Clips:</div>
+                    ${data.clips.map(clip => 
+                        `<div class="preview-clip">${clip.title} (${clip.points}pts, ${clip.multiplier}x)</div>`
+                    ).join('')}
+                `;
+                
+                slot.appendChild(preview);
+                slot.previewElement = preview;
+            });
+            
+            slot.addEventListener('mouseleave', function() {
+                if (slot.previewElement) {
+                    slot.previewElement.remove();
+                    slot.previewElement = null;
+                }
+            });
+
+            // Send message to parent
+            window.parent.postMessage({
+                type: 'rumi:setBucket',
+                payload: { bucket: bucketKey }
+            }, '*');
+        }
+
+        function cycleBucket() {
+            currentBucketIndex = (currentBucketIndex + 1) % bucketKeys.length;
+            renderProgramBlock();
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize the channel
+            renderProgramBlock();
+            
+            // Let the parent window know that the iframe is loaded and ready
+            window.parent.postMessage({ type: 'rumiChannelReady' }, '*');
+            
+            // Listen for messages from the parent window (the extension popup)
+            window.addEventListener('message', function(event) {
+                const message = event.data;
+                if (message && message.type === 'rumi:setBucket') {
+                    const { bucket } = message.payload;
+                    if (bucket) {
+                        // Find the bucket index and update
+                        const bucketIndex = bucketKeys.indexOf(bucket);
+                        if (bucketIndex !== -1) {
+                            currentBucketIndex = bucketIndex;
+                            renderProgramBlock();
+                        }
+                    }
+                }
+                
+                // NEW: Handle content request from main app for content detection
+                if (message && message.type === 'requestCurrentContent') {
+                    console.log('Received request for current content');
+                    
+                    // Get current bucket data
+                    const bucketKey = bucketKeys[currentBucketIndex];
+                    const data = bucketData[bucketKey];
+                    
+                    // Convert bucket clips to content format expected by main app
+                    const currentContent = data.clips.map((clip, index) => ({
+                        title: clip.title,
+                        duration: 60, // Each clip represents ~1 minute of content
+                        type: 'show',
+                        service: data.service,
+                        season: 'N/A',
+                        episode: 'N/A',
+                        startTime: index * 60 // Each clip starts 1 minute after the previous
+                    }));
+                    
+                    // Send current content back to parent
+                    window.parent.postMessage({
+                        type: 'currentContentResponse',
+                        content: currentContent
+                    }, '*');
+                    
+                    console.log('Sent current content to parent:', currentContent);
+                }
+            });
+        });
+    </script>
+</body>
+</html> 
