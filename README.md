@@ -282,4 +282,4 @@ This repository is configured for zero-config static deployment on Netlify.
    netlify deploy --prod      # manual production deploy (if needed)
    ```
 
-> **Tip:** Enable automatic deployments from the `main` (or `master`) branch so every push is instantly published. 
+> **Tip:** Enable automatic deployments from the `main` (or `master`) branch so every push is instantly published. # DOA
