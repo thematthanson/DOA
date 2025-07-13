@@ -5212,13 +5212,13 @@ function recordActualIndexedContentBeforeReceipt() {
                     scrollText(text, frame, width) {
                         if (!text || text.length <= width) return text.padEnd(width);
                         
-                        const scrollSpeed = 0.4; // Slightly faster for better visibility
+                        const scrollSpeed = 0.6; // Faster for better visibility and clear right-to-left movement
                         const totalCycle = text.length + width; // Total cycle length
                         const position = Math.floor(frame * scrollSpeed) % totalCycle;
                         
                         // Right to left scrolling: text moves from right edge to left edge
                         if (position < text.length) {
-                            // Text is moving across the display
+                            // Text is moving across the display from right to left
                             const startPos = position;
                             const endPos = Math.min(startPos + width, text.length);
                             let displayText = text.substring(startPos, endPos);
@@ -12327,15 +12327,15 @@ function recordActualIndexedContentBeforeReceipt() {
             
             // Calculate effective scroll time (subtract transition periods)
             const effectiveScrollTime = timeInCurrentItem - scrollStartTime;
-            const scrollSpeed = 1.6; // characters per second (doubled from 0.8)
+            const scrollSpeed = 2.0; // characters per second (increased for clearer right-to-left movement)
             const scrollOffset = Math.floor(effectiveScrollTime * scrollSpeed) % text.length;
             
-            // Scroll from right to left
+            // Scroll from right to left - text moves from right edge to left edge
             const startPos = scrollOffset;
             const endPos = Math.min(startPos + visibleWidth, text.length);
             let scrolledText = text.substring(startPos, endPos);
             
-            // If we're near the end, wrap around
+            // If we're near the end, wrap around with a clear separator
             if (endPos === text.length && startPos + visibleWidth > text.length) {
                 const remainingChars = visibleWidth - (text.length - startPos);
                 scrolledText += ' • ' + text.substring(0, remainingChars);
