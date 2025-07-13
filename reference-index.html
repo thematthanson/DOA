@@ -8392,46 +8392,64 @@ function recordActualIndexedContentBeforeReceipt() {
             
             const bucketSelect = document.getElementById('automode-dropdown');
             const selectedBucket = bucketSelect ? bucketSelect.value : 'Content Intelligence';
+            
+            // Ensure we have a valid bucket selection
+            if (!selectedBucket) {
+                console.error('[RUMI] No bucket selected for automode indexing');
+                alert('Please select an Intelligence Bucket before starting automode indexing');
+                return;
+            }
+            
+            console.log('[RUMI] Starting automode indexing with bucket:', selectedBucket);
             appState.currentBucket = selectedBucket;
             
-            const contentItems = getAutomodeContent(selectedBucket, appState.sessionDuration, appState.baseRate || 0.1, appState.currentMultiplier);
-            appState.automodeContentItems = contentItems;
-            appState.currentContentIndex = 0;
-            appState.contentItemStartTime = 0;
-            appState.contentItemDuration = contentItems[0] ? parseFloat(contentItems[0].duration) * 60 : 3600;
-            
-            // Start points earning
-            startPointsEarning();
-            
-            // Initialize backend if available
-            if (window.RumiBackend) {
-                window.RumiBackend.startSession();
-                console.log('Backend session started');
-            }
-            
-            // Show the indexing view (nokia content) - Section 3b
-            const homeContent = document.getElementById('home-content');
-            const nokiaContent = document.getElementById('nokia-content');
-            
-            if (homeContent) homeContent.style.display = 'none';
-            if (nokiaContent) nokiaContent.style.display = 'block';
-            
-            // Update UI to show indexing mode
-            updateUI();
-            
-            // Explicitly show the automode channel section for indexing view
-            const automodeChannelSection = document.getElementById('automode-channel-section-indexing');
-            if (automodeChannelSection) {
-                automodeChannelSection.style.display = 'block';
-                console.log('Automode channel section explicitly shown for indexing');
-            } else {
-                console.log('Automode channel section not found for explicit show');
-            }
-            
-            // Update debug button states
-            updateDebugButtonStates();
-            
-            console.log('Automode indexing session started - advanced to Section 3b');
+            // Generate content for the selected bucket
+            generateRobustFallbackContent(selectedBucket, appState.sessionDuration, appState.baseRate || 0.1, appState.currentMultiplier)
+                .then(contentItems => {
+                    console.log('[RUMI] Generated automode content:', contentItems.length, 'items for bucket:', selectedBucket);
+                    
+                    appState.automodeContentItems = contentItems;
+                    appState.currentContentIndex = 0;
+                    appState.contentItemStartTime = 0;
+                    appState.contentItemDuration = contentItems[0] ? contentItems[0].duration_seconds || 3600 : 3600;
+                    
+                    // Start points earning
+                    startPointsEarning();
+                    
+                    // Initialize backend if available
+                    if (window.RumiBackend) {
+                        window.RumiBackend.startSession();
+                        console.log('Backend session started');
+                    }
+                    
+                    // Show the indexing view (nokia content) - Section 3b
+                    const homeContent = document.getElementById('home-content');
+                    const nokiaContent = document.getElementById('nokia-content');
+                    
+                    if (homeContent) homeContent.style.display = 'none';
+                    if (nokiaContent) nokiaContent.style.display = 'block';
+                    
+                    // Update UI to show indexing mode
+                    updateUI();
+                    
+                    // Explicitly show the automode channel section for indexing view
+                    const automodeChannelSection = document.getElementById('automode-channel-section-indexing');
+                    if (automodeChannelSection) {
+                        automodeChannelSection.style.display = 'block';
+                        console.log('Automode channel section explicitly shown for indexing');
+                    } else {
+                        console.log('Automode channel section not found for explicit show');
+                    }
+                    
+                    // Update debug button states
+                    updateDebugButtonStates();
+                    
+                    console.log('[RUMI] Automode indexing session started - advanced to Section 3b with bucket:', selectedBucket);
+                })
+                .catch(error => {
+                    console.error('[RUMI] Error generating automode content:', error);
+                    alert('Error generating content for the selected bucket. Please try again.');
+                });
         }
 
         function activateExtension() {
@@ -10622,7 +10640,7 @@ function recordActualIndexedContentBeforeReceipt() {
 
         // CSV-based content generator - loads content from CSV files only
         function generateRobustFallbackContent(bucket, sessionDuration, baseRate, multiplier) {
-            console.log('🔍 [DEBUG] generateRobustFallbackContent - Loading CSV content for', sessionDuration / 60, 'minutes');
+            console.log('🔍 [DEBUG] generateRobustFallbackContent - Loading CSV content for bucket:', bucket, 'duration:', sessionDuration / 60, 'minutes');
             
             // Return a Promise that resolves with CSV-based content
             return new Promise((resolve) => {
@@ -10630,6 +10648,11 @@ function recordActualIndexedContentBeforeReceipt() {
                     .then(response => response.text())
                     .then(csvText => {
                         const csvContent = parseCSVContent(csvText);
+                        console.log('🔍 [DEBUG] Loaded CSV content:', csvContent.length, 'total items');
+                        
+                        // Log all unique buckets in CSV for debugging
+                        const allBuckets = [...new Set(csvContent.map(item => item.intelligence_bucket).filter(Boolean))];
+                        console.log('🔍 [DEBUG] Available buckets in CSV:', allBuckets);
                         
                         // Filter content for the specified bucket
                         let contentPool = csvContent.filter(item => 
@@ -10637,10 +10660,13 @@ function recordActualIndexedContentBeforeReceipt() {
                             item.automode_eligible === 'true'
                         );
                         
+                        console.log('🔍 [DEBUG] Bucket-specific content for', bucket, ':', contentPool.length, 'items');
+                        
                         // If no bucket-specific content, use all automode-eligible content
                         if (contentPool.length === 0) {
                             console.log('🔍 [DEBUG] No bucket-specific content found, using all automode-eligible content');
                             contentPool = csvContent.filter(item => item.automode_eligible === 'true');
+                            console.log('🔍 [DEBUG] All automode-eligible content:', contentPool.length, 'items');
                         }
                         
                         // If still no content, use all CSV content
@@ -10654,7 +10680,7 @@ function recordActualIndexedContentBeforeReceipt() {
                             console.error('🔍 [ERROR] CSV file appears to be empty or corrupted');
                         }
                         
-                        console.log('🔍 [DEBUG] Using', contentPool.length, 'CSV content items');
+                        console.log('🔍 [DEBUG] Final content pool for bucket', bucket, ':', contentPool.length, 'items');
                         
                         const content = generateContentFromPool(contentPool, bucket, sessionDuration, baseRate, multiplier);
                         resolve(content);
@@ -14681,8 +14707,22 @@ function debugTransitionSystem() {
                     automodeButton.style.cursor = 'pointer';
                     automodeButton.textContent = 'Launch Campaign';
                     
+                    // Update the current bucket and regenerate content
                     appState.currentBucket = selectedBucket;
+                    
+                    // Clear existing content to force regeneration
+                    appState.automodeContentItems = null;
+                    appState.currentContentIndex = 0;
+                    
+                    // Update channel title and UI
                     updateChannelTitle();
+                    
+                    // Show description for the selected bucket
+                    showAutomodeDescription(selectedBucket).catch(error => {
+                        console.error('[RUMI] Error showing automode description:', error);
+                    });
+                    
+                    console.log('[RUMI] Automode bucket updated and content cleared for regeneration:', selectedBucket);
                 } else {
                     // Disable the button when no selection
                     automodeButton.disabled = true;
@@ -14692,6 +14732,11 @@ function debugTransitionSystem() {
                     automodeButton.style.color = '#666';
                     automodeButton.style.cursor = 'not-allowed';
                     automodeButton.textContent = 'Select Intelligence Bucket to Launch';
+                    
+                    // Clear bucket and content
+                    appState.currentBucket = null;
+                    appState.automodeContentItems = null;
+                    appState.currentContentIndex = 0;
                 }
             });
         }
