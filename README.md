@@ -265,3 +265,21 @@ For technical support or questions:
 
 **🎉 Rumi Extension v100 - Production Ready**  
 *Complete package with enhanced features, comprehensive testing, and micro-test suite* 
+
+## 🚀 Deployment to Netlify
+
+This repository is configured for zero-config static deployment on Netlify.
+
+1. **Create a new site** in the Netlify UI and link it to the GitHub repo `DOA`.
+2. Netlify will automatically detect the `netlify.toml` at the project root and set the publish directory to the repository root.
+3. No build command is required for this purely static site. Netlify will simply upload the files as-is.
+4. Once the first deploy completes, your site will be live at `https://<your-subdomain>.netlify.app`.
+5. **Optional:** Use the Netlify CLI for local previews:
+
+   ```bash
+   npm install -g netlify-cli # one-time install
+   netlify dev                # launch local preview
+   netlify deploy --prod      # manual production deploy (if needed)
+   ```
+
+> **Tip:** Enable automatic deployments from the `main` (or `master`) branch so every push is instantly published. 
