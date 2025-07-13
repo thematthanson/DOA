@@ -1391,19 +1391,16 @@
                 const multiplier = this.calculateMultiplier(contentItem.startTime || 0);
                 this.addMetadataItem(grid, 'Current Multiplier', `${multiplier}x active`, 'highlight');
 
-                // Current content information - show only the currently indexed show
+                // Current content information - show the current content item details (syncs with ASCII text)
                 if (bucketContent.length > 0) {
                     // Get the current content item from parent window if available
-                    let currentContentTitle = null;
+                    let currentItem = null;
                     
                     try {
                         // Try to get current content from parent window
                         if (window.parent && window.parent.appState && window.parent.appState.automodeContentItems) {
                             const currentIndex = window.parent.appState.currentContentIndex || 0;
-                            const currentItem = window.parent.appState.automodeContentItems[currentIndex];
-                            if (currentItem) {
-                                currentContentTitle = currentItem.title;
-                            }
+                            currentItem = window.parent.appState.automodeContentItems[currentIndex];
                         }
                     } catch (e) {
                         // If we can't access parent, fall back to first item
@@ -1411,18 +1408,47 @@
                     }
                     
                     // If we couldn't get current content from parent, use first item
-                    if (!currentContentTitle) {
-                        currentContentTitle = bucketContent[0].title;
+                    if (!currentItem) {
+                        currentItem = bucketContent[0];
                     }
                     
-                    // Extract show name from title
-                    let showName = currentContentTitle;
-                    if (currentContentTitle.includes(' - ')) {
-                        showName = currentContentTitle.split(' - ')[0];
+                    // Show current content details that match ASCII text
+                    if (currentItem) {
+                        // Show title and description
+                        this.addMetadataItem(grid, 'Current Content', currentItem.title, 'highlight');
+                        
+                        if (currentItem.description) {
+                            this.addMetadataItem(grid, 'Description', currentItem.description, 'description');
+                        }
+                        
+                        // Show service and type
+                        const service = currentItem.service || 'RUMI LEARNING';
+                        const type = currentItem.type || 'CLIP';
+                        this.addMetadataItem(grid, 'Service & Type', `${service} • ${type.toUpperCase()}`);
+                        
+                        // Show duration and genre
+                        if (currentItem.duration) {
+                            const genre = currentItem.genre || 'LEARNING';
+                            this.addMetadataItem(grid, 'Duration & Genre', `${currentItem.duration} • ${genre.toUpperCase()}`);
+                        }
+                        
+                        // Show season/episode if available
+                        if (currentItem.season && currentItem.episode && currentItem.season !== 'N/A' && currentItem.episode !== 'N/A') {
+                            this.addMetadataItem(grid, 'Episode', `S${currentItem.season}E${currentItem.episode}`);
+                        }
+                        
+                        // Show year if available
+                        if (currentItem.year && currentItem.year !== 'Unknown') {
+                            this.addMetadataItem(grid, 'Year', currentItem.year);
+                        }
+                        
+                        // Show progress
+                        const currentIndex = (window.parent && window.parent.appState) ? 
+                            (window.parent.appState.currentContentIndex + 1) : 1;
+                        const totalItems = (window.parent && window.parent.appState && window.parent.appState.automodeContentItems) ? 
+                            window.parent.appState.automodeContentItems.length : bucketContent.length;
+                        this.addMetadataItem(grid, 'Progress', `Item ${currentIndex}/${totalItems}`, 'highlight');
                     }
-                    
-                    // Note: Removed redundant 'Current Content' and 'What we are learning' lines
-                    // The description field above already shows the important information
                 }
 
                 // Show popup and hide timeline
