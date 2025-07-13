@@ -485,24 +485,12 @@
         
         /* Very Short Screens - Mobile Landscape (≤ 480px height) */
         @media (max-height: 480px) {
-            .holistic-panel {
-                padding: 8px;
-                gap: 8px;
-            }
-            
-            .holistic-section {
-                padding: 6px;
-                font-size: 11px;
-            }
-            
-            #animation-panel-content {
-                font-size: 8px;
-                line-height: 1.1;
-            }
-            
+            /* PRIORITY 1: Points section - Always visible */
             .points-section {
                 padding: 8px;
                 margin-bottom: 8px;
+                order: 1;
+                flex-shrink: 0;
             }
             
             .points-total {
@@ -514,6 +502,113 @@
                 font-size: 10px;
             }
             
+            /* PRIORITY 2: ASCII art - Compact but visible */
+            .ascii-art-container {
+                height: 60px !important;
+                margin-bottom: 6px;
+                order: 2;
+                flex-shrink: 0;
+            }
+            
+            /* PRIORITY 3: Other content - Compressed */
+            .holistic-panel {
+                padding: 6px;
+                gap: 6px;
+                order: 3;
+                flex: 1;
+                min-height: 0;
+                overflow: hidden;
+            }
+            
+            .holistic-section {
+                padding: 4px;
+                font-size: 10px;
+            }
+            
+            #animation-panel-content {
+                font-size: 7px;
+                line-height: 1.0;
+                max-height: 40px;
+                overflow: hidden;
+            }
+            
+            #channel-frame {
+                height: 120px !important;
+            }
+            
+            /* Receipt view adjustments */
+            #receipt-content-list {
+                max-height: 48px !important; /* 1.5 items visible */
+                font-size: 8px;
+            }
+            
+            .leaderboard-section {
+                padding: 4px;
+                margin-bottom: 6px;
+            }
+            
+            .primary-cta {
+                padding: 6px 12px;
+                font-size: 11px;
+                margin: 6px 0;
+            }
+            
+            /* Force flex layout for priority ordering */
+            .holistic-container {
+                display: flex;
+                flex-direction: column;
+                height: 100vh;
+                overflow: hidden;
+            }
+        }
+        
+        /* Short Screens - Tablet Portrait (481px - 767px height) */
+        @media (min-height: 481px) and (max-height: 767px) {
+            /* PRIORITY 1: Points section - Prominent */
+            .points-section {
+                padding: 10px;
+                margin-bottom: 10px;
+                order: 1;
+                flex-shrink: 0;
+            }
+            
+            .points-total {
+                font-size: 16px;
+                margin-bottom: 6px;
+            }
+            
+            .points-pending {
+                font-size: 11px;
+            }
+            
+            /* PRIORITY 2: ASCII art - Moderate size */
+            .ascii-art-container {
+                height: 80px !important;
+                margin-bottom: 8px;
+                order: 2;
+                flex-shrink: 0;
+            }
+            
+            /* PRIORITY 3: Other content - Balanced */
+            .holistic-panel {
+                padding: 8px;
+                gap: 8px;
+                order: 3;
+                flex: 1;
+                min-height: 0;
+            }
+            
+            .holistic-section {
+                padding: 6px;
+                font-size: 11px;
+            }
+            
+            #animation-panel-content {
+                font-size: 8px;
+                line-height: 1.1;
+                max-height: 60px;
+            }
+            
             #channel-frame {
                 height: 200px !important;
             }
@@ -521,7 +616,6 @@
             /* Receipt view adjustments */
             #receipt-content-list {
                 max-height: 64px !important; /* 2 items visible */
-                font-size: 9px;
             }
             
             .leaderboard-section {
@@ -534,57 +628,12 @@
                 font-size: 12px;
                 margin: 8px 0;
             }
-        }
-        
-        /* Short Screens - Tablet Portrait (481px - 767px height) */
-        @media (min-height: 481px) and (max-height: 767px) {
-            .holistic-panel {
-                padding: 10px;
-                gap: 10px;
-            }
             
-            .holistic-section {
-                padding: 8px;
-                font-size: 12px;
-            }
-            
-            #animation-panel-content {
-                font-size: 9px;
-                line-height: 1.2;
-            }
-            
-            .points-section {
-                padding: 10px;
-                margin-bottom: 10px;
-            }
-            
-            .points-total {
-                font-size: 16px;
-                margin-bottom: 6px;
-            }
-            
-            .points-pending {
-                font-size: 11px;
-            }
-            
-            #channel-frame {
-                height: 260px !important;
-            }
-            
-            /* Receipt view adjustments */
-            #receipt-content-list {
-                max-height: 84px !important; /* 2.5 items visible */
-            }
-            
-            .leaderboard-section {
-                padding: 8px;
-                margin-bottom: 10px;
-            }
-            
-            .primary-cta {
-                padding: 10px 20px;
-                font-size: 13px;
-                margin: 10px 0;
+            /* Force flex layout for priority ordering */
+            .holistic-container {
+                display: flex;
+                flex-direction: column;
+                height: 100vh;
             }
         }
         
@@ -2128,7 +2177,10 @@
                 </select>
                 <button id="automode-button" class="automode-button disabled" onclick="launchWithAutomode()" style="width: 100%; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #666; padding: 8px; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: not-allowed;" disabled>
                     Select Intelligence Bucket to Launch
-            </button>
+                </button>
+                <button id="start-learning-button" class="primary-cta automode" onclick="startAutomodeIndexing()" style="width: 100%; margin-top: 8px; background: #ffff00; color: #000; border: 2px solid #ffff00; padding: 10px; border-radius: 4px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; display: none;">
+                    START LEARNING CONTENT INTELLIGENCE
+                </button>
             </div>
             <button id="user-changes-content-btn" class="secondary-button" onclick="simulateShowChange()" style="display: none; margin-top: 10px;">
                 User Changes Content
@@ -8263,6 +8315,59 @@ function recordActualIndexedContentBeforeReceipt() {
             // updateUI();
         }
 
+        // Section 2b: Start Automode Indexing Function
+        function startAutomodeIndexing() {
+            console.log('Starting automode indexing...');
+            
+            // Set app state to start indexing
+            appState.isIndexing = true;
+            appState.indexingStartTime = Date.now();
+            appState.sessionDuration = calculateSessionDuration();
+            
+            const bucketSelect = document.getElementById('automode-dropdown');
+            const selectedBucket = bucketSelect ? bucketSelect.value : 'Content Intelligence';
+            appState.currentBucket = selectedBucket;
+            
+            const contentItems = getAutomodeContent(selectedBucket, appState.sessionDuration, appState.baseRate || 0.1, appState.currentMultiplier);
+            appState.automodeContentItems = contentItems;
+            appState.currentContentIndex = 0;
+            appState.contentItemStartTime = 0;
+            appState.contentItemDuration = contentItems[0] ? parseFloat(contentItems[0].duration) * 60 : 3600;
+            
+            // Start points earning
+            startPointsEarning();
+            
+            // Initialize backend if available
+            if (window.RumiBackend) {
+                window.RumiBackend.startSession();
+                console.log('Backend session started');
+            }
+            
+            // Show the indexing view (nokia content) - Section 3b
+            const homeContent = document.getElementById('home-content');
+            const nokiaContent = document.getElementById('nokia-content');
+            
+            if (homeContent) homeContent.style.display = 'none';
+            if (nokiaContent) nokiaContent.style.display = 'block';
+            
+            // Update UI to show indexing mode
+            updateUI();
+            
+            // Explicitly show the automode channel section for indexing view
+            const automodeChannelSection = document.getElementById('automode-channel-section-indexing');
+            if (automodeChannelSection) {
+                automodeChannelSection.style.display = 'block';
+                console.log('Automode channel section explicitly shown for indexing');
+            } else {
+                console.log('Automode channel section not found for explicit show');
+            }
+            
+            // Update debug button states
+            updateDebugButtonStates();
+            
+            console.log('Automode indexing session started - advanced to Section 3b');
+        }
+
         function activateExtension() {
             const popup = document.querySelector('.extension-popup');
             const activationCircle = document.getElementById('activation-circle');
@@ -8320,6 +8425,13 @@ function recordActualIndexedContentBeforeReceipt() {
                     
                     // Reset channel expansion state for new entry point
                     appState.channelExpanded = false;
+                    
+                    // Show the start learning button for section 2b
+                    const startLearningButton = document.getElementById('start-learning-button');
+                    if (startLearningButton) {
+                        startLearningButton.style.display = 'block';
+                        startLearningButton.textContent = `START LEARNING ${appState.currentBucket}`;
+                    }
                     
                     // Update UI after state is set
                     updateUI();
