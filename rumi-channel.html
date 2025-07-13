@@ -381,7 +381,16 @@
 
             // Bucket information
             addMetadataItem(grid, 'Learning Category', bucketInfo.category, 'highlight');
-            addMetadataItem(grid, 'Description', bucketInfo.description, 'description');
+            
+            // Show real description from CSV if available, otherwise use bucket description
+            let descriptionText = bucketInfo.description;
+            if (bucketContent && bucketContent.length > 0) {
+                const firstItem = bucketContent[0];
+                if (firstItem && firstItem.description) {
+                    descriptionText = firstItem.description;
+                }
+            }
+            addMetadataItem(grid, 'Description', descriptionText, 'description');
             
             // Bucket statistics
             const totalClips = bucketContent.length || 20;
