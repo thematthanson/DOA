@@ -8332,17 +8332,27 @@ function recordActualIndexedContentBeforeReceipt() {
                 return;
             }
             
-            // Get the first content item for this bucket to show as example
+            // Get content items for this bucket from CSV data
             const contentItems = getAutomodeContent(selectedBucket, 3600, 0.1, 1.0);
             if (contentItems && contentItems.length > 0) {
+                // Find the first item with a description from the CSV
                 const firstItem = contentItems[0];
-                const description = firstItem.description || 'Learning content intelligence patterns';
-                descriptionText.textContent = description;
-                descriptionDiv.style.display = 'block';
-                console.log('[RUMI] Showing automode description:', description);
+                if (firstItem && firstItem.description) {
+                    // Use the actual description from CSV
+                    descriptionText.textContent = firstItem.description;
+                    descriptionDiv.style.display = 'block';
+                    console.log('[RUMI] Showing automode description from CSV:', firstItem.description);
+                } else {
+                    // Fallback if no description in CSV
+                    descriptionText.textContent = `Learning ${selectedBucket.toLowerCase()} patterns`;
+                    descriptionDiv.style.display = 'block';
+                    console.log('[RUMI] No CSV description found, using fallback');
+                }
             } else {
-                descriptionText.textContent = 'Learning content intelligence patterns';
+                // No content items found for this bucket
+                descriptionText.textContent = `Learning ${selectedBucket.toLowerCase()} patterns`;
                 descriptionDiv.style.display = 'block';
+                console.log('[RUMI] No content items found for bucket:', selectedBucket);
             }
         }
 
