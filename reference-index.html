@@ -8651,6 +8651,23 @@ function recordActualIndexedContentBeforeReceipt() {
     console.log('Main window received message:', message);
 
     switch(message.type) {
+        case 'requestCurrentContent': {
+            // Handle request for current content from popup
+            console.log('🔍 [DEBUG] Received request for current content');
+            
+            let currentItem = null;
+            if (appState.automodeContentItems && appState.automodeContentItems.length > 0) {
+                currentItem = appState.automodeContentItems[appState.currentContentIndex];
+                console.log('🔍 [DEBUG] Sending current content to popup:', currentItem);
+            }
+            
+            // Send response back to the iframe
+            event.source.postMessage({
+                type: 'currentContentResponse',
+                currentItem: currentItem
+            }, '*');
+            break;
+        }
         case 'rumi:setBucket': {
             const { bucket } = message.payload;
             if (bucket) {

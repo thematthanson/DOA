@@ -1393,64 +1393,96 @@
 
                 // Current content information - show the current content item details (syncs with ASCII text)
                 if (bucketContent.length > 0) {
-                    // Get the current content item from parent window if available
+                    // Get the current content item from parent window using message passing
                     let currentItem = null;
                     
-                    try {
-                        // Try to get current content from parent window
-                        if (window.parent && window.parent.appState && window.parent.appState.automodeContentItems) {
-                            const currentIndex = window.parent.appState.currentContentIndex || 0;
-                            currentItem = window.parent.appState.automodeContentItems[currentIndex];
+                    // Request current content from parent window
+                    if (window.parent) {
+                        try {
+                            // Send message to parent requesting current content
+                            window.parent.postMessage({
+                                type: 'requestCurrentContent',
+                                bucket: bucketName
+                            }, '*');
                             
-                            // Debug popup data
-                            console.log('🔍 [DEBUG] Popup getting data:', {
-                                currentIndex: currentIndex,
-                                totalItems: window.parent.appState.automodeContentItems.length,
-                                currentItem: currentItem
-                            });
+                            // Set up a one-time listener for the response
+                            const messageHandler = (event) => {
+                                if (event.data.type === 'currentContentResponse') {
+                                    window.removeEventListener('message', messageHandler);
+                                    
+                                    if (event.data.currentItem) {
+                                        currentItem = event.data.currentItem;
+                                        console.log('🔍 [DEBUG] Popup received current content via message:', currentItem);
+                                    } else {
+                                        console.log('🔍 [DEBUG] No current content received from parent, using fallback');
+                                        currentItem = bucketContent[0];
+                                    }
+                                    
+                                    // Continue with popup display after getting data
+                                    this.displayCurrentContentInPopup(currentItem, grid);
+                                }
+                            };
+                            
+                            window.addEventListener('message', messageHandler);
+                            
+                            // Timeout after 1 second if no response
+                            setTimeout(() => {
+                                window.removeEventListener('message', messageHandler);
+                                console.log('🔍 [DEBUG] Timeout waiting for parent response, using fallback');
+                                currentItem = bucketContent[0];
+                                this.displayCurrentContentInPopup(currentItem, grid);
+                            }, 1000);
+                            
+                            return; // Exit early, will continue in message handler
+                            
+                        } catch (e) {
+                            console.log('🔍 [DEBUG] Error accessing parent window:', e);
+                            currentItem = bucketContent[0];
                         }
-                    } catch (e) {
-                        // If we can't access parent, fall back to first item
-                        console.log('Cannot access parent window, using first item');
-                    }
-                    
-                    // If we couldn't get current content from parent, use first item
-                    if (!currentItem) {
+                    } else {
                         currentItem = bucketContent[0];
                     }
                     
+                    // Fallback: display content immediately if no message passing
+                    this.displayCurrentContentInPopup(currentItem, grid);
+                    
                     // Show current content details that match ASCII text
-                    if (currentItem) {
-                        if (currentItem.description) {
-                            this.addMetadataItem(grid, 'Description', currentItem.description, 'description');
-                        }
-                        
-                        // Show service and type
-                        const service = currentItem.service || 'RUMI LEARNING';
-                        const type = currentItem.type || 'CLIP';
-                        this.addMetadataItem(grid, 'Service & Type', `${service} • ${type.toUpperCase()}`);
-                        
-                        // Show duration and genre
-                        if (currentItem.duration) {
-                            const genre = currentItem.genre || 'LEARNING';
-                            this.addMetadataItem(grid, 'Duration & Genre', `${currentItem.duration} • ${genre.toUpperCase()}`);
-                        }
-                        
-                        // Show season/episode if available
-                        if (currentItem.season && currentItem.episode && currentItem.season !== 'N/A' && currentItem.episode !== 'N/A') {
-                            this.addMetadataItem(grid, 'Episode', `S${currentItem.season}E${currentItem.episode}`);
-                        }
-                        
-                        // Show year if available
-                        if (currentItem.year && currentItem.year !== 'Unknown') {
-                            this.addMetadataItem(grid, 'Year', currentItem.year);
-                        }
-                    }
+                    this.displayCurrentContentInPopup(currentItem, grid);
                 }
 
                 // Show popup and hide timeline
                 popup.classList.add('visible');
                 document.getElementById('timeline').style.display = 'none';
+            }
+
+            // Display current content in popup (helper function)
+            displayCurrentContentInPopup(currentItem, grid) {
+                if (currentItem) {
+                    if (currentItem.description) {
+                        this.addMetadataItem(grid, 'Description', currentItem.description, 'description');
+                    }
+                    
+                    // Show service and type
+                    const service = currentItem.service || 'RUMI LEARNING';
+                    const type = currentItem.type || 'CLIP';
+                    this.addMetadataItem(grid, 'Service & Type', `${service} • ${type.toUpperCase()}`);
+                    
+                    // Show duration and genre
+                    if (currentItem.duration) {
+                        const genre = currentItem.genre || 'LEARNING';
+                        this.addMetadataItem(grid, 'Duration & Genre', `${currentItem.duration} • ${genre.toUpperCase()}`);
+                    }
+                    
+                    // Show season/episode if available
+                    if (currentItem.season && currentItem.episode && currentItem.season !== 'N/A' && currentItem.episode !== 'N/A') {
+                        this.addMetadataItem(grid, 'Episode', `S${currentItem.season}E${currentItem.episode}`);
+                    }
+                    
+                    // Show year if available
+                    if (currentItem.year && currentItem.year !== 'Unknown') {
+                        this.addMetadataItem(grid, 'Year', currentItem.year);
+                    }
+                }
             }
 
             // Add metadata item to grid
