@@ -480,6 +480,306 @@
            VERTICAL BREAKPOINT SYSTEM
            ============================================================================ */
         
+        /* Mobile Responsive Design */
+        @media (max-width: 768px) {
+            body {
+                padding-top: 20px;
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+            
+            .simulation-container {
+                flex-direction: column;
+                gap: 20px;
+                align-items: center;
+                width: 100%;
+                max-width: 100%;
+            }
+            
+            .entry-point-panel {
+                width: 100%;
+                max-width: 400px;
+                padding: 15px;
+            }
+            
+            .extension-popup {
+                width: 100%;
+                max-width: 100%;
+                margin: 0;
+                border-radius: 0;
+            }
+            
+            .popup-header {
+                padding: 12px 15px;
+            }
+            
+            .popup-body {
+                padding: 15px;
+            }
+            
+            .points-section {
+                padding: 12px;
+                margin-bottom: 15px;
+            }
+            
+            .points-total {
+                font-size: 18px;
+            }
+            
+            .points-pending {
+                font-size: 11px;
+            }
+            
+            .holistic-panel {
+                padding: 10px;
+            }
+            
+            .holistic-section {
+                padding: 8px;
+                font-size: 11px;
+            }
+            
+            .primary-cta {
+                padding: 10px 16px;
+                font-size: 11px;
+            }
+            
+            .message-area {
+                padding: 8px 12px;
+                font-size: 12px;
+            }
+            
+            .message-area.expanded {
+                padding: 10px 12px;
+                font-size: 12px;
+            }
+            
+            .nokia-visual {
+                height: 35px;
+                margin-bottom: 10px;
+            }
+            
+            /* Channel frame adjustments for mobile */
+            #channel-frame {
+                height: 200px !important;
+            }
+            
+            /* Receipt view adjustments for mobile */
+            #receipt-content-list {
+                max-height: 80px !important;
+                font-size: 9px;
+            }
+            
+            .leaderboard-section {
+                padding: 8px;
+                margin-bottom: 10px;
+            }
+        }
+        
+        /* iPhone Pro Max and similar large phones */
+        @media (max-width: 430px) {
+            body {
+                padding-top: 15px;
+                padding-left: 8px;
+                padding-right: 8px;
+            }
+            
+            .simulation-container {
+                gap: 15px;
+            }
+            
+            .entry-point-panel {
+                padding: 12px;
+            }
+            
+            .entry-point-header {
+                font-size: 12px;
+            }
+            
+            .stream-detector {
+                padding: 12px;
+            }
+            
+            .stream-detector .status {
+                font-size: 12px;
+            }
+            
+            .stream-detector .subtext {
+                font-size: 10px;
+            }
+            
+            .automode-button {
+                padding: 12px;
+                font-size: 12px;
+            }
+            
+            .popup-header {
+                padding: 10px 12px;
+            }
+            
+            .popup-body {
+                padding: 12px;
+            }
+            
+            .points-section {
+                padding: 10px;
+                margin-bottom: 12px;
+            }
+            
+            .points-total {
+                font-size: 16px;
+            }
+            
+            .points-pending {
+                font-size: 10px;
+            }
+            
+            .holistic-panel {
+                padding: 8px;
+            }
+            
+            .holistic-section {
+                padding: 6px;
+                font-size: 10px;
+            }
+            
+            .primary-cta {
+                padding: 8px 14px;
+                font-size: 10px;
+            }
+            
+            .message-area {
+                padding: 6px 10px;
+                font-size: 11px;
+            }
+            
+            .message-area.expanded {
+                padding: 8px 10px;
+                font-size: 11px;
+            }
+            
+            .nokia-visual {
+                height: 30px;
+                margin-bottom: 8px;
+            }
+            
+            #channel-frame {
+                height: 180px !important;
+            }
+            
+            #receipt-content-list {
+                max-height: 70px !important;
+                font-size: 8px;
+            }
+            
+            .leaderboard-section {
+                padding: 6px;
+                margin-bottom: 8px;
+            }
+        }
+        
+        /* Very small phones */
+        @media (max-width: 375px) {
+            body {
+                padding-top: 10px;
+                padding-left: 5px;
+                padding-right: 5px;
+            }
+            
+            .simulation-container {
+                gap: 12px;
+            }
+            
+            .entry-point-panel {
+                padding: 10px;
+            }
+            
+            .entry-point-header {
+                font-size: 11px;
+            }
+            
+            .stream-detector {
+                padding: 10px;
+            }
+            
+            .stream-detector .status {
+                font-size: 11px;
+            }
+            
+            .stream-detector .subtext {
+                font-size: 9px;
+            }
+            
+            .automode-button {
+                padding: 10px;
+                font-size: 11px;
+            }
+            
+            .popup-header {
+                padding: 8px 10px;
+            }
+            
+            .popup-body {
+                padding: 10px;
+            }
+            
+            .points-section {
+                padding: 8px;
+                margin-bottom: 10px;
+            }
+            
+            .points-total {
+                font-size: 14px;
+            }
+            
+            .points-pending {
+                font-size: 9px;
+            }
+            
+            .holistic-panel {
+                padding: 6px;
+            }
+            
+            .holistic-section {
+                padding: 5px;
+                font-size: 9px;
+            }
+            
+            .primary-cta {
+                padding: 6px 12px;
+                font-size: 9px;
+            }
+            
+            .message-area {
+                padding: 5px 8px;
+                font-size: 10px;
+            }
+            
+            .message-area.expanded {
+                padding: 6px 8px;
+                font-size: 10px;
+            }
+            
+            .nokia-visual {
+                height: 25px;
+                margin-bottom: 6px;
+            }
+            
+            #channel-frame {
+                height: 160px !important;
+            }
+            
+            #receipt-content-list {
+                max-height: 60px !important;
+                font-size: 7px;
+            }
+            
+            .leaderboard-section {
+                padding: 5px;
+                margin-bottom: 6px;
+            }
+        }
+        
         /* Baseline (Default) - Standard Desktop/Laptop (768px - 1024px height) */
         /* Current layout serves as the baseline - no changes needed */
         
@@ -718,6 +1018,53 @@
                 height: 250px;
             }
         }
+        
+        /* Mobile-specific extension popup adjustments */
+        @media (max-width: 768px) and (max-height: 600px) {
+            .extension-popup {
+                height: 400px;
+            }
+            
+            .popup-body {
+                padding: 10px;
+            }
+            
+            .points-section {
+                padding: 8px;
+                margin-bottom: 10px;
+            }
+            
+            .points-total {
+                font-size: 16px;
+            }
+            
+            .points-pending {
+                font-size: 10px;
+            }
+        }
+        
+        @media (max-width: 430px) and (max-height: 600px) {
+            .extension-popup {
+                height: 350px;
+            }
+            
+            .popup-body {
+                padding: 8px;
+            }
+            
+            .points-section {
+                padding: 6px;
+                margin-bottom: 8px;
+            }
+            
+            .points-total {
+                font-size: 14px;
+            }
+            
+            .points-pending {
+                font-size: 9px;
+            }
+        }
 
         /* Debug Panel */
         .debug-panel {
@@ -875,6 +1222,67 @@
             background: #333;
             color: #666;
             cursor: not-allowed;
+        }
+        
+        /* Mobile debug panel adjustments */
+        @media (max-width: 768px) {
+            .debug-panel {
+                position: fixed;
+                bottom: 5px;
+                left: 5px;
+                right: 5px;
+                min-width: auto;
+                max-width: none;
+                font-size: 9px;
+                padding: 8px;
+            }
+            
+            .debug-trigger {
+                bottom: 5px;
+                left: 5px;
+                font-size: 7px;
+                padding: 2px 4px;
+            }
+            
+            .debug-section-header {
+                font-size: 8px;
+                padding: 4px 0;
+            }
+            
+            .debug-button {
+                font-size: 8px;
+                padding: 3px 6px;
+                margin: 1px;
+            }
+            
+            .debug-section-content {
+                max-height: 150px;
+            }
+        }
+        
+        @media (max-width: 430px) {
+            .debug-panel {
+                font-size: 8px;
+                padding: 6px;
+            }
+            
+            .debug-trigger {
+                font-size: 6px;
+                padding: 1px 3px;
+            }
+            
+            .debug-section-header {
+                font-size: 7px;
+            }
+            
+            .debug-button {
+                font-size: 7px;
+                padding: 2px 4px;
+            }
+            
+            .debug-section-content {
+                max-height: 120px;
+            }
         }
 
         /* Progress Bars */
@@ -1823,6 +2231,160 @@
             opacity: 0.3;
             filter: grayscale(100%);
             pointer-events: none;
+        }
+
+        /* Section 2a and 2b disabled states */
+        .section-disabled {
+            opacity: 0.3;
+            filter: grayscale(100%);
+            pointer-events: none;
+            position: relative;
+        }
+
+        .section-disabled::before {
+            content: "🔒 ACTIVATION REQUIRED";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.9);
+            color: #ffaa00;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            z-index: 10;
+            white-space: nowrap;
+        }
+
+        /* Section 2a and 2b content areas */
+        .section-2a-content,
+        .section-2b-content {
+            transition: opacity 0.3s ease, filter 0.3s ease;
+        }
+
+        .section-2a-content.disabled,
+        .section-2b-content.disabled {
+            opacity: 0.3;
+            filter: grayscale(100%);
+            pointer-events: none;
+        }
+
+        /* Disable sections 2a and 2b by default until activation */
+        #detected-show-ui,
+        #expandable-channel-section,
+        #realtime-learning-insights,
+        #start-learning-button,
+        #cta-button,
+        #expand-channel-header,
+        #channel-expanded-container,
+        #channel-iframe-container,
+        #channel-frame,
+        .insights-banner,
+        .stats-grid,
+        .stat-box,
+        .stat-item,
+        #patterns-detected,
+        #genres-identified,
+        #accuracy-improving,
+        #neural-connections,
+        #training-samples,
+        #model-confidence {
+            opacity: 0.3;
+            filter: grayscale(100%);
+            pointer-events: none;
+            position: relative;
+        }
+
+        #detected-show-ui::before,
+        #expandable-channel-section::before,
+        #realtime-learning-insights::before,
+        #cta-button::before {
+            content: "🔒 ACTIVATION REQUIRED";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.9);
+            color: #ffaa00;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            z-index: 10;
+            white-space: nowrap;
+        }
+
+        /* Enable sections after activation */
+        .section-enabled #detected-show-ui,
+        .section-enabled #expandable-channel-section,
+        .section-enabled #realtime-learning-insights,
+        .section-enabled #start-learning-button,
+        .section-enabled #cta-button,
+        .section-enabled #expand-channel-header,
+        .section-enabled #channel-expanded-container,
+        .section-enabled #channel-iframe-container,
+        .section-enabled #channel-frame,
+        .section-enabled .insights-banner,
+        .section-enabled .stats-grid,
+        .section-enabled .stat-box,
+        .section-enabled .stat-item,
+        .section-enabled #patterns-detected,
+        .section-enabled #genres-identified,
+        .section-enabled #accuracy-improving,
+        .section-enabled #neural-connections,
+        .section-enabled #training-samples,
+        .section-enabled #model-confidence {
+            opacity: 1;
+            filter: none;
+            pointer-events: all;
+        }
+
+        .section-enabled #detected-show-ui::before,
+        .section-enabled #expandable-channel-section::before,
+        .section-enabled #realtime-learning-insights::before,
+        .section-enabled #cta-button::before {
+            display: none;
+        }
+
+        /* Disable main content areas until activation */
+        #main-view:not(.section-enabled) #detected-show-ui,
+        #main-view:not(.section-enabled) #expandable-channel-section,
+        #main-view:not(.section-enabled) #realtime-learning-insights,
+        #main-view:not(.section-enabled) #cta-button,
+        #main-view:not(.section-enabled) #start-learning-button,
+        #main-view:not(.section-enabled) .insights-banner,
+        #main-view:not(.section-enabled) .stats-grid,
+        #main-view:not(.section-enabled) .stat-box {
+            opacity: 0.3;
+            filter: grayscale(100%);
+            pointer-events: none;
+            position: relative;
+        }
+
+        #main-view:not(.section-enabled) #detected-show-ui::before,
+        #main-view:not(.section-enabled) #expandable-channel-section::before,
+        #main-view:not(.section-enabled) #realtime-learning-insights::before,
+        #main-view:not(.section-enabled) #cta-button::before {
+            content: "🔒 ACTIVATION REQUIRED";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.9);
+            color: #ffaa00;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            z-index: 10;
+            white-space: nowrap;
         }
 
         .activation-container {
@@ -3699,6 +4261,13 @@
             // Initialize UI based on current state
             updateUI();
             updatePointsDisplay();
+            
+            // Ensure sections are disabled by default
+            const mainView = document.getElementById('main-view');
+            if (mainView) {
+                mainView.classList.remove('section-enabled');
+                console.log('Sections disabled by default - waiting for activation');
+            }
             
             // Test home screen checkpoints
             Tracker.assertRumi(RUMI_PROJECT.checkpoints.HOME_LOADED, true, 'Home screen loaded');
@@ -8349,12 +8918,9 @@ function recordActualIndexedContentBeforeReceipt() {
             appState.pendingEntryPoint = 'detection';
             appState.pendingDetectedShow = detectedShow;
             
-            // Don't set the main entry point yet - wait for activation
-            // appState.entryPoint = 'detection';
-            // appState.detectedShow = detectedShow;
-            
-            // Don't update UI yet - wait for activation
-            // updateUI();
+            // Show the extension popup but keep sections 2a and 2b disabled
+            // The sections will be enabled only after activation
+            console.log('[RUMI] Detection mode launched - waiting for activation');
         }
 
         function launchWithAutomode() {
@@ -8405,13 +8971,9 @@ function recordActualIndexedContentBeforeReceipt() {
             // Store the entry point info for when activation happens
             appState.pendingEntryPoint = 'automode';
             
-            // Don't set the main entry point yet - wait for activation
-            // appState.isIndexing = false;
-            // appState.entryPoint = 'automode';
-            // detectedShow = null;
-            
-            // Don't update UI yet - wait for activation
-            // updateUI();
+            // Show the extension popup but keep sections 2a and 2b disabled
+            // The sections will be enabled only after activation
+            console.log('[RUMI] Automode launched - waiting for activation');
         }
 
         // Show automode description for selected bucket
@@ -8535,7 +9097,7 @@ function recordActualIndexedContentBeforeReceipt() {
                 
                 // Now proceed with the normal flow based on pending entry point
                 if (appState.pendingEntryPoint === 'detection') {
-                    // Set the state to show indexing screen but NOT start indexing yet
+                    // Set the state to show detection section (2a)
                     appState.isIndexing = false;
                     appState.entryPoint = 'detection';
                     appState.detectedShow = appState.pendingDetectedShow;
@@ -8550,10 +9112,10 @@ function recordActualIndexedContentBeforeReceipt() {
                     // Set channel expansion state for new entry point (show by default in detection mode)
                     appState.channelExpanded = true;
 
-                    // Update UI after state is set
-                    updateUI();
+                    // Show Section 2a (Content Detected) - this is what appears after activation
+                    showSection2a();
 
-                    // Update the UI elements within the indexing view
+                    // Update the UI elements within the detection view
                     if (appState.pendingDetectedShow && appState.pendingDetectedShow.title) {
                         showDetectedShowUI(appState.pendingDetectedShow.title);
                     }
@@ -8564,7 +9126,7 @@ function recordActualIndexedContentBeforeReceipt() {
                     }, 500);
                     
                 } else if (appState.pendingEntryPoint === 'automode') {
-                    // Set the state to show indexing screen but NOT start indexing yet
+                    // Set the state to show automode section (2b)
                     appState.isIndexing = false;
                     appState.entryPoint = 'automode';
                     detectedShow = null; // Clear detectedShow for automode
@@ -8574,6 +9136,9 @@ function recordActualIndexedContentBeforeReceipt() {
                     
                     // Reset channel expansion state for new entry point
                     appState.channelExpanded = false;
+                    
+                    // Show Section 2b (Automode) - this is what appears after activation
+                    showSection2b();
                     
                     // Show the start learning button for section 2b
                     const startLearningButton = document.getElementById('start-learning-button');
@@ -8587,9 +9152,6 @@ function recordActualIndexedContentBeforeReceipt() {
                         console.error('[RUMI] Error showing automode description:', error);
                     });
                     
-                    // Update UI after state is set
-                    updateUI();
-
                     // Force update the expandable channel UI to show the correct channel
                     updateExpandableChannelUI();
                 }
@@ -8599,6 +9161,94 @@ function recordActualIndexedContentBeforeReceipt() {
                 appState.pendingDetectedShow = null;
                 
             }, 500); // 500ms delay for visual feedback
+        }
+
+        function showSection2a() {
+            console.log('showSection2a() called - showing detection section after activation');
+            
+            // Show the extension popup
+            const popup = document.querySelector('.extension-popup');
+            if (popup) {
+                popup.style.display = 'flex';
+            }
+            
+            // Show home content (not nokia content)
+            const homeContent = document.getElementById('home-content');
+            const nokiaContent = document.getElementById('nokia-content');
+            
+            if (homeContent) homeContent.style.display = 'block';
+            if (nokiaContent) nokiaContent.style.display = 'none';
+            
+            // Enable sections 2a and 2b by adding the section-enabled class to main-view
+            const mainView = document.getElementById('main-view');
+            if (mainView) {
+                mainView.classList.add('section-enabled');
+                console.log('Added section-enabled class to main-view');
+            }
+            
+            // Show the detected show UI
+            const detectedShowUI = document.getElementById('detected-show-ui');
+            if (detectedShowUI) {
+                detectedShowUI.style.display = 'block';
+            }
+            
+            // Show the expandable channel section
+            const expandableChannelSection = document.getElementById('expandable-channel-section');
+            if (expandableChannelSection) {
+                expandableChannelSection.style.display = 'block';
+            }
+            
+            // Update button text with detected show info
+            const startWatchingButton = document.getElementById('cta-button');
+            if (startWatchingButton && appState.detectedShow) {
+                const show = appState.detectedShow;
+                const episodeInfo = show.season !== 'N/A' ? ` S${show.season}E${show.episode}` : '';
+                startWatchingButton.textContent = `START WATCHING ${show.title}${episodeInfo}`;
+            }
+            
+            console.log('Section 2a (Content Detected) displayed after activation');
+        }
+
+        function showSection2b() {
+            console.log('showSection2b() called - showing automode section after activation');
+            
+            // Show the extension popup
+            const popup = document.querySelector('.extension-popup');
+            if (popup) {
+                popup.style.display = 'flex';
+            }
+            
+            // Show home content (not nokia content)
+            const homeContent = document.getElementById('home-content');
+            const nokiaContent = document.getElementById('nokia-content');
+            
+            if (homeContent) homeContent.style.display = 'block';
+            if (nokiaContent) nokiaContent.style.display = 'none';
+            
+            // Enable sections 2a and 2b by adding the section-enabled class to main-view
+            const mainView = document.getElementById('main-view');
+            if (mainView) {
+                mainView.classList.add('section-enabled');
+                console.log('Added section-enabled class to main-view');
+            }
+            
+            // Show the real-time learning insights section
+            const realtimeLearningInsights = document.getElementById('realtime-learning-insights');
+            if (realtimeLearningInsights) {
+                realtimeLearningInsights.style.display = 'block';
+            }
+            
+            // Note: The expandable rumi channel section doesn't exist in this version
+            // The automode content is handled through the real-time learning insights
+            
+            // Update button text with selected bucket
+            const startLearningButton = document.getElementById('start-learning-button');
+            if (startLearningButton && appState.currentBucket) {
+                startLearningButton.textContent = `START LEARNING ${appState.currentBucket}`;
+                startLearningButton.style.display = 'block';
+            }
+            
+            console.log('Section 2b (Automode) displayed after activation');
         }
 
         function updateEntryPointForNextStep() {
@@ -9850,7 +10500,6 @@ function recordActualIndexedContentBeforeReceipt() {
             console.log('testShowInterrupt called');
             setErrorState('show-interrupt');
             updateMessageArea('show-interrupt');
-            autoExpandSections('show-interrupt');
             
             // Ensure content info is populated after a longer delay to allow DOM to fully update
             setTimeout(() => {
