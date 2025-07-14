@@ -4981,12 +4981,10 @@ function recordActualIndexedContentBeforeReceipt() {
             if (appState.indexedContent && appState.indexedContent.length > 0) {
                 console.log(`📊 Receipt: Using ${appState.indexedContent.length} indexed content items from appState`);
                 appState.indexedContent.forEach((content, index) => {
-                    // Use the stored points from indexed content (already calculated correctly)
-                    const pointsEarned = content.points || 0;
+                    // Only show titles/clips that were indexed - simplified view
                     contentItems.push({
                         title: content.title,
                         duration: `${content.duration}min`,
-                        points: pointsEarned.toFixed(1),
                         isTransition: content.type === 'chained_show' || content.title.includes('(Chained)'),
                         isError: content.type === 'error',
                         service: content.service || 'Unknown'
@@ -4997,12 +4995,10 @@ function recordActualIndexedContentBeforeReceipt() {
             else if (receiptData.playedContent && receiptData.playedContent.length > 0) {
                 console.log(`📊 Receipt: Using ${receiptData.playedContent.length} transition system content items`);
                 receiptData.playedContent.forEach((content, index) => {
-                    // Use the stored points from transition system (already calculated correctly)
-                    const pointsEarned = content.points || 0;
+                    // Only show titles/clips that were indexed - simplified view
                     contentItems.push({
                         title: content.title,
                         duration: `${content.duration}min`,
-                        points: pointsEarned.toFixed(1),
                         isTransition: index > 0,
                         service: content.service || 'Unknown'
                     });
@@ -5015,16 +5011,15 @@ function recordActualIndexedContentBeforeReceipt() {
                 return;
             }
             
-            // Generate HTML for enhanced content items
+            // Generate HTML for simplified content items (titles only)
             const contentHTML = contentItems.map((item, index) => `
                 <div style="display: flex; justify-content: space-between; margin-bottom: 4px; padding: 6px; background: ${item.isError ? '#1a0000' : item.isTransition ? '#1a1a00' : '#1a1a1a'}; border-radius: 4px; border: ${item.isError ? '1px solid #ff4444' : item.isTransition ? '1px solid #ffaa00' : 'none'};">
                     <div style="flex: 1;">
                         <div style="color: ${item.isError ? '#ff4444' : item.isTransition ? '#ffaa00' : '#fff'}; font-size: 11px; font-weight: 600;">${item.title}</div>
-                        <div style="color: #888; font-size: 9px; margin-top: 2px;">${item.service}${item.isTransition ? ' • Transition Bonus' : ''}${item.isError ? ' • Error' : ''}</div>
+                        <div style="color: #888; font-size: 9px; margin-top: 2px;">${item.service}${item.isTransition ? ' • Transition' : ''}${item.isError ? ' • Error' : ''}</div>
                     </div>
-                    <div style="display: flex; align-items: center; gap: 8px; flex-shrink: 0;">
+                    <div style="display: flex; align-items: center; flex-shrink: 0;">
                         <span style="color: #888; font-size: 10px;">${item.duration}</span>
-                        <span style="color: ${item.isError ? '#ff4444' : item.isTransition ? '#ffaa00' : '#fff'}; font-weight: 600; font-size: 11px;">+${item.points}</span>
                     </div>
                 </div>
             `).join('');
@@ -5033,11 +5028,11 @@ function recordActualIndexedContentBeforeReceipt() {
             const summaryHTML = `
                 <div style="background: #0a0a0a; border: 1px solid #333; border-radius: 6px; padding: 8px; margin-bottom: 8px;">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <div style="color: #fff; font-size: 12px; font-weight: 600;">Session Summary</div>
+                        <div style="color: #fff; font-size: 12px; font-weight: 600;">Indexed Content</div>
                         <div style="color: #ffaa00; font-size: 11px;">${contentItems.length} item${contentItems.length > 1 ? 's' : ''}</div>
                     </div>
                     <div style="color: #888; font-size: 10px; margin-top: 4px;">
-                        ${Math.floor(receiptData.duration / 60)} minutes • ${receiptData.multiplier.toFixed(1)}x multiplier • +${receiptData.totalPoints.toFixed(2)} points
+                        ${Math.floor(receiptData.duration / 60)} minutes • ${receiptData.multiplier.toFixed(1)}x multiplier
                     </div>
                 </div>
             `;
@@ -9891,29 +9886,67 @@ function recordActualIndexedContentBeforeReceipt() {
 
         function returnToEntryPoint() {
             const originalEntryPoint = appState.entryPoint; // Store before resetting
-            Tracker.logRumiAction('Returning to indexing screen', { entryPoint: originalEntryPoint });
+            Tracker.logRumiAction('Returning to section 2 after receipt', { entryPoint: originalEntryPoint });
             
             // Hide receipt view and show main view
             document.getElementById('receipt-view').style.display = 'none';
             document.getElementById('main-view').style.display = 'block';
             document.getElementById('settings-view').style.display = 'none';
             
-            // Show the extension popup
-            const popup = document.querySelector('.extension-popup');
-            if (popup) {
-                popup.style.display = 'flex';
-            }
-            
-            // Hide the entry point panel
-            const entryPointPanel = document.querySelector('.entry-point-panel');
-            if (entryPointPanel) {
-                entryPointPanel.style.display = 'none';
-            }
-            
-            // Show the user changes content button
-            const userChangesBtn = document.getElementById('user-changes-content-btn');
-            if (userChangesBtn) {
-                userChangesBtn.style.display = 'block';
+            // Navigate to appropriate section based on entry point
+            if (originalEntryPoint === 'detection') {
+                // Go to section 2a (Detection Mode)
+                showSection2a();
+                
+                // NEW: When returning from section 4a, there's no detected show
+                // Hide the detected show UI and show genre channel by default
+                const detectedShowUI = document.getElementById('detected-show-ui');
+                if (detectedShowUI) {
+                    detectedShowUI.style.display = 'none';
+                }
+                
+                // Show the genre channel by default
+                const expandableChannelSection = document.getElementById('expandable-channel-section');
+                if (expandableChannelSection) {
+                    expandableChannelSection.style.display = 'block';
+                }
+                
+                // Expand the channel by default when returning from section 4a
+                const channelExpandedContainer = document.getElementById('channel-expanded-container');
+                if (channelExpandedContainer) {
+                    channelExpandedContainer.style.display = 'block';
+                    appState.channelExpanded = true;
+                }
+                
+                // Update the expand button text
+                const expandText = document.getElementById('expand-channel-text');
+                const expandIcon = document.getElementById('expand-channel-icon');
+                if (expandText) expandText.textContent = 'HIDE CHANNEL';
+                if (expandIcon) expandIcon.textContent = '▲';
+                
+                console.log('Returned to section 2a from section 4a - showing genre channel by default');
+                
+            } else if (originalEntryPoint === 'automode') {
+                // Go to section 2b (Automode)
+                showSection2b();
+            } else {
+                // Fallback: show main view with extension popup
+                const popup = document.querySelector('.extension-popup');
+                if (popup) {
+                    popup.style.display = 'flex';
+                }
+                
+                // Hide the entry point panel
+                const entryPointPanel = document.querySelector('.entry-point-panel');
+                if (entryPointPanel) {
+                    entryPointPanel.style.display = 'none';
+                }
+                
+                // Show the user changes content button
+                const userChangesBtn = document.getElementById('user-changes-content-btn');
+                if (userChangesBtn) {
+                    userChangesBtn.style.display = 'block';
+                }
             }
             
             // CRITICAL: Reset all session state to allow new sessions to start
@@ -9985,8 +10018,8 @@ function recordActualIndexedContentBeforeReceipt() {
             updateUI();
             updatePointsDisplay();
             
-            // If we came from detection, restore the detected show
-            if (originalEntryPoint === 'detection' && detectedShow) {
+            // If we came from detection, restore the detected show (but not when returning from section 4a)
+            if (originalEntryPoint === 'detection' && detectedShow && !appState.sessionCompleted) {
                 appState.detectedShow = detectedShow;
                 showDetectedShowUI(detectedShow.title);
             }
