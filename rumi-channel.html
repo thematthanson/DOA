@@ -634,11 +634,7 @@
             // Update the channel title to show current progress
             const channelTitle = document.querySelector('.channel-title');
             if (channelTitle) {
-                const minutes = Math.floor(elapsedTime / 60);
-                const seconds = Math.floor(elapsedTime % 60);
-                const timeStr = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-                
-                channelTitle.textContent = `${currentBucket.toUpperCase()} • ${timeStr} • ${currentMultiplier.toFixed(1)}x`;
+                channelTitle.textContent = `${currentBucket.toUpperCase()}`;
             }
             
             // Update content blocks to show current progression
