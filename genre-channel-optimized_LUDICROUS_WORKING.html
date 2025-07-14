@@ -1414,9 +1414,6 @@
                     
                     // Show current content details that match ASCII text
                     if (currentItem) {
-                        // Show title and description
-                        this.addMetadataItem(grid, 'Current Content', currentItem.title, 'highlight');
-                        
                         if (currentItem.description) {
                             this.addMetadataItem(grid, 'Description', currentItem.description, 'description');
                         }
@@ -1441,13 +1438,6 @@
                         if (currentItem.year && currentItem.year !== 'Unknown') {
                             this.addMetadataItem(grid, 'Year', currentItem.year);
                         }
-                        
-                        // Show progress
-                        const currentIndex = (window.parent && window.parent.appState) ? 
-                            (window.parent.appState.currentContentIndex + 1) : 1;
-                        const totalItems = (window.parent && window.parent.appState && window.parent.appState.automodeContentItems) ? 
-                            window.parent.appState.automodeContentItems.length : bucketContent.length;
-                        this.addMetadataItem(grid, 'Progress', `Item ${currentIndex}/${totalItems}`, 'highlight');
                     }
                 }
 
