@@ -14041,28 +14041,28 @@ function debugTransitionSystem() {
                 { 
                     name: 'pattern-recognition', 
                     threshold: 0, 
-                    contentTypes: ['movie', 'series', 'episode', 'documentary'], // Active for most content
+                    contentTypes: ['movie', 'series', 'episode', 'documentary', 'clip'], // Active for most content including clips
                     description: 'Analyzing visual and audio patterns',
                     dynamicStates: ['Scanning patterns', 'Identifying features', 'Mapping structures', 'Correlating data']
                 },
                 { 
                     name: 'classification', 
                     threshold: 2, 
-                    contentTypes: ['movie', 'series', 'episode', 'documentary', 'special'], // Active for structured content
+                    contentTypes: ['movie', 'series', 'episode', 'documentary', 'special', 'clip'], // Active for structured content including clips
                     description: 'Categorizing genre and content type',
                     dynamicStates: ['Analyzing genres', 'Classifying content', 'Tagging metadata', 'Refining categories']
                 },
                 { 
                     name: 'behavior-analysis', 
                     threshold: 5, 
-                    contentTypes: ['series', 'episode'], // More active for episodic content
+                    contentTypes: ['series', 'episode', 'clip'], // More active for episodic content and clips
                     description: 'Understanding narrative patterns',
                     dynamicStates: ['Tracking narratives', 'Analyzing behaviors', 'Mapping relationships', 'Predicting outcomes']
                 },
                 { 
                     name: 'optimization', 
                     threshold: 10, 
-                    contentTypes: ['movie', 'documentary'], // More active for longer content
+                    contentTypes: ['movie', 'documentary', 'clip'], // More active for longer content and clips
                     description: 'Optimizing processing algorithms',
                     dynamicStates: ['Tuning algorithms', 'Optimizing models', 'Enhancing accuracy', 'Improving efficiency']
                 }
