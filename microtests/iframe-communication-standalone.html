@@ -370,15 +370,47 @@
 
         <div class="main-content">
             <div class="instructions">
-                <h3>🎯 Testing Instructions</h3>
-                <ul>
-                    <li><strong>Send Messages:</strong> Use the control buttons to send different types of messages between components</li>
-                    <li><strong>Test State Sync:</strong> Update states in one component and observe synchronization in others</li>
-                    <li><strong>Monitor Connection:</strong> Watch the connection indicators to see communication status</li>
-                    <li><strong>Check Message Log:</strong> Review all communication activities in the message log</li>
-                    <li><strong>Test Error Handling:</strong> Trigger error scenarios to test resilience</li>
-                    <li><strong>Verify Statistics:</strong> Monitor message counts and performance metrics</li>
+                <h3>🎯 Component Communication Testing Guide</h3>
+                
+                <h4 style="color: #1976d2; margin: 15px 0 10px 0; font-size: 1.1em;">What This Test Demonstrates</h4>
+                <p style="margin-bottom: 15px; line-height: 1.6; color: #424242;">
+                    This test simulates how different components in the Rumi system communicate with each other, 
+                    similar to how the main interface talks to iframes, popups, and background processes. 
+                    It demonstrates message passing, state synchronization, and error handling.
+                </p>
+
+                <h4 style="color: #1976d2; margin: 15px 0 10px 0; font-size: 1.1em;">Step-by-Step Testing Process</h4>
+                <ol style="margin-left: 20px; color: #424242; line-height: 1.6;">
+                    <li><strong>Establish Connection:</strong> Click "Connect Components" to simulate the initial handshake between components</li>
+                    <li><strong>Send Basic Messages:</strong> Use "Send Ping A→B" and "Send Pong B→A" to test basic communication</li>
+                    <li><strong>Test State Updates:</strong> Click "Set A Active" or "Set B Processing" to see how state changes propagate</li>
+                    <li><strong>Monitor Real-time:</strong> Watch the connection indicators (green = connected, red = disconnected, yellow = connecting)</li>
+                    <li><strong>Check Message Log:</strong> Review the detailed communication log to understand message flow</li>
+                    <li><strong>Test Error Scenarios:</strong> Use "Simulate Error" to see how the system handles failures</li>
+                    <li><strong>Run Automated Tests:</strong> Use "Run Basic Test" or "Test State Sync" for comprehensive testing</li>
+                </ol>
+
+                <h4 style="color: #1976d2; margin: 15px 0 10px 0; font-size: 1.1em;">Understanding the Results</h4>
+                <ul style="margin-left: 20px; color: #424242; line-height: 1.6;">
+                    <li><strong>Connection Status:</strong> Green dots = connected, Red dots = disconnected, Yellow pulsing = connecting</li>
+                    <li><strong>State Synchronization:</strong> When one component changes state, others should update accordingly</li>
+                    <li><strong>Message Flow:</strong> Check the message log to see the sequence of communication</li>
+                    <li><strong>Statistics:</strong> Monitor success rate, latency, and error counts for performance insights</li>
+                    <li><strong>Error Recovery:</strong> Test how the system recovers from communication failures</li>
                 </ul>
+
+                <h4 style="color: #1976d2; margin: 15px 0 10px 0; font-size: 1.1em;">Advanced Testing Scenarios</h4>
+                <ul style="margin-left: 20px; color: #424242; line-height: 1.6;">
+                    <li><strong>Stress Test:</strong> Sends multiple messages rapidly to test system stability</li>
+                    <li><strong>Bidirectional Test:</strong> Tests two-way communication between components</li>
+                    <li><strong>Error Recovery:</strong> Simulates network failures and recovery processes</li>
+                    <li><strong>Message Queue:</strong> Tests how the system handles message queuing and processing</li>
+                </ul>
+
+                <div style="background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 6px; padding: 12px; margin-top: 15px;">
+                    <strong>💡 Pro Tip:</strong> Open your browser's developer console (F12) to see additional debugging information 
+                    and understand the underlying communication mechanisms.
+                </div>
             </div>
 
             <div class="test-section">
