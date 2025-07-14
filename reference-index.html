@@ -5048,6 +5048,36 @@ function recordActualIndexedContentBeforeReceipt() {
             return display;
         }
 
+        // NEW: Debug function to check ASCII and popup synchronization
+        function debugAsciiPopupSync() {
+            console.log('🔍 [DEBUG] ASCII/Popup Synchronization Check:');
+            console.log('🔍 [DEBUG] Current Content Index:', appState.currentContentIndex);
+            console.log('🔍 [DEBUG] Total Content Items:', appState.automodeContentItems ? appState.automodeContentItems.length : 'undefined');
+            
+            if (appState.automodeContentItems && appState.automodeContentItems.length > 0) {
+                const currentItem = appState.automodeContentItems[appState.currentContentIndex];
+                console.log('🔍 [DEBUG] Current Content Item:', currentItem);
+                
+                if (currentItem) {
+                    console.log('🔍 [DEBUG] ASCII Text Data:', {
+                        title: currentItem.title,
+                        service: currentItem.service,
+                        duration: currentItem.duration,
+                        genre: currentItem.genre,
+                        type: currentItem.type,
+                        description: currentItem.description
+                    });
+                }
+            }
+            
+            // Check if popup is visible and get its data
+            const popup = document.getElementById('content-metadata-popup');
+            if (popup && popup.classList.contains('visible')) {
+                const popupTitle = document.getElementById('metadata-title');
+                console.log('🔍 [DEBUG] Popup Title:', popupTitle ? popupTitle.textContent : 'No title element');
+            }
+        }
+
         function updateAnimationPanel(elapsedTime) {
             const holisticInfo = document.getElementById('holistic-show-info');
             const panel = document.getElementById('animation-panel-content');
@@ -5081,6 +5111,11 @@ function recordActualIndexedContentBeforeReceipt() {
             if (appState.entryPoint === 'automode' && appState.automodeContentItems && appState.automodeContentItems.length > 0) {
                 const currentItem = appState.automodeContentItems[appState.currentContentIndex];
                 if (currentItem) {
+                    // Debug synchronization every 5 seconds
+                    if (Math.floor(elapsedTime) % 5 === 0) {
+                        debugAsciiPopupSync();
+                    }
+                    
                     showTitle = currentItem.title.toUpperCase();
                     showType = currentItem.intelligence_bucket ? currentItem.intelligence_bucket.toLowerCase() : 'content';
                     

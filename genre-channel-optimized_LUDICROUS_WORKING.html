@@ -1401,6 +1401,13 @@
                         if (window.parent && window.parent.appState && window.parent.appState.automodeContentItems) {
                             const currentIndex = window.parent.appState.currentContentIndex || 0;
                             currentItem = window.parent.appState.automodeContentItems[currentIndex];
+                            
+                            // Debug popup data
+                            console.log('🔍 [DEBUG] Popup getting data:', {
+                                currentIndex: currentIndex,
+                                totalItems: window.parent.appState.automodeContentItems.length,
+                                currentItem: currentItem
+                            });
                         }
                     } catch (e) {
                         // If we can't access parent, fall back to first item
