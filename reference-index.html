@@ -2510,7 +2510,7 @@
         }
 
         .stat-title {
-            color: #ffaa00;
+            color: #ffff00;
             font-size: 11px;
             margin-bottom: 8px;
             font-weight: 600;
@@ -2535,7 +2535,7 @@
         }
 
         .percentage {
-            color: #00ff00;
+            color: #ffff00;
             font-weight: 600;
         }
 
@@ -2563,7 +2563,7 @@
         }
 
         .dashboard-item.active {
-            border-color: #ffaa00;
+            border-color: #ffff00;
             background-color: #332200;
         }
 
@@ -2586,7 +2586,7 @@
         }
 
         .dashboard-item.active .dashboard-subtitle {
-            color: #ffaa00;
+            color: #ffff00;
         }
 
         .dashboard-status {
@@ -2600,8 +2600,8 @@
         }
 
         .dashboard-status.status-active {
-            background: #00ff00;
-            box-shadow: 0 0 4px rgba(0, 255, 0, 0.5);
+            background: #ffff00;
+            box-shadow: 0 0 4px rgba(255, 255, 0, 0.5);
         }
 
         .dashboard-status.status-inactive {
@@ -2611,6 +2611,40 @@
         .dashboard-status.status-paused {
             background: #ffaa00;
             box-shadow: 0 0 4px rgba(255, 170, 0, 0.5);
+        }
+
+        /* Automode-specific styling for insights and dashboard */
+        .automode .insights-banner {
+            background-color: #333300;
+            border-color: #666600;
+            color: #ffff00;
+        }
+
+        .automode .insights-banner:hover {
+            background-color: #444400;
+            border-color: #888800;
+        }
+
+        .automode .stat-title {
+            color: #ffff00;
+        }
+
+        .automode .percentage {
+            color: #ffff00;
+        }
+
+        .automode .dashboard-item.active {
+            border-color: #ffff00;
+            background-color: #332200;
+        }
+
+        .automode .dashboard-item.active .dashboard-subtitle {
+            color: #ffff00;
+        }
+
+        .automode .dashboard-status.status-active {
+            background: #ffff00;
+            box-shadow: 0 0 4px rgba(255, 255, 0, 0.5);
         }
     </style>
 </head>
@@ -13065,6 +13099,11 @@ function recordActualIndexedContentBeforeReceipt() {
                     index: appState.currentContentIndex,
                     wasUserCompleted: wasUserCompleted
                 });
+                
+                // NEW: Cycle dashboard sections when content transitions
+                if (appState.entryPoint === 'automode') {
+                    cycleDashboardSection();
+                }
             } else {
                 // Reached end of all content - trigger session completion
                 console.log('End of channel content reached - completing session');
@@ -13270,6 +13309,11 @@ function initializeTransitionSystem() {
             
             // Update content display to show locked previous content
             triggerContentDisplayUpdate('show_transition');
+            
+            // NEW: Cycle dashboard sections when show transitions
+            if (appState.entryPoint === 'detection') {
+                cycleDashboardSection();
+            }
             
             // Update button text with current show title
             updateButtonWithCurrentShow(newShow);
@@ -14719,6 +14763,89 @@ function debugTransitionSystem() {
                     progressFill.style.background = '#666'; // Gray when low
                 }
             });
+        }
+        
+        // NEW: Function to cycle through dashboard sections when content transitions
+        function cycleDashboardSection() {
+            if (!appState.isIndexing || (appState.entryPoint !== 'automode' && appState.entryPoint !== 'detection')) return;
+            
+            // Get all dashboard items
+            const dashboardItems = [
+                document.getElementById('pattern-recognition-item'),
+                document.getElementById('classification-item'),
+                document.getElementById('behavior-analysis-item'),
+                document.getElementById('optimization-item')
+            ].filter(item => item !== null);
+            
+            if (dashboardItems.length === 0) return;
+            
+            // Find currently active item
+            let currentActiveIndex = -1;
+            dashboardItems.forEach((item, index) => {
+                if (item.classList.contains('active')) {
+                    currentActiveIndex = index;
+                }
+            });
+            
+            // Deactivate all items first
+            dashboardItems.forEach(item => {
+                item.classList.remove('active', 'pulsing');
+                item.style.animation = '';
+                const status = item.querySelector('.dashboard-status');
+                if (status) {
+                    status.classList.remove('status-active');
+                    status.classList.add('status-inactive');
+                }
+                const stateText = item.querySelector('.dashboard-subtitle:last-child');
+                if (stateText) {
+                    stateText.textContent = 'Queued';
+                }
+                // Remove background effects
+                item.style.backgroundColor = '';
+                item.style.borderLeft = '';
+            });
+            
+            // Activate next item in cycle
+            const nextIndex = (currentActiveIndex + 1) % dashboardItems.length;
+            const nextItem = dashboardItems[nextIndex];
+            
+            if (nextItem) {
+                nextItem.classList.add('active');
+                const status = nextItem.querySelector('.dashboard-status');
+                if (status) {
+                    status.classList.remove('status-inactive');
+                    status.classList.add('status-active');
+                }
+                
+                // Get current content for context
+                const currentItem = appState.automodeContentItems && appState.automodeContentItems.length > 0 ? 
+                    appState.automodeContentItems[appState.currentContentIndex] : null;
+                
+                // Update state text with content context
+                const stateText = nextItem.querySelector('.dashboard-subtitle:last-child');
+                if (stateText && currentItem) {
+                    const contentType = currentItem.type || 'content';
+                    const stageNames = ['Pattern Recognition', 'Classification', 'Behavior Analysis', 'Optimization'];
+                    stateText.textContent = `Processing ${contentType.toUpperCase()} • ${stageNames[nextIndex]}`;
+                }
+                
+                // Add pulsing effect
+                nextItem.classList.add('pulsing');
+                nextItem.style.animation = 'pulse 2s ease-in-out infinite';
+                
+                // Add theme background based on entry point
+                if (appState.entryPoint === 'automode') {
+                    // Yellow theme for automode
+                    nextItem.style.backgroundColor = 'rgba(255, 255, 0, 0.05)';
+                    nextItem.style.borderLeft = '3px solid #ffff00';
+                } else if (appState.entryPoint === 'detection') {
+                    // Green theme for detection mode
+                    nextItem.style.backgroundColor = 'rgba(0, 255, 65, 0.05)';
+                    nextItem.style.borderLeft = '3px solid #00ff41';
+                }
+                
+                console.log(`🔄 Dashboard cycled to: ${['Pattern Recognition', 'Classification', 'Behavior Analysis', 'Optimization'][nextIndex]}`);
+            }
         }
         
         function updateProgressDashboard() {
