@@ -6329,6 +6329,12 @@ function recordActualIndexedContentBeforeReceipt() {
                     
                     // Generate the current pattern based on content
                     generateCurrentPattern() {
+                        // Check if we should cycle to a new pattern for even distribution
+                        if (this.shouldCyclePattern()) {
+                            this.currentPattern = this.determinePattern();
+                            console.log(`🔄 Cycling to new ASCII pattern: ${this.currentPattern}`);
+                        }
+                        
                         if (!this.currentPattern) {
                             this.currentPattern = this.determinePattern();
                         }
@@ -6345,44 +6351,105 @@ function recordActualIndexedContentBeforeReceipt() {
                     determinePattern() {
                         const content = this.getCurrentContent();
                         
-                        // Apply mapping logic from the graph
+                        // Get all available patterns
+                        const allPatterns = [
+                            'wave', 'matrix', 'spiral', 'fractal', 'pulse', 'tunnel', 'vortex', 
+                            'lightning', 'mandala', 'crystal', 'fireworks', 'galaxy', 'plasma', 
+                            'diamond', 'circle', 'hexagon', 'star', 'maze', 'dna', 'atom', 'infinity'
+                        ];
                         
-                        // 1. Check Intelligence Bucket first
+                        // Create a deterministic pattern selection based on content
+                        let patternIndex = 0;
+                        
+                        // 1. Check Intelligence Bucket first (automode)
                         if (appState.entryPoint === 'automode') {
                             const bucket = appState.currentBucket;
-                            if (bucket && bucket.includes('Scene')) return 'wave';
-                            if (bucket && bucket.includes('Intelligence')) return 'matrix';
-                            if (bucket && bucket.includes('Story')) return 'spiral';
-                            if (bucket && bucket.includes('Character')) return 'fractal';
+                            if (bucket && bucket.includes('Scene')) patternIndex = 0; // wave
+                            else if (bucket && bucket.includes('Intelligence')) patternIndex = 1; // matrix
+                            else if (bucket && bucket.includes('Story')) patternIndex = 2; // spiral
+                            else if (bucket && bucket.includes('Character')) patternIndex = 3; // fractal
+                            else if (bucket && bucket.includes('Comedy')) patternIndex = 4; // pulse
+                            else if (bucket && bucket.includes('Drama')) patternIndex = 5; // tunnel
+                            else if (bucket && bucket.includes('Mystery')) patternIndex = 6; // vortex
+                            else if (bucket && bucket.includes('Action')) patternIndex = 7; // lightning
+                            else if (bucket && bucket.includes('Sci-Fi')) patternIndex = 8; // mandala
+                            else if (bucket && bucket.includes('Fantasy')) patternIndex = 9; // crystal
+                            else if (bucket && bucket.includes('Documentary')) patternIndex = 10; // fireworks
+                            else if (bucket && bucket.includes('Romance')) patternIndex = 11; // galaxy
+                            else if (bucket && bucket.includes('Horror')) patternIndex = 12; // plasma
+                            else if (bucket && bucket.includes('Thriller')) patternIndex = 13; // diamond
+                            else if (bucket && bucket.includes('Adventure')) patternIndex = 14; // circle
+                            else if (bucket && bucket.includes('Crime')) patternIndex = 15; // hexagon
+                            else if (bucket && bucket.includes('War')) patternIndex = 16; // star
+                            else if (bucket && bucket.includes('Western')) patternIndex = 17; // maze
+                            else if (bucket && bucket.includes('Musical')) patternIndex = 18; // dna
+                            else if (bucket && bucket.includes('Animation')) patternIndex = 19; // atom
+                            else patternIndex = 20; // infinity (default)
                         }
                         
-                        // 2. Check Genre
-                        if (content && content.genre) {
+                        // 2. Check Genre (detection mode)
+                        else if (content && content.genre) {
                             const genre = content.genre.toLowerCase();
-                            if (genre.includes('comedy')) return 'pulse';
-                            if (genre.includes('drama')) return 'tunnel';
-                            if (genre.includes('mystery') || genre.includes('thriller')) return 'vortex';
-                            if (genre.includes('horror')) return 'lightning';
-                            if (genre.includes('sci-fi') || genre.includes('scifi')) return 'matrix';
-                            if (genre.includes('fantasy')) return 'mandala';
-                            if (genre.includes('documentary')) return 'crystal';
-                            if (genre.includes('action') || genre.includes('superhero')) return 'fireworks';
+                            if (genre.includes('comedy')) patternIndex = 4; // pulse
+                            else if (genre.includes('drama')) patternIndex = 5; // tunnel
+                            else if (genre.includes('mystery') || genre.includes('thriller')) patternIndex = 6; // vortex
+                            else if (genre.includes('horror')) patternIndex = 7; // lightning
+                            else if (genre.includes('sci-fi') || genre.includes('scifi')) patternIndex = 8; // mandala
+                            else if (genre.includes('fantasy')) patternIndex = 9; // crystal
+                            else if (genre.includes('documentary')) patternIndex = 10; // fireworks
+                            else if (genre.includes('action') || genre.includes('superhero')) patternIndex = 11; // galaxy
+                            else if (genre.includes('romance')) patternIndex = 12; // plasma
+                            else if (genre.includes('adventure')) patternIndex = 13; // diamond
+                            else if (genre.includes('crime')) patternIndex = 14; // circle
+                            else if (genre.includes('war')) patternIndex = 15; // hexagon
+                            else if (genre.includes('western')) patternIndex = 16; // star
+                            else if (genre.includes('musical')) patternIndex = 17; // maze
+                            else if (genre.includes('animation')) patternIndex = 18; // dna
+                            else if (genre.includes('family')) patternIndex = 19; // atom
+                            else patternIndex = 20; // infinity (default)
                         }
                         
-                        // 3. Check Duration for animation speed
-                        if (content && content.duration) {
+                        // 3. Check Duration for additional variety
+                        else if (content && content.duration) {
                             const duration = parseInt(content.duration);
-                            if (duration >= 2 && duration <= 4) return 'pulse'; // Fast
-                            if (duration >= 5 && duration <= 8) return 'wave'; // Medium
-                            if (duration >= 9) return 'spiral'; // Slow
+                            patternIndex = (duration % 21); // Use duration to cycle through all patterns
                         }
                         
-                        // 4. Default patterns for automode vs detected
-                        if (appState.entryPoint === 'automode') {
-                            return 'matrix'; // Default for automode
-                            } else {
-                            return 'wave'; // Default for detected shows
+                        // 4. Use content title hash for deterministic but varied selection
+                        else if (content && content.title) {
+                            let hash = 0;
+                            for (let i = 0; i < content.title.length; i++) {
+                                hash = ((hash << 5) - hash + content.title.charCodeAt(i)) & 0xffffffff;
+                            }
+                            patternIndex = Math.abs(hash) % 21;
                         }
+                        
+                        // 5. Fallback to time-based cycling
+                        else {
+                            patternIndex = Math.floor(Date.now() / 10000) % 21; // Change every 10 seconds
+                        }
+                        
+                        // Ensure pattern index is within bounds
+                        patternIndex = patternIndex % allPatterns.length;
+                        
+                        console.log(`🎨 ASCII Pattern Selected: ${allPatterns[patternIndex]} (index: ${patternIndex})`);
+                        
+                        // Log pattern usage for debugging
+                        if (!this.patternUsage) {
+                            this.patternUsage = {};
+                        }
+                        this.patternUsage[allPatterns[patternIndex]] = (this.patternUsage[allPatterns[patternIndex]] || 0) + 1;
+                        
+                        return allPatterns[patternIndex];
+                    },
+                    
+                    // Debug function to show pattern usage
+                    getPatternUsage() {
+                        if (!this.patternUsage) return 'No patterns used yet';
+                        return Object.entries(this.patternUsage)
+                            .sort(([,a], [,b]) => b - a)
+                            .map(([pattern, count]) => `${pattern}: ${count}`)
+                            .join(', ');
                     },
                     
                     // Get current content information
@@ -6442,6 +6509,14 @@ function recordActualIndexedContentBeforeReceipt() {
                     resetPattern() {
                         this.currentPattern = null;
                         this.animationFrame = 0;
+                        this.lastPatternChange = 0;
+                    },
+                    
+                    // Cycle through patterns periodically for even distribution
+                    shouldCyclePattern() {
+                        // Change pattern every 30 seconds (300 frames at 100ms refresh rate)
+                        const cycleInterval = 300;
+                        return this.animationFrame % cycleInterval === 0 && this.animationFrame > 0;
                     },
                     
                     // Generate Wave pattern (resized for panel)
