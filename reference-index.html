@@ -2887,6 +2887,66 @@
         .automode #automode-description-text {
             color: #ffff00;
         }
+
+        /* Automode call to action button styling */
+        .automode #start-learning-button {
+            background: #ffff00 !important;
+            color: #000 !important;
+            border: 2px solid #ffff00 !important;
+        }
+
+        .automode #start-learning-button:hover {
+            background: #e6e600 !important;
+            border-color: #e6e600 !important;
+        }
+
+        /* Automode leaderboard styling */
+        .automode .leaderboard-section {
+            background: rgba(255, 255, 0, 0.05);
+            border-color: rgba(255, 255, 0, 0.2);
+        }
+
+        .automode .leaderboard-section:hover {
+            background: rgba(255, 255, 0, 0.1);
+            border-color: rgba(255, 255, 0, 0.3);
+        }
+
+        .automode .leaderboard-header .title {
+            color: #ffff00 !important;
+        }
+
+        .automode .leaderboard-header .user-rank {
+            color: #ffff00 !important;
+        }
+
+        .automode .leaderboard-expand-icon {
+            color: #ffff00 !important;
+        }
+
+        .automode .leaderboard-full-list {
+            color: #ffff00;
+        }
+
+        .automode .leaderboard-full-list span {
+            color: #ffff00;
+        }
+
+        /* Section 2c specific styling (post-receipt state) */
+        .section-2c .detected-show-ui {
+            display: none !important;
+        }
+
+        .section-2c .channel-expanded-container {
+            display: block !important;
+        }
+
+        .section-2c .expand-channel-text {
+            content: 'HIDE CHANNEL';
+        }
+
+        .section-2c .expand-channel-icon {
+            content: '▲';
+        }
     </style>
 </head>
 <body>
@@ -3109,7 +3169,7 @@
                 <button id="automode-button" class="automode-button disabled" onclick="launchWithAutomode()" style="width: 100%; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #666; padding: 8px; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: not-allowed;" disabled>
                     Select Intelligence Bucket to Launch
                 </button>
-                <button id="start-learning-button" class="primary-cta automode" onclick="startAutomodeIndexing()" style="width: 100%; margin-top: 8px; background: #ffff00; color: #000; border: 2px solid #ffff00; padding: 10px; border-radius: 4px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; display: none;">
+                <button id="start-learning-button" class="primary-cta automode" onclick="startAutomodeIndexing()" style="width: 100%; margin-top: 8px; padding: 10px; border-radius: 4px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; display: none;">
                     START LEARNING CONTENT INTELLIGENCE
                 </button>
                 <div id="automode-description" style="display: none; margin-top: 8px; padding: 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; font-size: 10px; color: #ccc; line-height: 1.3;">
@@ -5097,32 +5157,55 @@ function recordActualIndexedContentBeforeReceipt() {
                 setTimeout(waitForIndexedContent, 200);
                 return; // Don't continue with stopIndexing until content is ready
             } else {
-            // Record automode indexed content
+            // Record automode indexed content with accurate timing
                 if (appState.automodeContentItems && appState.automodeContentItems.length > 0) {
-                    // If indexed content is already populated (from moveToNextContentItem), don't overwrite it
+                    // If indexed content is already populated (from moveToNextContentItem), use it
                     if (!appState.indexedContent || appState.indexedContent.length === 0) {
-                    appState.indexedContent = appState.automodeContentItems
-                        .slice(0, appState.currentContentIndex + 1)
-                            .map(item => {
-                                // Calculate actual duration
-                                let itemDurationSeconds;
-                                if (typeof item.duration === 'string' && item.duration.includes(':')) {
-                                    const durationParts = item.duration.split(':');
-                                    itemDurationSeconds = parseInt(durationParts[0]) * 60 + parseInt(durationParts[1]);
-                                } else {
-                                    itemDurationSeconds = item.duration || (45 * 60);
-                                }
-                                
-                                return {
-                            title: item.title,
+                        // Calculate which items were actually completed based on elapsed time
+                        const elapsedTime = (Date.now() - appState.indexingStartTime) / 1000;
+                        let cumulativeTime = 0;
+                        let completedItems = [];
+                        
+                        for (let i = 0; i < appState.automodeContentItems.length; i++) {
+                            const item = appState.automodeContentItems[i];
+                            let itemDurationSeconds;
+                            
+                            if (typeof item.duration === 'string' && item.duration.includes(':')) {
+                                const durationParts = item.duration.split(':');
+                                itemDurationSeconds = parseInt(durationParts[0]) * 60 + parseInt(durationParts[1]);
+                            } else {
+                                itemDurationSeconds = item.duration || (45 * 60);
+                            }
+                            
+                            cumulativeTime += itemDurationSeconds;
+                            
+                            // If we've spent enough time to complete this item, include it
+                            if (elapsedTime >= cumulativeTime) {
+                                completedItems.push({
+                                    title: item.title,
                                     duration: Math.floor(itemDurationSeconds / 60), // Convert to minutes
                                     points: calculatePointsWithMultipliers(itemDurationSeconds, appState.baseRate || 0.08, TimeSystem.getSessionDuration()),
                                     type: 'automode_content'
-                                };
-                            });
+                                });
+                            } else {
+                                // For the current item, calculate partial completion
+                                const timeSpentOnCurrentItem = Math.max(0, elapsedTime - (cumulativeTime - itemDurationSeconds));
+                                if (timeSpentOnCurrentItem > 0) {
+                                    completedItems.push({
+                                        title: item.title,
+                                        duration: Math.floor(timeSpentOnCurrentItem / 60), // Convert to minutes
+                                        points: calculatePointsWithMultipliers(timeSpentOnCurrentItem, appState.baseRate || 0.08, TimeSystem.getSessionDuration()),
+                                        type: 'automode_content'
+                                    });
+                                }
+                                break; // Stop processing further items
+                            }
+                        }
+                        
+                        appState.indexedContent = completedItems;
                     }
                     
-                    console.log(`📊 StopIndexing: Recorded ${appState.indexedContent.length} automode content items`);
+                    console.log(`📊 StopIndexing: Recorded ${appState.indexedContent.length} automode content items with accurate timing`);
                 }
                 
                 // Proceed immediately for automode
@@ -9578,23 +9661,93 @@ function recordActualIndexedContentBeforeReceipt() {
                 console.log('Added section-enabled class to main-view');
             }
             
-            // Show the real-time learning insights section
-            const realtimeLearningInsights = document.getElementById('realtime-learning-insights');
-            if (realtimeLearningInsights) {
-                realtimeLearningInsights.style.display = 'block';
-            }
-            
-            // Note: The expandable rumi channel section doesn't exist in this version
-            // The automode content is handled through the real-time learning insights
-            
-            // Update button text with selected bucket
+            // Show the automode insights and dashboard
+            const insightsBanner = document.querySelector('.insights-banner');
+            const statsGrid = document.querySelector('.stats-grid');
             const startLearningButton = document.getElementById('start-learning-button');
-            if (startLearningButton && appState.currentBucket) {
-                startLearningButton.textContent = `START LEARNING ${appState.currentBucket}`;
-                startLearningButton.style.display = 'block';
+            
+            if (insightsBanner) insightsBanner.style.display = 'block';
+            if (statsGrid) statsGrid.style.display = 'block';
+            if (startLearningButton) startLearningButton.style.display = 'block';
+            
+            // Show the automode description
+            const automodeDescription = document.getElementById('automode-description');
+            if (automodeDescription) {
+                automodeDescription.style.display = 'block';
             }
             
             console.log('Section 2b (Automode) displayed after activation');
+        }
+
+        function showSection2c() {
+            console.log('showSection2c() called - showing post-receipt section (no detected show)');
+            
+            // Show the extension popup
+            const popup = document.querySelector('.extension-popup');
+            if (popup) {
+                popup.style.display = 'flex';
+            }
+            
+            // Show home content (not nokia content)
+            const homeContent = document.getElementById('home-content');
+            const nokiaContent = document.getElementById('nokia-content');
+            
+            if (homeContent) homeContent.style.display = 'block';
+            if (nokiaContent) nokiaContent.style.display = 'none';
+            
+            // Enable sections by adding the section-enabled class to main-view
+            const mainView = document.getElementById('main-view');
+            if (mainView) {
+                mainView.classList.add('section-enabled');
+                mainView.classList.add('section-2c'); // Add section-2c class for post-receipt styling
+                console.log('Added section-enabled and section-2c classes to main-view');
+            }
+            
+            // IMPORTANT: Hide the detected show UI for section 2c (post-receipt)
+            const detectedShowUI = document.getElementById('detected-show-ui');
+            if (detectedShowUI) {
+                detectedShowUI.style.display = 'none';
+                console.log('Section 2c: Hidden detected show UI (post-receipt state)');
+            }
+            
+            // Show the expandable channel section by default
+            const expandableChannelSection = document.getElementById('expandable-channel-section');
+            if (expandableChannelSection) {
+                expandableChannelSection.style.display = 'block';
+            }
+            
+            // Expand the channel by default for section 2c
+            const channelExpandedContainer = document.getElementById('channel-expanded-container');
+            if (channelExpandedContainer) {
+                channelExpandedContainer.style.display = 'block';
+                appState.channelExpanded = true;
+            }
+            
+            // Update the expand button text
+            const expandText = document.getElementById('expand-channel-text');
+            const expandIcon = document.getElementById('expand-channel-icon');
+            if (expandText) expandText.textContent = 'HIDE CHANNEL';
+            if (expandIcon) expandIcon.textContent = '▲';
+            
+            // Show insights and dashboard based on entry point
+            if (appState.entryPoint === 'automode') {
+                // Show automode insights and dashboard
+                const insightsBanner = document.querySelector('.insights-banner');
+                const statsGrid = document.querySelector('.stats-grid');
+                const startLearningButton = document.getElementById('start-learning-button');
+                
+                if (insightsBanner) insightsBanner.style.display = 'block';
+                if (statsGrid) statsGrid.style.display = 'block';
+                if (startLearningButton) startLearningButton.style.display = 'block';
+                
+                // Show the automode description
+                const automodeDescription = document.getElementById('automode-description');
+                if (automodeDescription) {
+                    automodeDescription.style.display = 'block';
+                }
+            }
+            
+            console.log('Section 2c (Post-Receipt) displayed - no detected show, channel expanded by default');
         }
 
         function updateEntryPointForNextStep() {
@@ -10304,40 +10457,16 @@ function recordActualIndexedContentBeforeReceipt() {
             
             // Navigate to appropriate section based on entry point
             if (originalEntryPoint === 'detection') {
-                // Go to section 2a (Detection Mode)
-                showSection2a();
+                // Go to section 2c (Post-Receipt Detection Mode - no detected show)
+                showSection2c();
                 
-                // NEW: When returning from section 4a, there's no detected show
-                // Hide the detected show UI and show genre channel by default
-                const detectedShowUI = document.getElementById('detected-show-ui');
-                if (detectedShowUI) {
-                    detectedShowUI.style.display = 'none';
-                }
-                
-                // Show the genre channel by default
-                const expandableChannelSection = document.getElementById('expandable-channel-section');
-                if (expandableChannelSection) {
-                    expandableChannelSection.style.display = 'block';
-                }
-                
-                // Expand the channel by default when returning from section 4a
-                const channelExpandedContainer = document.getElementById('channel-expanded-container');
-                if (channelExpandedContainer) {
-                    channelExpandedContainer.style.display = 'block';
-                    appState.channelExpanded = true;
-                }
-                
-                // Update the expand button text
-                const expandText = document.getElementById('expand-channel-text');
-                const expandIcon = document.getElementById('expand-channel-icon');
-                if (expandText) expandText.textContent = 'HIDE CHANNEL';
-                if (expandIcon) expandIcon.textContent = '▲';
-                
-                console.log('Returned to section 2a from section 4a - showing genre channel by default');
+                console.log('Returned to section 2c from section 4a - post-receipt state with channel expanded');
                 
             } else if (originalEntryPoint === 'automode') {
-                // Go to section 2b (Automode)
-                showSection2b();
+                // Go to section 2c (Post-Receipt Automode - no detected show)
+                showSection2c();
+                
+                console.log('Returned to section 2c from section 4a - post-receipt state with channel expanded');
             } else {
                 // Fallback: show main view with extension popup
                 const popup = document.querySelector('.extension-popup');
@@ -13555,6 +13684,39 @@ function recordActualIndexedContentBeforeReceipt() {
                 console.log('End of channel content reached - completing session');
                 console.log(`📊 Final indexed content count: ${appState.indexedContent.length} items`);
                 
+                // Ensure the final content item is indexed before completing
+                if (appState.currentContentIndex >= 0 && appState.currentContentIndex < appState.automodeContentItems.length) {
+                    const finalItem = appState.automodeContentItems[appState.currentContentIndex];
+                    if (finalItem) {
+                        // Calculate duration for the final item
+                        let itemDurationSeconds;
+                        if (typeof finalItem.duration === 'string' && finalItem.duration.includes(':')) {
+                            const durationParts = finalItem.duration.split(':');
+                            itemDurationSeconds = parseInt(durationParts[0]) * 60 + parseInt(durationParts[1]);
+                        } else {
+                            itemDurationSeconds = finalItem.duration || (45 * 60);
+                        }
+                        
+                        // Add to indexed content if not already tracked
+                        const indexedItem = {
+                            title: finalItem.title,
+                            duration: Math.floor(itemDurationSeconds / 60), // Convert to minutes for display
+                            type: appState.entryPoint === 'automode' ? 'automode_content' : 'content',
+                            points: Math.round((itemDurationSeconds * (appState.baseRate || 0.1) * (appState.currentMultiplier || 1.0)) * 100) / 100
+                        };
+                        
+                        // Check if already indexed to avoid duplicates
+                        const alreadyIndexed = appState.indexedContent.some(existing => 
+                            existing.title === indexedItem.title && existing.type === indexedItem.type
+                        );
+                        
+                        if (!alreadyIndexed) {
+                            appState.indexedContent.push(indexedItem);
+                            console.log(`📊 Indexed final content item: ${indexedItem.title} (${indexedItem.duration}min, ${indexedItem.points} pts)`);
+                        }
+                    }
+                }
+                
                 if (!appState.sessionCompleted) {
                     appState.sessionCompleted = true;
                     
@@ -13576,10 +13738,16 @@ function recordActualIndexedContentBeforeReceipt() {
                             totalIndexedItems: appState.indexedContent.length
                         });
                         
-                        // Give user 2 seconds to see "Session complete" message, then show receipt
-                        setTimeout(() => {
+                        // Immediately stop indexing and show receipt for automode
+                        if (appState.entryPoint === 'automode') {
+                            console.log('🚀 Automode session complete - stopping indexing immediately');
                             stopIndexing();
-                        }, 2000);
+                        } else {
+                            // Give user 2 seconds to see "Session complete" message, then show receipt
+                            setTimeout(() => {
+                                stopIndexing();
+                            }, 2000);
+                        }
                     }
                 }
             }
