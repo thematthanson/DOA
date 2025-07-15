@@ -6361,52 +6361,104 @@ function recordActualIndexedContentBeforeReceipt() {
                         // Create a deterministic pattern selection based on content
                         let patternIndex = 0;
                         
-                        // 1. Check Intelligence Bucket first (automode)
+                        // 1. Create unique visual signature for automode content
                         if (appState.entryPoint === 'automode') {
-                            const bucket = appState.currentBucket;
-                            if (bucket && bucket.includes('Scene')) patternIndex = 0; // wave
-                            else if (bucket && bucket.includes('Intelligence')) patternIndex = 1; // matrix
-                            else if (bucket && bucket.includes('Story')) patternIndex = 2; // spiral
-                            else if (bucket && bucket.includes('Character')) patternIndex = 3; // fractal
-                            else if (bucket && bucket.includes('Comedy')) patternIndex = 4; // pulse
-                            else if (bucket && bucket.includes('Drama')) patternIndex = 5; // tunnel
-                            else if (bucket && bucket.includes('Mystery')) patternIndex = 6; // vortex
-                            else if (bucket && bucket.includes('Action')) patternIndex = 7; // lightning
-                            else if (bucket && bucket.includes('Sci-Fi')) patternIndex = 8; // mandala
-                            else if (bucket && bucket.includes('Fantasy')) patternIndex = 9; // crystal
-                            else if (bucket && bucket.includes('Documentary')) patternIndex = 10; // fireworks
-                            else if (bucket && bucket.includes('Romance')) patternIndex = 11; // galaxy
-                            else if (bucket && bucket.includes('Horror')) patternIndex = 12; // plasma
-                            else if (bucket && bucket.includes('Thriller')) patternIndex = 13; // diamond
-                            else if (bucket && bucket.includes('Adventure')) patternIndex = 14; // circle
-                            else if (bucket && bucket.includes('Crime')) patternIndex = 15; // hexagon
-                            else if (bucket && bucket.includes('War')) patternIndex = 16; // star
-                            else if (bucket && bucket.includes('Western')) patternIndex = 17; // maze
-                            else if (bucket && bucket.includes('Musical')) patternIndex = 18; // dna
-                            else if (bucket && bucket.includes('Animation')) patternIndex = 19; // atom
-                            else patternIndex = 20; // infinity (default)
+                            // Get current automode content item
+                            const currentItem = appState.automodeContentItems && appState.automodeContentItems.length > 0 ? 
+                                appState.automodeContentItems[appState.currentContentIndex] : null;
+                            
+                            if (currentItem && currentItem.title) {
+                                // Create unique signature from automode content properties
+                                let contentSignature = '';
+                                
+                                // Include title (primary identifier)
+                                contentSignature += currentItem.title;
+                                
+                                // Include intelligence bucket for learning context
+                                if (appState.currentBucket) {
+                                    contentSignature += appState.currentBucket;
+                                }
+                                
+                                // Include service/platform
+                                if (currentItem.service) {
+                                    contentSignature += currentItem.service;
+                                }
+                                
+                                // Include content type
+                                if (currentItem.type) {
+                                    contentSignature += currentItem.type;
+                                }
+                                
+                                // Include duration
+                                if (currentItem.duration) {
+                                    contentSignature += currentItem.duration.toString();
+                                }
+                                
+                                // Include current content index for progression variety
+                                contentSignature += `Index${appState.currentContentIndex}`;
+                                
+                                // Create hash from content signature
+                                let hash = 0;
+                                for (let i = 0; i < contentSignature.length; i++) {
+                                    hash = ((hash << 5) - hash + contentSignature.charCodeAt(i)) & 0xffffffff;
+                                }
+                                
+                                // Use hash to select pattern, ensuring even distribution
+                                patternIndex = Math.abs(hash) % 21;
+                                
+                                console.log(`🎨 Automode Content Signature: "${contentSignature}" → Pattern ${patternIndex} (${allPatterns[patternIndex]})`);
+                            } else {
+                                // Fallback to bucket-based selection if no content item
+                                const bucket = appState.currentBucket;
+                                if (bucket && bucket.includes('Scene')) patternIndex = 0; // wave
+                                else if (bucket && bucket.includes('Intelligence')) patternIndex = 1; // matrix
+                                else if (bucket && bucket.includes('Story')) patternIndex = 2; // spiral
+                                else if (bucket && bucket.includes('Character')) patternIndex = 3; // fractal
+                                else patternIndex = Math.abs(Date.now() % 21); // time-based fallback
+                            }
                         }
                         
-                        // 2. Check Genre (detection mode)
-                        else if (content && content.genre) {
-                            const genre = content.genre.toLowerCase();
-                            if (genre.includes('comedy')) patternIndex = 4; // pulse
-                            else if (genre.includes('drama')) patternIndex = 5; // tunnel
-                            else if (genre.includes('mystery') || genre.includes('thriller')) patternIndex = 6; // vortex
-                            else if (genre.includes('horror')) patternIndex = 7; // lightning
-                            else if (genre.includes('sci-fi') || genre.includes('scifi')) patternIndex = 8; // mandala
-                            else if (genre.includes('fantasy')) patternIndex = 9; // crystal
-                            else if (genre.includes('documentary')) patternIndex = 10; // fireworks
-                            else if (genre.includes('action') || genre.includes('superhero')) patternIndex = 11; // galaxy
-                            else if (genre.includes('romance')) patternIndex = 12; // plasma
-                            else if (genre.includes('adventure')) patternIndex = 13; // diamond
-                            else if (genre.includes('crime')) patternIndex = 14; // circle
-                            else if (genre.includes('war')) patternIndex = 15; // hexagon
-                            else if (genre.includes('western')) patternIndex = 16; // star
-                            else if (genre.includes('musical')) patternIndex = 17; // maze
-                            else if (genre.includes('animation')) patternIndex = 18; // dna
-                            else if (genre.includes('family')) patternIndex = 19; // atom
-                            else patternIndex = 20; // infinity (default)
+                        // 2. Create unique visual signature based on content characteristics
+                        else if (content && content.title) {
+                            // Create a unique hash from multiple content properties
+                            let contentSignature = '';
+                            
+                            // Include title (primary identifier)
+                            contentSignature += content.title;
+                            
+                            // Include service/platform for variety
+                            if (content.service) {
+                                contentSignature += content.service;
+                            }
+                            
+                            // Include year for temporal variety
+                            if (content.year) {
+                                contentSignature += content.year.toString();
+                            }
+                            
+                            // Include season/episode for episodic variety
+                            if (content.season && content.season !== 'N/A') {
+                                contentSignature += `S${content.season}`;
+                            }
+                            if (content.episode && content.episode !== 'N/A') {
+                                contentSignature += `E${content.episode}`;
+                            }
+                            
+                            // Include duration for pacing variety
+                            if (content.duration) {
+                                contentSignature += content.duration.toString();
+                            }
+                            
+                            // Create hash from content signature
+                            let hash = 0;
+                            for (let i = 0; i < contentSignature.length; i++) {
+                                hash = ((hash << 5) - hash + contentSignature.charCodeAt(i)) & 0xffffffff;
+                            }
+                            
+                            // Use hash to select pattern, ensuring even distribution
+                            patternIndex = Math.abs(hash) % 21;
+                            
+                            console.log(`🎨 Content Signature: "${contentSignature}" → Pattern ${patternIndex} (${allPatterns[patternIndex]})`);
                         }
                         
                         // 3. Check Duration for additional variety
@@ -6450,6 +6502,35 @@ function recordActualIndexedContentBeforeReceipt() {
                             .sort(([,a], [,b]) => b - a)
                             .map(([pattern, count]) => `${pattern}: ${count}`)
                             .join(', ');
+                    },
+                    
+                    // Get current pattern info for debugging
+                    getCurrentPatternInfo() {
+                        const content = this.getCurrentContent();
+                        if (!content) return 'No content available';
+                        
+                        let signature = '';
+                        if (content.title) signature += content.title;
+                        if (content.service) signature += content.service;
+                        if (content.year) signature += content.year;
+                        if (content.season && content.season !== 'N/A') signature += `S${content.season}`;
+                        if (content.episode && content.episode !== 'N/A') signature += `E${content.episode}`;
+                        if (content.duration) signature += content.duration;
+                        
+                        return {
+                            pattern: this.currentPattern || 'none',
+                            signature: signature,
+                            hash: this.getContentHash(signature)
+                        };
+                    },
+                    
+                    // Get content hash for debugging
+                    getContentHash(contentSignature) {
+                        let hash = 0;
+                        for (let i = 0; i < contentSignature.length; i++) {
+                            hash = ((hash << 5) - hash + contentSignature.charCodeAt(i)) & 0xffffffff;
+                        }
+                        return Math.abs(hash) % 21;
                     },
                     
                     // Get current content information
@@ -9293,6 +9374,12 @@ function recordActualIndexedContentBeforeReceipt() {
             updatePointsDisplay();
             updateContentDisplay();
             updateButtonWithCurrentShow(newShow);
+            
+            // NEW: Reset ASCII animation pattern when show changes
+            if (window.ASCIIAnimationState) {
+                window.ASCIIAnimationState.resetPattern();
+                console.log(`🎨 ASCII pattern reset for direct show transition: ${newShow.title}`);
+            }
             
             console.log(`Direct transition: ${previousShow?.title} → ${newShow.title}`);
         }
@@ -13754,6 +13841,12 @@ function recordActualIndexedContentBeforeReceipt() {
                 if (appState.entryPoint === 'automode') {
                     cycleDashboardSection();
                 }
+                
+                // NEW: Reset ASCII animation pattern when content changes
+                if (window.ASCIIAnimationState) {
+                    window.ASCIIAnimationState.resetPattern();
+                    console.log(`🎨 ASCII pattern reset for new content: ${currentItem.title}`);
+                }
             } else {
                 // Reached end of all content - trigger session completion
                 console.log('End of channel content reached - completing session');
@@ -13927,6 +14020,12 @@ function initializeTransitionSystem() {
                 
                 // Update global detectedShow variable for compatibility
                 detectedShow = newShow;
+                
+                // NEW: Reset ASCII animation pattern when show changes in detection mode
+                if (window.ASCIIAnimationState) {
+                    window.ASCIIAnimationState.resetPattern();
+                    console.log(`🎨 ASCII pattern reset for show transition: ${newShow.title}`);
+                }
                 
                 // Add new show to synchronized timeline
                 const newShowItem = {
