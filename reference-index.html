@@ -1089,24 +1089,26 @@
             position: fixed;
             bottom: 10px;
             left: 10px;
-            background: rgba(0,0,0,0.6);
-            border: 1px solid #333;
-            color: #666;
-            padding: 3px 6px;
-            border-radius: 3px;
-            font-size: 8px;
+            background: rgba(0,0,0,0.8);
+            border: 2px solid #fff;
+            color: #fff;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 16px;
             cursor: pointer;
             z-index: 9999;
             font-family: 'SF Mono', monospace;
             text-transform: uppercase;
             transition: all 0.2s;
-            opacity: 0.7;
+            opacity: 0.9;
+            font-weight: 600;
         }
 
         .debug-trigger:hover {
             border-color: #00ff41;
             color: #00ff41;
             opacity: 1;
+            background: rgba(0,0,0,0.9);
         }
 
         .debug-panel-header {
@@ -1224,6 +1226,151 @@
             cursor: not-allowed;
         }
         
+        /* Tests Panel */
+        .tests-panel {
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            background: rgba(0,0,0,0.9);
+            border: 1px solid #ffff00;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 10px;
+            z-index: 10000;
+            min-width: 200px;
+            display: none; /* Hidden by default */
+        }
+
+        .tests-panel.visible {
+            display: block;
+        }
+
+        .tests-trigger {
+            position: fixed;
+            bottom: 10px;
+            left: 80px;
+            background: rgba(0,0,0,0.8);
+            border: 2px solid #fff;
+            color: #fff;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            z-index: 9999;
+            font-family: 'SF Mono', monospace;
+            text-transform: uppercase;
+            transition: all 0.2s;
+            opacity: 0.9;
+            font-weight: 600;
+        }
+
+        .tests-trigger:hover {
+            border-color: #ffff00;
+            color: #ffff00;
+            opacity: 1;
+            background: rgba(0,0,0,0.9);
+        }
+
+        .tests-panel-header {
+            color: #ffff00;
+            font-weight: bold;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .tests-panel-toggle {
+            background: none;
+            border: none;
+            color: #ffff00;
+            cursor: pointer;
+            font-size: 12px;
+            padding: 0;
+            transition: transform 0.2s;
+        }
+
+        .tests-panel-toggle.collapsed {
+            transform: rotate(-90deg);
+        }
+
+        .tests-section {
+            margin-bottom: 8px;
+            border-top: 1px solid #333;
+            padding-top: 8px;
+        }
+
+        .tests-section:first-child {
+            border-top: none;
+            padding-top: 0;
+        }
+
+        .tests-section-header {
+            color: #888;
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .tests-section-toggle {
+            background: none;
+            border: none;
+            color: #888;
+            cursor: pointer;
+            font-size: 10px;
+            padding: 0;
+            transition: transform 0.2s;
+        }
+
+        .tests-section-toggle.collapsed {
+            transform: rotate(-90deg);
+        }
+
+        .tests-section-content {
+            max-height: 200px;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .tests-section-content.collapsed {
+            max-height: 0;
+        }
+
+        .test-button {
+            background: #ffff00;
+            color: #000;
+            border: none;
+            padding: 4px 8px;
+            margin: 2px;
+            border-radius: 2px;
+            font-size: 9px;
+            cursor: pointer;
+            font-family: 'SF Mono', monospace;
+            text-decoration: none;
+            display: block;
+            text-align: center;
+            margin-bottom: 8px;
+        }
+
+        .test-button:hover {
+            background: #cccc00;
+        }
+
+        .test-button.info {
+            background: #a985ff;
+            color: #000;
+        }
+
+        .test-button.info:hover {
+            background: #8b6fd9;
+        }
+
         /* Mobile debug panel adjustments */
         @media (max-width: 768px) {
             .debug-panel {
@@ -1240,8 +1387,8 @@
             .debug-trigger {
                 bottom: 5px;
                 left: 5px;
-                font-size: 7px;
-                padding: 2px 4px;
+                font-size: 14px;
+                padding: 4px 8px;
             }
             
             .debug-section-header {
@@ -1256,6 +1403,39 @@
             }
             
             .debug-section-content {
+                max-height: 150px;
+            }
+            
+            .tests-panel {
+                position: fixed;
+                bottom: 5px;
+                left: 5px;
+                right: 5px;
+                min-width: auto;
+                max-width: none;
+                font-size: 9px;
+                padding: 8px;
+            }
+            
+            .tests-trigger {
+                bottom: 5px;
+                left: 70px;
+                font-size: 14px;
+                padding: 4px 8px;
+            }
+            
+            .tests-section-header {
+                font-size: 8px;
+                padding: 4px 0;
+            }
+            
+            .test-button {
+                font-size: 8px;
+                padding: 3px 6px;
+                margin: 1px;
+            }
+            
+            .tests-section-content {
                 max-height: 150px;
             }
         }
@@ -2646,6 +2826,67 @@
             background: #ffff00;
             box-shadow: 0 0 4px rgba(255, 255, 0, 0.5);
         }
+
+        /* Additional automode styling for section 2b elements */
+        .automode .stat-value {
+            color: #ffff00;
+        }
+
+        .automode .stat-label {
+            color: #cccccc;
+        }
+
+        .automode .dashboard-title {
+            color: #ffff00;
+        }
+
+        .automode .dashboard-subtitle {
+            color: #cccccc;
+        }
+
+        .automode .dashboard-item {
+            border-color: #333;
+        }
+
+        .automode .dashboard-item:hover {
+            border-color: #ffff00;
+            background-color: rgba(255, 255, 0, 0.05);
+        }
+
+        .automode .dashboard-icon {
+            color: #ffff00;
+        }
+
+        /* Automode button styling */
+        .automode .primary-cta {
+            color: #ffff00;
+            border-color: #ffff00;
+        }
+
+        .automode .primary-cta:hover {
+            background: #ffff00;
+            color: #000;
+        }
+
+        .automode .secondary-button {
+            color: #ffff00;
+            border-color: #ffff00;
+        }
+
+        .automode .secondary-button:hover {
+            background: #ffff00;
+            color: #000;
+        }
+
+        /* Automode description styling */
+        .automode #automode-description {
+            background: rgba(255, 255, 0, 0.05);
+            border-color: rgba(255, 255, 0, 0.2);
+        }
+
+        .automode #automode-description-text {
+            color: #ffff00;
+        }
     </style>
 </head>
 <body>
@@ -2658,6 +2899,11 @@
     <!-- Debug Trigger -->
     <div class="debug-trigger" onclick="toggleDebugPanel()" title="Debug Panel (Ctrl+Shift+D)">
         Debug
+    </div>
+
+    <!-- Tests Trigger -->
+    <div class="tests-trigger" onclick="toggleTestsPanel()" title="Tests Panel (Ctrl+Shift+T)">
+        Tests
     </div>
 
     <!-- Debug Panel -->
@@ -2750,21 +2996,87 @@
                 </div>
             </div>
 
-            <!-- Navigation Links Section -->
-            <div class="debug-section">
-                <div class="debug-section-header" onclick="toggleDebugSection('navigation-links')">
-                    <span>Navigation & Testing</span>
-                    <button class="debug-section-toggle" id="navigation-links-toggle">▼</button>
+
+        </div>
+    </div>
+
+    <!-- Tests Panel -->
+    <div class="tests-panel" id="tests-panel">
+        <div class="tests-panel-header" onclick="toggleTestsPanel()">
+            <span>Rumi Tests</span>
+            <button class="tests-panel-toggle" id="tests-panel-toggle">▼</button>
+        </div>
+        
+        <div class="tests-panel-content" id="tests-panel-content">
+            <!-- Core System Tests Section -->
+            <div class="tests-section">
+                <div class="tests-section-header" onclick="toggleTestsSection('core-system-tests')">
+                    <span>Core System Tests</span>
+                    <button class="tests-section-toggle" id="core-system-tests-toggle">▼</button>
                 </div>
-                <div class="debug-section-content" id="navigation-links-content">
-                    <a href="microtests/index.html" target="_blank" class="debug-button info" style="text-decoration: none; display: block; text-align: center; margin-bottom: 8px;">
+                <div class="tests-section-content" id="core-system-tests-content">
+                    <a href="asciiartstuff/ascii-shapes-standalone.html" target="_blank" class="test-button">
+                        🎨 ASCII Shapes Test
+                    </a>
+                    <a href="microtests/csv-processing-standalone.html" target="_blank" class="test-button">
+                        📊 CSV Processing Test
+                    </a>
+                    <a href="microtests/iframe-communication-standalone.html" target="_blank" class="test-button">
+                        🔗 Iframe Communication Test
+                    </a>
+                </div>
+            </div>
+
+            <!-- Intelligence & Learning Tests Section -->
+            <div class="tests-section">
+                <div class="tests-section-header" onclick="toggleTestsSection('intelligence-learning-tests')">
+                    <span>Intelligence & Learning Tests</span>
+                    <button class="tests-section-toggle" id="intelligence-learning-tests-toggle">▼</button>
+                </div>
+                <div class="tests-section-content" id="intelligence-learning-tests-content">
+                    <a href="microtests/intelligence-buckets-standalone.html" target="_blank" class="test-button">
+                        🧠 Intelligence Buckets Test
+                    </a>
+                    <a href="microtests/multiplier-calc-standalone.html" target="_blank" class="test-button">
+                        ⚡ Multiplier Calculation Test
+                    </a>
+                    <a href="microtests/points-calculation-standalone.html" target="_blank" class="test-button">
+                        💰 Points Calculation Test
+                    </a>
+                </div>
+            </div>
+
+            <!-- User Interface Tests Section -->
+            <div class="tests-section">
+                <div class="tests-section-header" onclick="toggleTestsSection('ui-tests')">
+                    <span>User Interface Tests</span>
+                    <button class="tests-section-toggle" id="ui-tests-toggle">▼</button>
+                </div>
+                <div class="tests-section-content" id="ui-tests-content">
+                    <a href="microtests/popup-system-standalone.html" target="_blank" class="test-button">
+                        🪟 Popup System Test
+                    </a>
+                    <a href="microtests/progress-diamonds-standalone.html" target="_blank" class="test-button">
+                        💎 Progress Diamonds Test
+                    </a>
+                    <a href="microtests/section-transitions-standalone.html" target="_blank" class="test-button">
+                        🔄 Section Transitions Test
+                    </a>
+                </div>
+            </div>
+
+            <!-- Additional Resources Section -->
+            <div class="tests-section">
+                <div class="tests-section-header" onclick="toggleTestsSection('additional-resources')">
+                    <span>Additional Resources</span>
+                    <button class="tests-section-toggle" id="additional-resources-toggle">▼</button>
+                </div>
+                <div class="tests-section-content" id="additional-resources-content">
+                    <a href="microtests/index.html" target="_blank" class="test-button info">
                         🧪 Microtests Suite
                     </a>
-                    <a href="puzzle-system.html" target="_blank" class="debug-button info" style="text-decoration: none; display: block; text-align: center; margin-bottom: 8px;">
+                    <a href="puzzle-system.html" target="_blank" class="test-button info">
                         🧩 Puzzle System
-                    </a>
-                    <a href="asciiartstuff/ascii-shapes-standalone.html" target="_blank" class="debug-button info" style="text-decoration: none; display: block; text-align: center; margin-bottom: 8px;">
-                        🎨 ASCII Art Test
                     </a>
                     <div style="font-size: 8px; color: #666; margin-top: 8px; text-align: center; line-height: 1.3;">
                         All links open in new tabs for easy testing
@@ -9215,10 +9527,15 @@ function recordActualIndexedContentBeforeReceipt() {
                 console.log('Added section-enabled class to main-view');
             }
             
-            // Show the detected show UI
+            // Show the detected show UI only if we have a detected show (not when returning from receipt)
             const detectedShowUI = document.getElementById('detected-show-ui');
             if (detectedShowUI) {
-                detectedShowUI.style.display = 'block';
+                if (appState.detectedShow && appState.detectedShow.title) {
+                    detectedShowUI.style.display = 'block';
+                } else {
+                    detectedShowUI.style.display = 'none';
+                    console.log('Hiding detected show UI - no detected show available');
+                }
             }
             
             // Show the expandable channel section
@@ -9794,6 +10111,98 @@ function recordActualIndexedContentBeforeReceipt() {
             }
         });
 
+        // Tests Panel Collapsible Functions
+        function toggleTestsPanel() {
+            const panel = document.getElementById('tests-panel');
+            const trigger = document.querySelector('.tests-trigger');
+            const content = document.getElementById('tests-panel-content');
+            const toggle = document.getElementById('tests-panel-toggle');
+            
+            if (panel.classList.contains('visible')) {
+                // Hide the panel
+                panel.classList.remove('visible');
+                trigger.style.display = 'block';
+            } else {
+                // Show the panel
+                panel.classList.add('visible');
+                trigger.style.display = 'none';
+                
+                // Expand the content when showing
+                content.classList.remove('collapsed');
+                toggle.textContent = '▼';
+                toggle.classList.remove('collapsed');
+                
+                // Expand core system tests section by default (most commonly used)
+                const coreSystemContent = document.getElementById('core-system-tests-content');
+                const coreSystemToggle = document.getElementById('core-system-tests-toggle');
+                if (coreSystemContent && coreSystemToggle) {
+                    coreSystemContent.classList.remove('collapsed');
+                    coreSystemToggle.textContent = '▼';
+                    coreSystemToggle.classList.remove('collapsed');
+                }
+            }
+        }
+
+        function toggleTestsSection(sectionId) {
+            const content = document.getElementById(sectionId + '-content');
+            const toggle = document.getElementById(sectionId + '-toggle');
+            
+            if (content.classList.contains('collapsed')) {
+                content.classList.remove('collapsed');
+                toggle.textContent = '▼';
+                toggle.classList.remove('collapsed');
+            } else {
+                content.classList.add('collapsed');
+                toggle.textContent = '▶';
+                toggle.classList.add('collapsed');
+            }
+        }
+
+        // Initialize tests panel state
+        document.addEventListener('DOMContentLoaded', function() {
+            // Start with tests panel hidden and trigger visible
+            const testsPanel = document.getElementById('tests-panel');
+            const testsTrigger = document.querySelector('.tests-trigger');
+            
+            if (testsPanel && testsTrigger) {
+                testsPanel.classList.remove('visible');
+                testsTrigger.style.display = 'block';
+            }
+            
+            // Start with sections collapsed
+            const coreSystemContent = document.getElementById('core-system-tests-content');
+            const intelligenceContent = document.getElementById('intelligence-learning-tests-content');
+            const uiContent = document.getElementById('ui-tests-content');
+            const additionalContent = document.getElementById('additional-resources-content');
+            const coreSystemToggle = document.getElementById('core-system-tests-toggle');
+            const intelligenceToggle = document.getElementById('intelligence-learning-tests-toggle');
+            const uiToggle = document.getElementById('ui-tests-toggle');
+            const additionalToggle = document.getElementById('additional-resources-toggle');
+            
+            if (coreSystemContent && intelligenceContent && uiContent && additionalContent) {
+                coreSystemContent.classList.add('collapsed');
+                intelligenceContent.classList.add('collapsed');
+                uiContent.classList.add('collapsed');
+                additionalContent.classList.add('collapsed');
+                coreSystemToggle.textContent = '▶';
+                intelligenceToggle.textContent = '▶';
+                uiToggle.textContent = '▶';
+                additionalToggle.textContent = '▶';
+                coreSystemToggle.classList.add('collapsed');
+                intelligenceToggle.classList.add('collapsed');
+                uiToggle.classList.add('collapsed');
+                additionalToggle.classList.add('collapsed');
+            }
+        });
+
+        // Keyboard shortcut for tests panel (Ctrl+Shift+T)
+        document.addEventListener('keydown', function(event) {
+            if (event.ctrlKey && event.shiftKey && event.key === 'T') {
+                event.preventDefault();
+                toggleTestsPanel();
+            }
+        });
+
         // Hide receipt overlay
         function hideReceiptView() {
             Tracker.logRumiAction('Receipt view hidden');
@@ -10022,6 +10431,10 @@ function recordActualIndexedContentBeforeReceipt() {
             if (originalEntryPoint === 'detection' && detectedShow && !appState.sessionCompleted) {
                 appState.detectedShow = detectedShow;
                 showDetectedShowUI(detectedShow.title);
+            } else if (originalEntryPoint === 'detection') {
+                // Clear detected show when returning from section 4a (completed session)
+                appState.detectedShow = null;
+                console.log('Cleared detected show when returning from completed session');
             }
             
             // Clean up modal timeout

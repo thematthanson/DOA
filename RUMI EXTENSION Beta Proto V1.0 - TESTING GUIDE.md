@@ -117,581 +117,304 @@ These micro tests provide isolated testing environments similar to `asciiartstuf
 
 ---
 
-## 🎯 Test Flow 1: Interface Launch & Activation
+## 🧪 **Test Flows**
 
-**Purpose**: Understand entry points and activation flow  
-**Time**: 2-3 minutes  
-**Skills**: Basic UI navigation  
+### **1. Interface Launch & Activation (2 mins)**
+**Purpose:** Ensure extension loads successfully and activation gate is clear.
 
-### What You'll Learn:
-- Two main user entry pathways
-- Extension activation simulation
-- UI state management
-- Entry point validation
+**Steps:**
+1. **Open Extension:** Click the RUMI extension icon in your browser toolbar
+2. **Observe Entry Screen:** You should see the entry point selection screen with two main sections:
+   - 🎯 **STREAM DETECTED** (green gradient section)
+   - 🤖 **AUTOMODE CAMPAIGN** (purple gradient section)
+3. **Check Activation Gate:** Notice the activation overlay is present - UI elements should appear disabled/grayed out
+4. **Click Activation:** Click the "Activate Extension" button in the center of the screen
+5. **Verify Activation:** The overlay should disappear and UI elements should become interactive
+6. **Check Entry Points:** Both detection and automode sections should now be fully functional
 
-### Steps:
-
-1. **Navigate to the Interface**
-   - Open `http://localhost:8000/reference-index.html`
-   - Locate the "SIMULATED ENTRY POINTS" panel
-
-2. **Test Content Detection Entry**
-   - Click **"Stream Detected"** button
-   - Observe the detected content banner (simulates Netflix/streaming detection)
-   - Note the "Launch Rumi and Get Points" button with detected show title
-
-3. **Test Automode Entry**
-   - Refresh page
-   - Click **"Automode Campaign"** button
-   - Observe the campaign interface for power users/miners
-
-4. **Activation Simulation**
-   - Click the **glowing blue activation circle** at top-center
-   - This simulates clicking the browser extension icon
-   - UI should transition to active state
-
-### Expected Results:
-- ✅ Entry point buttons respond correctly
-- ✅ Blue activation circle appears and functions
-- ✅ UI transitions smoothly between states
-- ✅ Detected content appears in banners
+**Success Criteria:** User sees detection/automode modes post-activation without errors.
 
 ---
 
-## 🎯 Test Flow 2a: Content Detection Mode (Casual Users)
+### **2a. Detection Mode Indexing (5 mins)**
+**Purpose:** Simulate casual user flow with passive indexing behavior.
 
-**Purpose**: Complete detection mode indexing session  
-**Time**: 5-7 minutes  
-**Skills**: Content selection, session management  
+**Steps:**
+1. **Select Detection Mode:** In the green "STREAM DETECTED" section, click the dropdown and select any show (e.g., "Planet Earth II")
+2. **Launch Detection:** Click the "Select Show to Launch" button - it should change to show the selected content
+3. **Navigate Sections:** Follow the flow through sections:
+   - **Section 1a:** Observe the detection confirmation screen
+   - **Section 2a:** View the genre channel with detected show highlighted
+   - **Section 3a:** Watch the learning progress dashboard (should show green theme)
+   - **Section 4a:** Complete the session and view receipt
+4. **Observe Passive Processing:** Content should be processed automatically without user intervention
+5. **Check Dashboard Cycling:** When content transitions occur, the dashboard should cycle through 4 learning stages
 
-### What You'll Learn:
-- Genre channel system
-- Content customization
-- Detection mode indexing
-- Progress tracking with green theme
-
-### Steps:
-
-1. **Setup Detection Mode**
-   - Follow Flow 1 using "Stream Detected" entry
-   - Ensure you're in Section 2a (green-themed interface)
-
-2. **Explore Genre Channel**
-   - Toggle down **"Watch Your Next Show with Us"**
-   - Verify genre matches detected content
-   - Review timeline showing session duration and multipliers
-   - Note: Currently watching item cannot be removed
-
-3. **Customize Content Channel**
-   - Click **"Edit Genre"** 
-   - Select different genre from dropdown
-   - Click **"Auto Populate"** to fill timeline
-   - Remove items by hovering and clicking red X
-   - Add items using + button and dropdown selection
-
-4. **Start Indexing Session**
-   - Click **"START WATCHING [Content Name]"**
-   - UI transitions to Section 3a (active indexing)
-   - Observe green ASCII animation panel
-   - Monitor real-time points accumulation
-
-5. **Monitor Progress Elements**
-   - **Progress Bar**: Green base with colored diamond multipliers
-   - **Points Display**: Real-time session points @ current multiplier
-   - **Animation Panel**: Content-specific ASCII visualizations
-   - **Timeline**: Glints align with progress milestones
-
-6. **End Session**
-   - Click **"STOP INDEXING"**
-   - Review receipt showing:
-     - Total points earned
-     - Session duration
-     - Multiplier breakdown
-     - Pending points (24-hour validation)
-   - Click **"DONE"** to return to main interface
-
-### Expected Results:
-- ✅ Genre channel loads correctly
-- ✅ Content customization works
-- ✅ Green progress bar with unique diamond colors
-- ✅ Real-time points calculation
-- ✅ Proper session receipt generation
+**Success Criteria:** Indexing runs automatically; dashboard cycling is triggered correctly.
 
 ---
 
-## 🎯 Test Flow 2b: Automode (Power Users/Miners)
+### **2b. Automode Indexing (5 mins)**
+**Purpose:** Simulate power user experience with high engagement.
 
-**Purpose**: Complete automode indexing with intelligence buckets  
-**Time**: 5-7 minutes  
-**Skills**: Intelligence bucket selection, advanced features  
+**Steps:**
+1. **Select Automode:** In the purple "AUTOMODE CAMPAIGN" section, click the dropdown and select an intelligence bucket (e.g., "Story Tree")
+2. **Launch Automode:** Click the "Select Intelligence Bucket to Launch" button
+3. **Start Learning:** Click the yellow "START LEARNING CONTENT INTELLIGENCE" button
+4. **Navigate Sections:** Follow the flow through sections:
+   - **Section 1b:** Observe the automode confirmation screen
+   - **Section 2b:** View the genre channel with automode active
+   - **Section 3b:** Watch the learning progress dashboard (should show yellow theme)
+   - **Section 4b:** Complete the session and view receipt
+5. **Test Manual Transitions:** Use debug panel to trigger `moveToNextContentItem()` and observe instant responses
+6. **Verify Dashboard Cycling:** Dashboard should cycle through learning stages on item transitions
 
-### What You'll Learn:
-- Intelligence bucket system
-- Enhanced point rates
-- Automode validation requirements
-- Yellow-themed power user interface
-
-### Steps:
-
-1. **Setup Automode**
-   - Follow Flow 1 using "Automode Campaign" entry
-   - Ensure you're in Section 2b (yellow-themed interface)
-
-2. **Explore Intelligence Buckets**
-   - Toggle down **"What Are We Learning"**
-   - Review available intelligence buckets:
-     - Content Intelligence
-     - Pattern Recognition  
-     - Behavior Analysis
-     - Classification Systems
-   - Hover over buckets to see detailed information
-
-3. **Intelligence Bucket Selection**
-   - **Important**: Notice launch button is disabled initially
-   - Select an intelligence bucket from dropdown
-   - Observe button becomes enabled: **"Launch Campaign"**
-   - Click **"Cycle Bucket"** to see different options
-
-4. **View Enhanced Popup Information**
-   - Click on intelligence bucket block
-   - Popup displays:
-     - Learning Category (e.g., "Metadata Processing")
-     - Description of bucket purpose
-     - Total Content (clips • duration)
-     - Estimated Points (with base rate)
-     - Current Multiplier
-     - Current Content examples
-
-5. **Start Automode Indexing**
-   - Click **"Launch Campaign"**
-   - UI transitions to Section 3b (yellow-themed)
-   - Observe yellow ASCII animation panel
-   - Monitor enhanced point rates
-
-6. **Monitor Enhanced Features**
-   - **Progress Bar**: Yellow base with unique diamond colors
-   - **Points Display**: Higher rate accumulation
-   - **Learning Dashboard**: Real-time AI training simulation
-   - **Read-only Channel**: Information display only
-
-7. **End Session**
-   - Click **"STOP INDEXING"**
-   - Review enhanced receipt with:
-     - Higher point totals
-     - Intelligence contribution metrics
-     - AI training progress
-     - Miner-specific bonuses
-
-### Expected Results:
-- ✅ Intelligence bucket selection required
-- ✅ Enhanced popup information system
-- ✅ Yellow progress bar with unique colors
-- ✅ Higher point accumulation rates
-- ✅ Miner-specific UI elements
+**Success Criteria:** Transitions respond instantly; yellow theme is applied consistently.
 
 ---
 
-## 🎯 Test Flow 3: Progress Bar Diamond System
+### **3. Progress Bar Milestones (10 mins)**
+**Purpose:** Validate points progress bar and learning stage awareness.
 
-**Purpose**: Understand the enhanced progress bar mechanics  
-**Time**: 10-15 minutes  
-**Skills**: Visual observation, timing analysis  
+**Steps:**
+1. **Start Indexing Session:** Launch either detection or automode mode
+2. **Observe Progress Bar:** Watch the progress bar at the top of the interface
+3. **Monitor Updates:** As content completes, the progress bar should update in real-time
+4. **Check Milestones:** At specific thresholds, milestone indicators should trigger:
+   - First content item completed
+   - Multiple items completed
+   - Session milestones reached
+5. **Verify Visual Feedback:** Progress bar should show smooth animations and clear milestone markers
 
-### What You'll Learn:
-- Unique diamond colors for each multiplier
-- Progress bar color transitions
-- Multiplier milestone system
-- Visual feedback mechanisms
-
-### Steps:
-
-1. **Test Detection Mode Progress Bar**
-   - Start detection mode session
-   - Observe initial green progress bar
-   - Watch for first diamond appearance
-   - Note color palette:
-     - Bright Green (#00ff41) - Base
-     - Orange (#ffaa00) - 1.5x
-     - Red-Orange (#ff6600) - 2.0x
-     - Purple (#a985ff) - 2.5x
-     - Cyan (#00ccff) - 3.0x
-     - Magenta (#ff00ff) - 3.5x+
-
-2. **Test Automode Progress Bar**
-   - Start automode session
-   - Observe initial yellow progress bar
-   - Watch for first diamond appearance
-   - Note color palette:
-     - Bright Yellow (#ffff00) - Base
-     - Orange (#ffaa00) - 1.5x
-     - Red-Orange (#ff6600) - 2.0x
-     - Purple (#a985ff) - 2.5x
-     - Cyan (#00ccff) - 3.0x
-     - Magenta (#ff00ff) - 3.5x+
-
-3. **Observe Color Transitions**
-   - Watch progress bar change color when passing diamonds
-   - Note enhanced glow effects on diamonds
-   - Observe pulsing animation on active diamonds
-   - See preview colors on unfilled diamonds
-
-4. **Test Fast Mode** (Debug Panel)
-   - Open debug panel
-   - Enable "Fast Mode" to accelerate timing
-   - Observe rapid diamond transitions
-   - Verify color changes occur correctly
-
-### Expected Results:
-- ✅ Each diamond has unique color
-- ✅ Progress bar adopts diamond colors
-- ✅ Smooth color transitions
-- ✅ Enhanced visual effects (glow, pulse)
-- ✅ Preview colors on future diamonds
+**Success Criteria:** Bar updates in real time, milestone indicators trigger correctly.
 
 ---
 
-## 🎯 Test Flow 4: Content Channel Management
+### **4. Content Channel Management (8 mins)**
+**Purpose:** Test channel creation, filtering, and switching.
 
-**Purpose**: Master content selection and channel customization  
-**Time**: 8-10 minutes  
-**Skills**: Content management, UI manipulation  
+**Steps:**
+1. **Access Channel Interface:** Navigate to section 2a or 2b to view the channel interface
+2. **Select Genre Filters:** Click on different genre categories (e.g., "Documentary", "Sitcom", "Drama")
+3. **Observe Content Updates:** The channel should update to show content from the selected genre
+4. **Switch Between Channels:** Click different channels and observe content-specific behaviors
+5. **Check Progress Persistence:** Ensure channel selections don't reset your current progress
+6. **Test Channel Expansion:** Click the expand/collapse buttons on channels to test UI responsiveness
 
-### What You'll Learn:
-- Genre-based content loading
-- Content addition/removal
-- Channel timeline management
-- Content metadata system
-
-### Steps:
-
-1. **Genre Channel Basics**
-   - Enter detection mode
-   - Expand "Watch Your Next Show with Us"
-   - Observe genre matching detected content
-   - Note timeline duration and multiplier display
-
-2. **Content Modification**
-   - Test content removal:
-     - Hover over timeline items
-     - Click red X to remove
-     - Verify item disappears
-   - Test content addition:
-     - Click + button
-     - Select from dropdown
-     - Click "ADD" to confirm
-     - Verify item appears in timeline
-
-3. **Genre Switching**
-   - Click "Edit Genre"
-   - Select different genre
-   - Click "Auto Populate"
-   - Observe timeline refresh with new content
-   - Verify genre consistency
-
-4. **Content Metadata**
-   - Click on content blocks
-   - Review popup information:
-     - Title and year
-     - Genre and type
-     - Duration and episodes
-     - Point potential
-     - Multiplier information
-
-5. **Session Persistence**
-   - Start indexing with custom timeline
-   - Verify content follows planned sequence
-   - Check that modifications persist during session
-
-### Expected Results:
-- ✅ Genre matching works correctly
-- ✅ Content addition/removal functions
-- ✅ Timeline updates properly
-- ✅ Metadata displays accurately
-- ✅ Modifications persist in session
+**Success Criteria:** Channel selections update UI and do not reset progress.
 
 ---
 
-## 🎯 Test Flow 5: Points System & Validation
+### **5. Points + Validation Logic (10 mins)**
+**Purpose:** Test pending vs validated point systems and backend sync.
 
-**Purpose**: Understand point calculation and validation mechanics  
-**Time**: 10-12 minutes  
-**Skills**: Mathematical verification, timing analysis  
+**Steps:**
+1. **Start Indexing Session:** Begin watching content in either mode
+2. **Monitor Points Display:** Watch the points counter in the top-right corner
+3. **Observe Pending State:** Points should appear as "pending" initially
+4. **Use Debug Tools:** Open debug panel and use "Skip 5 min" or "Skip 10 min" to accelerate
+5. **Check Validation:** Use debug panel to simulate backend validation or wait for natural validation
+6. **Verify Totals:** Check that lifetime and daily totals update correctly
+7. **Test Receipt View:** Complete a session and verify the receipt shows correct point calculations
 
-### What You'll Learn:
-- Point calculation formulas
-- Multiplier effects
-- Pending vs. lifetime points
-- Validation timeline
-
-### Steps:
-
-1. **Point Calculation Analysis**
-   - Start any indexing session
-   - Observe real-time point accumulation
-   - Note base rates:
-     - Detection Mode: ~0.1 points/5 seconds
-     - Automode: ~0.12 points/5 seconds
-   - Calculate expected vs. actual points
-
-2. **Multiplier Effects**
-   - Watch points increase when diamonds are reached
-   - Note multiplier values (1.0x → 1.5x → 2.0x, etc.)
-   - Verify point rate increases accordingly
-   - Check multiplier display updates
-
-3. **Pending Points System**
-   - Complete session and check receipt
-   - Note distinction between:
-     - Session points (just earned)
-     - Pending points (today's total)
-     - Lifetime points (validated total)
-
-4. **Validation Simulation**
-   - Open debug panel
-   - Use "Skip to Tomorrow" function
-   - Observe pending points convert to lifetime
-   - Verify cooldown system prevents spam
-
-5. **Session Receipt Analysis**
-   - Review receipt components:
-     - Total points earned
-     - Session duration
-     - Base rate information
-     - Multiplier breakdown
-     - Bonus calculations
-     - Validation timeline
-
-### Expected Results:
-- ✅ Point calculations match expected rates
-- ✅ Multipliers increase earnings correctly
-- ✅ Pending/lifetime distinction clear
-- ✅ Validation system works
-- ✅ Receipt provides complete breakdown
+**Success Criteria:** Points update as expected; validated points count reflects correct state.
 
 ---
 
-## 🎯 Test Flow 6: Error Handling & System States
+### **6. Error Recovery (8 mins)**
+**Purpose:** Validate UI responses to indexing or state failures.
 
-**Purpose**: Test system robustness and error recovery  
-**Time**: 8-10 minutes  
-**Skills**: Error simulation, recovery testing  
+**Steps:**
+1. **Open Debug Panel:** Click the "Debug" button in the bottom-left corner
+2. **Simulate Errors:** Use debug panel to trigger error simulations:
+   - Click "Volume Error" button
+   - Click "Speed Error" button
+   - Click "Language Error" button
+   - Click "System Error" button
+3. **Observe Error Messages:** Check that appropriate error messages appear in the message area
+4. **Test Recovery:** Use debug panel to clear errors and verify normal operation resumes
+5. **Check State Consistency:** Ensure the system maintains consistent state after error recovery
 
-### What You'll Learn:
-- Error state management
-- System recovery mechanisms
-- UI state preservation
-- Error communication
-
-### Steps:
-
-1. **Error State Testing**
-   - Start indexing session
-   - Open debug panel → "Error Testing"
-   - Test each error type:
-     - **Volume Error**: Playback volume issues
-     - **System Error**: General system problems
-     - **Network Error**: Connection issues
-     - **Language Error**: Audio language problems
-     - **Speed Error**: Playback speed issues
-
-2. **Error Behavior Observation**
-   - Note error banner appearance
-   - Observe animation/counter pausing
-   - Check UI color changes (gray states)
-   - Verify error message clarity
-
-3. **Recovery Testing**
-   - Click "Resume" on non-fatal errors
-   - Verify session continues normally
-   - Check point accumulation resumes
-   - Observe UI color restoration
-
-4. **Fatal Error Handling**
-   - Test fatal errors that end sessions
-   - Verify proper session termination
-   - Check receipt generation for partial sessions
-   - Confirm proper state cleanup
-
-5. **Session Interruption**
-   - Test "Show Interrupt" feature
-   - Choose "YES, CONTINUE" option
-   - Observe chaining behavior:
-     - Multiplier bonus (+0.1x)
-     - Session continuity
-     - Multiple content tracking
-
-### Expected Results:
-- ✅ Error states display properly
-- ✅ Recovery mechanisms work
-- ✅ Session state preserved
-- ✅ Fatal errors handled gracefully
-- ✅ Interruption chaining functions
+**Success Criteria:** Error is captured, message displayed, recovery flow works.
 
 ---
 
-## 🎯 Test Flow 7: Advanced Features & Debug Tools
+### **7. Debug Panel Tools (15 mins)**
+**Purpose:** Allow testers and devs to simulate edge cases or internal states.
 
-**Purpose**: Explore advanced functionality and testing tools  
-**Time**: 15-20 minutes  
-**Skills**: Advanced testing, system analysis  
+**Steps:**
+1. **Open Debug Panel:** Click the "Debug" button in the bottom-left corner
+2. **Test Basic Functions:**
+   - Click "Show Tracker" to view tracking data
+   - Click "Show State" to see current application state
+3. **Test Error Simulations:**
+   - Click various error buttons to test error handling
+   - Observe error messages in the interface
+4. **Test Time Skipping:**
+   - Use "Skip 1 min", "Skip 5 min", etc. to accelerate time
+   - Observe how this affects progress and milestones
+5. **Test Session Management:**
+   - Use "Skip to Tomorrow" to test date changes
+   - Use "Reset Show Detection" to test state resets
 
-### What You'll Learn:
-- Debug panel capabilities
-- Fast mode testing
-- Responsive design testing
-- Advanced session management
-
-### Steps:
-
-1. **Debug Panel Exploration**
-   - Open debug panel (bottom-left button)
-   - Explore sections:
-     - **Basic Testing**: State inspection
-     - **Error Testing**: Error simulation
-     - **Session Management**: Advanced controls
-     - **Vertical Breakpoints**: UI testing
-
-2. **Fast Mode Testing**
-   - Enable "Fast Mode (10s)" during indexing
-   - Observe accelerated timing
-   - Note compressed intervals
-   - Test both automode and detection variants
-
-3. **Responsive Design Testing**
-   - Test vertical breakpoints:
-     - Very Short (400px)
-     - Short (600px)
-     - Standard (800px)
-     - Tall (1100px)
-   - Verify UI adapts properly
-   - Check element accessibility
-   - Test with various UI states active
-
-4. **Advanced Session Management**
-   - Test "End-of-Content Receipt"
-   - Use "Debug Content Tracking"
-   - Explore "Debug Show Detection"
-   - Test session chaining scenarios
-
-5. **Content Library Testing**
-   - Open standalone channel (`rumi-channel.html`)
-   - Test content browsing
-   - Verify metadata popups
-   - Check content organization
-
-### Expected Results:
-- ✅ Debug tools function correctly
-- ✅ Fast mode accelerates properly
-- ✅ UI responsive at all breakpoints
-- ✅ Advanced features work as intended
-- ✅ Content library accessible
+**Success Criteria:** Debug controls apply expected state changes without breaking flow.
 
 ---
 
-## 🏛️ Backend Architecture & Data Flow
+### **8. Session Continuation (4 mins)**
+**Purpose:** Ensure users can resume previous progress after closing extension.
 
-### Point Calculation System
-```javascript
-// Base rates
-const BASE_RATES = {
-  detection: 0.1,  // points per 5 seconds
-  automode: 0.12   // points per 5 seconds
-};
+**Steps:**
+1. **Start Indexing Session:** Begin a session in either detection or automode
+2. **Make Progress:** Let the session run for a few minutes to accumulate some progress
+3. **Close Extension:** Close the browser tab or refresh the page
+4. **Reopen Extension:** Open the RUMI extension again
+5. **Verify Restoration:** Check that previously watched content and indexing history are restored
+6. **Test Continuation:** Resume the session and verify it continues from where it left off
 
-// Multiplier calculation
-function calculateMultiplier(elapsedTime, milestones) {
-  for (let milestone of milestones.reverse()) {
-    if (elapsedTime >= milestone.time) {
-      return milestone.multiplier;
-    }
-  }
-  return 1.0;
-}
-```
-
-### Session State Management
-- **TimeSystem**: Centralized time tracking
-- **AppState**: Global state management
-- **Animation Loop**: 60fps UI updates
-- **Content Library**: CSV-based content database
-
-### Intelligence Bucket System
-- **Bucket Types**: Content Intelligence, Pattern Recognition, etc.
-- **Validation**: Dropdown selection required before launch
-- **Metadata**: Learning categories, descriptions, point estimates
-- **Dynamic Content**: Rotates through different learning focuses
+**Success Criteria:** Previously watched content and indexing history are restored.
 
 ---
 
-## 🔍 Debug Panel Reference
+### **9. Metadata Learning Verification (6 mins)**
+**Purpose:** Confirm content-level metadata updates affect dashboard logic.
 
-### Basic Testing
-- **Show Tracker**: Analytics data inspection
-- **Show State**: Application state viewer
+**Steps:**
+1. **Start Indexing Session:** Begin a session in either mode
+2. **Observe Metadata Processing:** Watch how content metadata is processed and displayed
+3. **Check Dashboard Logic:** Observe how metadata affects dashboard behavior and transitions
+4. **Test Metadata Flags:** Use debug panel to simulate different metadata scenarios
+5. **Verify Classification:** Ensure content is properly classified based on metadata
+6. **Check Error Handling:** Test how the system handles misclassified or missing metadata
 
-### Error Testing
-- **Volume/Speed/Language**: Playback error simulation
-- **System/Network/Browser**: Infrastructure error testing
-- **Show Interrupt**: Content switching simulation
-
-### Session Management
-- **Fast Mode**: Accelerated timing (10s compression)
-- **Skip to Tomorrow**: Point validation simulation
-- **Debug Content Tracking**: Content detection analysis
-- **Test End-of-Content**: Receipt generation testing
-
-### Vertical Breakpoints
-- **Height Testing**: 400px, 600px, 800px, 1100px
-- **UI Adaptation**: Layout responsiveness verification
+**Success Criteria:** Metadata impacts dashboard logic; misclassified content is flagged.
 
 ---
 
-## 🔄 Reset Instructions
+### **10. Dashboard Cycling & Theme Verification (5 mins)**
+**Purpose:** Confirm active learning stage cycling with visual theme accuracy.
 
-To reset the interface completely:
-1. **Refresh** the browser page (Cmd+Shift+R / Ctrl+Shift+R)
-2. **Click** the blue activation circle to relaunch
-3. **All state** will reset to initial conditions
-4. **Debug settings** will return to defaults
+**Steps:**
+1. **Open Tests Panel:** Click the "Tests" button in the bottom-left corner
+2. **Launch Dashboard Test:** Click "🔄 Section Transitions Test" to open the test in a new tab
+3. **Test Detection Mode:** In the test, trigger show transitions and observe dashboard cycling
+4. **Test Automode:** Switch to automode and trigger item transitions
+5. **Verify Theme Colors:**
+   - **Detection Mode:** Should use green theme (`#00ff41`)
+   - **Automode:** Should use yellow theme (`#ffff00`)
+6. **Check Single Active:** Ensure only one dashboard item is active at a time
+7. **Test Cycling:** Verify dashboard cycles through all 4 learning stages correctly
 
----
-
-## 📊 Success Metrics
-
-### Functional Testing
-- [ ] All entry points function correctly
-- [ ] Both modes (detection/automode) work
-- [ ] Progress bars display unique diamond colors
-- [ ] Points calculate accurately
-- [ ] Error handling works properly
-
-### User Experience
-- [ ] UI transitions are smooth
-- [ ] Visual feedback is clear
-- [ ] Information is accessible
-- [ ] Recovery mechanisms work
-- [ ] Performance is acceptable
-
-### Integration Testing
-- [ ] All debug tools function
-- [ ] Content library loads properly
-- [ ] Session persistence works
-- [ ] Validation system operates
-- [ ] Responsive design adapts
+**Success Criteria:** Dashboard cycles visually and functionally; correct theme color applied.
 
 ---
 
-## 🚀 Next Steps
+### **11. Tests Panel Verification (3 mins)**
+**Purpose:** Verify all test links work correctly and open in new tabs.
 
-After completing these test flows, you should have a comprehensive understanding of:
-- The dual-mode system architecture
-- Enhanced visual feedback mechanisms
-- Robust error handling capabilities
-- Advanced testing and debugging tools
-- Point calculation and validation systems
+**Steps:**
+1. **Open Tests Panel:** Click the "Tests" button in the bottom-left corner
+2. **Test Core System Links:**
+   - Click "🎨 ASCII Shapes Test" - should open in new tab
+   - Click "📊 CSV Processing Test" - should open in new tab
+   - Click "🔗 Iframe Communication Test" - should open in new tab
+3. **Test Intelligence & Learning Links:**
+   - Click "🧠 Intelligence Buckets Test" - should open in new tab
+   - Click "⚡ Multiplier Calculation Test" - should open in new tab
+   - Click "💰 Points Calculation Test" - should open in new tab
+4. **Test UI Links:**
+   - Click "🪟 Popup System Test" - should open in new tab
+   - Click "💎 Progress Diamonds Test" - should open in new tab
+   - Click "🔄 Section Transitions Test" - should open in new tab
+5. **Test Additional Resources:**
+   - Click "🧪 Microtests Suite" - should open in new tab
+   - Click "🧩 Puzzle System" - should open in new tab
 
-The prototype demonstrates a production-ready foundation for a browser extension that gamifies content consumption while contributing to AI training data collection.
+**Success Criteria:** All test links open correctly in new tabs and function as expected.
 
 ---
 
-*For technical support or questions about specific test scenarios, refer to the debug panel logs or contact the development team.* 
+### **12. Mobile Responsiveness (5 mins)**
+**Purpose:** Verify the interface works correctly on mobile devices.
+
+**Steps:**
+1. **Open Developer Tools:** Press F12 to open browser developer tools
+2. **Enable Mobile View:** Click the mobile device icon in developer tools
+3. **Test Different Sizes:** Try different mobile device sizes (iPhone, iPad, etc.)
+4. **Check Button Visibility:** Verify debug and tests buttons are visible and properly sized
+5. **Test Panel Functionality:** Open debug and tests panels on mobile and verify they work
+6. **Check Touch Interactions:** Test touch interactions with buttons and panels
+7. **Verify Responsive Design:** Ensure all UI elements scale properly on mobile
+
+**Success Criteria:** Interface is fully functional and properly sized on mobile devices.
+
+---
+
+### **13. Keyboard Shortcuts (2 mins)**
+**Purpose:** Verify keyboard shortcuts work correctly.
+
+**Steps:**
+1. **Test Debug Panel Shortcut:** Press `Ctrl+Shift+D` - debug panel should toggle
+2. **Test Tests Panel Shortcut:** Press `Ctrl+Shift+T` - tests panel should toggle
+3. **Test Panel Sections:** Use mouse to click section headers and verify expand/collapse
+4. **Test Panel Close:** Click panel headers to close panels
+
+**Success Criteria:** Keyboard shortcuts work as expected and panels toggle correctly.
+
+---
+
+### **14. Theme Consistency (3 mins)**
+**Purpose:** Verify color themes are applied consistently across all modes.
+
+**Steps:**
+1. **Test Detection Mode:** Launch detection mode and verify green theme (`#00ff41`) is used consistently
+2. **Test Automode:** Launch automode and verify yellow theme (`#ffff00`) is used consistently
+3. **Check Button Colors:** Verify debug button uses green theme and tests button uses yellow theme
+4. **Check Panel Colors:** Verify debug panel uses green borders and tests panel uses yellow borders
+5. **Test Theme Switching:** Switch between modes and verify themes change appropriately
+
+**Success Criteria:** Color themes are applied consistently and correctly across all interface elements.
+
+---
+
+### **15. Performance Testing (5 mins)**
+**Purpose:** Verify the interface performs well under normal usage.
+
+**Steps:**
+1. **Open Multiple Tests:** Open several test tabs simultaneously
+2. **Monitor Performance:** Watch for any lag or performance issues
+3. **Test Panel Switching:** Rapidly open and close debug and tests panels
+4. **Check Memory Usage:** Monitor browser memory usage during testing
+5. **Test Long Sessions:** Run a longer indexing session to test sustained performance
+
+**Success Criteria:** Interface remains responsive and performs well during extended use.
+
+---
+
+## 🎯 **Testing Notes**
+
+### **Key UI Elements to Observe:**
+- **Activation Gate:** Should block interaction until activated
+- **Progress Bar:** Should update smoothly and show milestones
+- **Points Display:** Should show pending and validated states
+- **Dashboard Cycling:** Should cycle through 4 learning stages
+- **Theme Colors:** Green for detection, yellow for automode
+- **Error Messages:** Should appear in message area
+- **Debug/Tests Buttons:** Should be white with white borders, twice as big
+
+### **Common Issues to Watch For:**
+- Activation gate not clearing properly
+- Dashboard not cycling on transitions
+- Theme colors not applying correctly
+- Points not updating in real-time
+- Error messages not displaying
+- Mobile responsiveness issues
+- Performance degradation during extended use
+
+### **Success Metrics:**
+- All UI elements respond correctly to user interactions
+- Color themes are applied consistently
+- Dashboard cycling works in both modes
+- Error handling functions properly
+- Mobile interface is fully functional
+- Performance remains stable during testing 

@@ -1455,19 +1455,64 @@
                 document.getElementById('timeline').style.display = 'none';
             }
 
-            // Display current content in popup (helper function)
+            // Display current content in popup (helper function) - matches ASCII animation metadata
             displayCurrentContentInPopup(currentItem, grid) {
                 if (currentItem) {
-                    if (currentItem.description) {
-                        this.addMetadataItem(grid, 'Description', currentItem.description, 'description');
+                    // Build the same metadata string as ASCII animation
+                    let metadataString = currentItem.title || 'Unknown Content';
+                    
+                    // Add intelligence bucket (uppercase)
+                    if (currentItem.intelligence_bucket && currentItem.intelligence_bucket !== 'Unknown') {
+                        metadataString += ` • ${currentItem.intelligence_bucket.toUpperCase()}`;
                     }
                     
-                    // Show service and type
+                    // Add service and type (uppercase)
                     const service = currentItem.service || 'RUMI LEARNING';
                     const type = currentItem.type || 'CLIP';
+                    metadataString += ` • ${service.toUpperCase()}`;
+                    
+                    // Add duration
+                    if (currentItem.duration) {
+                        metadataString += ` • ${currentItem.duration}`;
+                    }
+                    
+                    // Add genre (uppercase)
+                    if (currentItem.genre && currentItem.genre !== 'Unknown') {
+                        metadataString += ` • ${currentItem.genre.toUpperCase()}`;
+                    }
+                    
+                    // Add season/episode
+                    if (currentItem.season && currentItem.episode && currentItem.season !== 'N/A' && currentItem.episode !== 'N/A') {
+                        metadataString += ` S${currentItem.season}E${currentItem.episode}`;
+                    }
+                    
+                    // Add year
+                    if (currentItem.year && currentItem.year !== 'Unknown') {
+                        metadataString += ` (${currentItem.year})`;
+                    }
+                    
+                    // Add type classification
+                    metadataString += ` [${type.toUpperCase()}]`;
+                    
+                    // Add progress tracking
+                    if (window.parent && window.parent.appState) {
+                        const currentIndex = window.parent.appState.currentContentIndex + 1;
+                        const totalItems = window.parent.appState.automodeContentItems ? window.parent.appState.automodeContentItems.length : 1;
+                        metadataString += ` • Item ${currentIndex}/${totalItems}`;
+                    }
+                    
+                    // Display the full metadata string as description
+                    this.addMetadataItem(grid, 'Current Content', metadataString, 'description');
+                    
+                    // Also show individual fields for clarity
+                    if (currentItem.description) {
+                        this.addMetadataItem(grid, 'Content Description', currentItem.description, 'description');
+                    }
+                    
+                    // Show service and type separately
                     this.addMetadataItem(grid, 'Service & Type', `${service} • ${type.toUpperCase()}`);
                     
-                    // Show duration and genre
+                    // Show duration and genre separately
                     if (currentItem.duration) {
                         const genre = currentItem.genre || 'LEARNING';
                         this.addMetadataItem(grid, 'Duration & Genre', `${currentItem.duration} • ${genre.toUpperCase()}`);
